@@ -1,0 +1,19 @@
+{
+  "items": [
+    { "slug": "iron-ore", "name": "Iron Ore", "type": "resource", "isResource": true, "imageAlt": "A chunk of iron ore" },
+    { "slug": "fuel", "name": "Fuel", "type": "resource", "isResource": true, "imageAlt": "A canister of fuel" },
+    { "slug": "iron-plate", "name": "Iron Plate", "type": "component", "workbenchLevel": 1, "craftTimeSeconds": 10,
+      "recipe": [{ "ingredient": "iron-ore", "quantity": 2 }], "imageAlt": "A flat iron plate" },
+    { "slug": "scrap-rifle", "name": "Scrap Rifle", "type": "weapon", "workbenchLevel": 2, "craftTimeSeconds": 30,
+      "unlockConditions": "Requires Basic Weapons tech", "unlockedBy": "basic-weapons",
+      "recipe": [{ "ingredient": "iron-plate", "quantity": 3 }, { "ingredient": "fuel", "quantity": 1 }],
+      "imageAlt": "A makeshift rifle built from scrap" }
+  ],
+  "techNodes": [
+    { "slug": "metalworking", "name": "Metalworking", "description": "Unlocks basic metal components.",
+      "costs": [{ "resource": "iron-ore", "quantity": 20 }], "prerequisites": [] },
+    { "slug": "basic-weapons", "name": "Basic Weapons", "description": "Unlocks scrap weaponry.",
+      "costs": [{ "resource": "iron-ore", "quantity": 10 }, { "resource": "fuel", "quantity": 5 }],
+      "prerequisites": ["metalworking"] }
+  ]
+}
