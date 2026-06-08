@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildItemQuery, type ItemFilter } from "./item-filter";
+import { buildItemQuery } from "./item-filter";
 
 describe("buildItemQuery", () => {
   it("defaults to no filters and name-ascending sort", () => {
