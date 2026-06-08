@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Item {
+  id               String  @id @default(cuid())
+  slug             String  @unique
+  name             String
+  description      String?
+  type             String
+  workbenchLevel   Int?
+  craftTimeSeconds Int?
+  unlockConditions String?
+  imageAlt         String?
+  isResource       Boolean @default(false)
+
+  unlockedById     String?
+  unlockedBy       TechNode? @relation("UnlockedItems", fields: [unlockedById], references: [id])
+
+  recipe           RecipeIngredient[] @relation("ItemRecipe")
+  usedIn           RecipeIngredient[] @relation("IngredientUsedIn")
+  techCosts        TechCost[]
+
+  @@index([type])
+  @@index([workbenchLevel])
+}
+
+model RecipeIngredient {
+  id           String @id @default(cuid())
+  itemId       String
+  item         Item   @relation("ItemRecipe", fields: [itemId], references: [id], onDelete: Cascade)
+  ingredientId String
+  ingredient   Item   @relation("IngredientUsedIn", fields: [ingredientId], references: [id], onDelete: Cascade)
+  quantity     Int
+
+  @@unique([itemId, ingredientId])
+  @@index([ingredientId])
+}
+
+model TechNode {
+  id            String @id @default(cuid())
+  slug          String @unique
+  name          String
+  description   String?
+
+  costs         TechCost[]
+  prerequisites TechPrerequisite[] @relation("NodePrerequisites")
+  requiredBy    TechPrerequisite[] @relation("PrerequisiteOf")
+  unlockedItems Item[]             @relation("UnlockedItems")
+}
+
+model TechCost {
+  id         String   @id @default(cuid())
+  techNodeId String
+  techNode   TechNode @relation(fields: [techNodeId], references: [id], onDelete: Cascade)
+  resourceId String
+  resource   Item     @relation(fields: [resourceId], references: [id], onDelete: Cascade)
+  quantity   Int
+
+  @@unique([techNodeId, resourceId])
+}
+
+model TechPrerequisite {
+  id             String   @id @default(cuid())
+  nodeId         String
+  node           TechNode @relation("NodePrerequisites", fields: [nodeId], references: [id], onDelete: Cascade)
+  prerequisiteId String
+  prerequisite   TechNode @relation("PrerequisiteOf", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+
+  @@unique([nodeId, prerequisiteId])
+  @@index([prerequisiteId])
+}
