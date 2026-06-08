@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import ReactFlow, { Background, Controls, type Edge, type Node } from "reactflow";
+import ReactFlow, { Background, type Edge, type Node } from "reactflow";
 import "reactflow/dist/style.css";
 
 export interface GraphNodeInput { id: string; name: string; prerequisiteIds: string[] }
@@ -20,10 +20,19 @@ export function TechTreeGraph({ nodes }: { nodes: GraphNodeInput[] }) {
   }, [nodes]);
 
   return (
-    <div style={{ height: 420 }} className="rounded border border-neutral-800" aria-hidden="true">
-      <ReactFlow nodes={rfNodes} edges={rfEdges} fitView>
+    // Decorative overview only. `inert` removes the whole React Flow subtree
+    // (its tabbable nodes/edges and attribution link) from the tab order and the
+    // accessibility tree — the keyboard/screen-reader path is the TechTreeTable.
+    <div style={{ height: 420 }} className="rounded border border-neutral-800" inert>
+      <ReactFlow
+        nodes={rfNodes}
+        edges={rfEdges}
+        fitView
+        nodesFocusable={false}
+        edgesFocusable={false}
+        proOptions={{ hideAttribution: true }}
+      >
         <Background />
-        <Controls />
       </ReactFlow>
     </div>
   );
