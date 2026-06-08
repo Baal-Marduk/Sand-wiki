@@ -6,7 +6,7 @@ export interface FilterOptions {
 
 export function ItemFilters({ types, resources, current }: FilterOptions) {
   return (
-    <form action="/items" method="get" className="grid gap-3 sm:grid-cols-5 items-end mb-6">
+    <form action="/items" method="get" className="grid gap-3 sm:grid-cols-6 items-end mb-6">
       <div className="sm:col-span-2">
         <label htmlFor="q" className="block text-sm">Name</label>
         <input id="q" name="q" type="search" defaultValue={current.q ?? ""}
@@ -19,6 +19,12 @@ export function ItemFilters({ types, resources, current }: FilterOptions) {
           <option value="">All</option>
           {types.map((t) => <option key={t} value={t}>{t}</option>)}
         </select>
+      </div>
+      <div>
+        <label htmlFor="workbench" className="block text-sm">Workbench level</label>
+        <input id="workbench" name="workbench" type="number" min={1} inputMode="numeric"
+          defaultValue={current.workbench ?? ""} placeholder="Any"
+          className="w-full rounded bg-neutral-900 border border-neutral-700 px-2 py-1" />
       </div>
       <div>
         <label htmlFor="resource" className="block text-sm">Uses resource</label>
@@ -36,7 +42,7 @@ export function ItemFilters({ types, resources, current }: FilterOptions) {
           <option value="workbench">Workbench level</option>
         </select>
       </div>
-      <button type="submit" className="rounded bg-amber-600 text-neutral-950 font-medium px-4 py-2 sm:col-span-5 sm:w-32">
+      <button type="submit" className="rounded bg-amber-600 text-neutral-950 font-medium px-4 py-2 sm:col-span-6 sm:w-32">
         Apply
       </button>
     </form>

@@ -14,12 +14,18 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
   const q = str(sp.q);
   const type = str(sp.type);
   const resource = str(sp.resource);
+  const workbench = str(sp.workbench);
   const sortParam = str(sp.sort);
   const sort: ItemFilter["sort"] = sortParam === "workbench" ? "workbench" : "name";
+
+  // workbench is a positive integer level; ignore blank or non-numeric input.
+  const workbenchLevel =
+    workbench && Number.isInteger(Number(workbench)) ? Number(workbench) : undefined;
 
   const filter: ItemFilter = {
     query: q || undefined,
     type: type || undefined,
+    workbenchLevel,
     requiredResourceId: resource || undefined,
     sort,
   };
@@ -34,7 +40,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
       <ItemFilters
         types={types}
         resources={resources.map((r) => ({ id: r.id, name: r.name }))}
-        current={{ q, type, resource, sort }}
+        current={{ q, type, workbench, resource, sort }}
       />
       <p className="text-sm text-neutral-400 mb-2" aria-live="polite">{items.length} result(s)</p>
       {items.length === 0 ? (
