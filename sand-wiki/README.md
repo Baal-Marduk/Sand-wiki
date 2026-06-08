@@ -1,36 +1,36 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Unofficial SAND Wiki
 
-## Getting Started
+Community, unofficial wiki for *SAND: Raiders of Sofia*. Not affiliated with tinyBuild.
 
-First, run the development server:
+## Local development
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. Copy `.env.example` to `.env` and set `DATABASE_URL` to your hosted Postgres (Neon/Supabase).
+2. `npm install`
+3. `npx prisma migrate dev` — apply schema.
+4. `npm run db:seed` — load data (set `SEED_FILE=path/to/data.json` for the real dataset).
+5. `npm run dev` — http://localhost:3000
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Tech stack
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+- Next.js (App Router, TypeScript) — UI + data access in one app.
+- PostgreSQL via Prisma (v6).
+- Tailwind CSS. React Flow for the tech-tree graph.
+- Vitest (unit) + Playwright/axe (e2e + accessibility).
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Tests
 
-## Learn More
+- `npm run test` — unit (Vitest): tech-tree cost logic, item filtering.
+- `npm run test:e2e` — Playwright + axe accessibility checks (builds and starts the app; requires a seeded DB).
 
-To learn more about Next.js, take a look at the following resources:
+## Data
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The seed reads `prisma/sample-data.json` by default. Replace it (or point `SEED_FILE` at)
+the real dataset using the same shape. See `prisma/seed.ts` for the expected fields.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Project structure
 
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- `prisma/` — schema, migrations, seed script + sample data.
+- `src/lib/` — `tech-tree.ts` (cost-closure logic), `item-filter.ts` (query building), `queries.ts` (DB reads), `db.ts` (Prisma client).
+- `src/app/` — routes: `/`, `/items`, `/items/[slug]`, `/tech`, `/about`.
+- `src/components/` — UI components.
+- `tests/e2e/` — Playwright specs.
