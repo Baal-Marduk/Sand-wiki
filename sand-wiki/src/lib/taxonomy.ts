@@ -56,3 +56,30 @@ export function categoryLabel(slug: string): string {
 export function getSection(slug: string): Section | undefined {
   return SECTIONS.find((s) => s.slug === slug);
 }
+
+/** Maps the scraper's game `type` enum to a wiki item category slug. Unknown/null -> "misc". */
+const TYPE_TO_CATEGORY: Record<string, string> = {
+  WEAPON: "guns",
+  WEAPON_BELT: "guns",
+  AMMO: "ammo",
+  TURRET_AMMO: "ammo",
+  RESOURCE_T1: "resources",
+  RESOURCE_T2: "resources",
+  RESOURCE_T3: "resources",
+  ENERGY: "resources",
+  ARMOR: "attire",
+  BACKPACK: "attire",
+  ATTACK_CONSUMABLE: "weapons",
+  RAID_EXPLOSIVES: "weapons",
+  UTILITY_CONSUMABLE: "tools",
+  FOOD: "medical",
+  KEY: "misc",
+  MONEY: "misc",
+  LARGE_VALUABLE: "misc",
+  SMALL_VALUABLE: "misc",
+};
+
+export function categoryForType(type: string | null | undefined): string {
+  if (!type) return "misc";
+  return TYPE_TO_CATEGORY[type] ?? "misc";
+}

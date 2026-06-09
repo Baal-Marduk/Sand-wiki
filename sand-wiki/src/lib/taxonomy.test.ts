@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   SECTIONS, ITEM_CATEGORIES, ITEM_CATEGORY_SLUGS,
-  isItemCategory, categoryLabel, getSection,
+  isItemCategory, categoryLabel, getSection, categoryForType,
 } from "./taxonomy";
 
 describe("taxonomy", () => {
@@ -43,5 +43,32 @@ describe("taxonomy", () => {
   it("looks up a section by slug", () => {
     expect(getSection("environment")?.label).toBe("Environment");
     expect(getSection("missing")).toBeUndefined();
+  });
+});
+
+describe("categoryForType", () => {
+  it("maps known game types to wiki categories", () => {
+    expect(categoryForType("WEAPON")).toBe("guns");
+    expect(categoryForType("WEAPON_BELT")).toBe("guns");
+    expect(categoryForType("AMMO")).toBe("ammo");
+    expect(categoryForType("TURRET_AMMO")).toBe("ammo");
+    expect(categoryForType("RESOURCE_T1")).toBe("resources");
+    expect(categoryForType("RESOURCE_T3")).toBe("resources");
+    expect(categoryForType("ENERGY")).toBe("resources");
+    expect(categoryForType("ARMOR")).toBe("attire");
+    expect(categoryForType("BACKPACK")).toBe("attire");
+    expect(categoryForType("ATTACK_CONSUMABLE")).toBe("weapons");
+    expect(categoryForType("RAID_EXPLOSIVES")).toBe("weapons");
+    expect(categoryForType("UTILITY_CONSUMABLE")).toBe("tools");
+    expect(categoryForType("FOOD")).toBe("medical");
+    expect(categoryForType("KEY")).toBe("misc");
+    expect(categoryForType("MONEY")).toBe("misc");
+    expect(categoryForType("LARGE_VALUABLE")).toBe("misc");
+    expect(categoryForType("SMALL_VALUABLE")).toBe("misc");
+  });
+
+  it("maps null/unknown types to misc", () => {
+    expect(categoryForType(null)).toBe("misc");
+    expect(categoryForType("SOME_NEW_TYPE")).toBe("misc");
   });
 });
