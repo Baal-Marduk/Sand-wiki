@@ -3,8 +3,7 @@ import type { Prisma } from "@prisma/client";
 export interface ItemFilter {
   query?: string;
   category?: string;
-  workbenchLevel?: number;
-  requiredResourceId?: string;
+  workbenchTier?: number;
   sort?: "name" | "workbench";
 }
 
@@ -15,22 +14,11 @@ export interface ItemQuery {
 
 export function buildItemQuery(filter: ItemFilter): ItemQuery {
   const where: Prisma.ItemWhereInput = {};
-
-  if (filter.query) {
-    where.name = { contains: filter.query, mode: "insensitive" };
-  }
-  if (filter.category) {
-    where.category = filter.category;
-  }
-  if (filter.workbenchLevel !== undefined) {
-    where.workbenchLevel = filter.workbenchLevel;
-  }
-  if (filter.requiredResourceId) {
-    where.recipe = { some: { ingredientId: filter.requiredResourceId } };
-  }
+  if (filter.query) where.name = { contains: filter.query, mode: "insensitive" };
+  if (filter.category) where.category = filter.category;
+  if (filter.workbenchTier !== undefined) where.workbenchTier = filter.workbenchTier;
 
   const orderBy: Prisma.ItemOrderByWithRelationInput =
-    filter.sort === "workbench" ? { workbenchLevel: "asc" } : { name: "asc" };
-
+    filter.sort === "workbench" ? { workbenchTier: "asc" } : { name: "asc" };
   return { where, orderBy };
 }
