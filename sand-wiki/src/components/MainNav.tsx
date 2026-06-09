@@ -24,19 +24,20 @@ export function MainNav() {
                     {section.label} ▾
                   </button>
                   <ul
-                    className="invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition-opacity absolute left-0 top-full z-20 mt-1 w-48 rounded-box border border-base-300 bg-base-200 p-2 shadow space-y-1"
+                    className="invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition-opacity absolute left-0 top-full z-20 pt-2 w-48 space-y-1"
                   >
-                    <li>
-                      <Link href={`/${section.slug}`} className={dropdownItemCls}>All {section.label}</Link>
+                    <li className="rounded-box border border-base-300 bg-base-200 p-2 shadow space-y-1 list-none">
+                      <ul className="space-y-1">
+                        {section.categories.map((c) => (
+                          <li key={c.slug}>
+                            <Link href={`/${section.slug}?category=${c.slug}`} className={dropdownItemCls}>
+                              <span className="size-2 rounded-full" style={{ backgroundColor: categoryColor(c.slug) }} aria-hidden="true" />
+                              {c.label}
+                            </Link>
+                          </li>
+                        ))}
+                      </ul>
                     </li>
-                    {section.categories.map((c) => (
-                      <li key={c.slug}>
-                        <Link href={`/${section.slug}?category=${c.slug}`} className={dropdownItemCls}>
-                          <span className="size-2 rounded-full" style={{ backgroundColor: categoryColor(c.slug) }} aria-hidden="true" />
-                          {c.label}
-                        </Link>
-                      </li>
-                    ))}
                   </ul>
                 </li>
               );

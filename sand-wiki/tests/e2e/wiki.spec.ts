@@ -59,12 +59,14 @@ test("workbench tier filter narrows the items list", async ({ page }) => {
   await expect(page.locator('a[href="/items/sniper-rifle-silencer"]')).toBeVisible();
 });
 
-test("nav exposes the Items category menu", async ({ page }) => {
+test("nav exposes the Items category menu without an All link", async ({ page }) => {
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "Primary" });
-  // The section menu now opens on hover/focus (not a click-toggle); the trigger is a button.
   await nav.getByRole("button", { name: /^Items/ }).hover();
   await expect(nav.getByRole("link", { name: "Weapons" })).toBeVisible();
+  await expect(nav.getByRole("link", { name: "Artillery" })).toBeVisible();
+  // The "All Items" shortcut has been removed.
+  await expect(nav.getByRole("link", { name: /^All Items$/ })).toHaveCount(0);
 });
 
 test("item detail shows Crafted by and Used in tabs with tables", async ({ page }) => {
