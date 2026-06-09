@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getItemBySlug } from "@/lib/queries";
-import { CategoryTag } from "@/components/CategoryTag";
-import { RecipeCardView } from "@/components/RecipeCardView";
 import { classifyTrades } from "@/lib/trades";
-import { TradeSection } from "@/components/TradeSection";
+import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
+import { CategoryTag } from "@/components/CategoryTag";
+import { ItemIcon } from "@/components/ItemIcon";
+import { ItemTabs, type Tab } from "@/components/ItemTabs";
+import { ItemDetailsPanel } from "@/components/ItemDetailsPanel";
+import { CraftTable } from "@/components/CraftTable";
+import { UsedInTable } from "@/components/UsedInTable";
+import { TradeTable } from "@/components/TradeTable";
 
 type Params = Promise<{ slug: string }>;
 
@@ -13,51 +18,56 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const item = await getItemBySlug(slug);
   if (!item) notFound();
 
-  const { buy, sell, crafts, usedInCrafts } = classifyTrades(item.slug, item.craftedBy, item.usedIn);
+  const trades = classifyTrades(item.slug, item.craftedBy, item.usedIn);
+  const { buy, sell, crafts, usedInCrafts } = trades;
+
+  const tabContent: Record<TabId, React.ReactNode> = {
+    "crafted-by": <CraftTable recipes={crafts} />,
+    "used-in": <UsedInTable recipes={usedInCrafts} />,
+    buy: <TradeTable options={buy} />,
+    sell: <TradeTable options={sell} />,
+  };
+  const tabs: Tab[] = availableTabs(trades).map((t) => ({
+    id: t.id,
+    label: t.label,
+    content: tabContent[t.id],
+  }));
+
+  const detailRows = itemDetailRows(
+    {
+      category: item.category,
+      isResource: item.isResource,
+      storageStack: item.storageStack,
+      workbenchTier: item.workbenchTier,
+    },
+    trades,
+  );
 
   return (
-    <article className="py-6 space-y-6 max-w-3xl">
-      <header className="space-y-2">
-        <h1 className="font-display text-3xl font-bold">{item.name}</h1>
-        <div className="flex flex-wrap gap-2">
-          <CategoryTag slug={item.category} />
-          {item.isResource && <span className="badge badge-secondary">Resource</span>}
-          {item.workbenchTier !== null && (
-            <span className="badge badge-outline">Workbench tier {item.workbenchTier}</span>
-          )}
-          {item.storageStack !== null && (
-            <span className="badge badge-ghost">Stacks to {item.storageStack}</span>
-          )}
-          {buy.length > 0 && <span className="badge badge-success" aria-label="Buyable">◈ Buyable</span>}
-          {sell.length > 0 && <span className="badge badge-warning" aria-label="Sellable">◈ Sellable</span>}
+    <article className="py-6 space-y-6 max-w-5xl">
+      <header className="flex flex-wrap items-start gap-4">
+        <ItemIcon name={item.name} size="lg" />
+        <div className="flex-1 min-w-[16rem] space-y-2">
+          <h1 className="font-display text-3xl font-bold">{item.name}</h1>
+          <div className="flex flex-wrap gap-2">
+            <CategoryTag slug={item.category} />
+            {buy.length > 0 && <span className="badge badge-success" aria-label="Buyable">◈ Buyable</span>}
+            {sell.length > 0 && <span className="badge badge-warning" aria-label="Sellable">◈ Sellable</span>}
+          </div>
+          {item.description && <p className="text-base-content/80 max-w-prose">{item.description}</p>}
         </div>
-        {item.description && <p className="text-base-content/80">{item.description}</p>}
       </header>
 
-      <TradeSection kind="buy" options={buy} />
-      <TradeSection kind="sell" options={sell} />
-
-      <section>
-        <h2 className="font-display text-xl font-semibold mb-2">Crafted by</h2>
-        {crafts.length === 0 ? (
-          <p className="text-base-content/70">No known recipe produces this item.</p>
-        ) : (
-          <div className="space-y-3">
-            {crafts.map((r) => <RecipeCardView key={r.slug} recipe={r} />)}
-          </div>
-        )}
-      </section>
-
-      <section>
-        <h2 className="font-display text-xl font-semibold mb-2">Used in</h2>
-        {usedInCrafts.length === 0 ? (
-          <p className="text-base-content/70">Not used as an ingredient in any known recipe.</p>
-        ) : (
-          <div className="space-y-3">
-            {usedInCrafts.map((r) => <RecipeCardView key={r.slug} recipe={r} />)}
-          </div>
-        )}
-      </section>
+      <div className="grid gap-6 lg:grid-cols-[1fr_260px] items-start">
+        <div className="min-w-0">
+          {tabs.length === 0 ? (
+            <p className="text-base-content/70">No crafting, usage, or trade data for this item.</p>
+          ) : (
+            <ItemTabs tabs={tabs} />
+          )}
+        </div>
+        <ItemDetailsPanel rows={detailRows} />
+      </div>
 
       <p><Link href="/items" className="btn btn-ghost btn-sm">← Back to items</Link></p>
     </article>
