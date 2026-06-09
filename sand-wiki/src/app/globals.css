@@ -1,27 +1,62 @@
 @import "tailwindcss";
+@plugin "daisyui";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@plugin "daisyui/theme" {
+  name: "desertnight";
+  default: true;
+  prefersdark: true;
+  color-scheme: dark;
+  --color-base-100: #171009;
+  --color-base-200: #1f160d;
+  --color-base-300: #2c2014;
+  --color-base-content: #ece0cb;
+  --color-primary: #e8893b;
+  --color-primary-content: #1a120a;
+  --color-secondary: #b5532a;
+  --color-secondary-content: #fbe9d8;
+  --color-accent: #c9a24b;
+  --color-accent-content: #1a120a;
+  --color-neutral: #2c2014;
+  --color-neutral-content: #ece0cb;
+  --color-info: #6aa9c9;
+  --color-info-content: #08131a;
+  --color-success: #7fb069;
+  --color-success-content: #0c1607;
+  --color-warning: #e0a341;
+  --color-warning-content: #1a1304;
+  --color-error: #d4654f;
+  --color-error-content: #1a0805;
+  --radius-box: 0.75rem;
+  --radius-field: 0.5rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+@plugin "daisyui/theme" {
+  name: "desertday";
+  color-scheme: light;
+  --color-base-100: #efe6d6;
+  --color-base-200: #e6dac6;
+  --color-base-300: #d9c9ad;
+  --color-base-content: #2a1d10;
+  --color-primary: #c2671f;
+  --color-primary-content: #fff7ec;
+  --color-secondary: #9a4420;
+  --color-secondary-content: #fff7ec;
+  --color-accent: #8a6d2f;
+  --color-accent-content: #fff7ec;
+  --color-neutral: #2a1d10;
+  --color-neutral-content: #efe6d6;
+  --color-info: #2f6f8f;
+  --color-info-content: #fff;
+  --color-success: #4f7a3a;
+  --color-success-content: #fff;
+  --color-warning: #9a6a16;
+  --color-warning-content: #fff;
+  --color-error: #a83c28;
+  --color-error-content: #fff;
+  --radius-box: 0.75rem;
+  --radius-field: 0.5rem;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-/* The dark theme is applied via Tailwind utilities on <body> in layout.tsx
-   (bg-neutral-950 text-neutral-100). Do not set background/color here or it
-   overrides those utilities and breaks color contrast (a11y). */
-body {
-  font-family: Arial, Helvetica, sans-serif;
+@theme {
+  --font-display: var(--font-oswald);
 }
