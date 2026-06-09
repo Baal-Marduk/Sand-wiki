@@ -13,7 +13,7 @@ export function ItemCard({ item }: { item: ItemCardData }) {
       <Link href={`/items/${item.slug}`} className="card bg-base-200 hover:bg-base-300 transition-colors h-full">
         <div className="card-body p-4">
           <div className="flex items-center gap-2">
-            <ItemIcon name={item.name} icon={item.icon} size="sm" />
+            <ItemIcon name={item.name} icon={item.icon} size="sm" decorative />
             <span className="font-medium">{item.name}</span>
           </div>
           <div className="flex flex-wrap gap-2 items-center">

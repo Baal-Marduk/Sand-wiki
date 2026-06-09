@@ -1,13 +1,17 @@
 /** Item image. When `icon` is set, render the sprite; otherwise a placeholder glyph.
- *  This is the single change point for item imagery. */
+ *  This is the single change point for item imagery.
+ *  Pass `decorative` when the item name is already shown as adjacent text, so screen
+ *  readers don't announce the name twice. */
 export function ItemIcon({
   name,
   icon,
   size = "md",
+  decorative = false,
 }: {
   name: string;
   icon?: string | null;
   size?: "sm" | "md" | "lg";
+  decorative?: boolean;
 }) {
   const px = { sm: "size-5", md: "size-12", lg: "size-28" }[size];
   if (icon) {
@@ -15,8 +19,7 @@ export function ItemIcon({
       // eslint-disable-next-line @next/next/no-img-element
       <img
         src={icon}
-        alt={name}
-        title={name}
+        alt={decorative ? "" : name}
         className={`${px} rounded-box bg-base-300 object-contain shrink-0`}
       />
     );
@@ -24,9 +27,7 @@ export function ItemIcon({
   return (
     <span
       className={`${px} inline-flex items-center justify-center rounded-box bg-base-300 text-base-content/40 shrink-0`}
-      role="img"
-      aria-label={name}
-      title={name}
+      {...(decorative ? { "aria-hidden": true } : { role: "img", "aria-label": name, title: name })}
     >
       <span aria-hidden="true">▦</span>
     </span>
