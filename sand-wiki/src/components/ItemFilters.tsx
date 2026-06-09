@@ -8,7 +8,7 @@ export interface FilterOptions {
 
 export function ItemFilters({ categories, tiers, current }: FilterOptions) {
   return (
-    <form action="/items" method="get" className="card bg-base-200 mb-6">
+    <form action="/items" method="get" className="card bg-base-200 mb-6 sticky top-[4.5rem] z-30">
       <div className="card-body grid gap-3 sm:grid-cols-5 items-end">
         <div className="sm:col-span-2">
           <label htmlFor="q" className="block text-sm font-medium mb-1">Name</label>
