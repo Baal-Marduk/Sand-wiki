@@ -6,7 +6,8 @@ import { categoryForType, isItemCategory } from "../src/lib/taxonomy";
 const prisma = new PrismaClient();
 
 interface ScrapItem {
-  slug: string; id: string; name: string; type: string | null;
+  slug: string; id: string; name: string; displayName?: string | null;
+  description?: string | null; type: string | null;
   isResource: boolean; storageStack: number | null; workbenchTier: number | null; fromCatalog: boolean;
 }
 interface ScrapLine { item: string; amount: number }
@@ -22,6 +23,14 @@ async function main() {
   const file = process.env.SEED_FILE ?? join(__dirname, "data.json");
   const data: ScrapData = JSON.parse(readFileSync(file, "utf-8"));
 
+  const iconRel: Record<string, string> = JSON.parse(
+    readFileSync(join(__dirname, "icons.json"), "utf-8"),
+  );
+  const iconFor = (id: string): string | undefined => {
+    const rel = iconRel[id];
+    return rel ? "/icons/" + rel.split("/").pop() : undefined;
+  };
+
   await prisma.recipeInput.deleteMany();
   await prisma.recipeOutput.deleteMany();
   await prisma.recipe.deleteMany();
@@ -35,8 +44,13 @@ async function main() {
     }
     await prisma.item.create({
       data: {
-        slug: i.slug, name: i.name, category, isResource: i.isResource,
+        slug: i.slug,
+        name: i.displayName ?? i.name,
+        derivedName: i.name,
+        description: i.description ?? undefined,
+        category, isResource: i.isResource,
         storageStack: i.storageStack ?? undefined, workbenchTier: i.workbenchTier ?? undefined,
+        icon: iconFor(i.id),
       },
     });
   }
