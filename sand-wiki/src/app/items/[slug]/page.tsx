@@ -3,6 +3,8 @@ import { notFound } from "next/navigation";
 import { getItemBySlug } from "@/lib/queries";
 import { CategoryTag } from "@/components/CategoryTag";
 import { RecipeCardView } from "@/components/RecipeCardView";
+import { classifyTrades } from "@/lib/trades";
+import { TradeSection } from "@/components/TradeSection";
 
 type Params = Promise<{ slug: string }>;
 
@@ -10,6 +12,8 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const { slug } = await params;
   const item = await getItemBySlug(slug);
   if (!item) notFound();
+
+  const { buy, sell, crafts, usedInCrafts } = classifyTrades(item.slug, item.craftedBy, item.usedIn);
 
   return (
     <article className="py-6 space-y-6 max-w-3xl">
@@ -24,28 +28,33 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
           {item.storageStack !== null && (
             <span className="badge badge-ghost">Stacks to {item.storageStack}</span>
           )}
+          {buy.length > 0 && <span className="badge badge-success" aria-label="Buyable">◈ Buyable</span>}
+          {sell.length > 0 && <span className="badge badge-warning" aria-label="Sellable">◈ Sellable</span>}
         </div>
         {item.description && <p className="text-base-content/80">{item.description}</p>}
       </header>
 
+      <TradeSection kind="buy" options={buy} />
+      <TradeSection kind="sell" options={sell} />
+
       <section>
         <h2 className="font-display text-xl font-semibold mb-2">Crafted by</h2>
-        {item.craftedBy.length === 0 ? (
+        {crafts.length === 0 ? (
           <p className="text-base-content/70">No known recipe produces this item.</p>
         ) : (
           <div className="space-y-3">
-            {item.craftedBy.map((r) => <RecipeCardView key={r.slug} recipe={r} />)}
+            {crafts.map((r) => <RecipeCardView key={r.slug} recipe={r} />)}
           </div>
         )}
       </section>
 
       <section>
         <h2 className="font-display text-xl font-semibold mb-2">Used in</h2>
-        {item.usedIn.length === 0 ? (
+        {usedInCrafts.length === 0 ? (
           <p className="text-base-content/70">Not used as an ingredient in any known recipe.</p>
         ) : (
           <div className="space-y-3">
-            {item.usedIn.map((r) => <RecipeCardView key={r.slug} recipe={r} />)}
+            {usedInCrafts.map((r) => <RecipeCardView key={r.slug} recipe={r} />)}
           </div>
         )}
       </section>
