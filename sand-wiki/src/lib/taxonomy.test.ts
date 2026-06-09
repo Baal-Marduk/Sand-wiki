@@ -55,7 +55,7 @@ describe("categoryForType", () => {
     expect(categoryForType("TURRET_AMMO")).toBe("ammo");
     expect(categoryForType("RESOURCE_T1")).toBe("resources");
     expect(categoryForType("RESOURCE_T3")).toBe("resources");
-    expect(categoryForType("ENERGY")).toBe("resources");
+    expect(categoryForType("ENERGY")).toBe("tools");
     expect(categoryForType("ARMOR")).toBe("attire");
     expect(categoryForType("BACKPACK")).toBe("attire");
     expect(categoryForType("ATTACK_CONSUMABLE")).toBe("weapons");
@@ -95,6 +95,17 @@ describe("categoryForItem", () => {
   it("falls back to type mapping for null/unknown", () => {
     expect(categoryForItem(null, "anything")).toBe("misc");
     expect(categoryForItem("SOME_NEW_TYPE", "40mm")).toBe("misc");
+  });
+
+  it("applies per-slug overrides ahead of the type mapping", () => {
+    // Untyped weapon and a utility-typed medical item.
+    expect(categoryForItem(null, 'M1866/9 "Einzel" Breechloader', "rifle-musket")).toBe("weapons");
+    expect(categoryForItem("UTILITY_CONSUMABLE", "MedKit", "med-kit")).toBe("medical");
+  });
+
+  it("leaves non-overridden slugs to the normal mapping", () => {
+    expect(categoryForItem("UTILITY_CONSUMABLE", "Repair Kit", "repair-kit")).toBe("tools");
+    expect(categoryForItem("ENERGY", "NZ Mk2 Energy Rod", "energy-rod-mk2")).toBe("tools");
   });
 });
 

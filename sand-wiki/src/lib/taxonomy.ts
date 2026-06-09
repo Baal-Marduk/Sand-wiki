@@ -66,7 +66,7 @@ const TYPE_TO_CATEGORY: Record<string, string> = {
   RESOURCE_T1: "resources",
   RESOURCE_T2: "resources",
   RESOURCE_T3: "resources",
-  ENERGY: "resources",
+  ENERGY: "tools",
   ARMOR: "attire",
   BACKPACK: "attire",
   ATTACK_CONSUMABLE: "weapons",
@@ -84,10 +84,23 @@ export function categoryForType(type: string | null | undefined): string {
   return TYPE_TO_CATEGORY[type] ?? "misc";
 }
 
-/** Name-aware category. Weapon types whose name contains a number followed by "mm"
- *  (e.g. "40mm", "85 mm") are artillery; everything else uses the type mapping.
- *  This is the single source of the guns→weapons/artillery split — applied at seed time. */
-export function categoryForItem(type: string | null | undefined, name: string): string {
+/** Per-item category overrides, keyed by slug, for items the type mapping gets wrong:
+ *  untyped weapons and a utility-typed medical item. Checked before the type mapping. */
+const CATEGORY_OVERRIDES: Record<string, string> = {
+  "rifle-musket": "weapons", // M1866/9 "Einzel" Breechloader — has no game type
+  "med-kit": "medical", // MedKit — typed UTILITY_CONSUMABLE but is medical
+};
+
+/** Name-aware category. Per-slug overrides win first; otherwise weapon-type items whose
+ *  name contains a number followed by "mm" (e.g. "40mm", "85 mm") are artillery, and
+ *  everything else uses the type mapping. Single source of item categorization — applied
+ *  at seed time. */
+export function categoryForItem(
+  type: string | null | undefined,
+  name: string,
+  slug?: string,
+): string {
+  if (slug && CATEGORY_OVERRIDES[slug]) return CATEGORY_OVERRIDES[slug];
   const base = categoryForType(type);
   if (base === "weapons" && /\d+\s?mm/i.test(name)) return "artillery";
   return base;

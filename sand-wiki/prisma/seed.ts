@@ -37,7 +37,7 @@ async function main() {
   await prisma.item.deleteMany();
 
   for (const i of data.items) {
-    const category = categoryForItem(i.type, i.displayName ?? i.name);
+    const category = categoryForItem(i.type, i.displayName ?? i.name, i.slug);
     if (!isItemCategory(category)) throw new Error(`Mapped category "${category}" is not a known category`);
     if (i.type && category === "misc" && !INTENDED_MISC.has(i.type)) {
       console.warn(`Unmapped type "${i.type}" -> misc (${i.slug})`);
