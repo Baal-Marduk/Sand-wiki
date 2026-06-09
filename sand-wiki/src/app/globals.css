@@ -36,7 +36,7 @@
   --color-base-100: #efe6d6;
   --color-base-200: #e6dac6;
   --color-base-300: #d9c9ad;
-  --color-base-content: #2a1d10;
+  --color-base-content: #140d05;
   --color-primary: #c2671f;
   --color-primary-content: #fff7ec;
   --color-secondary: #9a4420;
@@ -59,4 +59,15 @@
 
 @theme {
   --font-display: var(--font-oswald);
+}
+
+/* Theme toggle icon: show moon in dark theme, sun in light theme (CSS-only). */
+.theme-icon-day {
+  display: none;
+}
+[data-theme="desertday"] .theme-icon-night {
+  display: none;
+}
+[data-theme="desertday"] .theme-icon-day {
+  display: inline;
 }

@@ -1,22 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-
-type Theme = "desertnight" | "desertday";
-
+// Toggles the document theme directly (no React state) and persists it.
+// The sun/moon icon is swapped purely via CSS on [data-theme] (see globals.css),
+// so it always matches the actual theme — including the anti-FOUC init script —
+// with no hydration mismatch and no setState-in-effect.
 export function ThemeToggle() {
-  const [theme, setTheme] = useState<Theme>("desertnight");
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => {
-    const current = (document.documentElement.dataset.theme as Theme) || "desertnight";
-    setTheme(current);
-    setMounted(true);
-  }, []);
-
   function toggle() {
-    const next: Theme = theme === "desertnight" ? "desertday" : "desertnight";
-    setTheme(next);
+    const current = document.documentElement.dataset.theme === "desertday" ? "desertday" : "desertnight";
+    const next = current === "desertnight" ? "desertday" : "desertnight";
     document.documentElement.dataset.theme = next;
     try {
       localStorage.setItem("sand-theme", next);
@@ -32,7 +23,8 @@ export function ThemeToggle() {
       aria-label="Toggle light and dark theme"
       className="btn btn-ghost btn-circle text-lg"
     >
-      <span aria-hidden="true">{mounted && theme === "desertday" ? "☀" : "☾"}</span>
+      <span aria-hidden="true" className="theme-icon-night">☾</span>
+      <span aria-hidden="true" className="theme-icon-day">☀</span>
     </button>
   );
 }

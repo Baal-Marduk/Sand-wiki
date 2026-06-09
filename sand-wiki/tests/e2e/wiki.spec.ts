@@ -13,9 +13,14 @@ for (const path of pages) {
 }
 
 test("light theme (desertday) has no serious/critical a11y violations on key pages", async ({ page }) => {
+  // Persist the light theme so the anti-FOUC script applies it at load time — this
+  // avoids analyzing mid-transition colors that a runtime data-theme swap would catch.
+  await page.addInitScript(() => {
+    try { localStorage.setItem("sand-theme", "desertday"); } catch { /* ignore */ }
+  });
   for (const path of ["/", "/items", "/tech"]) {
     await page.goto(path);
-    await page.evaluate(() => { document.documentElement.dataset.theme = "desertday"; });
+    await expect(page.locator("html")).toHaveAttribute("data-theme", "desertday");
     const results = await new AxeBuilder({ page }).analyze();
     const serious = results.violations.filter((v) => ["serious", "critical"].includes(v.impact ?? ""));
     expect(serious, `${path}: ${JSON.stringify(serious, null, 2)}`).toEqual([]);
