@@ -6,9 +6,12 @@ describe("buildItemQuery", () => {
     expect(buildItemQuery({})).toEqual({ where: {}, orderBy: { name: "asc" } });
   });
 
-  it("filters by name (case-insensitive) and category", () => {
+  it("filters by name OR derivedName (case-insensitive) and category", () => {
     expect(buildItemQuery({ query: "rifle", category: "guns" }).where).toEqual({
-      name: { contains: "rifle", mode: "insensitive" },
+      OR: [
+        { name: { contains: "rifle", mode: "insensitive" } },
+        { derivedName: { contains: "rifle", mode: "insensitive" } },
+      ],
       category: "guns",
     });
   });

@@ -13,7 +13,11 @@ export interface ItemQuery {
 
 export function buildItemQuery(filter: ItemFilter): ItemQuery {
   const where: Prisma.ItemWhereInput = {};
-  if (filter.query) where.name = { contains: filter.query, mode: "insensitive" };
+  if (filter.query)
+    where.OR = [
+      { name: { contains: filter.query, mode: "insensitive" } },
+      { derivedName: { contains: filter.query, mode: "insensitive" } },
+    ];
   if (filter.category) where.category = filter.category;
   if (filter.workbenchTier !== undefined) where.workbenchTier = filter.workbenchTier;
 
