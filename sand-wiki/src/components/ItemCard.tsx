@@ -2,7 +2,7 @@ import Link from "next/link";
 import { ItemIcon } from "@/components/ItemIcon";
 
 export interface ItemCardData {
-  slug: string; name: string; icon?: string | null; workbenchTier: number | null;
+  slug: string; name: string; icon?: string | null;
   buyable?: boolean; sellable?: boolean;
 }
 
@@ -18,9 +18,6 @@ export function ItemCard({ item }: { item: ItemCardData }) {
           <div className="font-medium truncate">{item.name}</div>
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
-          {item.workbenchTier !== null && (
-            <span className="badge badge-ghost badge-sm">T{item.workbenchTier}</span>
-          )}
           {item.buyable && (
             <span className="badge badge-success badge-sm" aria-label="Buyable">◈ Buy</span>
           )}
