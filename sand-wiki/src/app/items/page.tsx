@@ -1,4 +1,4 @@
-import { listItems, listWorkbenchTiers } from "@/lib/queries";
+import { listItems, listWorkbenchTiers, getTradeFlags } from "@/lib/queries";
 import { ItemCard } from "@/components/ItemCard";
 import { ItemFilters } from "@/components/ItemFilters";
 import { ITEM_CATEGORIES, isItemCategory } from "@/lib/taxonomy";
@@ -28,7 +28,11 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
     sort,
   };
 
-  const [items, tiers] = await Promise.all([listItems(filter), listWorkbenchTiers()]);
+  const [items, tiers, tradeFlags] = await Promise.all([
+    listItems(filter),
+    listWorkbenchTiers(),
+    getTradeFlags(),
+  ]);
 
   return (
     <section className="py-6">
@@ -45,7 +49,16 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
         <p>No items match your filters.</p>
       ) : (
         <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {items.map((i) => <ItemCard key={i.id} item={i} />)}
+          {items.map((i) => (
+            <ItemCard
+              key={i.id}
+              item={{
+                slug: i.slug, name: i.name, category: i.category, workbenchTier: i.workbenchTier,
+                buyable: tradeFlags.buyable.has(i.slug),
+                sellable: tradeFlags.sellable.has(i.slug),
+              }}
+            />
+          ))}
         </ul>
       )}
     </section>

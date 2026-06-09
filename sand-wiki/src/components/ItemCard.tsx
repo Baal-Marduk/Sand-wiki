@@ -3,6 +3,7 @@ import { CategoryTag } from "@/components/CategoryTag";
 
 export interface ItemCardData {
   slug: string; name: string; category: string; workbenchTier: number | null;
+  buyable?: boolean; sellable?: boolean;
 }
 
 export function ItemCard({ item }: { item: ItemCardData }) {
@@ -15,6 +16,12 @@ export function ItemCard({ item }: { item: ItemCardData }) {
             <CategoryTag slug={item.category} size="sm" />
             {item.workbenchTier !== null && (
               <span className="badge badge-ghost badge-sm">Tier {item.workbenchTier}</span>
+            )}
+            {item.buyable && (
+              <span className="badge badge-success badge-sm" aria-label="Buyable">◈ Buy</span>
+            )}
+            {item.sellable && (
+              <span className="badge badge-warning badge-sm" aria-label="Sellable">◈ Sell</span>
             )}
           </div>
         </div>

@@ -1,6 +1,7 @@
 import { prisma } from "./db";
 import { buildItemQuery, type ItemFilter } from "./item-filter";
 import { toRecipeCard } from "./recipes";
+import { CURRENCY_SLUG } from "./trades";
 
 const recipeInclude = {
   recipe: { include: { inputs: { include: { item: true } }, outputs: { include: { item: true } } } },
@@ -20,6 +21,32 @@ export async function listWorkbenchTiers(): Promise<number[]> {
     orderBy: { workbenchTier: "asc" },
   });
   return rows.map((r) => r.workbenchTier).filter((t): t is number => t !== null);
+}
+
+/**
+ * Item slugs that can be bought (produced by a recipe whose input includes Coin Crown)
+ * or sold (consumed by a recipe whose output includes Coin Crown). One pair of queries
+ * for the whole list — used to mark grid cards.
+ */
+export async function getTradeFlags(): Promise<{ buyable: Set<string>; sellable: Set<string> }> {
+  const [buys, sells] = await Promise.all([
+    prisma.recipe.findMany({
+      where: { inputs: { some: { item: { slug: CURRENCY_SLUG } } } },
+      select: { outputs: { select: { item: { select: { slug: true } } } } },
+    }),
+    prisma.recipe.findMany({
+      where: { outputs: { some: { item: { slug: CURRENCY_SLUG } } } },
+      select: { inputs: { select: { item: { select: { slug: true } } } } },
+    }),
+  ]);
+
+  const buyable = new Set<string>();
+  for (const r of buys) for (const o of r.outputs) if (o.item.slug !== CURRENCY_SLUG) buyable.add(o.item.slug);
+
+  const sellable = new Set<string>();
+  for (const r of sells) for (const i of r.inputs) if (i.item.slug !== CURRENCY_SLUG) sellable.add(i.item.slug);
+
+  return { buyable, sellable };
 }
 
 export async function getItemBySlug(slug: string) {
