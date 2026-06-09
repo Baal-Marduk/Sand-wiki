@@ -4,6 +4,6 @@ import { resolve } from "path";
 
 export default defineConfig({
   plugins: [react()],
-  test: { environment: "node", include: ["src/**/*.test.ts"] },
+  test: { environment: "node", include: ["src/**/*.test.ts", "prisma/**/*.test.ts"] },
   resolve: { alias: { "@": resolve(__dirname, "src") } },
 });
