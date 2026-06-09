@@ -26,8 +26,8 @@
   --color-warning-content: #1a1304;
   --color-error: #d4654f;
   --color-error-content: #1a0805;
-  --radius-box: 0.75rem;
-  --radius-field: 0.5rem;
+  --radius-box: 0.25rem;
+  --radius-field: 0.1875rem;
 }
 
 @plugin "daisyui/theme" {
@@ -53,8 +53,8 @@
   --color-warning-content: #fff;
   --color-error: #a83c28;
   --color-error-content: #fff;
-  --radius-box: 0.75rem;
-  --radius-field: 0.5rem;
+  --radius-box: 0.25rem;
+  --radius-field: 0.1875rem;
 }
 
 @theme {
