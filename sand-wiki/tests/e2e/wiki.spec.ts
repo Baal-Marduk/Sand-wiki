@@ -79,6 +79,11 @@ test("item detail shows Crafted by and Used in tabs with tables", async ({ page 
   // Switching to Used in shows the Produces column.
   await page.getByRole("tab", { name: "Used in" }).click();
   await expect(page.getByRole("columnheader", { name: "Produces" })).toBeVisible();
+
+  // Ingredient icons expose the item name as their accessible name (shown visually on hover).
+  await page.getByRole("tab", { name: "Crafted by" }).click();
+  const firstIngredientLink = page.locator('[role="tabpanel"] table tbody a[href^="/items/"]').first();
+  await expect(firstIngredientLink).toHaveAttribute("aria-label", /\S+/);
 });
 
 test("resource detail exposes a Used in tab", async ({ page }) => {
