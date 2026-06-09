@@ -19,12 +19,15 @@ model Item {
   imageAlt      String?
   icon          String?
   derivedName   String?
+  rarity        String?
+  stats         Json?
 
   producedBy    RecipeOutput[]
   usedIn        RecipeInput[]
 
   @@index([category])
   @@index([workbenchTier])
+  @@index([rarity])
 }
 
 model Recipe {

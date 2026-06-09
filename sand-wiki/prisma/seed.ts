@@ -1,9 +1,12 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, Prisma } from "@prisma/client";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { categoryForItem, isItemCategory } from "../src/lib/taxonomy";
+import { isRarity } from "../src/lib/rarity";
 
 const prisma = new PrismaClient();
+
+interface Enrichment { rarity?: string; stats?: Record<string, unknown> }
 
 interface ScrapItem {
   slug: string; id: string; name: string; displayName?: string | null;
@@ -31,6 +34,10 @@ async function main() {
     return rel ? "/icons/" + rel.split("/").pop() : undefined;
   };
 
+  const enrichment: Record<string, Enrichment> = JSON.parse(
+    readFileSync(join(__dirname, "wiki-enrichment.json"), "utf-8"),
+  );
+
   await prisma.recipeInput.deleteMany();
   await prisma.recipeOutput.deleteMany();
   await prisma.recipe.deleteMany();
@@ -42,6 +49,12 @@ async function main() {
     if (i.type && category === "misc" && !INTENDED_MISC.has(i.type)) {
       console.warn(`Unmapped type "${i.type}" -> misc (${i.slug})`);
     }
+    const e = enrichment[i.slug];
+    let rarity: string | undefined;
+    if (e?.rarity) {
+      if (isRarity(e.rarity)) rarity = e.rarity;
+      else console.warn(`Unknown rarity "${e.rarity}" for ${i.slug} — skipped`);
+    }
     await prisma.item.create({
       data: {
         slug: i.slug,
@@ -51,6 +64,8 @@ async function main() {
         category, isResource: i.isResource,
         storageStack: i.storageStack ?? undefined, workbenchTier: i.workbenchTier ?? undefined,
         icon: iconFor(i.id),
+        rarity,
+        stats: (e?.stats ?? undefined) as Prisma.InputJsonValue | undefined,
       },
     });
   }
