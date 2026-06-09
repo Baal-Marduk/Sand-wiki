@@ -10,10 +10,10 @@ export function ItemIcon({
 }: {
   name: string;
   icon?: string | null;
-  size?: "sm" | "md" | "lg";
+  size?: "sm" | "recipe" | "md" | "card" | "lg";
   decorative?: boolean;
 }) {
-  const px = { sm: "size-5", md: "size-12", lg: "size-28" }[size];
+  const px = { sm: "size-5", recipe: "size-11", md: "size-12", card: "size-18", lg: "size-28" }[size];
   if (icon) {
     return (
       // eslint-disable-next-line @next/next/no-img-element
