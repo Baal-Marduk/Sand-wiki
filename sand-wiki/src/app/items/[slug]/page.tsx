@@ -5,6 +5,8 @@ import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
 import { CategoryTag } from "@/components/CategoryTag";
 import { ItemIcon } from "@/components/ItemIcon";
+import { StatBox, type ItemStats } from "@/components/StatBox";
+import { rarityColor } from "@/lib/rarity";
 import { ItemTabs, type Tab } from "@/components/ItemTabs";
 import { ItemDetailsPanel } from "@/components/ItemDetailsPanel";
 import { CraftTable } from "@/components/CraftTable";
@@ -46,15 +48,22 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   return (
     <article className="py-6 space-y-6 max-w-5xl">
       <header className="flex flex-wrap items-start gap-4">
-        <ItemIcon name={item.name} icon={item.icon} size="lg" />
+        <ItemIcon name={item.name} icon={item.icon} size="lg" rarity={item.rarity} />
         <div className="flex-1 min-w-[16rem] space-y-2">
           <h1 className="font-display text-3xl font-bold">{item.name}</h1>
           <div className="flex flex-wrap gap-2">
+            {item.rarity && (
+              <span className="badge badge-outline gap-1.5">
+                <span className="size-2 rounded-full" style={{ backgroundColor: rarityColor(item.rarity) ?? "transparent" }} aria-hidden="true" />
+                {item.rarity}
+              </span>
+            )}
             <CategoryTag slug={item.category} />
             {buy.length > 0 && <span className="badge badge-success" aria-label="Buyable">◈ Buyable</span>}
             {sell.length > 0 && <span className="badge badge-warning" aria-label="Sellable">◈ Sellable</span>}
           </div>
           {item.description && <p className="text-base-content/80 max-w-prose">{item.description}</p>}
+          <StatBox stats={item.stats as unknown as ItemStats | null} />
         </div>
       </header>
 
