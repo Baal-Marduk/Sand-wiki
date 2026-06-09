@@ -1,11 +1,12 @@
 import Link from "next/link";
-import { SECTIONS } from "@/lib/taxonomy";
+import { SECTIONS, categoryColor } from "@/lib/taxonomy";
 import { ThemeToggle } from "@/components/ThemeToggle";
+import { SearchBox } from "@/components/SearchBox";
 
 // Explicit full-contrast text (not DaisyUI's dimmed .menu links) so the nav
 // meets WCAG AA contrast in both the dark and light themes.
 const linkCls = "text-base-content hover:text-primary px-2 py-1 rounded transition-colors";
-const dropdownItemCls = "block px-2 py-1 rounded text-base-content hover:bg-base-300";
+const dropdownItemCls = "flex items-center gap-2 px-2 py-1 rounded text-base-content hover:bg-base-300";
 
 export function MainNav() {
   return (
@@ -18,20 +19,25 @@ export function MainNav() {
           {SECTIONS.map((section) => {
             if (section.kind === "data" && section.categories.length > 0) {
               return (
-                <li key={section.slug} className="relative">
-                  <details>
-                    <summary className={`${linkCls} cursor-pointer list-none`}>{section.label}</summary>
-                    <ul className="absolute z-10 mt-2 w-48 rounded-box border border-base-300 bg-base-200 p-2 shadow space-y-1">
-                      <li>
-                        <Link href={`/${section.slug}`} className={dropdownItemCls}>All {section.label}</Link>
+                <li key={section.slug} className="relative group">
+                  <button type="button" className={`${linkCls} cursor-pointer`} aria-haspopup="true">
+                    {section.label} ▾
+                  </button>
+                  <ul
+                    className="invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition-opacity absolute left-0 top-full z-20 mt-1 w-48 rounded-box border border-base-300 bg-base-200 p-2 shadow space-y-1"
+                  >
+                    <li>
+                      <Link href={`/${section.slug}`} className={dropdownItemCls}>All {section.label}</Link>
+                    </li>
+                    {section.categories.map((c) => (
+                      <li key={c.slug}>
+                        <Link href={`/${section.slug}?category=${c.slug}`} className={dropdownItemCls}>
+                          <span className="size-2 rounded-full" style={{ backgroundColor: categoryColor(c.slug) }} aria-hidden="true" />
+                          {c.label}
+                        </Link>
                       </li>
-                      {section.categories.map((c) => (
-                        <li key={c.slug}>
-                          <Link href={`/${section.slug}?category=${c.slug}`} className={dropdownItemCls}>{c.label}</Link>
-                        </li>
-                      ))}
-                    </ul>
-                  </details>
+                    ))}
+                  </ul>
                 </li>
               );
             }
@@ -44,7 +50,8 @@ export function MainNav() {
           })}
         </ul>
       </div>
-      <div className="flex-none items-center gap-1">
+      <div className="flex-none flex items-center gap-2">
+        <SearchBox variant="navbar" />
         <Link href="/about" className={linkCls}>About</Link>
         <ThemeToggle />
       </div>
