@@ -20,4 +20,8 @@ describe("buildItemQuery", () => {
     expect(buildItemQuery({ workbenchTier: 2 }).where).toEqual({ workbenchTier: 2 });
   });
 
+  it("filters by rarity", () => {
+    expect(buildItemQuery({ rarity: "Rare" }).where).toEqual({ rarity: "Rare" });
+  });
+
 });

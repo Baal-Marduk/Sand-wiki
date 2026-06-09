@@ -12,6 +12,20 @@ export async function listItems(filter: ItemFilter) {
   return prisma.item.findMany({ where, orderBy });
 }
 
+/** Distinct rarities present among items matching the filter (ignoring any rarity
+ *  constraint), so the rarity chip row reflects the current category/search context. */
+export async function listRarities(filter: ItemFilter): Promise<string[]> {
+  const rest = { ...filter };
+  delete rest.rarity;
+  const { where } = buildItemQuery(rest);
+  const rows = await prisma.item.findMany({
+    where: { ...where, rarity: { not: null } },
+    distinct: ["rarity"],
+    select: { rarity: true },
+  });
+  return rows.map((r) => r.rarity).filter((r): r is string => r !== null);
+}
+
 /** Distinct non-null workbench tiers across items, ascending — for the items-list tier filter. */
 export async function listWorkbenchTiers(): Promise<number[]> {
   const rows = await prisma.item.findMany({

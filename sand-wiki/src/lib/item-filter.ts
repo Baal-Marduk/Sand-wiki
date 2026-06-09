@@ -4,6 +4,7 @@ export interface ItemFilter {
   query?: string;
   category?: string;
   workbenchTier?: number;
+  rarity?: string;
 }
 
 export interface ItemQuery {
@@ -20,6 +21,7 @@ export function buildItemQuery(filter: ItemFilter): ItemQuery {
     ];
   if (filter.category) where.category = filter.category;
   if (filter.workbenchTier !== undefined) where.workbenchTier = filter.workbenchTier;
+  if (filter.rarity) where.rarity = filter.rarity;
 
   return { where, orderBy: { name: "asc" } };
 }
