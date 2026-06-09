@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { SECTIONS, ITEM_CATEGORIES } from "@/lib/taxonomy";
 import { CategoryTag } from "@/components/CategoryTag";
+import { SearchBox } from "@/components/SearchBox";
 
 export default function HomePage() {
   return (
@@ -15,17 +16,7 @@ export default function HomePage() {
               Items, crafting recipes, and trade prices for{" "}
               <em>SAND: Raiders of Sophie</em>.
             </p>
-            <form action="/items" method="get" role="search" className="join w-full max-w-md mx-auto">
-              <label htmlFor="q" className="sr-only">Search items by name</label>
-              <input
-                id="q"
-                name="q"
-                type="search"
-                placeholder="Search items by name…"
-                className="input input-bordered join-item w-full"
-              />
-              <button type="submit" className="btn btn-primary join-item">Search</button>
-            </form>
+            <SearchBox variant="hero" />
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               {ITEM_CATEGORIES.map((c) => (
                 <Link key={c.slug} href={`/items?category=${c.slug}`} className="hover:opacity-80 transition-opacity">
