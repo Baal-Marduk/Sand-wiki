@@ -47,16 +47,18 @@ test("search navigates to filtered items list", async ({ page }) => {
 });
 
 test("category filter narrows the items list", async ({ page }) => {
-  await page.goto("/items?category=guns");
+  await page.goto("/items?category=weapons");
   await expect(page.locator('a[href="/items/sniper-rifle"]')).toBeVisible();
   await expect(page.locator('a[href="/items/energy-bar"]')).toHaveCount(0);
 });
 
-test("workbench tier filter narrows the items list", async ({ page }) => {
-  await page.goto("/items?tier=2");
-  // Tier-2 items only; the result count badge reports a non-zero, bounded set.
-  await expect(page.getByText(/\d+ result\(s\)/)).toBeVisible();
-  await expect(page.locator('a[href="/items/sniper-rifle-silencer"]')).toBeVisible();
+test("category quick-nav switches the filtered list", async ({ page }) => {
+  await page.goto("/items");
+  const quickNav = page.getByRole("navigation", { name: "Item categories" });
+  await quickNav.getByRole("link", { name: "Weapons" }).click();
+  await expect(page).toHaveURL(/\/items\?category=weapons/);
+  await expect(page.getByRole("navigation", { name: "Item categories" })
+    .getByRole("link", { name: "Weapons" })).toHaveAttribute("aria-current", "page");
 });
 
 test("nav exposes the Items category menu without an All link", async ({ page }) => {
