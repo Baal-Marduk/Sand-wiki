@@ -18,14 +18,10 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
   const tierParam = str(sp.tier);
   const workbenchTier =
     tierParam && Number.isInteger(Number(tierParam)) ? Number(tierParam) : undefined;
-  const sortParam = str(sp.sort);
-  const sort: ItemFilter["sort"] = sortParam === "workbench" ? "workbench" : "name";
-
   const filter: ItemFilter = {
     query: q || undefined,
     category: category || undefined,
     workbenchTier,
-    sort,
   };
 
   const [items, tiers, tradeFlags] = await Promise.all([
@@ -40,7 +36,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
       <ItemFilters
         categories={ITEM_CATEGORIES}
         tiers={tiers}
-        current={{ q, category, tier: tierParam, sort }}
+        current={{ q, category, tier: tierParam }}
       />
       <p className="text-sm text-base-content/70 mb-3" aria-live="polite">
         <span className="badge badge-ghost">{items.length} result(s)</span>

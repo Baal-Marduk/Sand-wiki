@@ -17,7 +17,4 @@ describe("buildItemQuery", () => {
     expect(buildItemQuery({ workbenchTier: 2 }).where).toEqual({ workbenchTier: 2 });
   });
 
-  it("sorts by workbench tier when requested", () => {
-    expect(buildItemQuery({ sort: "workbench" }).orderBy).toEqual({ workbenchTier: "asc" });
-  });
 });

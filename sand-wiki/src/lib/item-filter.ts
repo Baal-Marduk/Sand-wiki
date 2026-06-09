@@ -4,7 +4,6 @@ export interface ItemFilter {
   query?: string;
   category?: string;
   workbenchTier?: number;
-  sort?: "name" | "workbench";
 }
 
 export interface ItemQuery {
@@ -18,7 +17,5 @@ export function buildItemQuery(filter: ItemFilter): ItemQuery {
   if (filter.category) where.category = filter.category;
   if (filter.workbenchTier !== undefined) where.workbenchTier = filter.workbenchTier;
 
-  const orderBy: Prisma.ItemOrderByWithRelationInput =
-    filter.sort === "workbench" ? { workbenchTier: "asc" } : { name: "asc" };
-  return { where, orderBy };
+  return { where, orderBy: { name: "asc" } };
 }
