@@ -168,3 +168,18 @@ test("item detail shows a real sprite image", async ({ page }) => {
   await expect(img).toBeVisible();
   await expect(img).toHaveAttribute("src", /^\/icons\/.+\.png$/);
 });
+
+test("items list exposes a rarity filter that narrows results", async ({ page }) => {
+  await page.goto("/items?category=weapons");
+  const f = page.getByRole("navigation", { name: "Rarity" });
+  await expect(f).toBeVisible();
+  await f.getByRole("link", { name: "Common", exact: true }).click();
+  await expect(page).toHaveURL(/rarity=Common/);
+});
+
+test("weapon detail shows a rarity badge and a stat box with ammo link", async ({ page }) => {
+  await page.goto("/items/rifle-musket");
+  await expect(page.getByText("Common")).toBeVisible();
+  await expect(page.getByText("Damage")).toBeVisible();
+  await expect(page.getByRole("link", { name: "9x42 mm Ammo" })).toBeVisible();
+});

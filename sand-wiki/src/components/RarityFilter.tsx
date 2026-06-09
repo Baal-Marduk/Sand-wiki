@@ -20,7 +20,7 @@ export function RarityFilter({
 
   const chip = (active: boolean) =>
     `flex items-center gap-1.5 rounded-field border px-3 py-1 text-sm whitespace-nowrap ${
-      active ? "bg-base-300 text-primary border-base-300" : "border-base-300 hover:bg-base-200 text-base-content"
+      active ? "bg-base-300 text-base-content font-semibold border-base-300" : "border-base-300 hover:bg-base-200 text-base-content"
     }`;
 
   return (
