@@ -26,8 +26,7 @@ export default async function TechPage({ searchParams }: { searchParams: SearchP
   }
 
   const graphInput = nodes.map((n) => ({
-    id: n.id, name: n.name,
-    prerequisiteIds: graph.get(n.id)?.prerequisiteIds ?? [],
+    id: n.id, name: n.name, prerequisiteIds: graph.get(n.id)?.prerequisiteIds ?? [],
   }));
   const tableRows = nodes.map((n) => ({
     slug: n.slug, name: n.name,
@@ -36,41 +35,42 @@ export default async function TechPage({ searchParams }: { searchParams: SearchP
 
   return (
     <section className="py-6 space-y-8">
-      <h1 className="text-2xl font-bold">Tech Tree</h1>
+      <h1 className="font-display text-2xl font-bold">Tech Tree</h1>
 
-      <TechTreeGraph nodes={graphInput} />
+      <div className="card bg-base-200"><div className="card-body p-3"><TechTreeGraph nodes={graphInput} /></div></div>
 
       <section>
-        <h2 className="text-xl font-semibold mb-2">All technologies</h2>
+        <h2 className="font-display text-xl font-semibold mb-2">All technologies</h2>
         <TechTreeTable rows={tableRows} />
       </section>
 
       <section>
-        <h2 className="text-xl font-semibold mb-2">Cost calculator</h2>
+        <h2 className="font-display text-xl font-semibold mb-2">Cost calculator</h2>
         <form action="/tech" method="get" className="flex gap-2 items-end mb-4">
           <div>
-            <label htmlFor="target" className="block text-sm">Unlock technology</label>
-            <select id="target" name="target" defaultValue={targetSlug ?? ""}
-              className="rounded bg-neutral-900 border border-neutral-700 px-2 py-1">
+            <label htmlFor="target" className="label text-sm">Unlock technology</label>
+            <select id="target" name="target" defaultValue={targetSlug ?? ""} className="select select-bordered">
               <option value="">Select…</option>
               {nodes.map((n) => <option key={n.slug} value={n.slug}>{n.name}</option>)}
             </select>
           </div>
-          <button type="submit" className="rounded bg-amber-600 text-neutral-950 font-medium px-4 py-2">
-            Calculate
-          </button>
+          <button type="submit" className="btn btn-primary">Calculate</button>
         </form>
 
         {total && (
-          <div aria-live="polite">
-            <h3 className="font-medium mb-2">Total cost to unlock {targetName} (from scratch):</h3>
-            {total.length === 0 ? (
-              <p>No resource cost recorded.</p>
-            ) : (
-              <ul className="list-disc list-inside">
-                {total.map((t) => <li key={t.resource}>{t.quantity} × {t.resource}</li>)}
-              </ul>
-            )}
+          <div aria-live="polite" className="card bg-base-200 max-w-md">
+            <div className="card-body p-4">
+              <h3 className="font-medium mb-2">Total cost to unlock {targetName} (from scratch):</h3>
+              {total.length === 0 ? (
+                <p>No resource cost recorded.</p>
+              ) : (
+                <div className="flex flex-wrap gap-2">
+                  {total.map((t) => (
+                    <span key={t.resource} className="badge badge-lg badge-primary">{t.quantity} × {t.resource}</span>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         )}
       </section>
