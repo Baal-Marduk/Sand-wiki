@@ -4,7 +4,7 @@ import { prisma } from "@/lib/db";
 /** Lightweight index of all items for client-side search autocomplete. */
 export async function GET() {
   const items = await prisma.item.findMany({
-    select: { slug: true, name: true, category: true },
+    select: { slug: true, name: true, category: true, derivedName: true },
     orderBy: { name: "asc" },
   });
   return NextResponse.json(items, {

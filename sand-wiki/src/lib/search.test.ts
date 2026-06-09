@@ -2,9 +2,9 @@ import { describe, it, expect } from "vitest";
 import { searchSuggestions, type IndexItem } from "./search";
 
 const index: IndexItem[] = [
-  { slug: "sniper-rifle", name: "Sniper Rifle", category: "guns" },
-  { slug: "pistol-ammo", name: "Pistol Ammo", category: "ammo" },
-  { slug: "energy-bar", name: "Energy Bar", category: "medical" },
+  { slug: "sniper-rifle", name: "1874s Petros Sniper Rifle", category: "guns", derivedName: "Sniper Rifle" },
+  { slug: "pistol-ammo", name: "8x21 mm Ammo", category: "ammo", derivedName: "Pistol Ammo" },
+  { slug: "energy-bar", name: "NZ Mk2 Energy Rod", category: "medical", derivedName: "Energy Bar" },
 ];
 
 describe("searchSuggestions", () => {
@@ -26,8 +26,18 @@ describe("searchSuggestions", () => {
 
   it("caps item results at 8", () => {
     const many: IndexItem[] = Array.from({ length: 20 }, (_, n) => ({
-      slug: `gun-${n}`, name: `Gun ${n}`, category: "guns",
+      slug: `gun-${n}`, name: `Gun ${n}`, category: "guns", derivedName: `Gun ${n}`,
     }));
     expect(searchSuggestions("gun", many).items).toHaveLength(8);
+  });
+
+  it("matches the derived name even when the display name does not contain the query", () => {
+    const r = searchSuggestions("sniper rifle", index);
+    expect(r.items.map((i) => i.slug)).toEqual(["sniper-rifle"]);
+  });
+
+  it("still displays the real name in suggestions", () => {
+    const r = searchSuggestions("sniper rifle", index);
+    expect(r.items[0].name).toBe("1874s Petros Sniper Rifle");
   });
 });

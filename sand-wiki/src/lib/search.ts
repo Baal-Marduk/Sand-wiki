@@ -1,6 +1,6 @@
 import { ITEM_CATEGORIES, type Category } from "@/lib/taxonomy";
 
-export interface IndexItem { slug: string; name: string; category: string }
+export interface IndexItem { slug: string; name: string; category: string; derivedName?: string | null }
 export interface Suggestions { categories: Category[]; items: IndexItem[] }
 
 const ITEM_CAP = 8;
@@ -10,6 +10,8 @@ export function searchSuggestions(query: string, index: IndexItem[]): Suggestion
   const q = query.trim().toLowerCase();
   if (q.length === 0) return { categories: [], items: [] };
   const categories = ITEM_CATEGORIES.filter((c) => c.label.toLowerCase().includes(q));
-  const items = index.filter((i) => i.name.toLowerCase().includes(q)).slice(0, ITEM_CAP);
+  const items = index
+    .filter((i) => i.name.toLowerCase().includes(q) || (i.derivedName ?? "").toLowerCase().includes(q))
+    .slice(0, ITEM_CAP);
   return { categories, items };
 }
