@@ -1,7 +1,8 @@
 import Link from "next/link";
+import { categoryLabel } from "@/lib/taxonomy";
 
 export interface ItemCardData {
-  slug: string; name: string; type: string; workbenchLevel: number | null;
+  slug: string; name: string; category: string; workbenchLevel: number | null;
 }
 
 export function ItemCard({ item }: { item: ItemCardData }) {
@@ -10,7 +11,7 @@ export function ItemCard({ item }: { item: ItemCardData }) {
       <Link href={`/items/${item.slug}`} className="block">
         <span className="font-medium">{item.name}</span>
         <span className="block text-sm text-neutral-400">
-          {item.type}
+          {categoryLabel(item.category)}
           {item.workbenchLevel !== null ? ` · Workbench ${item.workbenchLevel}` : ""}
         </span>
       </Link>

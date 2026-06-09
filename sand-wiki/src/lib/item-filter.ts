@@ -2,7 +2,7 @@ import type { Prisma } from "@prisma/client";
 
 export interface ItemFilter {
   query?: string;
-  type?: string;
+  category?: string;
   workbenchLevel?: number;
   requiredResourceId?: string;
   sort?: "name" | "workbench";
@@ -19,8 +19,8 @@ export function buildItemQuery(filter: ItemFilter): ItemQuery {
   if (filter.query) {
     where.name = { contains: filter.query, mode: "insensitive" };
   }
-  if (filter.type) {
-    where.type = filter.type;
+  if (filter.category) {
+    where.category = filter.category;
   }
   if (filter.workbenchLevel !== undefined) {
     where.workbenchLevel = filter.workbenchLevel;

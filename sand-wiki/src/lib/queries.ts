@@ -7,13 +7,6 @@ export async function listItems(filter: ItemFilter) {
   return prisma.item.findMany({ where, orderBy });
 }
 
-export async function listItemTypes() {
-  const rows = await prisma.item.findMany({
-    distinct: ["type"], select: { type: true }, orderBy: { type: "asc" },
-  });
-  return rows.map((r) => r.type);
-}
-
 export async function listResources() {
   return prisma.item.findMany({ where: { isResource: true }, orderBy: { name: "asc" } });
 }

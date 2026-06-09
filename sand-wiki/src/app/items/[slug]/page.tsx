@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getItemBySlug } from "@/lib/queries";
+import { categoryLabel } from "@/lib/taxonomy";
 
 type Params = Promise<{ slug: string }>;
 
@@ -13,7 +14,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
     <article className="py-6 space-y-6 max-w-2xl">
       <header>
         <h1 className="text-2xl font-bold">{item.name}</h1>
-        <p className="text-neutral-400">{item.type}</p>
+        <p className="text-neutral-400">{categoryLabel(item.category)}</p>
         {item.description && <p className="mt-2">{item.description}</p>}
       </header>
 

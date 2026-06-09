@@ -14,9 +14,9 @@ describe("buildItemQuery", () => {
     expect(q.where).toEqual({ name: { contains: "rifle", mode: "insensitive" } });
   });
 
-  it("filters by type and workbench level", () => {
-    const q = buildItemQuery({ type: "weapon", workbenchLevel: 2 });
-    expect(q.where).toEqual({ type: "weapon", workbenchLevel: 2 });
+  it("filters by category and workbench level", () => {
+    const q = buildItemQuery({ category: "weapons", workbenchLevel: 2 });
+    expect(q.where).toEqual({ category: "weapons", workbenchLevel: 2 });
   });
 
   it("filters by required resource via the recipe relation", () => {
@@ -29,10 +29,10 @@ describe("buildItemQuery", () => {
   });
 
   it("combines multiple filters", () => {
-    const q = buildItemQuery({ query: "axe", type: "tool" });
+    const q = buildItemQuery({ query: "axe", category: "tools" });
     expect(q.where).toEqual({
       name: { contains: "axe", mode: "insensitive" },
-      type: "tool",
+      category: "tools",
     });
   });
 });

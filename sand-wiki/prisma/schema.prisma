@@ -12,7 +12,7 @@ model Item {
   slug             String  @unique
   name             String
   description      String?
-  type             String
+  category         String
   workbenchLevel   Int?
   craftTimeSeconds Int?
   unlockConditions String?
@@ -26,7 +26,7 @@ model Item {
   usedIn           RecipeIngredient[] @relation("IngredientUsedIn")
   techCosts        TechCost[]
 
-  @@index([type])
+  @@index([category])
   @@index([workbenchLevel])
 }
 

@@ -1,12 +1,13 @@
 import { PrismaClient } from "@prisma/client";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
+import { isItemCategory } from "../src/lib/taxonomy";
 
 const prisma = new PrismaClient();
 
 interface SeedRecipe { ingredient: string; quantity: number }
 interface SeedItem {
-  slug: string; name: string; type: string; isResource?: boolean;
+  slug: string; name: string; category: string; isResource?: boolean;
   description?: string; workbenchLevel?: number; craftTimeSeconds?: number;
   unlockConditions?: string; unlockedBy?: string; imageAlt?: string; recipe?: SeedRecipe[];
 }
@@ -35,9 +36,12 @@ async function main() {
   }
   // 2. Items (without recipe/unlockedBy links yet).
   for (const i of data.items) {
+    if (!isItemCategory(i.category)) {
+      throw new Error(`Unknown item category "${i.category}" for ${i.slug}`);
+    }
     await prisma.item.create({
       data: {
-        slug: i.slug, name: i.name, type: i.type, isResource: i.isResource ?? false,
+        slug: i.slug, name: i.name, category: i.category, isResource: i.isResource ?? false,
         description: i.description, workbenchLevel: i.workbenchLevel,
         craftTimeSeconds: i.craftTimeSeconds, unlockConditions: i.unlockConditions, imageAlt: i.imageAlt,
       },

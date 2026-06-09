@@ -1,10 +1,12 @@
+import type { Category } from "@/lib/taxonomy";
+
 export interface FilterOptions {
-  types: string[];
+  categories: Category[];
   resources: { id: string; name: string }[];
-  current: { q?: string; type?: string; workbench?: string; resource?: string; sort?: string };
+  current: { q?: string; category?: string; workbench?: string; resource?: string; sort?: string };
 }
 
-export function ItemFilters({ types, resources, current }: FilterOptions) {
+export function ItemFilters({ categories, resources, current }: FilterOptions) {
   return (
     <form action="/items" method="get" className="grid gap-3 sm:grid-cols-6 items-end mb-6">
       <div className="sm:col-span-2">
@@ -13,11 +15,11 @@ export function ItemFilters({ types, resources, current }: FilterOptions) {
           className="w-full rounded bg-neutral-900 border border-neutral-700 px-2 py-1" />
       </div>
       <div>
-        <label htmlFor="type" className="block text-sm">Type</label>
-        <select id="type" name="type" defaultValue={current.type ?? ""}
+        <label htmlFor="category" className="block text-sm">Category</label>
+        <select id="category" name="category" defaultValue={current.category ?? ""}
           className="w-full rounded bg-neutral-900 border border-neutral-700 px-2 py-1">
           <option value="">All</option>
-          {types.map((t) => <option key={t} value={t}>{t}</option>)}
+          {categories.map((c) => <option key={c.slug} value={c.slug}>{c.label}</option>)}
         </select>
       </div>
       <div>
