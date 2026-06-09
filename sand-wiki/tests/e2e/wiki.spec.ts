@@ -39,10 +39,10 @@ test("theme toggle switches between desert night and day", async ({ page }) => {
 
 test("search navigates to filtered items list", async ({ page }) => {
   await page.goto("/");
-  await page.getByRole("searchbox", { name: /search items/i }).fill("rifle");
-  await page.getByRole("button", { name: /^search$/i }).click();
+  const box = page.getByRole("combobox", { name: /search items/i });
+  await box.fill("rifle");
+  await box.press("Enter");
   await expect(page).toHaveURL(/\/items\?q=rifle/);
-  // Item-card links carry category/tier badge text in their accessible name, so match by href.
   await expect(page.locator('a[href="/items/sniper-rifle"]')).toBeVisible();
 });
 
@@ -119,4 +119,36 @@ test("items grid marks buyable and sellable items", async ({ page }) => {
   await page.goto("/items");
   await expect(page.locator('a[href="/items/c4-dynamite"]').getByLabel("Buyable")).toBeVisible();
   await expect(page.locator('a[href="/items/pistol-ammo"]').getByLabel("Sellable")).toBeVisible();
+});
+
+test("navbar search is hidden on home but present elsewhere", async ({ page }) => {
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  await page.goto("/");
+  await expect(nav.getByRole("combobox")).toHaveCount(0);
+  await page.goto("/items");
+  await expect(nav.getByRole("combobox")).toBeVisible();
+});
+
+test("autocomplete suggests an item and navigates to its page", async ({ page }) => {
+  await page.goto("/items");
+  const box = page.getByRole("navigation", { name: "Primary" }).getByRole("combobox");
+  await box.fill("Sniper Rifle Silencer");
+  const option = page.getByRole("option", { name: "Sniper Rifle Silencer", exact: true });
+  await option.click();
+  await expect(page).toHaveURL(/\/items\/sniper-rifle-silencer/);
+});
+
+test("autocomplete category suggestion filters the list", async ({ page }) => {
+  await page.goto("/items");
+  const nav = page.getByRole("navigation", { name: "Primary" });
+  const box = nav.getByRole("combobox");
+  await box.fill("weapons");
+  const option = nav.getByRole("listbox").getByRole("option", { name: "Weapons", exact: true });
+  await option.click();
+  await expect(page).toHaveURL(/\/items\?category=weapons/);
+});
+
+test("items filters no longer expose a Sort-by control", async ({ page }) => {
+  await page.goto("/items");
+  await expect(page.getByLabel("Sort by")).toHaveCount(0);
 });
