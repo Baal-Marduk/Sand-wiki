@@ -67,23 +67,22 @@ test("nav exposes the Items category menu", async ({ page }) => {
   await expect(nav.getByRole("link", { name: "Weapons" })).toBeVisible();
 });
 
-test("item detail shows multiple 'Crafted by' recipes and 'Used in'", async ({ page }) => {
-  // sniper-rifle-silencer is produced by more than one recipe.
-  await page.goto("/items/sniper-rifle-silencer");
-  await expect(page.getByRole("heading", { name: "Sniper Rifle Silencer" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Crafted by" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Used in" })).toBeVisible();
-  // Each recipe card labels its inputs/outputs.
-  await expect(page.getByRole("heading", { name: "Inputs" }).first()).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Outputs" }).first()).toBeVisible();
+test("item detail shows Crafted by and Used in tabs with tables", async ({ page }) => {
+  await page.goto("/items/sniper-rifle-iron-sights-silencer");
+  await expect(page.getByRole("heading", { name: "Sniper Rifle Iron Sights Silencer" })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Crafted by" })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Used in" })).toBeVisible();
+  // Default tab (Crafted by) renders an Ingredients column.
+  await expect(page.getByRole("columnheader", { name: "Ingredients" })).toBeVisible();
+  // Switching to Used in shows the Produces column.
+  await page.getByRole("tab", { name: "Used in" }).click();
+  await expect(page.getByRole("columnheader", { name: "Produces" })).toBeVisible();
 });
 
-test("resource detail lists the recipes it is used in", async ({ page }) => {
+test("resource detail exposes a Used in tab", async ({ page }) => {
   await page.goto("/items/resource-metal-parts");
   await expect(page.getByRole("heading", { name: "Resource Metal Parts" })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Used in" })).toBeVisible();
-  // Used-in recipe cards render their outputs (the items this resource helps craft).
-  await expect(page.getByRole("heading", { name: "Outputs" }).first()).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Used in" })).toBeVisible();
 });
 
 test("environment section shows a coming-soon placeholder", async ({ page }) => {
@@ -101,18 +100,18 @@ test("tech section is a placeholder explaining the missing data", async ({ page 
   await expect(page.getByRole("button", { name: /calculate/i })).toHaveCount(0);
 });
 
-test("buyable item shows a Buy section and header badge", async ({ page }) => {
+test("buyable item shows a Buy tab, header badge, and Details summary", async ({ page }) => {
   await page.goto("/items/c4-dynamite");
   await expect(page.getByLabel("Buyable")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Buy" })).toBeVisible();
-  await expect(page.getByText(/for 10 crowns/i)).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Buy" })).toBeVisible();
+  await expect(page.getByText("Category")).toBeVisible();
 });
 
 test("sellable item lists all sell tiers with a best-price marker", async ({ page }) => {
   await page.goto("/items/pistol-ammo");
   await expect(page.getByLabel("Sellable")).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Sell" })).toBeVisible();
-  await expect(page.getByText(/for 1,000 crowns/i)).toBeVisible();
+  await page.getByRole("tab", { name: "Sell" }).click();
+  await expect(page.getByText("1,000 ◈")).toBeVisible();
   await expect(page.getByText("Best")).toBeVisible();
 });
 

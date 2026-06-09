@@ -1,28 +1,45 @@
-import { Fragment } from "react";
+"use client";
+
+import { useState } from "react";
 
 export interface Tab { id: string; label: string; content: React.ReactNode }
 
-/** CSS-only radio tabs (DaisyUI). Server-component friendly, no JS, keyboard-navigable.
- *  The first tab is checked by default. Returns null when there are no tabs. */
-export function ItemTabs({ tabs, name = "item-tabs" }: { tabs: Tab[]; name?: string }) {
+/** Client-component tabs with proper ARIA tablist/tabpanel structure.
+ *  Tabs are in a <div role="tablist"> that only contains <button role="tab"> elements;
+ *  the active content panel sits in a <div role="tabpanel"> outside the tablist. */
+export function ItemTabs({ tabs }: { tabs: Tab[] }) {
+  const [activeId, setActiveId] = useState(tabs[0]?.id ?? "");
   if (tabs.length === 0) return null;
+  const activeTab = tabs.find((t) => t.id === activeId) ?? tabs[0];
   return (
-    <div role="tablist" className="tabs tabs-border">
-      {tabs.map((t, i) => (
-        <Fragment key={t.id}>
-          <input
-            type="radio"
-            name={name}
-            role="tab"
-            className="tab"
-            aria-label={t.label}
-            defaultChecked={i === 0}
-          />
-          <div role="tabpanel" className="tab-content pt-3">
-            {t.content}
-          </div>
-        </Fragment>
-      ))}
+    <div>
+      <div role="tablist" className="tabs tabs-border">
+        {tabs.map((t) => {
+          const isActive = t.id === activeId;
+          return (
+            <button
+              key={t.id}
+              role="tab"
+              type="button"
+              aria-selected={isActive}
+              aria-controls={`tabpanel-${t.id}`}
+              id={`tab-${t.id}`}
+              className={`tab${isActive ? " tab-active" : " text-base-content/75"}`}
+              onClick={() => setActiveId(t.id)}
+            >
+              {t.label}
+            </button>
+          );
+        })}
+      </div>
+      <div
+        role="tabpanel"
+        id={`tabpanel-${activeTab.id}`}
+        aria-labelledby={`tab-${activeTab.id}`}
+        className="pt-3"
+      >
+        {activeTab.content}
+      </div>
     </div>
   );
 }
