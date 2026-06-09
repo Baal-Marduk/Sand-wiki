@@ -4,7 +4,7 @@ import { CategoryTag } from "@/components/CategoryTag";
 
 export default function HomePage() {
   return (
-    <div className="space-y-10 py-6">
+    <div className="max-w-5xl mx-auto space-y-10 py-6">
       <section className="hero rounded-box bg-base-200 py-12">
         <div className="hero-content text-center">
           <div className="max-w-xl">
@@ -12,7 +12,7 @@ export default function HomePage() {
               Unofficial SAND Wiki
             </h1>
             <p className="py-3 text-base-content/70">
-              Crafting recipes, items, and the tech tree for{" "}
+              Items, crafting recipes, and trade prices for{" "}
               <em>SAND: Raiders of Sophie</em>.
             </p>
             <form action="/items" method="get" role="search" className="join w-full max-w-md mx-auto">
