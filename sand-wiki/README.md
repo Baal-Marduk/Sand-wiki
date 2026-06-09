@@ -243,7 +243,7 @@ it's safe to re-run after each game update.
    - `ingredient`, `resource`, `unlockedBy`, and `prerequisites` entries all reference other
      entities by their **`slug`**. The seed resolves them and fails loudly if a slug is missing.
    - `category` must be one of the item categories defined in `src/lib/taxonomy.ts`
-     (`weapons`, `guns`, `resources`, `attire`, `tools`, `medical`, `ammo`, `misc`); the seed
+     (`weapons`, `artillery`, `resources`, `attire`, `tools`, `medical`, `ammo`, `misc`); the seed
      rejects unknown categories.
    - Raw resources are just items with `"isResource": true` (and usually no recipe).
 
