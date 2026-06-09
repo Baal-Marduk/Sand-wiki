@@ -62,7 +62,8 @@ test("workbench tier filter narrows the items list", async ({ page }) => {
 test("nav exposes the Items category menu", async ({ page }) => {
   await page.goto("/");
   const nav = page.getByRole("navigation", { name: "Primary" });
-  await nav.getByText("Items", { exact: true }).click();
+  // The section menu now opens on hover/focus (not a click-toggle); the trigger is a button.
+  await nav.getByRole("button", { name: /^Items/ }).hover();
   await expect(nav.getByRole("link", { name: "Weapons" })).toBeVisible();
 });
 
