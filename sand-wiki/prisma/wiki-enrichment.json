@@ -1,0 +1,163 @@
+{
+  "repeater-rifle": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Single-Shot Rifle",
+      "damage": 60,
+      "magazine": 6,
+      "value": 50,
+      "ammoSlug": "rifle-ammo",
+      "ammoName": "9x42 mm Ammo"
+    }
+  },
+  "revolver-small": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Revolver",
+      "damage": 15,
+      "magazine": 6,
+      "value": 25,
+      "ammoSlug": "pistol-ammo",
+      "ammoName": "8x21 mm Ammo"
+    }
+  },
+  "revolver-small-dusters": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Revolver",
+      "damage": 15,
+      "magazine": 6,
+      "value": 50,
+      "ammoSlug": "pistol-ammo",
+      "ammoName": "8x21 mm Ammo"
+    }
+  },
+  "rifle-musket": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Single-Shot Rifle",
+      "damage": 50,
+      "magazine": 1,
+      "value": 25,
+      "ammoSlug": "rifle-ammo",
+      "ammoName": "9x42 mm Ammo"
+    }
+  },
+  "rifle-repeater-aperture": {
+    "rarity": "Noteworthy",
+    "stats": {
+      "type": "Single-Shot Rifle",
+      "damage": 60,
+      "magazine": 6,
+      "value": 50,
+      "ammoSlug": "rifle-ammo",
+      "ammoName": "9x42 mm Ammo"
+    }
+  },
+  "semi-automatic-pistol": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Semi-Automatic Pistol",
+      "damage": 15,
+      "magazine": 10,
+      "value": 50,
+      "ammoSlug": "pistol-ammo",
+      "ammoName": "8x21 mm Ammo"
+    }
+  },
+  "semi-automatic-pistol-decreased-mag": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Semi-Automatic Pistol",
+      "damage": 15,
+      "magazine": 5,
+      "ammoSlug": "pistol-ammo",
+      "ammoName": "8x21 mm Ammo"
+    }
+  },
+  "semi-automatic-pistol-increased-mag": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Semi-Automatic Pistol",
+      "damage": 15,
+      "magazine": 15,
+      "ammoSlug": "pistol-ammo",
+      "ammoName": "8x21 mm Ammo"
+    }
+  },
+  "shotgun": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Shotgun",
+      "damage": 60,
+      "magazine": 3,
+      "value": 50,
+      "ammoSlug": "shotgun-ammo",
+      "ammoName": "12 GA Ammo"
+    }
+  },
+  "shotgun-handmade": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Shotgun",
+      "damage": 60,
+      "magazine": 1,
+      "value": 25,
+      "ammoSlug": "shotgun-ammo",
+      "ammoName": "12 GA Ammo"
+    }
+  },
+  "shotgun-handmade-choke": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Shotgun",
+      "damage": 80,
+      "magazine": 1,
+      "value": 50,
+      "ammoSlug": "shotgun-ammo",
+      "ammoName": "12 GA Ammo"
+    }
+  },
+  "shotgun-triplet": {
+    "rarity": "Noteworthy",
+    "stats": {
+      "type": "Shotgun",
+      "damage": 80,
+      "magazine": 3,
+      "value": 150,
+      "ammoSlug": "shotgun-ammo",
+      "ammoName": "12 GA Ammo"
+    }
+  },
+  "sniper-rifle": {
+    "rarity": "Noteworthy",
+    "stats": {
+      "type": "Single-Shot Rifle",
+      "damage": 60,
+      "magazine": 1,
+      "ammoSlug": "sniper-rifle-ammo",
+      "ammoName": "11x54 mm Ammo"
+    }
+  },
+  "sniper-rifle-iron-sights": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Single-Shot Rifle",
+      "damage": 60,
+      "magazine": 1,
+      "value": 50,
+      "ammoSlug": "sniper-rifle-ammo",
+      "ammoName": "11x54 mm Ammo"
+    }
+  },
+  "sniper-rifle-iron-sights-silencer": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Single-Shot Rifle",
+      "damage": 60,
+      "magazine": 1,
+      "ammoSlug": "sniper-rifle-ammo",
+      "ammoName": "11x54 mm Ammo"
+    }
+  }
+}
