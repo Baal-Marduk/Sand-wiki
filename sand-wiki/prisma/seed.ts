@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { categoryForType, isItemCategory } from "../src/lib/taxonomy";
+import { categoryForItem, isItemCategory } from "../src/lib/taxonomy";
 
 const prisma = new PrismaClient();
 
@@ -37,7 +37,7 @@ async function main() {
   await prisma.item.deleteMany();
 
   for (const i of data.items) {
-    const category = categoryForType(i.type);
+    const category = categoryForItem(i.type, i.displayName ?? i.name);
     if (!isItemCategory(category)) throw new Error(`Mapped category "${category}" is not a known category`);
     if (i.type && category === "misc" && !INTENDED_MISC.has(i.type)) {
       console.warn(`Unmapped type "${i.type}" -> misc (${i.slug})`);
