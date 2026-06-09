@@ -18,10 +18,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en" data-theme="desertnight" className={oswald.variable}>
       <body className="min-h-screen bg-base-100 text-base-content flex flex-col">
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
-        <header className="border-b border-base-300">
+        <header className="sticky top-0 z-40 border-b border-base-300 bg-base-100/90 backdrop-blur supports-[backdrop-filter]:bg-base-100/80">
           <MainNav />
         </header>
-        <main className="max-w-5xl mx-auto w-full p-4 flex-1">{children}</main>
+        <main className="max-w-6xl mx-auto w-full p-4 flex-1">{children}</main>
         <footer className="footer footer-center border-t border-base-300 text-sm text-base-content/70 p-4">
           <p>
             Unofficial fan site. Not affiliated with or endorsed by tinyBuild.{" "}

@@ -9,7 +9,7 @@ const dropdownItemCls = "block px-2 py-1 rounded text-base-content hover:bg-base
 
 export function MainNav() {
   return (
-    <nav aria-label="Primary" className="navbar max-w-5xl mx-auto px-4">
+    <nav aria-label="Primary" className="navbar max-w-6xl mx-auto px-4">
       <div className="flex-1 flex flex-wrap items-center gap-2">
         <Link href="/" className="font-display text-xl font-bold text-primary tracking-wide">
           SAND
