@@ -15,7 +15,7 @@ export interface Section {
 
 const itemCategories: Category[] = [
   { slug: "weapons", label: "Weapons" },
-  { slug: "guns", label: "Guns" },
+  { slug: "artillery", label: "Artillery" },
   { slug: "resources", label: "Resources" },
   { slug: "attire", label: "Attire" },
   { slug: "tools", label: "Tools" },
@@ -59,8 +59,8 @@ export function getSection(slug: string): Section | undefined {
 
 /** Maps the scraper's game `type` enum to a wiki item category slug. Unknown/null -> "misc". */
 const TYPE_TO_CATEGORY: Record<string, string> = {
-  WEAPON: "guns",
-  WEAPON_BELT: "guns",
+  WEAPON: "weapons",
+  WEAPON_BELT: "weapons",
   AMMO: "ammo",
   TURRET_AMMO: "ammo",
   RESOURCE_T1: "resources",
@@ -84,10 +84,20 @@ export function categoryForType(type: string | null | undefined): string {
   return TYPE_TO_CATEGORY[type] ?? "misc";
 }
 
+/** Name-aware category. Weapon types whose name contains a number followed by "mm"
+ *  (e.g. "40mm", "85 mm") are artillery; everything else uses the type mapping.
+ *  This is the single source of the guns→weapons/artillery split — applied at seed time. */
+export function categoryForItem(type: string | null | undefined, name: string): string {
+  const base = categoryForType(type);
+  if (base === "weapons" && /\d+\s?mm/i.test(name)) return "artillery";
+  return base;
+}
+
 /** Per-category accent color (hex). Decorative dot only — the text label carries meaning. */
 export const CATEGORY_COLORS: Record<string, string> = {
   weapons: "#d4654f",
-  guns: "#8b94a6",
+  artillery: "#8b94a6",
+  guns: "#8b94a6", // legacy fallback — not a current category
   ammo: "#e0a341",
   resources: "#7fb069",
   tools: "#4fb3a6",

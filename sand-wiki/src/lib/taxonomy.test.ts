@@ -1,7 +1,7 @@
 import { describe, it, expect } from "vitest";
 import {
   SECTIONS, ITEM_CATEGORIES, ITEM_CATEGORY_SLUGS,
-  isItemCategory, categoryLabel, getSection, categoryForType,
+  isItemCategory, categoryLabel, getSection, categoryForType, categoryForItem,
   CATEGORY_COLORS, categoryColor,
 } from "./taxonomy";
 
@@ -25,7 +25,7 @@ describe("taxonomy", () => {
 
   it("defines the eight item categories", () => {
     expect(ITEM_CATEGORY_SLUGS).toEqual([
-      "weapons", "guns", "resources", "attire", "tools", "medical", "ammo", "misc",
+      "weapons", "artillery", "resources", "attire", "tools", "medical", "ammo", "misc",
     ]);
     expect(ITEM_CATEGORIES.every((c) => c.label.length > 0)).toBe(true);
   });
@@ -49,8 +49,8 @@ describe("taxonomy", () => {
 
 describe("categoryForType", () => {
   it("maps known game types to wiki categories", () => {
-    expect(categoryForType("WEAPON")).toBe("guns");
-    expect(categoryForType("WEAPON_BELT")).toBe("guns");
+    expect(categoryForType("WEAPON")).toBe("weapons");
+    expect(categoryForType("WEAPON_BELT")).toBe("weapons");
     expect(categoryForType("AMMO")).toBe("ammo");
     expect(categoryForType("TURRET_AMMO")).toBe("ammo");
     expect(categoryForType("RESOURCE_T1")).toBe("resources");
@@ -71,6 +71,30 @@ describe("categoryForType", () => {
   it("maps null/unknown types to misc", () => {
     expect(categoryForType(null)).toBe("misc");
     expect(categoryForType("SOME_NEW_TYPE")).toBe("misc");
+  });
+});
+
+describe("categoryForItem", () => {
+  it("routes mm-named weapons to artillery", () => {
+    expect(categoryForItem("WEAPON", "40mm Cannon")).toBe("artillery");
+    expect(categoryForItem("WEAPON", "85 mm Howitzer")).toBe("artillery");
+    expect(categoryForItem("WEAPON_BELT", "120mm Belt")).toBe("artillery");
+  });
+
+  it("keeps non-mm weapons in weapons", () => {
+    expect(categoryForItem("WEAPON", "Assault Rifle")).toBe("weapons");
+    expect(categoryForItem("WEAPON_BELT", "Ammo Belt")).toBe("weapons");
+  });
+
+  it("only applies the mm rule to weapon types", () => {
+    // "mm" in a non-weapon name must not move it to artillery
+    expect(categoryForItem("FOOD", "Yummy 9mm Snack")).toBe("medical");
+    expect(categoryForItem("RESOURCE_T1", "100mm Scrap")).toBe("resources");
+  });
+
+  it("falls back to type mapping for null/unknown", () => {
+    expect(categoryForItem(null, "anything")).toBe("misc");
+    expect(categoryForItem("SOME_NEW_TYPE", "40mm")).toBe("misc");
   });
 });
 
