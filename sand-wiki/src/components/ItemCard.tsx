@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { categoryLabel } from "@/lib/taxonomy";
+import { CategoryTag } from "@/components/CategoryTag";
 
 export interface ItemCardData {
   slug: string; name: string; category: string; workbenchTier: number | null;
@@ -12,7 +12,7 @@ export function ItemCard({ item }: { item: ItemCardData }) {
         <div className="card-body p-4">
           <span className="font-medium">{item.name}</span>
           <div className="flex flex-wrap gap-2 items-center">
-            <span className="badge badge-outline badge-sm">{categoryLabel(item.category)}</span>
+            <CategoryTag slug={item.category} size="sm" />
             {item.workbenchTier !== null && (
               <span className="badge badge-ghost badge-sm">Tier {item.workbenchTier}</span>
             )}
