@@ -1,6 +1,10 @@
 import { prisma } from "./db";
 import { buildItemQuery, type ItemFilter } from "./item-filter";
-import type { TechGraph } from "./tech-tree";
+import { toRecipeCard } from "./recipes";
+
+const recipeInclude = {
+  recipe: { include: { inputs: { include: { item: true } }, outputs: { include: { item: true } } } },
+} as const;
 
 export async function listItems(filter: ItemFilter) {
   const { where, orderBy } = buildItemQuery(filter);
@@ -12,37 +16,12 @@ export async function listResources() {
 }
 
 export async function getItemBySlug(slug: string) {
-  return prisma.item.findUnique({
+  const item = await prisma.item.findUnique({
     where: { slug },
-    include: {
-      recipe: { include: { ingredient: true } },
-      usedIn: { include: { item: true } },
-      unlockedBy: true,
-    },
+    include: { producedBy: { include: recipeInclude }, usedIn: { include: recipeInclude } },
   });
-}
-
-export async function loadTechGraph(): Promise<TechGraph> {
-  const nodes = await prisma.techNode.findMany({
-    include: { costs: true, prerequisites: true },
-  });
-  return new Map(
-    nodes.map((n) => [
-      n.id,
-      {
-        id: n.id,
-        costs: n.costs.map((c) => ({ resourceId: c.resourceId, quantity: c.quantity })),
-        prerequisiteIds: n.prerequisites.map((p) => p.prerequisiteId),
-      },
-    ]),
-  );
-}
-
-export async function listTechNodes() {
-  return prisma.techNode.findMany({ orderBy: { name: "asc" } });
-}
-
-export async function resourceNamesById(): Promise<Map<string, string>> {
-  const resources = await prisma.item.findMany({ where: { isResource: true } });
-  return new Map(resources.map((r) => [r.id, r.name]));
+  if (!item) return null;
+  const craftedBy = item.producedBy.map((o) => toRecipeCard(o.recipe));
+  const usedIn = item.usedIn.map((i) => toRecipeCard(i.recipe));
+  return { ...item, craftedBy, usedIn };
 }
