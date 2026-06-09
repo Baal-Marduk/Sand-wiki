@@ -1,4 +1,12 @@
 node_modules/
 .next/
-.env
+
+# env files — ignore all, but allow the example template
+.env*
+!.env.example
+
+# secrets / keys
+*.pem
+*.key
+
 *.log
