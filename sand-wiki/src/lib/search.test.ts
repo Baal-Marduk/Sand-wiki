@@ -32,12 +32,13 @@ describe("searchSuggestions", () => {
   });
 
   it("matches the derived name even when the display name does not contain the query", () => {
-    const r = searchSuggestions("sniper rifle", index);
-    expect(r.items.map((i) => i.slug)).toEqual(["sniper-rifle"]);
+    // "pistol ammo" is absent from the display name "8x21 mm Ammo" but present in derivedName.
+    const r = searchSuggestions("pistol ammo", index);
+    expect(r.items.map((i) => i.slug)).toEqual(["pistol-ammo"]);
   });
 
   it("still displays the real name in suggestions", () => {
-    const r = searchSuggestions("sniper rifle", index);
-    expect(r.items[0].name).toBe("1874s Petros Sniper Rifle");
+    const r = searchSuggestions("pistol ammo", index);
+    expect(r.items[0].name).toBe("8x21 mm Ammo");
   });
 });
