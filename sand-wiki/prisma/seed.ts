@@ -1,95 +1,65 @@
 import { PrismaClient } from "@prisma/client";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { isItemCategory } from "../src/lib/taxonomy";
+import { categoryForType, isItemCategory } from "../src/lib/taxonomy";
 
 const prisma = new PrismaClient();
 
-interface SeedRecipe { ingredient: string; quantity: number }
-interface SeedItem {
-  slug: string; name: string; category: string; isResource?: boolean;
-  description?: string; workbenchLevel?: number; craftTimeSeconds?: number;
-  unlockConditions?: string; unlockedBy?: string; imageAlt?: string; recipe?: SeedRecipe[];
+interface ScrapItem {
+  slug: string; id: string; name: string; type: string | null;
+  isResource: boolean; storageStack: number | null; workbenchTier: number | null; fromCatalog: boolean;
 }
-interface SeedCost { resource: string; quantity: number }
-interface SeedTechNode {
-  slug: string; name: string; description?: string; costs?: SeedCost[]; prerequisites?: string[];
+interface ScrapLine { item: string; amount: number }
+interface ScrapRecipe {
+  slug: string; workbench: string | null; tier: number | null; craftTimeSeconds: number | null;
+  inputs: ScrapLine[]; outputs: ScrapLine[];
 }
-interface SeedData { items: SeedItem[]; techNodes: SeedTechNode[] }
+interface ScrapData { items: ScrapItem[]; recipes: ScrapRecipe[] }
+
+const INTENDED_MISC = new Set(["KEY", "MONEY", "LARGE_VALUABLE", "SMALL_VALUABLE"]);
 
 async function main() {
-  const file = process.env.SEED_FILE ?? join(__dirname, "sample-data.json");
-  const data: SeedData = JSON.parse(readFileSync(file, "utf-8"));
+  const file = process.env.SEED_FILE ?? join(__dirname, "data.json");
+  const data: ScrapData = JSON.parse(readFileSync(file, "utf-8"));
 
-  // Clear in FK-safe order (idempotent re-runs).
-  await prisma.recipeIngredient.deleteMany();
-  await prisma.techCost.deleteMany();
-  await prisma.techPrerequisite.deleteMany();
+  await prisma.recipeInput.deleteMany();
+  await prisma.recipeOutput.deleteMany();
+  await prisma.recipe.deleteMany();
   await prisma.item.deleteMany();
-  await prisma.techNode.deleteMany();
 
-  // 1. Tech nodes (without prerequisites yet).
-  for (const t of data.techNodes) {
-    await prisma.techNode.create({
-      data: { slug: t.slug, name: t.name, description: t.description },
-    });
-  }
-  // 2. Items (without recipe/unlockedBy links yet).
   for (const i of data.items) {
-    if (!isItemCategory(i.category)) {
-      throw new Error(`Unknown item category "${i.category}" for ${i.slug}`);
+    const category = categoryForType(i.type);
+    if (!isItemCategory(category)) throw new Error(`Mapped category "${category}" is not a known category`);
+    if (i.type && category === "misc" && !INTENDED_MISC.has(i.type)) {
+      console.warn(`Unmapped type "${i.type}" -> misc (${i.slug})`);
     }
     await prisma.item.create({
       data: {
-        slug: i.slug, name: i.name, category: i.category, isResource: i.isResource ?? false,
-        description: i.description, workbenchLevel: i.workbenchLevel,
-        craftTimeSeconds: i.craftTimeSeconds, unlockConditions: i.unlockConditions, imageAlt: i.imageAlt,
+        slug: i.slug, name: i.name, category, isResource: i.isResource,
+        storageStack: i.storageStack ?? undefined, workbenchTier: i.workbenchTier ?? undefined,
       },
     });
   }
 
-  const itemBySlug = new Map((await prisma.item.findMany()).map((i) => [i.slug, i]));
-  const techBySlug = new Map((await prisma.techNode.findMany()).map((t) => [t.slug, t]));
-  const need = <T,>(v: T | undefined, what: string): T => {
-    if (v === undefined) throw new Error(`Seed reference not found: ${what}`);
-    return v;
+  const idBySlug = new Map((await prisma.item.findMany()).map((it) => [it.slug, it.id]));
+  const need = (slug: string) => {
+    const id = idBySlug.get(slug);
+    if (!id) throw new Error(`Recipe references unknown item slug: ${slug}`);
+    return id;
   };
 
-  // 3. Item recipes + unlockedBy.
-  for (const i of data.items) {
-    const item = need(itemBySlug.get(i.slug), `item ${i.slug}`);
-    if (i.unlockedBy) {
-      const tech = need(techBySlug.get(i.unlockedBy), `tech ${i.unlockedBy}`);
-      await prisma.item.update({ where: { id: item.id }, data: { unlockedById: tech.id } });
-    }
-    for (const r of i.recipe ?? []) {
-      const ingredient = need(itemBySlug.get(r.ingredient), `ingredient ${r.ingredient}`);
-      await prisma.recipeIngredient.create({
-        data: { itemId: item.id, ingredientId: ingredient.id, quantity: r.quantity },
-      });
-    }
+  for (const r of data.recipes) {
+    await prisma.recipe.create({
+      data: {
+        slug: r.slug, workbench: r.workbench ?? undefined, tier: r.tier ?? undefined,
+        craftTimeSeconds: r.craftTimeSeconds ?? undefined,
+        inputs: { create: r.inputs.map((l) => ({ itemId: need(l.item), amount: l.amount })) },
+        outputs: { create: r.outputs.map((l) => ({ itemId: need(l.item), amount: l.amount })) },
+      },
+    });
   }
 
-  // 4. Tech costs + prerequisites.
-  for (const t of data.techNodes) {
-    const node = need(techBySlug.get(t.slug), `tech ${t.slug}`);
-    for (const c of t.costs ?? []) {
-      const resource = need(itemBySlug.get(c.resource), `resource ${c.resource}`);
-      await prisma.techCost.create({
-        data: { techNodeId: node.id, resourceId: resource.id, quantity: c.quantity },
-      });
-    }
-    for (const p of t.prerequisites ?? []) {
-      const prereq = need(techBySlug.get(p), `prerequisite ${p}`);
-      await prisma.techPrerequisite.create({
-        data: { nodeId: node.id, prerequisiteId: prereq.id },
-      });
-    }
-  }
-
-  console.log(`Seeded ${data.items.length} items and ${data.techNodes.length} tech nodes.`);
+  console.log(`Seeded ${data.items.length} items and ${data.recipes.length} recipes.`);
 }
 
-main()
-  .catch((e) => { console.error(e); process.exit(1); })
-  .finally(() => prisma.$disconnect());
+main().catch((e) => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());

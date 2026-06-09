@@ -1,0 +1,1949 @@
+{
+  "meta": {
+    "gameVersion": "unknown",
+    "scrapedAt": "2026-06-09T09:53:20.077547+00:00",
+    "sourceBundles": [
+      "craftingrecipes_assets_all.bundle",
+      "configuration_assets_all.bundle",
+      "sand_monoscripts.bundle"
+    ]
+  },
+  "items": [
+    {
+      "slug": "anti-reactor-gun",
+      "id": "item_antiReactorGun",
+      "name": "Anti Reactor Gun",
+      "type": "WEAPON_BELT",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "artefact-crystal",
+      "id": "ArtefactCrystal",
+      "name": "Artefact Crystal",
+      "type": null,
+      "isResource": false,
+      "storageStack": null,
+      "workbenchTier": 1,
+      "fromCatalog": false
+    },
+    {
+      "slug": "backpack01",
+      "id": "item_backpack01",
+      "name": "Backpack01",
+      "type": "BACKPACK",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "black-box",
+      "id": "item_blackBox",
+      "name": "Black Box",
+      "type": "LARGE_VALUABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "boosted-energy-bar",
+      "id": "item_boostedEnergyBar",
+      "name": "Boosted Energy Bar",
+      "type": "ENERGY",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "boosted-energy-bar-v1",
+      "id": "item_boostedEnergyBarV1",
+      "name": "Boosted Energy Bar V1",
+      "type": "ENERGY",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "c4-dynamite",
+      "id": "item_c4Dynamite",
+      "name": "C4 Dynamite",
+      "type": "RAID_EXPLOSIVES",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 2,
+      "fromCatalog": true
+    },
+    {
+      "slug": "canned-fish",
+      "id": "item_cannedFish",
+      "name": "Canned Fish",
+      "type": "LARGE_VALUABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "coin-crown",
+      "id": "item_coinCrown",
+      "name": "Coin Crown",
+      "type": "MONEY",
+      "isResource": false,
+      "storageStack": 1000000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "crystal-handles",
+      "id": "item_crystalHandles",
+      "name": "Crystal Handles",
+      "type": "LARGE_VALUABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "document-safe",
+      "id": "item_documentSafe",
+      "name": "Document Safe",
+      "type": "LARGE_VALUABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "energy-bar",
+      "id": "item_energyBar",
+      "name": "Energy Bar",
+      "type": "ENERGY",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "explosive-big",
+      "id": "item_explosiveBig",
+      "name": "Explosive Big",
+      "type": "RAID_EXPLOSIVES",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "ficus",
+      "id": "item_ficus",
+      "name": "Ficus",
+      "type": "LARGE_VALUABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "food-can",
+      "id": "item_foodCan",
+      "name": "Food Can",
+      "type": "FOOD",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-alarm-lock-box-black",
+      "id": "game_alarmLockBoxBlack",
+      "name": "Game Alarm Lock Box Black",
+      "type": "LARGE_VALUABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-alarm-lock-box-green",
+      "id": "game_alarmLockBoxGreen",
+      "name": "Game Alarm Lock Box Green",
+      "type": "LARGE_VALUABLE",
+      "isResource": false,
+      "storageStack": 15,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-alarm-lock-box-yellow",
+      "id": "game_alarmLockBoxYellow",
+      "name": "Game Alarm Lock Box Yellow",
+      "type": "LARGE_VALUABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-key-island-door-black",
+      "id": "game_keyIslandDoorBlack",
+      "name": "Game Key Island Door Black",
+      "type": "KEY",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-key-island-door-blue",
+      "id": "game_keyIslandDoorBlue",
+      "name": "Game Key Island Door Blue",
+      "type": "KEY",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-key-island-door-fort",
+      "id": "game_keyIslandDoorFort",
+      "name": "Game Key Island Door Fort",
+      "type": "KEY",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-key-island-door-green",
+      "id": "game_keyIslandDoorGreen",
+      "name": "Game Key Island Door Green",
+      "type": "KEY",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-key-island-door-red",
+      "id": "game_keyIslandDoorRed",
+      "name": "Game Key Island Door Red",
+      "type": "KEY",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-key-island-door-white",
+      "id": "game_keyIslandDoorWhite",
+      "name": "Game Key Island Door White",
+      "type": "KEY",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-key-locked-box",
+      "id": "game_keyLockedBox",
+      "name": "Game Key Locked Box",
+      "type": "KEY",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-auto-turret-t1-container",
+      "id": "game_packedAutoTurretT1Container",
+      "name": "Game Packed Auto Turret T1 Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-auto-turret-t2-container",
+      "id": "game_packedAutoTurretT2Container",
+      "name": "Game Packed Auto Turret T2 Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-auto-turret-t3-container",
+      "id": "game_packedAutoTurretT3Container",
+      "name": "Game Packed Auto Turret T3 Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-auto-turret-t4-accelerating-container",
+      "id": "game_packedAutoTurretT4Accelerating_Container",
+      "name": "Game Packed Auto Turret T4 Accelerating Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-shotgun-turret-t1-container",
+      "id": "game_packedShotgunTurretT1Container",
+      "name": "Game Packed Shotgun Turret T1 Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-shotgun-turret-t2-container",
+      "id": "game_packedShotgunTurretT2Container",
+      "name": "Game Packed Shotgun Turret T2 Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-shotgun-turret-t3-container",
+      "id": "game_packedShotgunTurretT3Container",
+      "name": "Game Packed Shotgun Turret T3 Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-shotgun-turret-t4-double-barrel-container",
+      "id": "game_packedShotgunTurretT4DoubleBarrel_Container",
+      "name": "Game Packed Shotgun Turret T4 Double Barrel Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-turret-t1-container",
+      "id": "game_packedTurretT1Container",
+      "name": "Game Packed Turret T1 Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-turret-t2-container",
+      "id": "game_packedTurretT2Container",
+      "name": "Game Packed Turret T2 Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-turret-t3-container",
+      "id": "game_packedTurretT3Container",
+      "name": "Game Packed Turret T3 Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-turret-t4-double-barrel-container",
+      "id": "game_packedTurretT4_DoubleBarrelContainer",
+      "name": "Game Packed Turret T4 Double Barrel Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "game-packed-turret-t4-rail-gun-container",
+      "id": "game_packedTurretT4_RailGunContainer",
+      "name": "Game Packed Turret T4 Rail Gun Container",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "grenade-contact",
+      "id": "item_grenadeContact",
+      "name": "Grenade Contact",
+      "type": "ATTACK_CONSUMABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "health-emitter",
+      "id": "item_healthEmitter",
+      "name": "Health Emitter",
+      "type": "UTILITY_CONSUMABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "med-kit",
+      "id": "MedKit",
+      "name": "Med Kit",
+      "type": "UTILITY_CONSUMABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "old-jacket",
+      "id": "Old_Jacket",
+      "name": "Old Jacket",
+      "type": "ARMOR",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "old-jacket-t2",
+      "id": "Old_JacketT2",
+      "name": "Old Jacket T2",
+      "type": "ARMOR",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "old-jacket-t3",
+      "id": "Old_JacketT3",
+      "name": "Old Jacket T3",
+      "type": "ARMOR",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "orbital-strike-gun",
+      "id": "item_orbitalStrikeGun",
+      "name": "Orbital Strike Gun",
+      "type": "WEAPON_BELT",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "pistol-ammo",
+      "id": "item_pistolAmmo",
+      "name": "Pistol Ammo",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "pistol-ammo-armor",
+      "id": "item_pistolAmmo_Armor",
+      "name": "Pistol Ammo Armor",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "pistol-ammo-fire",
+      "id": "item_pistolAmmo_Fire",
+      "name": "Pistol Ammo Fire",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "pistol-ammo-high-velocity",
+      "id": "item_pistolAmmo_highVelocity",
+      "name": "Pistol Ammo High Velocity",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 2,
+      "fromCatalog": true
+    },
+    {
+      "slug": "pistol-ammo-toxic",
+      "id": "item_pistolAmmo_Toxic",
+      "name": "Pistol Ammo Toxic",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "projectile-amplifier",
+      "id": "item_projectileAmplifier",
+      "name": "Projectile Amplifier",
+      "type": "ATTACK_CONSUMABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "projectile-deflect-shield",
+      "id": "item_projectileDeflectShield",
+      "name": "Projectile Deflect Shield",
+      "type": "ATTACK_CONSUMABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "projectile-sphere-shield",
+      "id": "item_projectileSphereShield",
+      "name": "Projectile Sphere Shield",
+      "type": "ATTACK_CONSUMABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "repair-kit",
+      "id": "RepairKit",
+      "name": "Repair Kit",
+      "type": "UTILITY_CONSUMABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "repeater-rifle",
+      "id": "item_repeaterRifle",
+      "name": "Repeater Rifle",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 2,
+      "fromCatalog": true
+    },
+    {
+      "slug": "repeater-rifle-one-shot",
+      "id": "item_repeaterRifleOneShot",
+      "name": "Repeater Rifle One Shot",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "repeater-rifle-quick-reload",
+      "id": "item_repeaterRifleQuickReload",
+      "name": "Repeater Rifle Quick Reload",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-coral-dust",
+      "id": "item_resourceCoralDust",
+      "name": "Resource Coral Dust",
+      "type": "RESOURCE_T2",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-coral-piece",
+      "id": "item_resourceCoralPiece",
+      "name": "Resource Coral Piece",
+      "type": "RESOURCE_T1",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-fabric",
+      "id": "item_resourceFabric",
+      "name": "Resource Fabric",
+      "type": "RESOURCE_T2",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-fabric-scraps",
+      "id": "item_resourceFabricScraps",
+      "name": "Resource Fabric Scraps",
+      "type": "RESOURCE_T1",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-gunpowder",
+      "id": "item_resourceGunpowder",
+      "name": "Resource Gunpowder",
+      "type": "RESOURCE_T2",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-high-grade-gunpowder",
+      "id": "item_resourceHighGradeGunpowder",
+      "name": "Resource High Grade Gunpowder",
+      "type": "RESOURCE_T3",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-leviathan-meat",
+      "id": "item_resourceLeviathanMeat",
+      "name": "Resource Leviathan Meat",
+      "type": "RESOURCE_T2",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-leviathan-skin",
+      "id": "item_resourceLeviathanSkin",
+      "name": "Resource Leviathan Skin",
+      "type": "RESOURCE_T2",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-metal-parts",
+      "id": "item_resourceMetalParts",
+      "name": "Resource Metal Parts",
+      "type": "RESOURCE_T1",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-metal-rods",
+      "id": "item_resourceMetalRods",
+      "name": "Resource Metal Rods",
+      "type": "RESOURCE_T2",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-metal-t1",
+      "id": "item_resourceMetal_t1",
+      "name": "Resource Metal T1",
+      "type": "RESOURCE_T1",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-metal-t2",
+      "id": "item_resourceMetal_t2",
+      "name": "Resource Metal T2",
+      "type": "RESOURCE_T2",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-metal-t3",
+      "id": "item_resourceMetal_t3",
+      "name": "Resource Metal T3",
+      "type": "RESOURCE_T3",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-mixtures",
+      "id": "item_resourceMixtures",
+      "name": "Resource Mixtures",
+      "type": "RESOURCE_T2",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-optic-lenses",
+      "id": "item_resourceOpticLenses",
+      "name": "Resource Optic Lenses",
+      "type": "RESOURCE_T3",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-reinforced-leather-strips",
+      "id": "item_resourceReinforcedLeatherStrips",
+      "name": "Resource Reinforced Leather Strips",
+      "type": "RESOURCE_T3",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-scrapped-ammo",
+      "id": "item_resourceScrappedAmmo",
+      "name": "Resource Scrapped Ammo",
+      "type": "RESOURCE_T1",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-threads",
+      "id": "item_resourceThreads",
+      "name": "Resource Threads",
+      "type": "RESOURCE_T1",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "resource-weapon-parts",
+      "id": "item_resourceWeaponParts",
+      "name": "Resource Weapon Parts",
+      "type": "RESOURCE_T2",
+      "isResource": true,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "revolver-quick-reload",
+      "id": "item_revolverQuickReload",
+      "name": "Revolver Quick Reload",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "revolver-quick-reload-eight-shot",
+      "id": "item_revolverQuickReloadEightShot",
+      "name": "Revolver Quick Reload Eight Shot",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "revolver-small",
+      "id": "item_revolverSmall",
+      "name": "Revolver Small",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "revolver-small-dusters",
+      "id": "item_revolverSmall_dusters",
+      "name": "Revolver Small Dusters",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "rifle-ammo",
+      "id": "item_rifleAmmo",
+      "name": "Rifle Ammo",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "rifle-ammo-armor",
+      "id": "item_rifleAmmo_Armor",
+      "name": "Rifle Ammo Armor",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "rifle-ammo-fire",
+      "id": "item_rifleAmmo_Fire",
+      "name": "Rifle Ammo Fire",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "rifle-ammo-high-velocity",
+      "id": "item_rifleAmmo_highVelocity",
+      "name": "Rifle Ammo High Velocity",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 2,
+      "fromCatalog": true
+    },
+    {
+      "slug": "rifle-ammo-toxic",
+      "id": "item_rifleAmmo_Toxic",
+      "name": "Rifle Ammo Toxic",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "rifle-musket",
+      "id": "item_rifleMusket",
+      "name": "Rifle Musket",
+      "type": null,
+      "isResource": false,
+      "storageStack": null,
+      "workbenchTier": 1,
+      "fromCatalog": false
+    },
+    {
+      "slug": "rifle-repeater-aperture",
+      "id": "item_rifleRepeaterAperture",
+      "name": "Rifle Repeater Aperture",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "rocket-launcher",
+      "id": "item_rocketLauncher",
+      "name": "Rocket Launcher",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "rocket-launcher-ammo-armor-piercing",
+      "id": "item_rocketLauncherAmmoArmorPiercing",
+      "name": "Rocket Launcher Ammo Armor Piercing",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "rocket-launcher-ammo-high-explosion",
+      "id": "item_rocketLauncherAmmoHighExplosion",
+      "name": "Rocket Launcher Ammo High Explosion",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "semi-automatic-pistol",
+      "id": "item_semiAutomaticPistol",
+      "name": "Semi Automatic Pistol",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 2,
+      "fromCatalog": true
+    },
+    {
+      "slug": "semi-automatic-pistol-decreased-mag",
+      "id": "item_semiAutomaticPistol_decreasedMag",
+      "name": "Semi Automatic Pistol Decreased Mag",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "semi-automatic-pistol-increased-mag",
+      "id": "item_semiAutomaticPistol_increasedMag",
+      "name": "Semi Automatic Pistol Increased Mag",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "shotgun",
+      "id": "item_shotgun",
+      "name": "Shotgun",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 2,
+      "fromCatalog": true
+    },
+    {
+      "slug": "shotgun-ammo",
+      "id": "item_shotgunAmmo",
+      "name": "Shotgun Ammo",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "shotgun-ammo-armor",
+      "id": "item_shotgunAmmo_Armor",
+      "name": "Shotgun Ammo Armor",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "shotgun-ammo-explosive",
+      "id": "item_shotgunAmmo_explosive",
+      "name": "Shotgun Ammo Explosive",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "shotgun-ammo-fire",
+      "id": "item_shotgunAmmo_Fire",
+      "name": "Shotgun Ammo Fire",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "shotgun-ammo-slug",
+      "id": "item_shotgunAmmo_slug",
+      "name": "Shotgun Ammo Slug",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 2,
+      "fromCatalog": true
+    },
+    {
+      "slug": "shotgun-ammo-toxic",
+      "id": "item_shotgunAmmo_Toxic",
+      "name": "Shotgun Ammo Toxic",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "shotgun-handmade",
+      "id": "item_shotgunHandmade",
+      "name": "Shotgun Handmade",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "shotgun-handmade-choke",
+      "id": "item_shotgunHandmade_choke",
+      "name": "Shotgun Handmade Choke",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "shotgun-triplet",
+      "id": "item_shotgunTriplet",
+      "name": "Shotgun Triplet",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "shotgun-turret-ammo",
+      "id": "item_shotgunTurretAmmo",
+      "name": "Shotgun Turret Ammo",
+      "type": "TURRET_AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "shotgun-turret-ammo-slug",
+      "id": "item_shotgunTurretAmmo_slug",
+      "name": "Shotgun Turret Ammo Slug",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "small-cannon-ammo",
+      "id": "item_smallCannonAmmo",
+      "name": "Small Cannon Ammo",
+      "type": "TURRET_AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "small-cannon-ammo-long-range",
+      "id": "item_smallCannonAmmo_longRange",
+      "name": "Small Cannon Ammo Long Range",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "small-valuables",
+      "id": "item_smallValuables",
+      "name": "Small Valuables",
+      "type": "SMALL_VALUABLE",
+      "isResource": false,
+      "storageStack": 1000000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "smoke-grenade",
+      "id": "item_smokeGrenade",
+      "name": "Smoke Grenade",
+      "type": "ATTACK_CONSUMABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "smokeless-energy-bar",
+      "id": "item_smokelessEnergyBar",
+      "name": "Smokeless Energy Bar",
+      "type": "ENERGY",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "sniper-rifle",
+      "id": "item_sniperRifle",
+      "name": "Sniper Rifle",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 2,
+      "fromCatalog": true
+    },
+    {
+      "slug": "sniper-rifle-ammo",
+      "id": "item_sniperRifleAmmo",
+      "name": "Sniper Rifle Ammo",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 2,
+      "fromCatalog": true
+    },
+    {
+      "slug": "sniper-rifle-ammo-high-penetration",
+      "id": "item_sniperRifleAmmo_highPenetration",
+      "name": "Sniper Rifle Ammo High Penetration",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "sniper-rifle-double-barrel",
+      "id": "item_sniperRifleDoubleBarrel",
+      "name": "Sniper Rifle Double Barrel",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "sniper-rifle-iron-sights",
+      "id": "item_sniperRifle_ironSights",
+      "name": "Sniper Rifle Iron Sights",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "sniper-rifle-iron-sights-silencer",
+      "id": "item_sniperRifle_ironSights_silencer",
+      "name": "Sniper Rifle Iron Sights Silencer",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 2,
+      "fromCatalog": true
+    },
+    {
+      "slug": "sniper-rifle-silencer",
+      "id": "item_sniperRifle_silencer",
+      "name": "Sniper Rifle Silencer",
+      "type": "WEAPON",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 2,
+      "fromCatalog": true
+    },
+    {
+      "slug": "treasure-shovel",
+      "id": "item_treasureShovel",
+      "name": "Treasure Shovel",
+      "type": "UTILITY_CONSUMABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "turret-ammo",
+      "id": "item_turretAmmo",
+      "name": "Turret Ammo",
+      "type": "TURRET_AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "turret-ammo-high-velocity",
+      "id": "item_turretAmmo_highVelocity",
+      "name": "Turret Ammo High Velocity",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "valuable-papers",
+      "id": "item_valuablePapers",
+      "name": "Valuable Papers",
+      "type": "SMALL_VALUABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": 1,
+      "fromCatalog": true
+    },
+    {
+      "slug": "wine-box",
+      "id": "item_wineBox",
+      "name": "Wine Box",
+      "type": "LARGE_VALUABLE",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "wok-bomb",
+      "id": "item_wokBomb",
+      "name": "Wok Bomb",
+      "type": "RAID_EXPLOSIVES",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    }
+  ],
+  "recipes": [
+    {
+      "slug": "artefact-crystal",
+      "workbench": "Utility",
+      "tier": 1,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "crystal-handles",
+          "amount": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "artefact-crystal",
+          "amount": 4
+        }
+      ]
+    },
+    {
+      "slug": "c4-dynamite",
+      "workbench": null,
+      "tier": null,
+      "craftTimeSeconds": 30.0,
+      "inputs": [
+        {
+          "item": "coin-crown",
+          "amount": 10
+        }
+      ],
+      "outputs": [
+        {
+          "item": "c4-dynamite",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "c4-dynamite-2",
+      "workbench": "Armament",
+      "tier": 2,
+      "craftTimeSeconds": 3.0,
+      "inputs": [
+        {
+          "item": "resource-fabric",
+          "amount": 2
+        },
+        {
+          "item": "resource-gunpowder",
+          "amount": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "c4-dynamite",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "coin-crown",
+      "workbench": null,
+      "tier": null,
+      "craftTimeSeconds": 1.0,
+      "inputs": [
+        {
+          "item": "pistol-ammo",
+          "amount": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "coin-crown",
+          "amount": 5
+        }
+      ]
+    },
+    {
+      "slug": "coin-crown-2",
+      "workbench": null,
+      "tier": null,
+      "craftTimeSeconds": 3.0,
+      "inputs": [
+        {
+          "item": "pistol-ammo",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "coin-crown",
+          "amount": 25
+        }
+      ]
+    },
+    {
+      "slug": "coin-crown-3",
+      "workbench": null,
+      "tier": null,
+      "craftTimeSeconds": 10.0,
+      "inputs": [
+        {
+          "item": "pistol-ammo",
+          "amount": 100
+        }
+      ],
+      "outputs": [
+        {
+          "item": "coin-crown",
+          "amount": 1000
+        }
+      ]
+    },
+    {
+      "slug": "food-can",
+      "workbench": "Utility",
+      "tier": 1,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "canned-fish",
+          "amount": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "food-can",
+          "amount": 25
+        }
+      ]
+    },
+    {
+      "slug": "old-jacket",
+      "workbench": "Utility",
+      "tier": 1,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "resource-fabric",
+          "amount": 2
+        },
+        {
+          "item": "resource-threads",
+          "amount": 10
+        }
+      ],
+      "outputs": [
+        {
+          "item": "old-jacket",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "old-jacket-t2",
+      "workbench": "Utility",
+      "tier": 1,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "resource-fabric",
+          "amount": 5
+        },
+        {
+          "item": "resource-threads",
+          "amount": 50
+        }
+      ],
+      "outputs": [
+        {
+          "item": "old-jacket-t2",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "pistol-ammo",
+      "workbench": "Armament",
+      "tier": 1,
+      "craftTimeSeconds": 3.0,
+      "inputs": [
+        {
+          "item": "resource-scrapped-ammo",
+          "amount": 5
+        },
+        {
+          "item": "resource-metal-parts",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "pistol-ammo",
+          "amount": 20
+        }
+      ]
+    },
+    {
+      "slug": "pistol-ammo-high-velocity",
+      "workbench": "Armament",
+      "tier": 2,
+      "craftTimeSeconds": 3.0,
+      "inputs": [
+        {
+          "item": "pistol-ammo",
+          "amount": 20
+        },
+        {
+          "item": "resource-coral-dust",
+          "amount": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "pistol-ammo-high-velocity",
+          "amount": 20
+        }
+      ]
+    },
+    {
+      "slug": "repeater-rifle",
+      "workbench": "Armament",
+      "tier": 2,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "resource-metal-rods",
+          "amount": 4
+        },
+        {
+          "item": "resource-weapon-parts",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "repeater-rifle",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "resource-fabric",
+      "workbench": "Utility",
+      "tier": 1,
+      "craftTimeSeconds": 2.0,
+      "inputs": [
+        {
+          "item": "resource-fabric-scraps",
+          "amount": 5
+        },
+        {
+          "item": "resource-threads",
+          "amount": 15
+        }
+      ],
+      "outputs": [
+        {
+          "item": "resource-fabric",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "revolver-small",
+      "workbench": "Armament",
+      "tier": 1,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "resource-metal-parts",
+          "amount": 25
+        }
+      ],
+      "outputs": [
+        {
+          "item": "revolver-small",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "revolver-small-dusters",
+      "workbench": "Armament",
+      "tier": 1,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "revolver-small",
+          "amount": 1
+        },
+        {
+          "item": "resource-metal-parts",
+          "amount": 25
+        }
+      ],
+      "outputs": [
+        {
+          "item": "revolver-small-dusters",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "rifle-ammo",
+      "workbench": "Armament",
+      "tier": 1,
+      "craftTimeSeconds": 3.0,
+      "inputs": [
+        {
+          "item": "resource-metal-parts",
+          "amount": 5
+        },
+        {
+          "item": "resource-scrapped-ammo",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "rifle-ammo",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "slug": "rifle-ammo-high-velocity",
+      "workbench": "Armament",
+      "tier": 2,
+      "craftTimeSeconds": 3.0,
+      "inputs": [
+        {
+          "item": "rifle-ammo",
+          "amount": 10
+        },
+        {
+          "item": "resource-coral-dust",
+          "amount": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "rifle-ammo-high-velocity",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "slug": "rifle-musket",
+      "workbench": "Armament",
+      "tier": 1,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "resource-metal-parts",
+          "amount": 25
+        }
+      ],
+      "outputs": [
+        {
+          "item": "rifle-musket",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "semi-automatic-pistol",
+      "workbench": "Armament",
+      "tier": 2,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "resource-metal-rods",
+          "amount": 4
+        },
+        {
+          "item": "resource-weapon-parts",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "semi-automatic-pistol",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "semi-automatic-pistol-decreased-mag",
+      "workbench": "Armament",
+      "tier": 1,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "resource-metal-parts",
+          "amount": 25
+        }
+      ],
+      "outputs": [
+        {
+          "item": "semi-automatic-pistol-decreased-mag",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "shotgun",
+      "workbench": "Armament",
+      "tier": 2,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "resource-fabric",
+          "amount": 4
+        },
+        {
+          "item": "resource-metal-rods",
+          "amount": 4
+        }
+      ],
+      "outputs": [
+        {
+          "item": "shotgun",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "shotgun-ammo",
+      "workbench": "Armament",
+      "tier": 1,
+      "craftTimeSeconds": 3.0,
+      "inputs": [
+        {
+          "item": "resource-scrapped-ammo",
+          "amount": 5
+        },
+        {
+          "item": "resource-fabric-scraps",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "shotgun-ammo",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "slug": "shotgun-ammo-slug",
+      "workbench": "Armament",
+      "tier": 2,
+      "craftTimeSeconds": 3.0,
+      "inputs": [
+        {
+          "item": "shotgun-ammo",
+          "amount": 10
+        },
+        {
+          "item": "resource-metal-rods",
+          "amount": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "shotgun-ammo-slug",
+          "amount": 10
+        }
+      ]
+    },
+    {
+      "slug": "shotgun-handmade",
+      "workbench": "Armament",
+      "tier": 1,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "resource-metal-parts",
+          "amount": 25
+        }
+      ],
+      "outputs": [
+        {
+          "item": "shotgun-handmade",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "shotgun-handmade-choke",
+      "workbench": "Armament",
+      "tier": 1,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "shotgun-handmade",
+          "amount": 1
+        },
+        {
+          "item": "resource-metal-parts",
+          "amount": 25
+        }
+      ],
+      "outputs": [
+        {
+          "item": "shotgun-handmade-choke",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "shotgun-turret-ammo",
+      "workbench": "Armament",
+      "tier": 1,
+      "craftTimeSeconds": 2.0,
+      "inputs": [
+        {
+          "item": "resource-fabric-scraps",
+          "amount": 5
+        },
+        {
+          "item": "resource-scrapped-ammo",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "shotgun-turret-ammo",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "small-cannon-ammo",
+      "workbench": "Armament",
+      "tier": 1,
+      "craftTimeSeconds": 1.0,
+      "inputs": [
+        {
+          "item": "resource-scrapped-ammo",
+          "amount": 2
+        },
+        {
+          "item": "resource-metal-parts",
+          "amount": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "small-cannon-ammo",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "sniper-rifle",
+      "workbench": "Armament",
+      "tier": 2,
+      "craftTimeSeconds": 10.0,
+      "inputs": [
+        {
+          "item": "sniper-rifle-iron-sights",
+          "amount": 1
+        },
+        {
+          "item": "resource-optic-lenses",
+          "amount": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "sniper-rifle",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "sniper-rifle-ammo",
+      "workbench": "Armament",
+      "tier": 2,
+      "craftTimeSeconds": 2.0,
+      "inputs": [
+        {
+          "item": "resource-high-grade-gunpowder",
+          "amount": 1
+        },
+        {
+          "item": "resource-metal-parts",
+          "amount": 25
+        }
+      ],
+      "outputs": [
+        {
+          "item": "sniper-rifle-ammo",
+          "amount": 6
+        }
+      ]
+    },
+    {
+      "slug": "sniper-rifle-iron-sights-silencer",
+      "workbench": "Armament",
+      "tier": 2,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "sniper-rifle-iron-sights",
+          "amount": 1
+        },
+        {
+          "item": "resource-metal-rods",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "sniper-rifle-iron-sights-silencer",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "sniper-rifle-silencer",
+      "workbench": "Armament",
+      "tier": 2,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "sniper-rifle",
+          "amount": 1
+        },
+        {
+          "item": "resource-metal-rods",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "sniper-rifle-silencer",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "sniper-rifle-silencer-2",
+      "workbench": "Armament",
+      "tier": 2,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "sniper-rifle-iron-sights-silencer",
+          "amount": 1
+        },
+        {
+          "item": "resource-optic-lenses",
+          "amount": 2
+        }
+      ],
+      "outputs": [
+        {
+          "item": "sniper-rifle-silencer",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "turret-ammo",
+      "workbench": "Armament",
+      "tier": 1,
+      "craftTimeSeconds": 2.0,
+      "inputs": [
+        {
+          "item": "resource-scrapped-ammo",
+          "amount": 5
+        },
+        {
+          "item": "resource-metal-parts",
+          "amount": 5
+        }
+      ],
+      "outputs": [
+        {
+          "item": "turret-ammo",
+          "amount": 1
+        }
+      ]
+    },
+    {
+      "slug": "valuable-papers",
+      "workbench": "Utility",
+      "tier": 1,
+      "craftTimeSeconds": 5.0,
+      "inputs": [
+        {
+          "item": "document-safe",
+          "amount": 1
+        }
+      ],
+      "outputs": [
+        {
+          "item": "valuable-papers",
+          "amount": 150
+        }
+      ]
+    }
+  ]
+}
