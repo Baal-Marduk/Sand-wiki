@@ -1,4 +1,4 @@
-import { listItems, listResources } from "@/lib/queries";
+import { listItems, listWorkbenchTiers } from "@/lib/queries";
 import { ItemCard } from "@/components/ItemCard";
 import { ItemFilters } from "@/components/ItemFilters";
 import { ITEM_CATEGORIES, isItemCategory } from "@/lib/taxonomy";
@@ -15,31 +15,28 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
   const q = str(sp.q);
   const rawCategory = str(sp.category);
   const category = rawCategory && isItemCategory(rawCategory) ? rawCategory : undefined;
-  const resource = str(sp.resource);
-  const workbench = str(sp.workbench);
+  const tierParam = str(sp.tier);
+  const workbenchTier =
+    tierParam && Number.isInteger(Number(tierParam)) ? Number(tierParam) : undefined;
   const sortParam = str(sp.sort);
   const sort: ItemFilter["sort"] = sortParam === "workbench" ? "workbench" : "name";
-
-  const workbenchLevel =
-    workbench && Number.isInteger(Number(workbench)) ? Number(workbench) : undefined;
 
   const filter: ItemFilter = {
     query: q || undefined,
     category: category || undefined,
-    workbenchLevel,
-    requiredResourceId: resource || undefined,
+    workbenchTier,
     sort,
   };
 
-  const [items, resources] = await Promise.all([listItems(filter), listResources()]);
+  const [items, tiers] = await Promise.all([listItems(filter), listWorkbenchTiers()]);
 
   return (
     <section className="py-6">
       <h1 className="font-display text-2xl font-bold mb-4">Items</h1>
       <ItemFilters
         categories={ITEM_CATEGORIES}
-        resources={resources.map((r) => ({ id: r.id, name: r.name }))}
-        current={{ q, category, workbench, resource, sort }}
+        tiers={tiers}
+        current={{ q, category, tier: tierParam, sort }}
       />
       <p className="text-sm text-base-content/70 mb-3" aria-live="polite">
         <span className="badge badge-ghost">{items.length} result(s)</span>

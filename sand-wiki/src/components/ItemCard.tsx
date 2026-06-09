@@ -2,7 +2,7 @@ import Link from "next/link";
 import { categoryLabel } from "@/lib/taxonomy";
 
 export interface ItemCardData {
-  slug: string; name: string; category: string; workbenchLevel: number | null;
+  slug: string; name: string; category: string; workbenchTier: number | null;
 }
 
 export function ItemCard({ item }: { item: ItemCardData }) {
@@ -13,8 +13,8 @@ export function ItemCard({ item }: { item: ItemCardData }) {
           <span className="font-medium">{item.name}</span>
           <div className="flex flex-wrap gap-2 items-center">
             <span className="badge badge-outline badge-sm">{categoryLabel(item.category)}</span>
-            {item.workbenchLevel !== null && (
-              <span className="badge badge-ghost badge-sm">Workbench {item.workbenchLevel}</span>
+            {item.workbenchTier !== null && (
+              <span className="badge badge-ghost badge-sm">Tier {item.workbenchTier}</span>
             )}
           </div>
         </div>

@@ -11,8 +11,15 @@ export async function listItems(filter: ItemFilter) {
   return prisma.item.findMany({ where, orderBy });
 }
 
-export async function listResources() {
-  return prisma.item.findMany({ where: { isResource: true }, orderBy: { name: "asc" } });
+/** Distinct non-null workbench tiers across items, ascending — for the items-list tier filter. */
+export async function listWorkbenchTiers(): Promise<number[]> {
+  const rows = await prisma.item.findMany({
+    where: { workbenchTier: { not: null } },
+    distinct: ["workbenchTier"],
+    select: { workbenchTier: true },
+    orderBy: { workbenchTier: "asc" },
+  });
+  return rows.map((r) => r.workbenchTier).filter((t): t is number => t !== null);
 }
 
 export async function getItemBySlug(slug: string) {
