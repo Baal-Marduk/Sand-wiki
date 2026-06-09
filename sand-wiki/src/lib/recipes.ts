@@ -1,4 +1,4 @@
-export interface RecipeLineItem { slug: string; name: string }
+export interface RecipeLineItem { slug: string; name: string; icon: string | null }
 export interface RecipeLine { amount: number; item: RecipeLineItem }
 export interface RecipeWithItems {
   slug: string;
@@ -9,7 +9,7 @@ export interface RecipeWithItems {
   outputs: RecipeLine[];
 }
 
-export interface RecipeCardRow { slug: string; name: string; amount: number }
+export interface RecipeCardRow { slug: string; name: string; icon: string | null; amount: number }
 export interface RecipeCard {
   slug: string;
   workbench: string | null;
@@ -19,7 +19,7 @@ export interface RecipeCard {
   outputs: RecipeCardRow[];
 }
 
-const row = (l: RecipeLine): RecipeCardRow => ({ slug: l.item.slug, name: l.item.name, amount: l.amount });
+const row = (l: RecipeLine): RecipeCardRow => ({ slug: l.item.slug, name: l.item.name, icon: l.item.icon, amount: l.amount });
 
 /** Flatten a recipe (with nested items) into display-ready rows for the item page. */
 export function toRecipeCard(r: RecipeWithItems): RecipeCard {
