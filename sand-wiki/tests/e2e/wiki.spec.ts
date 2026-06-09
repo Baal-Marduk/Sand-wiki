@@ -69,7 +69,7 @@ test("nav exposes the Items category menu", async ({ page }) => {
 
 test("item detail shows Crafted by and Used in tabs with tables", async ({ page }) => {
   await page.goto("/items/sniper-rifle-iron-sights-silencer");
-  await expect(page.getByRole("heading", { name: "Sniper Rifle Iron Sights Silencer" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "1874e/sd Petros Rifle (Silenced)" })).toBeVisible();
   await expect(page.getByRole("tab", { name: "Crafted by" })).toBeVisible();
   await expect(page.getByRole("tab", { name: "Used in" })).toBeVisible();
   // Default tab (Crafted by) renders an Ingredients column.
@@ -81,7 +81,7 @@ test("item detail shows Crafted by and Used in tabs with tables", async ({ page 
 
 test("resource detail exposes a Used in tab", async ({ page }) => {
   await page.goto("/items/resource-metal-parts");
-  await expect(page.getByRole("heading", { name: "Resource Metal Parts" })).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Scrap Metal" })).toBeVisible();
   await expect(page.getByRole("tab", { name: "Used in" })).toBeVisible();
 });
 
@@ -133,7 +133,7 @@ test("autocomplete suggests an item and navigates to its page", async ({ page })
   await page.goto("/items");
   const box = page.getByRole("navigation", { name: "Primary" }).getByRole("combobox");
   await box.fill("Sniper Rifle Silencer");
-  const option = page.getByRole("option", { name: "Sniper Rifle Silencer", exact: true });
+  const option = page.getByRole("option", { name: "1874s/sd Petros Sniper Rifle (Silenced)", exact: true });
   await option.click();
   await expect(page).toHaveURL(/\/items\/sniper-rifle-silencer/);
 });
@@ -151,4 +151,11 @@ test("autocomplete category suggestion filters the list", async ({ page }) => {
 test("items filters no longer expose a Sort-by control", async ({ page }) => {
   await page.goto("/items");
   await expect(page.getByLabel("Sort by")).toHaveCount(0);
+});
+
+test("item detail shows a real sprite image", async ({ page }) => {
+  await page.goto("/items/c4-dynamite");
+  const img = page.getByRole("img", { name: "Time Bomb" });
+  await expect(img).toBeVisible();
+  await expect(img).toHaveAttribute("src", /^\/icons\/.+\.png$/);
 });
