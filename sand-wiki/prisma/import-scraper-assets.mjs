@@ -9,6 +9,7 @@ if (!existsSync("prisma") || !existsSync("public")) {
   process.exit(1);
 }
 
+// Default points at this repo's sand-scraper worktree; pass an explicit path if yours differs.
 const OUT = process.argv[2] ?? join("..", ".claude", "worktrees", "sand-scraper-impl", "sand-scraper", "out");
 
 // 1. data.json (items now carry displayName + description) — verbatim byte copy

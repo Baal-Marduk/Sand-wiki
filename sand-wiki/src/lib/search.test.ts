@@ -41,4 +41,10 @@ describe("searchSuggestions", () => {
     const r = searchSuggestions("pistol ammo", index);
     expect(r.items[0].name).toBe("8x21 mm Ammo");
   });
+
+  it("matches the display name when the query is absent from the derived name", () => {
+    // "petros" is in the display name but not the derived name "Sniper Rifle".
+    const r = searchSuggestions("petros", index);
+    expect(r.items.map((i) => i.slug)).toEqual(["sniper-rifle"]);
+  });
 });
