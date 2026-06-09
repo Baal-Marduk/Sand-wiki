@@ -1,7 +1,7 @@
 import { getSection } from "@/lib/taxonomy";
 import { notFound } from "next/navigation";
 
-export function SectionPlaceholder({ sectionSlug }: { sectionSlug: string }) {
+export function SectionPlaceholder({ sectionSlug, note }: { sectionSlug: string; note?: string }) {
   const section = getSection(sectionSlug);
   if (!section) notFound();
 
@@ -9,7 +9,7 @@ export function SectionPlaceholder({ sectionSlug }: { sectionSlug: string }) {
     <section className="py-8 space-y-4 max-w-2xl">
       <h1 className="font-display text-2xl font-bold">{section.label}</h1>
       <div role="alert" className="alert alert-warning">
-        <span>Coming soon — this section isn&apos;t available yet.</span>
+        <span>{note ?? "Coming soon — this section isn't available yet."}</span>
       </div>
       {section.categories.length > 0 && (
         <div>

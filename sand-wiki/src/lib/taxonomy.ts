@@ -38,8 +38,8 @@ export const SECTIONS: Section[] = [
     ],
   },
   { slug: "tramplers", label: "Tramplers", kind: "placeholder", categories: [] },
-  { slug: "tech", label: "Tech Tree", kind: "link", href: "/tech", categories: [] },
-  { slug: "tools", label: "Tools", kind: "tools", href: "/tools", categories: [] },
+  { slug: "tech", label: "Tech Tree", kind: "placeholder", categories: [] },
+  { slug: "tools", label: "Tools", kind: "placeholder", categories: [] },
 ];
 
 export const ITEM_CATEGORIES = itemCategories;
