@@ -83,3 +83,19 @@ export function categoryForType(type: string | null | undefined): string {
   if (!type) return "misc";
   return TYPE_TO_CATEGORY[type] ?? "misc";
 }
+
+/** Per-category accent color (hex). Decorative dot only — the text label carries meaning. */
+export const CATEGORY_COLORS: Record<string, string> = {
+  weapons: "#d4654f",
+  guns: "#8b94a6",
+  ammo: "#e0a341",
+  resources: "#7fb069",
+  tools: "#4fb3a6",
+  attire: "#6aa9c9",
+  medical: "#d56a8c",
+  misc: "#9b8b73",
+};
+
+export function categoryColor(slug: string): string {
+  return CATEGORY_COLORS[slug] ?? CATEGORY_COLORS.misc;
+}

@@ -2,6 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   SECTIONS, ITEM_CATEGORIES, ITEM_CATEGORY_SLUGS,
   isItemCategory, categoryLabel, getSection, categoryForType,
+  CATEGORY_COLORS, categoryColor,
 } from "./taxonomy";
 
 describe("taxonomy", () => {
@@ -70,5 +71,18 @@ describe("categoryForType", () => {
   it("maps null/unknown types to misc", () => {
     expect(categoryForType(null)).toBe("misc");
     expect(categoryForType("SOME_NEW_TYPE")).toBe("misc");
+  });
+});
+
+describe("category colors", () => {
+  it("defines a color for every item category", () => {
+    for (const slug of ITEM_CATEGORY_SLUGS) {
+      expect(CATEGORY_COLORS[slug], `missing color for ${slug}`).toMatch(/^#[0-9a-f]{6}$/i);
+    }
+  });
+
+  it("falls back to the misc color for unknown slugs", () => {
+    expect(categoryColor("nope")).toBe(CATEGORY_COLORS.misc);
+    expect(categoryColor("weapons")).toBe("#d4654f");
   });
 });
