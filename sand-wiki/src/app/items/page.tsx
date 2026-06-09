@@ -1,7 +1,7 @@
 import { listItems, listResources } from "@/lib/queries";
 import { ItemCard } from "@/components/ItemCard";
 import { ItemFilters } from "@/components/ItemFilters";
-import { ITEM_CATEGORIES } from "@/lib/taxonomy";
+import { ITEM_CATEGORIES, isItemCategory } from "@/lib/taxonomy";
 import type { ItemFilter } from "@/lib/item-filter";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -13,7 +13,9 @@ function str(v: string | string[] | undefined): string | undefined {
 export default async function ItemsPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
   const q = str(sp.q);
-  const category = str(sp.category);
+  const rawCategory = str(sp.category);
+  // Ignore unknown categories so a bad ?category= shows all items (and the select resets to "All").
+  const category = rawCategory && isItemCategory(rawCategory) ? rawCategory : undefined;
   const resource = str(sp.resource);
   const workbench = str(sp.workbench);
   const sortParam = str(sp.sort);
