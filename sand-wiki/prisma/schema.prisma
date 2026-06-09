@@ -8,70 +8,54 @@ datasource db {
 }
 
 model Item {
-  id               String  @id @default(cuid())
-  slug             String  @unique
-  name             String
-  description      String?
-  category         String
-  workbenchLevel   Int?
-  craftTimeSeconds Int?
-  unlockConditions String?
-  imageAlt         String?
-  isResource       Boolean @default(false)
-
-  unlockedById     String?
-  unlockedBy       TechNode? @relation("UnlockedItems", fields: [unlockedById], references: [id])
-
-  recipe           RecipeIngredient[] @relation("ItemRecipe")
-  usedIn           RecipeIngredient[] @relation("IngredientUsedIn")
-  techCosts        TechCost[]
-
-  @@index([category])
-  @@index([workbenchLevel])
-}
-
-model RecipeIngredient {
-  id           String @id @default(cuid())
-  itemId       String
-  item         Item   @relation("ItemRecipe", fields: [itemId], references: [id], onDelete: Cascade)
-  ingredientId String
-  ingredient   Item   @relation("IngredientUsedIn", fields: [ingredientId], references: [id], onDelete: Cascade)
-  quantity     Int
-
-  @@unique([itemId, ingredientId])
-  @@index([ingredientId])
-}
-
-model TechNode {
-  id            String @id @default(cuid())
-  slug          String @unique
+  id            String  @id @default(cuid())
+  slug          String  @unique
   name          String
   description   String?
+  category      String
+  isResource    Boolean @default(false)
+  storageStack  Int?
+  workbenchTier Int?
+  imageAlt      String?
 
-  costs         TechCost[]
-  prerequisites TechPrerequisite[] @relation("NodePrerequisites")
-  requiredBy    TechPrerequisite[] @relation("PrerequisiteOf")
-  unlockedItems Item[]             @relation("UnlockedItems")
+  producedBy    RecipeOutput[]
+  usedIn        RecipeInput[]
+
+  @@index([category])
+  @@index([workbenchTier])
 }
 
-model TechCost {
-  id         String   @id @default(cuid())
-  techNodeId String
-  techNode   TechNode @relation(fields: [techNodeId], references: [id], onDelete: Cascade)
-  resourceId String
-  resource   Item     @relation(fields: [resourceId], references: [id], onDelete: Cascade)
-  quantity   Int
+model Recipe {
+  id               String  @id @default(cuid())
+  slug             String  @unique
+  workbench        String?
+  tier             Int?
+  craftTimeSeconds Float?
 
-  @@unique([techNodeId, resourceId])
+  inputs           RecipeInput[]
+  outputs          RecipeOutput[]
 }
 
-model TechPrerequisite {
-  id             String   @id @default(cuid())
-  nodeId         String
-  node           TechNode @relation("NodePrerequisites", fields: [nodeId], references: [id], onDelete: Cascade)
-  prerequisiteId String
-  prerequisite   TechNode @relation("PrerequisiteOf", fields: [prerequisiteId], references: [id], onDelete: Cascade)
+model RecipeInput {
+  id       String @id @default(cuid())
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  itemId   String
+  item     Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  amount   Int
 
-  @@unique([nodeId, prerequisiteId])
-  @@index([prerequisiteId])
+  @@index([itemId])
+  @@index([recipeId])
+}
+
+model RecipeOutput {
+  id       String @id @default(cuid())
+  recipeId String
+  recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
+  itemId   String
+  item     Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  amount   Int
+
+  @@index([itemId])
+  @@index([recipeId])
 }
