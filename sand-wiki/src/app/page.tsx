@@ -27,7 +27,7 @@ export default function HomePage() {
             </form>
             <div className="mt-4 flex flex-wrap justify-center gap-2">
               {ITEM_CATEGORIES.map((c) => (
-                <Link key={c.slug} href={`/items?category=${c.slug}`} className="badge badge-outline badge-lg hover:badge-primary">
+                <Link key={c.slug} href={`/items?category=${c.slug}`} className="badge badge-outline badge-lg hover:bg-primary hover:text-primary-content hover:border-primary">
                   {c.label}
                 </Link>
               ))}

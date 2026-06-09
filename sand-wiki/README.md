@@ -54,7 +54,8 @@ players find crafting recipes, item details, and the technology tree.
 | Framework | **Next.js 16** (App Router, TypeScript) — UI **and** data access in one app, no separate API service |
 | Database | **PostgreSQL** (hosted; e.g. [Neon](https://neon.tech) or [Supabase](https://supabase.com)) |
 | ORM | **Prisma 6** |
-| Styling | **Tailwind CSS** (v4) |
+| Styling | **Tailwind CSS** (v4) + **DaisyUI 5** with custom "Desert Raiders" themes (dark `desertnight` / light `desertday`, toggle) |
+| Fonts | **Oswald** (display headings) via `next/font` |
 | Graph | **React Flow** (tech-tree visualization) |
 | Unit tests | **Vitest** |
 | E2E + a11y | **Playwright** + **axe-core** |
@@ -142,18 +143,23 @@ sand-wiki/
 │  │  ├─ item-filter.test.ts
 │  │  ├─ queries.ts          # all database read functions used by pages
 │  │  └─ db.ts               # Prisma client singleton
+│  ├─ lib/taxonomy.ts        # nav sections + item categories (single source of truth)
 │  ├─ app/
-│  │  ├─ layout.tsx          # shell: nav + persistent disclaimer footer
-│  │  ├─ page.tsx            # landing + search
+│  │  ├─ layout.tsx          # shell: navbar + theme init + disclaimer footer
+│  │  ├─ page.tsx            # landing hero: search + category chips + section grid
 │  │  ├─ items/page.tsx      # item list (search / filter / sort)
 │  │  ├─ items/[slug]/page.tsx  # item detail (recipe + "used in")
 │  │  ├─ tech/page.tsx       # tech graph + table + cost calculator
+│  │  ├─ environment/, tramplers/  # "coming soon" placeholder sections
+│  │  ├─ tools/page.tsx      # site calculators index
 │  │  ├─ about/page.tsx      # disclaimer / legal
-│  │  └─ globals.css
+│  │  └─ globals.css         # DaisyUI + custom desert themes + font token
 │  └─ components/
-│     ├─ SearchBar.tsx
+│     ├─ MainNav.tsx         # DaisyUI navbar (taxonomy-driven)
+│     ├─ ThemeToggle.tsx     # dark/light theme switch (client)
 │     ├─ ItemCard.tsx
 │     ├─ ItemFilters.tsx
+│     ├─ SectionPlaceholder.tsx  # shared "coming soon" view
 │     ├─ TechTreeGraph.tsx   # React Flow (decorative, inert)
 │     └─ TechTreeTable.tsx   # accessible equivalent of the graph
 ├─ tests/e2e/wiki.spec.ts    # Playwright + axe specs
@@ -173,8 +179,9 @@ functions in `queries.ts`; the database is only touched at request time.
 All entities live in `prisma/schema.prisma`:
 
 - **`Item`** — both manufacturable items **and** raw resources (distinguished by `isResource`),
-  since recipes reference both. Fields: `slug`, `name`, `description`, `type`, `workbenchLevel`,
-  `craftTimeSeconds`, `unlockConditions`, `imageAlt`, optional `unlockedBy` (a `TechNode`).
+  since recipes reference both. Fields: `slug`, `name`, `description`, `category` (validated against
+  `src/lib/taxonomy.ts`), `workbenchLevel`, `craftTimeSeconds`, `unlockConditions`, `imageAlt`,
+  optional `unlockedBy` (a `TechNode`).
 - **`RecipeIngredient`** — a self-referential join: an item's recipe is a list of
   `(ingredient, quantity)`. Powers both "what's in this" and the reverse "used in".
 - **`TechNode`** — a technology in the tree.
@@ -206,7 +213,7 @@ it's safe to re-run after each game update.
        {
          "slug": "scrap-rifle",
          "name": "Scrap Rifle",
-         "type": "weapon",
+         "category": "weapons",
          "isResource": false,
          "workbenchLevel": 2,
          "craftTimeSeconds": 30,
@@ -235,6 +242,9 @@ it's safe to re-run after each game update.
    ```
    - `ingredient`, `resource`, `unlockedBy`, and `prerequisites` entries all reference other
      entities by their **`slug`**. The seed resolves them and fails loudly if a slug is missing.
+   - `category` must be one of the item categories defined in `src/lib/taxonomy.ts`
+     (`weapons`, `guns`, `resources`, `attire`, `tools`, `medical`, `ammo`, `misc`); the seed
+     rejects unknown categories.
    - Raw resources are just items with `"isResource": true` (and usually no recipe).
 
 3. **Changing the schema?** Edit `prisma/schema.prisma`, then
@@ -266,9 +276,9 @@ Accessibility is a first-class requirement, not an afterthought:
 - The decorative tech-tree graph is marked `inert` (removed from focus order and the
   accessibility tree); the **`TechTreeTable`** carries the same information for keyboard and
   screen-reader users.
-- Dark theme with checked color contrast.
+- Dark (`desertnight`) and light (`desertday`) DaisyUI themes, both checked for color contrast.
 - `alt` text stored for every image.
-- Automated **axe** checks run on every page in the e2e suite.
+- Automated **axe** checks run on every page in the e2e suite, in **both** themes.
 
 ---
 
@@ -316,9 +326,11 @@ already leaves room for this.
 - Specs and the implementation plan live in `docs/superpowers/` at the repository root.
 - The app intentionally runs as a **single Next.js application** (no separate Express backend) and
   uses **hosted Postgres** rather than local Docker.
-- The dark theme is applied via Tailwind utilities on `<body>` in `layout.tsx`; do **not** set
-  `background`/`color` on `body` in `globals.css` (it overrides those utilities and breaks
-  contrast).
+- Theming uses **DaisyUI**: the two desert themes are defined with `@plugin "daisyui/theme"` in
+  `globals.css`, and components use semantic classes (`bg-base-100`, `text-base-content`,
+  `btn-primary`, `card`, `badge`, …) so both themes work automatically. Prefer those over raw
+  color utilities. The default theme is set on `<html data-theme>`; `ThemeToggle` + a small
+  anti-FOUC script in `layout.tsx` persist and apply the user's choice.
 
 ---
 
