@@ -2,8 +2,8 @@ import { test, expect } from "@playwright/test";
 import AxeBuilder from "@axe-core/playwright";
 
 const pages = [
-  "/", "/items", "/items/sniper-rifle-silencer", "/tech", "/tools",
-  "/about", "/environment", "/tramplers",
+  "/", "/items", "/items/sniper-rifle-silencer", "/items/c4-dynamite", "/items/pistol-ammo",
+  "/tech", "/tools", "/about", "/environment", "/tramplers",
 ];
 
 for (const path of pages) {
@@ -98,4 +98,25 @@ test("tech section is a placeholder explaining the missing data", async ({ page 
   await expect(page.getByText(/tech tree isn't available/i)).toBeVisible();
   // The old calculator controls are gone.
   await expect(page.getByRole("button", { name: /calculate/i })).toHaveCount(0);
+});
+
+test("buyable item shows a Buy section and header badge", async ({ page }) => {
+  await page.goto("/items/c4-dynamite");
+  await expect(page.getByLabel("Buyable")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Buy" })).toBeVisible();
+  await expect(page.getByText(/for 10 crowns/i)).toBeVisible();
+});
+
+test("sellable item lists all sell tiers with a best-price marker", async ({ page }) => {
+  await page.goto("/items/pistol-ammo");
+  await expect(page.getByLabel("Sellable")).toBeVisible();
+  await expect(page.getByRole("heading", { name: "Sell" })).toBeVisible();
+  await expect(page.getByText(/for 1,000 crowns/i)).toBeVisible();
+  await expect(page.getByText("Best")).toBeVisible();
+});
+
+test("items grid marks buyable and sellable items", async ({ page }) => {
+  await page.goto("/items");
+  await expect(page.locator('a[href="/items/c4-dynamite"]').getByLabel("Buyable")).toBeVisible();
+  await expect(page.locator('a[href="/items/pistol-ammo"]').getByLabel("Sellable")).toBeVisible();
 });
