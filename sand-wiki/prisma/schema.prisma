@@ -17,6 +17,8 @@ model Item {
   storageStack  Int?
   workbenchTier Int?
   imageAlt      String?
+  icon          String?
+  derivedName   String?
 
   producedBy    RecipeOutput[]
   usedIn        RecipeInput[]
