@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import { searchSuggestions, type IndexItem } from "./search";
 
 const index: IndexItem[] = [
-  { slug: "sniper-rifle", name: "1874s Petros Sniper Rifle", category: "guns", derivedName: "Sniper Rifle" },
+  { slug: "sniper-rifle", name: "1874s Petros Sniper Rifle", category: "weapons", derivedName: "Sniper Rifle" },
   { slug: "pistol-ammo", name: "8x21 mm Ammo", category: "ammo", derivedName: "Pistol Ammo" },
   { slug: "energy-bar", name: "NZ Mk2 Energy Rod", category: "medical", derivedName: "Energy Bar" },
 ];
@@ -26,7 +26,7 @@ describe("searchSuggestions", () => {
 
   it("caps item results at 8", () => {
     const many: IndexItem[] = Array.from({ length: 20 }, (_, n) => ({
-      slug: `gun-${n}`, name: `Gun ${n}`, category: "guns", derivedName: `Gun ${n}`,
+      slug: `gun-${n}`, name: `Gun ${n}`, category: "weapons", derivedName: `Gun ${n}`,
     }));
     expect(searchSuggestions("gun", many).items).toHaveLength(8);
   });
