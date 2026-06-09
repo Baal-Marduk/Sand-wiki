@@ -1,9 +1,8 @@
 import Link from "next/link";
-import { CategoryTag } from "@/components/CategoryTag";
 import { ItemIcon } from "@/components/ItemIcon";
 
 export interface ItemCardData {
-  slug: string; name: string; icon?: string | null; category: string; workbenchTier: number | null;
+  slug: string; name: string; icon?: string | null; workbenchTier: number | null;
   buyable?: boolean; sellable?: boolean;
 }
 
@@ -17,9 +16,6 @@ export function ItemCard({ item }: { item: ItemCardData }) {
         <ItemIcon name={item.name} icon={item.icon} size="card" decorative />
         <div className="flex-1 min-w-0">
           <div className="font-medium truncate">{item.name}</div>
-          <div className="mt-1">
-            <CategoryTag slug={item.category} size="sm" />
-          </div>
         </div>
         <div className="flex flex-col items-end gap-1 shrink-0">
           {item.workbenchTier !== null && (
