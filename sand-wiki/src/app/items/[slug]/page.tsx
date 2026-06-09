@@ -46,7 +46,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   return (
     <article className="py-6 space-y-6 max-w-5xl">
       <header className="flex flex-wrap items-start gap-4">
-        <ItemIcon name={item.name} size="lg" />
+        <ItemIcon name={item.name} icon={item.icon} size="lg" />
         <div className="flex-1 min-w-[16rem] space-y-2">
           <h1 className="font-display text-3xl font-bold">{item.name}</h1>
           <div className="flex flex-wrap gap-2">

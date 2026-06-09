@@ -8,7 +8,7 @@ export function IngredientList({ rows }: { rows: RecipeCardRow[] }) {
     <div className="flex flex-wrap gap-x-4 gap-y-1">
       {rows.map((r, i) => (
         <span key={`${r.slug}-${i}`} className="inline-flex items-center gap-1">
-          <ItemIcon name={r.name} size="sm" />
+          <ItemIcon name={r.name} icon={r.icon} size="sm" />
           <Link href={`/items/${r.slug}`} className="link">{r.name}</Link>
           <span className="text-xs text-base-content/60">×{r.amount}</span>
         </span>

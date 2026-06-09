@@ -49,7 +49,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
             <ItemCard
               key={i.id}
               item={{
-                slug: i.slug, name: i.name, category: i.category, workbenchTier: i.workbenchTier,
+                slug: i.slug, name: i.name, icon: i.icon, category: i.category, workbenchTier: i.workbenchTier,
                 buyable: tradeFlags.buyable.has(i.slug),
                 sellable: tradeFlags.sellable.has(i.slug),
               }}
