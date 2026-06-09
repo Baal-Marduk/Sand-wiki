@@ -14,7 +14,6 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
   const sp = await searchParams;
   const q = str(sp.q);
   const rawCategory = str(sp.category);
-  // Ignore unknown categories so a bad ?category= shows all items (and the select resets to "All").
   const category = rawCategory && isItemCategory(rawCategory) ? rawCategory : undefined;
   const resource = str(sp.resource);
   const workbench = str(sp.workbench);
@@ -36,13 +35,15 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
 
   return (
     <section className="py-6">
-      <h1 className="text-2xl font-bold mb-4">Items</h1>
+      <h1 className="font-display text-2xl font-bold mb-4">Items</h1>
       <ItemFilters
         categories={ITEM_CATEGORIES}
         resources={resources.map((r) => ({ id: r.id, name: r.name }))}
         current={{ q, category, workbench, resource, sort }}
       />
-      <p className="text-sm text-neutral-400 mb-2" aria-live="polite">{items.length} result(s)</p>
+      <p className="text-sm text-base-content/70 mb-3" aria-live="polite">
+        <span className="badge badge-ghost">{items.length} result(s)</span>
+      </p>
       {items.length === 0 ? (
         <p>No items match your filters.</p>
       ) : (
