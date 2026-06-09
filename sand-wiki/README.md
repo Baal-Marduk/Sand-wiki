@@ -1,6 +1,6 @@
 # Unofficial SAND Wiki
 
-A community-built, **unofficial** database for the game *SAND: Raiders of Sofia* — helping
+A community-built, **unofficial** database for the game *SAND: Raiders of Sophie* — helping
 players find crafting recipes, item details, and the technology tree.
 
 > ⚠️ **Disclaimer:** This is a fan-made, unofficial project. It is **not affiliated with,

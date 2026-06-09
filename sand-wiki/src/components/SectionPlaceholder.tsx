@@ -7,16 +7,16 @@ export function SectionPlaceholder({ sectionSlug }: { sectionSlug: string }) {
 
   return (
     <section className="py-8 space-y-4 max-w-2xl">
-      <h1 className="text-2xl font-bold">{section.label}</h1>
-      <p className="rounded border border-amber-700/60 bg-amber-950/30 px-4 py-3 text-amber-200">
-        Coming soon — this section isn&apos;t available yet.
-      </p>
+      <h1 className="font-display text-2xl font-bold">{section.label}</h1>
+      <div role="alert" className="alert alert-warning">
+        <span>Coming soon — this section isn&apos;t available yet.</span>
+      </div>
       {section.categories.length > 0 && (
         <div>
-          <h2 className="text-lg font-semibold mb-2">Planned categories</h2>
-          <ul className="list-disc list-inside text-neutral-300">
-            {section.categories.map((c) => <li key={c.slug}>{c.label}</li>)}
-          </ul>
+          <h2 className="font-display text-lg font-semibold mb-2">Planned categories</h2>
+          <div className="flex flex-wrap gap-2">
+            {section.categories.map((c) => <span key={c.slug} className="badge badge-outline badge-lg">{c.label}</span>)}
+          </div>
         </div>
       )}
     </section>
