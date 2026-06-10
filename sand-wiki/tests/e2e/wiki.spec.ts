@@ -196,3 +196,16 @@ test("weapon detail shows a rarity badge and a stat box with ammo link", async (
   await expect(page.getByText("Damage")).toBeVisible();
   await expect(page.getByRole("link", { name: "9x42 mm Ammo" })).toBeVisible();
 });
+
+test("crate detail shows loot tier tabs with linked items", async ({ page }) => {
+  await page.goto("/environment/crate-of-shells");
+  await expect(page.getByRole("tab", { name: "Normal" })).toBeVisible();
+  await expect(page.getByRole("tab", { name: "Rare", exact: true })).toBeVisible();
+  await expect(page.getByRole("link", { name: "40mm Shell" })).toBeVisible();
+});
+
+test("item page links back to crates via a Loot tab", async ({ page }) => {
+  await page.goto("/items/small-cannon-ammo");
+  await page.getByRole("tab", { name: "Loot" }).click();
+  await expect(page.getByRole("link", { name: "Crate of Shells" }).first()).toBeVisible();
+});
