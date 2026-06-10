@@ -2,6 +2,7 @@ import { prisma } from "./db";
 import { buildItemQuery, type ItemFilter } from "./item-filter";
 import { toRecipeCard } from "./recipes";
 import { CURRENCY_SLUG } from "./trades";
+import { ammoCaliber, weaponCaliber } from "./ammo";
 
 const recipeInclude = {
   recipe: { include: { inputs: { include: { item: true } }, outputs: { include: { item: true } } } },
@@ -133,4 +134,29 @@ export async function getWeaponsUsingAmmo(ammoSlug: string): Promise<AmmoUser[]>
     select: { slug: true, name: true, icon: true, category: true },
     orderBy: { name: "asc" },
   });
+}
+
+/** {slug,name,icon} rows for ItemLinkList. */
+type LinkItem = { slug: string; name: string; icon: string | null };
+
+/** Ammo items whose caliber family matches `caliber` (all interchangeable variants). */
+export async function getAmmoByCaliber(caliber: string): Promise<LinkItem[]> {
+  const rows = await prisma.item.findMany({
+    where: { category: "ammo" },
+    select: { slug: true, name: true, icon: true },
+    orderBy: { name: "asc" },
+  });
+  return rows.filter((r) => ammoCaliber(r.name) === caliber);
+}
+
+/** Weapons/artillery that fire the given caliber family. */
+export async function getWeaponsByCaliber(caliber: string): Promise<LinkItem[]> {
+  const rows = await prisma.item.findMany({
+    where: { category: { in: ["weapons", "artillery"] } },
+    select: { slug: true, name: true, icon: true, stats: true },
+    orderBy: { name: "asc" },
+  });
+  return rows
+    .filter((r) => weaponCaliber(r.slug, (r.stats as { ammoName?: string } | null)?.ammoName) === caliber)
+    .map(({ slug, name, icon }) => ({ slug, name, icon }));
 }
