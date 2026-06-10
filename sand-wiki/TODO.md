@@ -5,7 +5,7 @@
 - [x] Order artillery by type
 - [x] Add EMP and Delayed detonation ammo for 80mm (icons added; descriptions are still TODO placeholders)
 - [x] add alphanumeric ordering on tables columns (click headers: asc → desc → default)
-- add hover effect on links and tabs and interactive ui in app
+- [x] add hover effect on links and tabs and interactive ui in app (global hover system in globals.css)
 - Make rarity background color slightly translucent like in game
 - Fix import from wiki in crates content sometimes mismatching "pneumatic components" for example being pneumatic parts
 - Add landmarks and loot containers to search auto fill
