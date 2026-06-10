@@ -6,7 +6,7 @@ import { CategoryIcon } from "@/components/CategoryIcon";
 
 // Explicit full-contrast text (not DaisyUI's dimmed .menu links) so the nav
 // meets WCAG AA contrast in both the dark and light themes.
-const linkCls = "text-base-content hover:text-primary px-2 py-1 rounded transition-colors";
+const linkCls = "nav-link text-base-content px-2 py-1 rounded";
 const dropdownItemCls = "flex items-center gap-2 px-2 py-1 rounded text-base-content hover:bg-base-300";
 
 export function MainNav() {
