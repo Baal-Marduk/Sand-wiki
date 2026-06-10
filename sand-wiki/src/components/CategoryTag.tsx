@@ -1,15 +1,12 @@
-import { categoryColor, categoryLabel } from "@/lib/taxonomy";
+import { categoryLabel } from "@/lib/taxonomy";
+import { CategoryIcon } from "@/components/CategoryIcon";
 
-/** Neutral pill with a colored dot. The text label is the meaningful signal;
- *  the dot is decorative (aria-hidden) so there is no color-contrast concern. */
+/** Neutral pill with a category icon. The text label is the meaningful signal;
+ *  the icon is decorative (aria-hidden). */
 export function CategoryTag({ slug, size }: { slug: string; size?: "sm" }) {
   return (
     <span className={`badge badge-outline gap-1.5 ${size === "sm" ? "badge-sm" : ""}`}>
-      <span
-        className="size-2 rounded-full"
-        style={{ backgroundColor: categoryColor(slug) }}
-        aria-hidden="true"
-      />
+      <CategoryIcon slug={slug} className="size-3.5 shrink-0" />
       {categoryLabel(slug)}
     </span>
   );

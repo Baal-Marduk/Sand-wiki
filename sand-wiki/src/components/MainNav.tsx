@@ -1,7 +1,8 @@
 import Link from "next/link";
-import { SECTIONS, categoryColor } from "@/lib/taxonomy";
+import { SECTIONS } from "@/lib/taxonomy";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SearchBox } from "@/components/SearchBox";
+import { CategoryIcon } from "@/components/CategoryIcon";
 
 // Explicit full-contrast text (not DaisyUI's dimmed .menu links) so the nav
 // meets WCAG AA contrast in both the dark and light themes.
@@ -31,7 +32,7 @@ export function MainNav() {
                         {section.categories.map((c) => (
                           <li key={c.slug}>
                             <Link href={`/${section.slug}?category=${c.slug}`} className={dropdownItemCls}>
-                              <span className="size-2 rounded-full" style={{ backgroundColor: categoryColor(c.slug) }} aria-hidden="true" />
+                              <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
                               {c.label}
                             </Link>
                           </li>

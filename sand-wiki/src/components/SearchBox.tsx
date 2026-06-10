@@ -2,7 +2,7 @@
 
 import { Fragment, useEffect, useId, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
-import { categoryColor } from "@/lib/taxonomy";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { searchSuggestions, type IndexItem, type Suggestions } from "@/lib/search";
 
 // Shared across all instances — fetch the index at most once per page load.
@@ -145,7 +145,7 @@ export function SearchBox({ variant }: { variant: "navbar" | "hero" }) {
                   onMouseEnter={() => setActive(i)}
                   onMouseDown={(e) => { e.preventDefault(); navigate(f); }}
                 >
-                  <span className="size-2 rounded-full" style={{ backgroundColor: categoryColor(f.category) }} aria-hidden="true" />
+                  <CategoryIcon slug={f.category} className="size-4 shrink-0" />
                   {f.label}
                   <span className="ml-auto text-xs text-base-content/50" aria-hidden="true">
                     {f.kind === "category" ? "filter" : "page"}

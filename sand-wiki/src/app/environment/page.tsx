@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { getSection, isEnvCategory, categoryColor } from "@/lib/taxonomy";
+import { getSection, isEnvCategory } from "@/lib/taxonomy";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { listEnvEntities, envCategoryCounts } from "@/lib/queries";
 import { EnvCard } from "@/components/EnvCard";
 
@@ -27,7 +28,7 @@ export default async function EnvironmentPage({ searchParams }: { searchParams: 
                   href={`/environment?category=${c.slug}`}
                   className="card bg-base-200 hover:bg-base-300 transition-colors p-4 flex flex-row items-center gap-3"
                 >
-                  <span className="size-3 rounded-full" style={{ backgroundColor: categoryColor(c.slug) }} aria-hidden="true" />
+                  <CategoryIcon slug={c.slug} className="size-5 shrink-0" />
                   <span className="font-medium flex-1">{c.label}</span>
                   <span className="badge badge-ghost badge-sm">{n > 0 ? n : "coming soon"}</span>
                 </Link>

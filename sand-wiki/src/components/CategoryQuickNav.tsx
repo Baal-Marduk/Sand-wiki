@@ -1,6 +1,6 @@
 import Link from "next/link";
 import type { Category } from "@/lib/taxonomy";
-import { categoryColor } from "@/lib/taxonomy";
+import { CategoryIcon } from "@/components/CategoryIcon";
 
 /** Responsive category switcher. Sticky vertical list on lg+, horizontal scroll
  *  row of chips below lg. Highlights the active category and preserves ?q=. */
@@ -29,7 +29,7 @@ export function CategoryQuickNav({
                     : "border-base-300 lg:border-transparent hover:bg-base-200 text-base-content"
                 }`}
               >
-                <span className="size-2 rounded-full" style={{ backgroundColor: categoryColor(c.slug) }} aria-hidden="true" />
+                <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
                 {c.label}
               </Link>
             </li>
