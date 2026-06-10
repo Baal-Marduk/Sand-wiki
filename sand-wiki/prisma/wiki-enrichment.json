@@ -191,6 +191,15 @@
       "value": 7
     }
   },
+  "resource-metal-t1": {
+    "rarity": "Uncommon"
+  },
+  "resource-metal-t2": {
+    "rarity": "Rare"
+  },
+  "resource-metal-t3": {
+    "rarity": "Noteworthy"
+  },
   "resource-mixtures": {
     "rarity": "Common",
     "stats": {
