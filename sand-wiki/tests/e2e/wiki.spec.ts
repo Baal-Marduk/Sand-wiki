@@ -241,3 +241,25 @@ test("ammo page lists the weapons that use it via a Used by tab", async ({ page 
   // Vertical list shows the weapon name as visible text beside its icon.
   await expect(weaponLink).toContainText("Blitz 10R Pistol");
 });
+
+test("an ammo variant lists guns of its caliber via Used by", async ({ page }) => {
+  // "11x54 mm AP Ammo" shares the 11x54 mm family with the base round, so it must
+  // list the Petros rifles even though those weapons point at the base ammo slug.
+  await page.goto("/items/sniper-rifle-ammo-high-penetration");
+  await page.getByRole("tab", { name: "Used by" }).click();
+  await expect(page.locator('[role="tabpanel"] a[href="/items/sniper-rifle"]')).toBeVisible();
+});
+
+test("artillery turret has an Ammo tab listing its shells", async ({ page }) => {
+  await page.goto("/items/game-packed-turret-t1-container");
+  await page.getByRole("tab", { name: "Ammo" }).click();
+  const shell = page.locator('[role="tabpanel"] a[href="/items/turret-ammo"]');
+  await expect(shell).toBeVisible();
+  await expect(shell).toContainText("80 mm Shell");
+});
+
+test("ammo stat box shows the precise class label as its type", async ({ page }) => {
+  await page.goto("/items/sniper-rifle-ammo");
+  // The stat box is the only <dl> on the page; its Type cell now reads the class label.
+  await expect(page.locator("dl").getByText("Sniper")).toBeVisible();
+});
