@@ -1,5 +1,6 @@
 import Link from "next/link";
 import type { CrateDrop } from "@/lib/queries";
+import { SortableTable, type SortableTableRow } from "@/components/SortableTable";
 
 /** Reverse loot view on an item page: which crates drop this item (grouped, with tiers). */
 export function CrateDropList({ drops }: { drops: CrateDrop[] }) {
@@ -9,19 +10,22 @@ export function CrateDropList({ drops }: { drops: CrateDrop[] }) {
     if (!e.tiers.includes(d.tier)) e.tiers.push(d.tier);
     byCrate.set(d.crateSlug, e);
   }
+
+  const rows: SortableTableRow[] = [...byCrate.entries()].map(([slug, c]) => ({
+    keys: [c.name.toLowerCase(), c.tiers.join(", ")],
+    cells: [
+      <Link key="c" href={`/environment/${slug}`} className="link">{c.name}</Link>,
+      <span key="t" className="whitespace-nowrap">{c.tiers.join(", ")}</span>,
+    ],
+  }));
+
   return (
     <div className="overflow-x-auto">
-      <table className="table">
-        <thead><tr><th>Crate</th><th>Tiers</th></tr></thead>
-        <tbody>
-          {[...byCrate.entries()].map(([slug, c]) => (
-            <tr key={slug}>
-              <td><Link href={`/environment/${slug}`} className="link">{c.name}</Link></td>
-              <td className="whitespace-nowrap">{c.tiers.join(", ")}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
+      <SortableTable
+        caption="Crates that drop this item"
+        columns={[{ label: "Crate" }, { label: "Tiers" }]}
+        rows={rows}
+      />
     </div>
   );
 }
