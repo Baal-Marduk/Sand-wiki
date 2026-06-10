@@ -15,7 +15,7 @@ const themeInit = `(function(){try{var t=localStorage.getItem('sand-theme');if(t
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" data-theme="desertnight" className={oswald.variable}>
+    <html lang="en" data-theme="desertnight" className={oswald.variable} suppressHydrationWarning>
       <body className="min-h-screen bg-base-100 text-base-content flex flex-col">
         <script dangerouslySetInnerHTML={{ __html: themeInit }} />
         <header className="sticky top-0 z-40 border-b border-base-300 bg-base-100/90 backdrop-blur supports-[backdrop-filter]:bg-base-100/80">
