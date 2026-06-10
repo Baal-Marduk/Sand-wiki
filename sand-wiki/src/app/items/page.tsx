@@ -3,7 +3,7 @@ import { ItemCard } from "@/components/ItemCard";
 import { CategoryQuickNav } from "@/components/CategoryQuickNav";
 import { FilterSelect } from "@/components/FilterSelect";
 import { ITEM_CATEGORIES, isItemCategory, isWeaponClassCategory } from "@/lib/taxonomy";
-import { isRarity } from "@/lib/rarity";
+import { isRarity, rarityTier } from "@/lib/rarity";
 import type { ItemFilter } from "@/lib/item-filter";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -20,6 +20,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
   const rawRarity = str(sp.rarity);
   const rarity = rawRarity && isRarity(rawRarity) ? rawRarity : undefined;
   const sort: "rarity" | "name" = str(sp.sort) === "name" ? "name" : "rarity";
+  const sortParam = sort === "name" ? sort : undefined;
 
   // Option lists are scoped to the current category + search, independent of the
   // rarity/class/tier constraints (so they show every value available in this context).
@@ -30,6 +31,8 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
     weaponClassMode ? listItemClasses(scope) : Promise.resolve<string[]>([]),
     weaponClassMode ? Promise.resolve<number[]>([]) : listWorkbenchTiers(scope),
   ]);
+
+  const raritiesSorted = [...rarities].sort((a, b) => rarityTier(a) - rarityTier(b));
 
   // Validate the type-dependent params against what's actually available.
   const rawClass = str(sp.class);
@@ -61,7 +64,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
               name="sort"
               label="Sort"
               allLabel="Rarity"
-              value={sort === "name" ? "name" : undefined}
+              value={sortParam}
               options={[{ value: "name", label: "Name (A–Z)" }]}
             />
             {rarities.length > 0 && (
@@ -70,7 +73,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
                 label="Rarity"
                 allLabel="All rarities"
                 value={rarity}
-                options={rarities.map((r) => ({ value: r, label: r }))}
+                options={raritiesSorted.map((r) => ({ value: r, label: r }))}
               />
             )}
             {weaponClassMode && classes.length > 0 && (
@@ -108,7 +111,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
           )}
         </div>
         <div className="order-1 lg:order-2">
-          <CategoryQuickNav categories={ITEM_CATEGORIES} current={category} query={q} sort={sort === "name" ? "name" : undefined} />
+          <CategoryQuickNav categories={ITEM_CATEGORIES} current={category} query={q} sort={sortParam} />
         </div>
       </div>
     </section>
