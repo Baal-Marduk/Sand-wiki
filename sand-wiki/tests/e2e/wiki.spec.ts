@@ -3,7 +3,7 @@ import AxeBuilder from "@axe-core/playwright";
 
 const pages = [
   "/", "/items", "/items/sniper-rifle-silencer", "/items/c4-dynamite", "/items/pistol-ammo",
-  "/tech", "/tools", "/about", "/environment", "/tramplers",
+  "/tech", "/tools", "/about", "/environment", "/environment/weapon-crate", "/tramplers",
 ];
 
 for (const path of pages) {
@@ -94,11 +94,24 @@ test("resource detail exposes a Used in tab", async ({ page }) => {
   await expect(page.getByRole("tab", { name: "Used in" })).toBeVisible();
 });
 
-test("environment section shows a coming-soon placeholder", async ({ page }) => {
+test("environment landing lists Loot Containers and links to a container", async ({ page }) => {
   await page.goto("/environment");
   await expect(page.getByRole("heading", { name: "Environment" })).toBeVisible();
+  await page.getByRole("link", { name: /Loot Containers/ }).click();
+  await expect(page).toHaveURL(/category=loot-containers/);
+  await expect(page.getByRole("link", { name: "Weapon Crate" })).toBeVisible();
+});
+
+test("loot container detail shows a description and a source link", async ({ page }) => {
+  await page.goto("/environment/weapon-crate");
+  await expect(page.getByRole("heading", { name: "Weapon Crate" })).toBeVisible();
+  await expect(page.getByText(/Player Weapons/)).toBeVisible();
+  await expect(page.getByRole("link", { name: /sandgame\.wiki/ })).toHaveAttribute("href", /Weapon_Crate/);
+});
+
+test("an unpopulated environment category shows coming soon", async ({ page }) => {
+  await page.goto("/environment?category=game-modes");
   await expect(page.getByText(/coming soon/i)).toBeVisible();
-  await expect(page.getByText("Loot Containers")).toBeVisible();
 });
 
 test("tech section is a placeholder explaining the missing data", async ({ page }) => {
