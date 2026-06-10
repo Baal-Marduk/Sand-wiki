@@ -16,6 +16,14 @@ describe("stripWikiMarkup", () => {
     expect(stripWikiMarkup("==Top==\nx")).toBe("");
     expect(stripWikiMarkup("")).toBe("");
   });
+
+  it("drops bare Category/File tags but keeps inline category links' labels", () => {
+    expect(stripWikiMarkup("[[Category:Landmarks]]")).toBe("");
+    expect(stripWikiMarkup("[[File:x.png|256px]] Fort text.")).toBe("Fort text.");
+    expect(stripWikiMarkup("Stores [[:Category:Player Weapons|Player Weapons]] here.")).toBe(
+      "Stores Player Weapons here.",
+    );
+  });
 });
 
 describe("titleToSlug", () => {

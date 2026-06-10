@@ -1,4 +1,10 @@
 {
+  "archipel-von-leopold": {
+    "category": "landmarks",
+    "name": "Archipel Von Leopold",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Archipel_Von_Leopold"
+  },
   "crate-of-shells": {
     "category": "loot-containers",
     "name": "Crate of Shells",
@@ -156,10 +162,22 @@
       ]
     }
   },
+  "dreadnaught": {
+    "category": "landmarks",
+    "name": "Dreadnaught",
+    "description": "The Dreadnaught is a Landmark that can only be found in the game mode Storm Dive, and holds some of the best loot in the game.",
+    "sourceUrl": "https://sandgame.wiki/index.php/Dreadnaught"
+  },
+  "factorio": {
+    "category": "landmarks",
+    "name": "Factorio",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Factorio"
+  },
   "food-crate": {
     "category": "loot-containers",
     "name": "Food Crate",
-    "description": "The Rare Food Crate\nThe Food Crate is a Loot Container that can be found all across Sophie, most commonly at city and port Landmarks.\nJust like all containers, it has 3 \"Rarity\" tiers: Normal, Rare, and Very Rare. Normal crates contain Canned Food and Threads within. Rare and very rare crates additionally contain Leviathan Meat OR Coral Dust and Reinforced Leather Strips within, respectively.\nCrates also contain a hidden \"Quality\" tier that is primarily location driven based on where the crate spawns at.\nBoth the rarity and quality of a crate impact how much of each item the crate contains within.",
+    "description": "The Food Crate is a Loot Container that can be found all across Sophie, most commonly at city and port Landmarks.\nJust like all containers, it has 3 \"Rarity\" tiers: Normal, Rare, and Very Rare. Normal crates contain Canned Food and Threads within. Rare and very rare crates additionally contain Leviathan Meat OR Coral Dust and Reinforced Leather Strips within, respectively.\nCrates also contain a hidden \"Quality\" tier that is primarily location driven based on where the crate spawns at.\nBoth the rarity and quality of a crate impact how much of each item the crate contains within.",
     "sourceUrl": "https://sandgame.wiki/index.php/Food_Crate",
     "loot": {
       "tiers": [
@@ -285,6 +303,36 @@
       ]
     }
   },
+  "fort-arpad": {
+    "category": "landmarks",
+    "name": "Fort Arpad",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Fort_Arpad"
+  },
+  "fort-istria": {
+    "category": "landmarks",
+    "name": "Fort Istria",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Fort_Istria"
+  },
+  "fort-metternich": {
+    "category": "landmarks",
+    "name": "Fort Metternich",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Fort_Metternich"
+  },
+  "fort-tarndpol": {
+    "category": "landmarks",
+    "name": "Fort Tarndpol",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Fort_Tarndpol"
+  },
+  "kaiserplatz": {
+    "category": "landmarks",
+    "name": "Kaiserplatz",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Kaiserplatz"
+  },
   "medical-cabinet": {
     "category": "loot-containers",
     "name": "Medical Cabinet",
@@ -386,6 +434,12 @@
         }
       ]
     }
+  },
+  "meeresauge": {
+    "category": "landmarks",
+    "name": "Meeresauge",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Meeresauge"
   },
   "parts-crate": {
     "category": "loot-containers",
@@ -538,10 +592,46 @@
       ]
     }
   },
+  "rauchwolke": {
+    "category": "landmarks",
+    "name": "Rauchwolke",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Rauchwolke"
+  },
+  "schwalbenberg": {
+    "category": "landmarks",
+    "name": "Schwalbenberg",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Schwalbenberg"
+  },
+  "segen": {
+    "category": "landmarks",
+    "name": "Segen",
+    "description": "This page has no content, perhaps you would like to add some?",
+    "sourceUrl": "https://sandgame.wiki/index.php/Segen"
+  },
+  "storm-dive": {
+    "category": "game-modes",
+    "name": "Storm Dive",
+    "description": "Storm Dive is one of the two game modes in Sand, after selecting your trampler, inventory and loadout, you will be dropped onto the surface of Sophie by the insertion ship. You'll have limited time to explore, fight and loot before being consumed by the ever approaching dust storm, so you'd better keep moving!",
+    "sourceUrl": "https://sandgame.wiki/index.php/Storm_Dive"
+  },
+  "strudel": {
+    "category": "landmarks",
+    "name": "Strudel",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Strudel"
+  },
+  "stufeninsel": {
+    "category": "landmarks",
+    "name": "Stufeninsel",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Stufeninsel"
+  },
   "suspicious-pile-of-sand": {
     "category": "loot-containers",
     "name": "Suspicious Pile of Sand",
-    "description": "The Suspicious Pile of Sand is a Loot Container that can only be found at Shipwrecks. Unlike other containers, the pile only has one rarity: Normal.\nIt is suspected that the pile does have a rarity value, but this information is hidden from the players view unlike other containers that state their rarity in the name and by visual color differences. As such, it can only be speculated at if the container contains different drop tables or not.\nThe pile is similar to locked Boxes in that it requires a Key to open, that being a Rusty Shovel, to unearth the pile and get to whatever buried treasure it contains. Unlike locked boxes, the pile is a static object and can not be picked up.\nThe contents within a pile is extremely varied and comes in distinct sets. Data is still being collected on what exactly can be found but notable drops include: Armored Jacket, AV1 Rocket Launcher and Rockets, Triplet Shotgun, and KF866/9R \"Mehrzel\" Repeater.\nLoot Container",
+    "description": "The Suspicious Pile of Sand is a Loot Container that can only be found at Shipwrecks. Unlike other containers, the pile only has one rarity: Normal.\nIt is suspected that the pile does have a rarity value, but this information is hidden from the players view unlike other containers that state their rarity in the name and by visual color differences. As such, it can only be speculated at if the container contains different drop tables or not.\nThe pile is similar to locked Boxes in that it requires a Key to open, that being a Rusty Shovel, to unearth the pile and get to whatever buried treasure it contains. Unlike locked boxes, the pile is a static object and can not be picked up.\nThe contents within a pile is extremely varied and comes in distinct sets. Data is still being collected on what exactly can be found but notable drops include: Armored Jacket, AV1 Rocket Launcher and Rockets, Triplet Shotgun, and KF866/9R \"Mehrzel\" Repeater.",
     "sourceUrl": "https://sandgame.wiki/index.php/Suspicious_Pile_of_Sand"
   },
   "valuables-safe": {
@@ -708,6 +798,18 @@
         }
       ]
     }
+  },
+  "venedig": {
+    "category": "landmarks",
+    "name": "Venedig",
+    "description": "",
+    "sourceUrl": "https://sandgame.wiki/index.php/Venedig"
+  },
+  "voyage": {
+    "category": "game-modes",
+    "name": "Voyage",
+    "description": "Voyage is one of the two game modes in Sand, after selecting your trampler, inventory and loadout, you will be dropped onto the surface of Sophie by the insertion ship.\nOnce the Voyage starts you have as long as you like to explore the surface of Sophie, gather resources and engage in piracy hang out with your new found friends!\nOnce you're ready to leave, you'll have to head to one of the Extraction Points scattered around Sophie, and use the radio placed at the top of the tower to engage the extraction",
+    "sourceUrl": "https://sandgame.wiki/index.php/Voyage"
   },
   "weapon-crate": {
     "category": "loot-containers",

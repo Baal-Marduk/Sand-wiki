@@ -46,37 +46,48 @@ async function main() {
   }
   const resolveSlug = (name) => overrides[norm(name)] ?? index.get(norm(name));
 
-  const titles = await members("Loot Container");
+  const CATS = [
+    { wiki: "Loot Container", slug: "loot-containers", loot: true },
+    { wiki: "Landmarks", slug: "landmarks", loot: false },
+    { wiki: "Gamemodes", slug: "game-modes", loot: false },
+  ];
   const out = {};
   const empty = [];
   const unresolved = new Set();
-  for (const title of titles) {
-    const wt = await wikitext(title);
-    const description = stripWikiMarkup(wt);
-    const slug = titleToSlug(title);
-    if (!description) empty.push(title);
-    out[slug] = {
-      category: "loot-containers",
-      name: title,
-      description,
-      sourceUrl: "https://sandgame.wiki/index.php/" + encodeURIComponent(title.replace(/ /g, "_")),
-    };
-    const tiers = parseLootTable(wt, title).map((t) => ({
-      tier: t.tier,
-      columns: t.columns,
-      entries: t.entries.map((e) => {
-        const itemSlug = resolveSlug(e.name);
-        if (!itemSlug) unresolved.add(e.name);
-        return itemSlug ? { slug: itemSlug, name: e.name, values: e.values } : { name: e.name, values: e.values };
-      }),
-    }));
-    if (tiers.length) out[slug].loot = { tiers };
-    const entryCount = tiers.reduce((n, t) => n + t.entries.length, 0);
-    console.log(`  ${title}: ${tiers.length} tiers, ${entryCount} entries`);
+  for (const cat of CATS) {
+    const titles = await members(cat.wiki);
+    for (const title of titles) {
+      const wt = await wikitext(title);
+      const description = stripWikiMarkup(wt);
+      const slug = titleToSlug(title);
+      if (out[slug]) { console.warn(`Slug collision "${slug}" (${title}) — keeping first`); continue; }
+      if (!description) empty.push(title);
+      out[slug] = {
+        category: cat.slug,
+        name: title,
+        description,
+        sourceUrl: "https://sandgame.wiki/index.php/" + encodeURIComponent(title.replace(/ /g, "_")),
+      };
+      if (cat.loot) {
+        const tiers = parseLootTable(wt, title).map((t) => ({
+          tier: t.tier,
+          columns: t.columns,
+          entries: t.entries.map((e) => {
+            const itemSlug = resolveSlug(e.name);
+            if (!itemSlug) unresolved.add(e.name);
+            return itemSlug ? { slug: itemSlug, name: e.name, values: e.values } : { name: e.name, values: e.values };
+          }),
+        }));
+        if (tiers.length) out[slug].loot = { tiers };
+        const entryCount = tiers.reduce((n, t) => n + t.entries.length, 0);
+        console.log(`  ${title}: ${tiers.length} tiers, ${entryCount} entries`);
+      }
+    }
+    console.log(`[${cat.slug}] ${titles.length} pages`);
   }
   const sorted = Object.fromEntries(Object.keys(out).sort().map((k) => [k, out[k]]));
   writeFileSync(join(__dirname, "env-content.json"), JSON.stringify(sorted, null, 2) + "\n");
-  console.log(`Wrote ${Object.keys(sorted).length} loot containers. Empty descriptions: ${empty.join(", ") || "none"}`);
+  console.log(`Wrote ${Object.keys(sorted).length} env entities. Empty descriptions: ${empty.join(", ") || "none"}`);
   if (unresolved.size) console.log(`Unresolved loot items: ${[...unresolved].join(", ")}`);
 }
 

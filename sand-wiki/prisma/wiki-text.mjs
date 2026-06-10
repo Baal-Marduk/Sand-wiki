@@ -20,8 +20,11 @@ export function stripWikiMarkup(wikitext) {
   s = s.replace(/<[^>]+>/g, " ");                    // html / tabber tags
   s = s.replace(/\{\|[\s\S]*?\|\}/g, " ");           // stray wikitables
   s = s.replace(/\[\[([^\]]+)\]\]/g, (_, inner) => { // [[a|b]] -> b, [[a]] -> a
+    const t = inner.trim();
+    if (/^:?\s*(File|Image)\s*:/i.test(t)) return ""; // file/image embeds
+    if (/^Category\s*:/i.test(t)) return "";          // bare category tag (no leading colon)
     const parts = inner.split("|");
-    return (parts[parts.length - 1] || "").replace(/^:?Category:/i, "").trim();
+    return (parts[parts.length - 1] || "").replace(/^:?\s*Category\s*:/i, "").trim();
   });
   s = s.replace(/'''?/g, "");                         // bold / italic
   s = s.replace(/[ \t]+/g, " ").replace(/ *\n+ */g, "\n").trim();
