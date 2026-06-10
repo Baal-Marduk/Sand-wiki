@@ -122,3 +122,15 @@ export async function getItemBySlug(slug: string) {
   const usedIn = item.usedIn.map((i) => toRecipeCard(i.recipe));
   return { ...item, craftedBy, usedIn };
 }
+
+export interface AmmoUser { slug: string; name: string; icon: string | null; category: string }
+
+/** Weapons/artillery that fire the given ammo — reverse of a weapon's `stats.ammoSlug`.
+ *  Returns [] for any item nothing points at (so the tab only appears on ammo). */
+export async function getWeaponsUsingAmmo(ammoSlug: string): Promise<AmmoUser[]> {
+  return prisma.item.findMany({
+    where: { stats: { path: ["ammoSlug"], equals: ammoSlug } },
+    select: { slug: true, name: true, icon: true, category: true },
+    orderBy: { name: "asc" },
+  });
+}

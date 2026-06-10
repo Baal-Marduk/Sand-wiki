@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getItemBySlug, getCratesContaining } from "@/lib/queries";
+import { getItemBySlug, getCratesContaining, getWeaponsUsingAmmo } from "@/lib/queries";
 import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
 import { CategoryTag } from "@/components/CategoryTag";
@@ -13,6 +13,7 @@ import { CraftTable } from "@/components/CraftTable";
 import { UsedInTable } from "@/components/UsedInTable";
 import { TradeTable } from "@/components/TradeTable";
 import { CrateDropList } from "@/components/CrateDropList";
+import { AmmoUsedByGrid } from "@/components/AmmoUsedByGrid";
 
 type Params = Promise<{ slug: string }>;
 
@@ -24,6 +25,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const trades = classifyTrades(item.slug, item.craftedBy, item.usedIn);
   const { buy, sell, crafts, usedInCrafts } = trades;
   const drops = await getCratesContaining(item.slug);
+  const ammoUsers = await getWeaponsUsingAmmo(item.slug);
 
   const tabContent: Partial<Record<TabId, React.ReactNode>> = {
     "crafted-by": <CraftTable recipes={crafts} />,
@@ -36,6 +38,9 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
     label: t.label,
     content: tabContent[t.id],
   }));
+  if (ammoUsers.length > 0) {
+    tabs.push({ id: "used-by", label: "Used by", content: <AmmoUsedByGrid items={ammoUsers} /> });
+  }
   if (drops.length > 0) {
     tabs.push({ id: "loot", label: "Loot", content: <CrateDropList drops={drops} /> });
   }

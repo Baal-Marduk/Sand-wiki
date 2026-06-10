@@ -28,7 +28,7 @@ export function itemDetailRows(facts: ItemFacts, trades: ItemTrades): DetailRow[
   return rows;
 }
 
-export type TabId = "crafted-by" | "used-in" | "buy" | "sell" | "loot";
+export type TabId = "crafted-by" | "used-in" | "buy" | "sell" | "used-by" | "loot";
 export interface TabDef { id: TabId; label: string }
 
 /** Available relationship tabs in fixed order, only those with data. */
