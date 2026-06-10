@@ -265,3 +265,53 @@ test("ammo stat box shows the precise class label as its type", async ({ page })
   // The stat box is the only <dl> on the page; its Type cell now reads the class label.
   await expect(page.locator("dl dd").getByText("Sniper")).toBeVisible();
 });
+
+test("clicking a table header sorts rows and toggles aria-sort", async ({ page }) => {
+  await page.goto("/items/resource-metal-parts");
+  // Mechanical Parts is used in many recipes — open that table.
+  await page.getByRole("tab", { name: "Used in" }).click();
+
+  const table = page.locator('table:has(caption:text("Recipes that use this item"))');
+  // The "Produces" cells contain icon links whose aria-label is the output item name.
+  // We use those labels as the sort key — they match the key the component sorts on.
+  const firstColLinks = table.locator("tbody tr td:first-child a[aria-label]");
+  await expect(firstColLinks.first()).toBeVisible();
+
+  // Use a regex anchored at start so the selector keeps matching the same button
+  // after the aria-label changes to "Produces, sorted ascending, activate to sort".
+  const header = table.getByRole("button", { name: /^Produces/ });
+  // Locate the th by finding the one that contains a button whose visible text is "Produces".
+  // We can't use { has: header } with an already-scoped locator, so we use a CSS
+  // has-text approach on the th instead.
+  const headerCell = table.locator("th:has(button)")
+    .filter({ has: page.locator("button", { hasText: /^Produces/ }) })
+    .first();
+
+  await expect(headerCell).toHaveAttribute("aria-sort", "none");
+  // Capture "before" order using the first link per row (rows may have multiple outputs
+  // but we only compare the first item label per row to track row order changes).
+  const firstLinkPerRow = table.locator("tbody tr td:first-child a[aria-label]:first-child");
+  const before = await firstLinkPerRow.evaluateAll((els) =>
+    els.map((el) => (el as HTMLElement).getAttribute("aria-label") ?? "")
+  );
+
+  // Ascending
+  await header.click();
+  await expect(headerCell).toHaveAttribute("aria-sort", "ascending");
+  const asc = await firstLinkPerRow.evaluateAll((els) =>
+    els.map((el) => (el as HTMLElement).getAttribute("aria-label") ?? "")
+  );
+  expect(asc).toEqual([...asc].sort((a, b) => a.localeCompare(b, undefined, { numeric: true })));
+
+  // Descending
+  await header.click();
+  await expect(headerCell).toHaveAttribute("aria-sort", "descending");
+
+  // Back to default (original order)
+  await header.click();
+  await expect(headerCell).toHaveAttribute("aria-sort", "none");
+  const after = await firstLinkPerRow.evaluateAll((els) =>
+    els.map((el) => (el as HTMLElement).getAttribute("aria-label") ?? "")
+  );
+  expect(after).toEqual(before);
+});
