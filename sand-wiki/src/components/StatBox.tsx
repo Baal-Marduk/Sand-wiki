@@ -15,7 +15,7 @@ export interface ItemStats {
 
 /** Prominent grid of wiki-sourced gameplay stats, shown under the detail header.
  *  Renders nothing when there are no displayable stats. */
-export function StatBox({ stats }: { stats: ItemStats | null | undefined }) {
+export function StatBox({ stats, typeLabel }: { stats: ItemStats | null | undefined; typeLabel?: string }) {
   if (!stats) return null;
 
   const cells: { label: string; node: React.ReactNode }[] = [];
@@ -24,7 +24,8 @@ export function StatBox({ stats }: { stats: ItemStats | null | undefined }) {
   if (stats.tDamage != null) cells.push({ label: "Damage (Trampler)", node: stats.tDamage });
   if (stats.sDamage != null) cells.push({ label: "Splash Damage", node: stats.sDamage });
   if (stats.magazine != null) cells.push({ label: "Magazine", node: stats.magazine });
-  if (stats.type) cells.push({ label: "Type", node: stats.type });
+  const typeValue = typeLabel ?? stats.type;
+  if (typeValue) cells.push({ label: "Type", node: typeValue });
   if (stats.value != null)
     cells.push({ label: "Value", node: <>{stats.value} <CoinIcon /></> });
 
