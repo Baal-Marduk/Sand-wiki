@@ -114,7 +114,7 @@ export function parseModule(wikitext) {
     const line = lines[i];
     if (/^\s*\}\}/.test(line)) break;
     const m = line.match(/^\s*\|\s*([^=]+?)\s*=\s*(.*)$/);
-    if (m) out[m[1].trim()] = m[2].trim();
+    if (m) out[m[1]] = m[2].trim();
   }
   return out;
 }

@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { stripWikiMarkup, titleToSlug, parseLootTable } from "./wiki-text.mjs";
-import { parseModule, parseResearch, parseCost } from "./wiki-text.mjs";
+import { stripWikiMarkup, titleToSlug, parseLootTable, parseModule, parseResearch, parseCost } from "./wiki-text.mjs";
 
 const WT = `The Weapon Crate is a [[Loot Containers|Loot Container]] which stores [[:Category:Player Weapons|Player Weapons]] and [[Ammunition]]. '''Bold''' across [[Sophie]]. {{SomeTemplate|x=1}}
 ===Loot Table===
@@ -139,6 +138,10 @@ describe("parseResearch", () => {
   it("returns nulls for empty input", () => {
     expect(parseResearch("")).toEqual({ node: null, name: null, tier: null });
   });
+
+  it("parses a node prefix with no tier tag", () => {
+    expect(parseResearch("II. Some Node")).toEqual({ node: "II", name: "Some Node", tier: null });
+  });
 });
 
 describe("parseCost", () => {
@@ -148,6 +151,12 @@ describe("parseCost", () => {
     expect(parseCost(fields, resolve)).toEqual([
       { name: "Crowns", amount: 75 },
       { slug: "resource-metal-t1", name: "Mechanical Parts", amount: 200 },
+    ]);
+  });
+
+  it("keeps a non-Crowns cost slug-less when resolve returns undefined", () => {
+    expect(parseCost({ "cost 2": "50" }, () => undefined)).toEqual([
+      { name: "Mechanical Parts", amount: 50 },
     ]);
   });
 });
