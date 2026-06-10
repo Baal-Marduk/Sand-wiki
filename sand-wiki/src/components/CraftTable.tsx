@@ -11,7 +11,7 @@ export function CraftTable({ recipes }: { recipes: RecipeCard[] }) {
     keys: [names(r.inputs), r.craftTimeSeconds, workbenchKey(r)],
     cells: [
       <IngredientList key="i" rows={r.inputs} />,
-      r.craftTimeSeconds !== null ? `${r.craftTimeSeconds} sec` : "—",
+      <span key="t" className="whitespace-nowrap">{r.craftTimeSeconds !== null ? `${r.craftTimeSeconds} sec` : "—"}</span>,
       <WorkbenchBadge key="w" recipe={r} />,
     ],
   }));
