@@ -1,6 +1,6 @@
 // One-off importer: scrape Trampler Component pages from sandgame.wiki into
 // prisma/tramplers.json (slug-keyed) and download module images into public/tramplers/.
-//   node prisma/import-tramplers.mjs
+//   npx tsx prisma/import-tramplers.mjs   (must run under tsx — imports ../src/lib/taxonomy.ts)
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
@@ -79,6 +79,7 @@ async function main() {
     const wt = await wikitext(title);
     const m = parseModule(wt);
     const slug = titleToSlug(title);
+    if (out[slug]) { console.warn(`Slug collision "${slug}" (${title}) — keeping first`); continue; }
     const category = tramplerCategoryForName(title);
     catCounts[category] = (catCounts[category] ?? 0) + 1;
     const research = parseResearch(m.research);
