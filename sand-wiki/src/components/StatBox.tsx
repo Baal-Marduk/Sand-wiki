@@ -1,5 +1,3 @@
-import { CoinIcon } from "@/components/CoinIcon";
-
 /** Shape of the JSON stats blob stored on Item.stats (from the wiki enrichment). */
 export interface ItemStats {
   type?: string;
@@ -26,9 +24,6 @@ export function StatBox({ stats, typeLabel }: { stats: ItemStats | null | undefi
   if (stats.magazine != null) cells.push({ label: "Magazine", node: stats.magazine });
   const typeValue = typeLabel ?? stats.type;
   if (typeValue) cells.push({ label: "Type", node: typeValue });
-  if (stats.value != null)
-    cells.push({ label: "Value", node: <>{stats.value} <CoinIcon /></> });
-
   if (cells.length === 0) return null;
 
   return (

@@ -30,6 +30,15 @@ describe("itemDetailRows", () => {
     expect(r).toContainEqual({ label: "Buyable", value: "10", coin: true, unit: "/ unit" });
     expect(r).toContainEqual({ label: "Sellable", value: "10", coin: true, unit: "/ unit" });
   });
+
+  it("adds a Value row from the wiki value, without a unit", () => {
+    const r = itemDetailRows({ ...facts, value: 5 }, noTrades);
+    expect(r).toContainEqual({ label: "Value", value: "5", coin: true });
+  });
+
+  it("omits the Value row when value is null/undefined", () => {
+    expect(itemDetailRows(facts, noTrades).some((row) => row.label === "Value")).toBe(false);
+  });
 });
 
 describe("availableTabs", () => {
@@ -46,8 +55,6 @@ describe("availableTabs", () => {
     };
     expect(availableTabs(trades)).toEqual([
       { id: "crafted-by", label: "Crafted by" },
-      { id: "buy", label: "Buy" },
-      { id: "sell", label: "Sell" },
     ]);
   });
 });
