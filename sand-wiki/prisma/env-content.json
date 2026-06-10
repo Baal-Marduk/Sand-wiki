@@ -1,0 +1,44 @@
+{
+  "crate-of-shells": {
+    "category": "loot-containers",
+    "name": "Crate of Shells",
+    "description": "The Crate of Shells is a Loot Container that can be found all across Sophie. Just like all containers, it has 3 tiers: Normal, Rare, and Very Rare.\nAll crates contain one type of Ammunition for mounted weapons and Fabric Scraps within. Rare crates additionally contain a second type of ammunition and Metal Rods within. Very rare crates contain all three type of ammunition and Reinforced Leather Strips additionally within.",
+    "sourceUrl": "https://sandgame.wiki/index.php/Crate_of_Shells"
+  },
+  "food-crate": {
+    "category": "loot-containers",
+    "name": "Food Crate",
+    "description": "The Rare Food Crate\nThe Food Crate is a Loot Container that can be found all across Sophie, most commonly at city and port Landmarks.\nJust like all containers, it has 3 \"Rarity\" tiers: Normal, Rare, and Very Rare. Normal crates contain Canned Food and Threads within. Rare and very rare crates additionally contain Leviathan Meat OR Coral Dust and Reinforced Leather Strips within, respectively.\nCrates also contain a hidden \"Quality\" tier that is primarily location driven based on where the crate spawns at.\nBoth the rarity and quality of a crate impact how much of each item the crate contains within.",
+    "sourceUrl": "https://sandgame.wiki/index.php/Food_Crate"
+  },
+  "medical-cabinet": {
+    "category": "loot-containers",
+    "name": "Medical Cabinet",
+    "description": "The Medical Cabinet is a Loot Container which can be found all across Sophie, most commonly at city and port Landmarks. Just like all containers, it has 3 tiers: Normal, Rare, and Very Rare.\nJust like all containers, it has 3 \"Rarity\" tiers: Normal, Rare, and Very Rare. Normal cabinets contain Medkits and Mixtures within. Rare and very rare cabinets additionally contain Fabric and Optic Lenses within, respetively.\nCabinets also contain a hidden \"Quality\" tier that is primarily location driven based on where the cabinet spawns at.\nBoth the rarity and quality of a cabinet impact how much of each item the cabinet contains within.",
+    "sourceUrl": "https://sandgame.wiki/index.php/Medical_Cabinet"
+  },
+  "parts-crate": {
+    "category": "loot-containers",
+    "name": "Parts Crate",
+    "description": "The Parts Crate is a Loot Container that can be found all across Sophie, mainly at Landmarks.\nJust like all containers, it has 3 \"Rarity\" tiers: Normal, Rare, and Very Rare. Normal Parts crates mainly store Mechanical Parts and Scrap Metal along with a chance to contain Mk2 Energy Rod within. Rare and very rare crates additionally contain Gunpowder and HG Gunpowder, respectively.\nCrates also contain a hidden \"Quality\" tier that is primarily location driven based on where the crate spawns at. Normal and greater crates additionally contain Pneumatic Components within.\nBoth the rarity and quality of a crate impact how much of each item the crate contains within.",
+    "sourceUrl": "https://sandgame.wiki/index.php/Parts_Crate"
+  },
+  "suspicious-pile-of-sand": {
+    "category": "loot-containers",
+    "name": "Suspicious Pile of Sand",
+    "description": "The Suspicious Pile of Sand is a Loot Container that can only be found at Shipwrecks. Unlike other containers, the pile only has one rarity: Normal.\nIt is suspected that the pile does have a rarity value, but this information is hidden from the players view unlike other containers that state their rarity in the name and by visual color differences. As such, it can only be speculated at if the container contains different drop tables or not.\nThe pile is similar to locked Boxes in that it requires a Key to open, that being a Rusty Shovel, to unearth the pile and get to whatever buried treasure it contains. Unlike locked boxes, the pile is a static object and can not be picked up.\nThe contents within a pile is extremely varied and comes in distinct sets. Data is still being collected on what exactly can be found but notable drops include: Armored Jacket, AV1 Rocket Launcher and Rockets, Triplet Shotgun, and KF866/9R \"Mehrzel\" Repeater.\nLoot Container",
+    "sourceUrl": "https://sandgame.wiki/index.php/Suspicious_Pile_of_Sand"
+  },
+  "valuables-safe": {
+    "category": "loot-containers",
+    "name": "Valuables Safe",
+    "description": "The Valuables Safe is a Loot Container that can be found all across Sophie, most commonly inside buildings at city and port Landmarks.\nJust like all containers, it has 3 \"Rarity\" tiers: Normal, Rare, and Very Rare. Normal safes contain Crowns, either Small Valuables OR Valuable Papers, and Coral Chunks within. Rare and very rare safes contain additional items, those being Leviathan Skin and Optic Lenses/Crystal, respectively.\nSafes also contain a hidden \"Quality\" tier that is primarily location driven based on where the crate spawns at.\nBoth the rarity and quality of a safe impact how much of each item the safe contains within.",
+    "sourceUrl": "https://sandgame.wiki/index.php/Valuables_Safe"
+  },
+  "weapon-crate": {
+    "category": "loot-containers",
+    "name": "Weapon Crate",
+    "description": "The Weapon Crate is a Loot Container which mainly stores Player Weapons, Ammunition for player weapons, and Raw Materials like Scrapped Ammo. Just like all containers, it has 3 tiers: Normal, Rare, and Very Rare. it can be found all across Sophie.",
+    "sourceUrl": "https://sandgame.wiki/index.php/Weapon_Crate"
+  }
+}
