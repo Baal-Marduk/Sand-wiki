@@ -37,7 +37,6 @@ export async function listWorkbenchTiers(): Promise<number[]> {
   return rows.map((r) => r.workbenchTier).filter((t): t is number => t !== null);
 }
 
-
 /** Environment entities (loot containers, etc.), optionally filtered by category. */
 export async function listEnvEntities(category?: string) {
   return prisma.envEntity.findMany({
