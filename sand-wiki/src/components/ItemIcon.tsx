@@ -29,14 +29,14 @@ export function ItemIcon({
         src={icon}
         alt={decorative ? "" : name}
         style={style}
-        className={`${px} rounded-box ${bg} object-contain shrink-0`}
+        className={`item-sprite ${px} rounded-box ${bg} object-contain shrink-0`}
       />
     );
   }
   return (
     <span
       style={style}
-      className={`${px} inline-flex items-center justify-center rounded-box ${bg} shrink-0 ${tint ? "text-base-100" : "text-base-content/40"}`}
+      className={`item-sprite ${px} inline-flex items-center justify-center rounded-box ${bg} shrink-0 ${tint ? "text-base-100" : "text-base-content/40"}`}
       {...(decorative ? { "aria-hidden": true } : { role: "img", "aria-label": name, title: name })}
     >
       <span aria-hidden="true">▦</span>
