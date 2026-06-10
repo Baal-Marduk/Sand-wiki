@@ -224,3 +224,13 @@ test("item page links back to crates via a Loot tab", async ({ page }) => {
   await page.getByRole("tab", { name: "Loot" }).click();
   await expect(page.getByRole("link", { name: "Crate of Shells" }).first()).toBeVisible();
 });
+
+test("ammo page lists the weapons that use it via a Used by tab", async ({ page }) => {
+  await page.goto("/items/pistol-ammo");
+  const tab = page.getByRole("tab", { name: "Used by" });
+  await expect(tab).toBeVisible();
+  await tab.click();
+  const weaponLink = page.locator('[role="tabpanel"] a[href="/items/semi-automatic-pistol"]');
+  await expect(weaponLink).toBeVisible();
+  await expect(weaponLink).toHaveAttribute("aria-label", "Blitz 10R Pistol");
+});
