@@ -81,6 +81,30 @@ export async function envCategoryCounts(): Promise<Record<string, number>> {
   return Object.fromEntries(rows.map((r) => [r.category, r._count]));
 }
 
+export interface CrateDrop { crateSlug: string; crateName: string; tier: string; columns: string[]; values: string[] }
+
+interface LootShape { tiers?: { tier: string; columns: string[]; entries: { slug?: string; values: string[] }[] }[] }
+
+/** Crates (with tier + amounts) whose loot tables contain the given item slug. */
+export async function getCratesContaining(itemSlug: string): Promise<CrateDrop[]> {
+  const crates = await prisma.envEntity.findMany({
+    where: { category: "loot-containers" },
+    select: { slug: true, name: true, loot: true },
+  });
+  const drops: CrateDrop[] = [];
+  for (const c of crates) {
+    const tiers = (c.loot as LootShape | null)?.tiers ?? [];
+    for (const t of tiers) {
+      for (const e of t.entries) {
+        if (e.slug === itemSlug) {
+          drops.push({ crateSlug: c.slug, crateName: c.name, tier: t.tier, columns: t.columns, values: e.values });
+        }
+      }
+    }
+  }
+  return drops;
+}
+
 export async function getItemBySlug(slug: string) {
   const item = await prisma.item.findUnique({
     where: { slug },
