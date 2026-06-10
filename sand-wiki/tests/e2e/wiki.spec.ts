@@ -201,6 +201,8 @@ test("weapon detail shows a rarity badge, a stat box, and an Ammo tab", async ({
   const ammoLink = page.locator('[role="tabpanel"] a[href="/items/rifle-ammo"]');
   await expect(ammoLink).toBeVisible();
   await expect(ammoLink).toContainText("9x42 mm Ammo");
+  // Caliber family lists every 9x42 mm variant, not just the base round.
+  await expect(page.locator('[role="tabpanel"] a[href="/items/rifle-ammo-armor"]')).toBeVisible();
 });
 
 test("crate detail shows loot tier tabs with linked item icons, no amount columns", async ({ page }) => {
@@ -261,5 +263,5 @@ test("artillery turret has an Ammo tab listing its shells", async ({ page }) => 
 test("ammo stat box shows the precise class label as its type", async ({ page }) => {
   await page.goto("/items/sniper-rifle-ammo");
   // The stat box is the only <dl> on the page; its Type cell now reads the class label.
-  await expect(page.locator("dl").getByText("Sniper")).toBeVisible();
+  await expect(page.locator("dl dd").getByText("Sniper")).toBeVisible();
 });
