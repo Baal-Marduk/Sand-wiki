@@ -92,4 +92,7 @@ _Add desired features, content, and rules below — this section is owned by the
 - [ ] NPCs: no community-wiki source yet — decide on a data source or author manually.
 - [ ] Landmarks/Game Modes: most wiki pages are empty stubs — consider authoring descriptions
       locally instead of relying on the wiki.
+- [ ] Weapon/artillery pages: render the `StatBox` "Ammo" stat as an icon + tooltip
+      (`ItemIconLink`) instead of the current plain text link, matching the loot/recipe
+      icon grids. (Reverse view — ammo's "Used by" tab — is already implemented.)
 - [ ] (add more here…)
