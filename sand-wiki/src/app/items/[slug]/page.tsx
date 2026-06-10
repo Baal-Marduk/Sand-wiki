@@ -25,7 +25,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const trades = classifyTrades(item.slug, item.craftedBy, item.usedIn);
   const { buy, sell, crafts, usedInCrafts } = trades;
   const drops = await getCratesContaining(item.slug);
-  const ammoUsers = await getWeaponsUsingAmmo(item.slug);
+  const ammoUsers = item.category === "ammo" ? await getWeaponsUsingAmmo(item.slug) : [];
 
   const tabContent: Partial<Record<TabId, React.ReactNode>> = {
     "crafted-by": <CraftTable recipes={crafts} />,
