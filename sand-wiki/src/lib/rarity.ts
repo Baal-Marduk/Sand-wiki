@@ -19,6 +19,17 @@ export function rarityColor(name?: string | null): string | null {
   return name ? byName.get(name.toLowerCase())?.color ?? null : null;
 }
 
+/** Default rarity for items with no rarity info — everything is at least Common. */
+export const DEFAULT_RARITY = "Common";
+
+/** Alpha-blended rarity color for filled backgrounds (the item-icon tile), ~65% opacity —
+ *  a softened tint matching the in-game slot wash. Solid `rarityColor` stays for small
+ *  indicators (the badge dot). Null for unknown/absent. */
+export function rarityBgColor(name?: string | null): string | null {
+  const c = rarityColor(name);
+  return c ? `${c}A6` : null; // 0xA6 ≈ 65% alpha
+}
+
 /** Tier (1–6) for ordering; unknown/absent → 0. */
 export function rarityTier(name?: string | null): number {
   return name ? byName.get(name.toLowerCase())?.tier ?? 0 : 0;
