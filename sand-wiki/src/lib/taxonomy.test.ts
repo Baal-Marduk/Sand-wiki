@@ -3,7 +3,7 @@ import {
   SECTIONS, ITEM_CATEGORIES, ITEM_CATEGORY_SLUGS,
   isItemCategory, categoryLabel, getSection, categoryForType, categoryForItem,
   isEnvCategory, CATEGORY_COLORS, categoryColor,
-  isTramplerCategory, tramplerCategoryForName,
+  isTramplerCategory, tramplerCategoryForName, TRAMPLER_CATEGORY_SLUGS,
 } from "./taxonomy";
 
 describe("taxonomy", () => {
@@ -155,6 +155,12 @@ describe("categoryForItem", () => {
 describe("category colors", () => {
   it("defines a color for every item category", () => {
     for (const slug of ITEM_CATEGORY_SLUGS) {
+      expect(CATEGORY_COLORS[slug], `missing color for ${slug}`).toMatch(/^#[0-9a-f]{6}$/i);
+    }
+  });
+
+  it("defines a color for every trampler category", () => {
+    for (const slug of TRAMPLER_CATEGORY_SLUGS) {
       expect(CATEGORY_COLORS[slug], `missing color for ${slug}`).toMatch(/^#[0-9a-f]{6}$/i);
     }
   });

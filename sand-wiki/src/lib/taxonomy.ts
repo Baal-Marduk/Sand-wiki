@@ -93,10 +93,10 @@ export function isTramplerCategory(slug: string): boolean {
 const TRAMPLER_NAME_RULES: { kw: RegExp; category: string }[] = [
   { kw: /chassis/i, category: "chassis" },
   { kw: /reactor/i, category: "reactors" },
-  { kw: /engine/i, category: "engines" },
+  { kw: /\bengine\b/i, category: "engines" },
   { kw: /turret deck/i, category: "turrets" },
   { kw: /armor plate|embrasure|battering ram|casemate/i, category: "turrets" },
-  { kw: /crew (cabin|module)|captain|\bcabin\b/i, category: "crew" },
+  { kw: /crew (cabin|module)|captain|\bcabin\b/i, category: "crew" }, // standalone "cabin" also maps to crew
   { kw: /steering deck|flybridge|pilot bridge|wheelhouse/i, category: "driving" },
   { kw: /cargo/i, category: "cargo" },
   { kw: /workbench|workshop/i, category: "stations" },
