@@ -49,6 +49,11 @@ export function SortableTable({
   const ariaSort = (col: number): "ascending" | "descending" | "none" =>
     sort && sort.col === col ? (sort.dir === "asc" ? "ascending" : "descending") : "none";
 
+  const dirSuffix = (col: number): string => {
+    if (!sort || sort.col !== col) return "";
+    return sort.dir === "asc" ? ", sorted ascending" : ", sorted descending";
+  };
+
   return (
     <table className="table">
       {caption && <caption className="sr-only">{caption}</caption>}
@@ -58,6 +63,7 @@ export function SortableTable({
             <th key={c.label} aria-sort={ariaSort(col)} className={c.alignRight ? "text-right" : undefined}>
               <button
                 type="button"
+                aria-label={`${c.label}${dirSuffix(col)}, activate to sort`}
                 className="inline-flex items-center gap-1 cursor-pointer hover:text-base-content"
                 onClick={() => onHeaderClick(col)}
               >
