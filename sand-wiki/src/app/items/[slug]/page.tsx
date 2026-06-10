@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getItemBySlug } from "@/lib/queries";
+import { getItemBySlug, getCratesContaining } from "@/lib/queries";
 import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
 import { CategoryTag } from "@/components/CategoryTag";
@@ -12,6 +12,7 @@ import { ItemDetailsPanel } from "@/components/ItemDetailsPanel";
 import { CraftTable } from "@/components/CraftTable";
 import { UsedInTable } from "@/components/UsedInTable";
 import { TradeTable } from "@/components/TradeTable";
+import { CrateDropList } from "@/components/CrateDropList";
 
 type Params = Promise<{ slug: string }>;
 
@@ -22,8 +23,9 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
 
   const trades = classifyTrades(item.slug, item.craftedBy, item.usedIn);
   const { buy, sell, crafts, usedInCrafts } = trades;
+  const drops = await getCratesContaining(item.slug);
 
-  const tabContent: Record<TabId, React.ReactNode> = {
+  const tabContent: Partial<Record<TabId, React.ReactNode>> = {
     "crafted-by": <CraftTable recipes={crafts} />,
     "used-in": <UsedInTable recipes={usedInCrafts} />,
     buy: <TradeTable options={buy} />,
@@ -34,6 +36,9 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
     label: t.label,
     content: tabContent[t.id],
   }));
+  if (drops.length > 0) {
+    tabs.push({ id: "loot", label: "Loot", content: <CrateDropList drops={drops} /> });
+  }
 
   const detailRows = itemDetailRows(
     {
