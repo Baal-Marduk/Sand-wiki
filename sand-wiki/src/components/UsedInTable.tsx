@@ -3,6 +3,7 @@ import { IngredientList, WorkbenchBadge } from "@/components/recipe-cells";
 import { SortableTable, type SortableTableRow } from "@/components/SortableTable";
 
 const names = (rows: { name: string }[]) => rows.map((r) => r.name).join(", ").toLowerCase();
+// Sort token (not display text): a stable, monotonic key over (workbench, tier).
 const workbenchKey = (r: RecipeCard) =>
   r.workbench ? `${r.workbench}·T${r.tier ?? 0}` : null;
 
