@@ -100,3 +100,63 @@ export function parseLootTable(wikitext, crateName) {
   });
   return tiers;
 }
+
+/** Parse a {{Module}} infobox into a flat { key: value } map. Line-based: collects
+ *  `| key = value` lines until the closing `}}` on its own line, so inline templates
+ *  in a value (e.g. {{Tag Tier2}}) are preserved. Returns {} if no Module block.
+ *  @param {string} wikitext
+ *  @returns {Record<string, string>} */
+export function parseModule(wikitext) {
+  if (!wikitext) return {};
+  const start = wikitext.indexOf("{{Module");
+  if (start < 0) return {};
+  const lines = wikitext.slice(start).split("\n");
+  const out = {};
+  for (let i = 1; i < lines.length; i++) {
+    const line = lines[i];
+    if (/^\s*\}\}/.test(line)) break;
+    const m = line.match(/^\s*\|\s*([^=]+?)\s*=\s*(.*)$/);
+    if (m) out[m[1]] = m[2].trim();
+  }
+  return out;
+}
+
+/** The four ordered cost slots of the {{Module}} infobox, by resource name.
+ *  cost 1 is the Crowns currency (no item slug); 2-4 are craftable resources. */
+const COST_SLOTS = [
+  { field: "cost 1", name: "Crowns" },
+  { field: "cost 2", name: "Mechanical Parts" },
+  { field: "cost 3", name: "Pneumatic Parts" },
+  { field: "cost 4", name: "Computing Module" },
+];
+
+/** Build a [{ slug?, name, amount }] cost array from Module fields, dropping zero/blank
+ *  amounts. `resolve(name)` returns an item slug or undefined; Crowns stays slug-less.
+ *  @param {Record<string, string>} fields
+ *  @param {(name: string) => string | undefined} resolve
+ *  @returns {Array<{ slug?: string, name: string, amount: number }>} */
+export function parseCost(fields, resolve) {
+  const out = [];
+  for (const { field, name } of COST_SLOTS) {
+    const amount = Number(fields[field]);
+    if (!Number.isFinite(amount) || amount <= 0) continue;
+    const slug = name === "Crowns" ? undefined : resolve(name);
+    out.push(slug ? { slug, name, amount } : { name, amount });
+  }
+  return out;
+}
+
+/** Parse `research = II(b). Middling Chassis {{Tag TierN}}` into { node, name, tier }.
+ *  Roman-numeral node prefixes (I, II(b), …) are split off; dotted root names
+ *  (e.g. "K.K. Landwehr") have no node and stay whole.
+ *  @param {string} value
+ *  @returns {{ node: string | null, name: string | null, tier: number | null }} */
+export function parseResearch(value) {
+  if (!value) return { node: null, name: null, tier: null };
+  const tierMatch = value.match(/\{\{\s*Tag\s+Tier(\d+)\s*\}\}/i);
+  const tier = tierMatch ? Number(tierMatch[1]) : null;
+  const text = value.replace(/\{\{[^}]*\}\}/g, "").trim();
+  const nodeMatch = text.match(/^([IVX]+(?:\([a-z]\))?)\.\s+(.*)$/);
+  if (nodeMatch) return { node: nodeMatch[1], name: nodeMatch[2].trim(), tier };
+  return { node: null, name: text || null, tier };
+}

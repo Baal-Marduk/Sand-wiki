@@ -43,6 +43,36 @@ model EnvEntity {
   @@index([category])
 }
 
+model TramplerPart {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  name        String
+  category    String
+  description String?
+  icon        String?
+  sourceUrl   String?
+
+  dimensions         String?
+  health             Int?
+  weight             Int?
+  weightCapacity     Int?
+  weightCompensation Int?
+  energyConsumption  Int?
+  energyCapacity     Int?
+  ratedPower         Int?
+  crewSlots          Int?
+  itemSlots          Int?
+
+  researchNode String?
+  researchName String?
+  researchTier Int?
+
+  cost Json?
+
+  @@index([category])
+  @@index([researchTier])
+}
+
 model Recipe {
   id               String  @id @default(cuid())
   slug             String  @unique

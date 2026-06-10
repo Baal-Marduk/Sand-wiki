@@ -1,10 +1,17 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { categoryForItem, isItemCategory, isEnvCategory } from "../src/lib/taxonomy";
+import { categoryForItem, isItemCategory, isEnvCategory, isTramplerCategory } from "../src/lib/taxonomy";
 import { isRarity } from "../src/lib/rarity";
 
 interface EnvContent { category: string; name: string; description?: string; sourceUrl?: string; loot?: unknown }
+
+interface TramplerContent {
+  slug: string; name: string; category: string; description?: string; icon?: string; sourceUrl?: string;
+  dimensions?: string; health?: number; weight?: number; weightCapacity?: number; weightCompensation?: number;
+  energyConsumption?: number; energyCapacity?: number; ratedPower?: number; crewSlots?: number; itemSlots?: number;
+  researchNode?: string; researchName?: string; researchTier?: number; cost?: unknown;
+}
 
 const prisma = new PrismaClient();
 
@@ -45,6 +52,7 @@ async function main() {
   await prisma.recipe.deleteMany();
   await prisma.item.deleteMany();
   await prisma.envEntity.deleteMany();
+  await prisma.tramplerPart.deleteMany();
 
   for (const i of data.items) {
     const category = categoryForItem(i.type, i.displayName ?? i.name, i.slug);
@@ -110,7 +118,33 @@ async function main() {
     envCount++;
   }
 
-  console.log(`Seeded ${data.items.length} items, ${data.recipes.length} recipes, ${envCount} environment entities.`);
+  const tramplers: Record<string, TramplerContent> = JSON.parse(
+    readFileSync(join(__dirname, "tramplers.json"), "utf-8"),
+  );
+  let tramplerCount = 0;
+  for (const [slug, t] of Object.entries(tramplers)) {
+    if (!isTramplerCategory(t.category)) {
+      console.warn(`Unknown trampler category "${t.category}" for ${slug} — skipped`);
+      continue;
+    }
+    await prisma.tramplerPart.create({
+      data: {
+        slug, name: t.name, category: t.category,
+        description: t.description ?? undefined, icon: t.icon ?? undefined, sourceUrl: t.sourceUrl ?? undefined,
+        dimensions: t.dimensions ?? undefined,
+        health: t.health ?? undefined, weight: t.weight ?? undefined,
+        weightCapacity: t.weightCapacity ?? undefined, weightCompensation: t.weightCompensation ?? undefined,
+        energyConsumption: t.energyConsumption ?? undefined, energyCapacity: t.energyCapacity ?? undefined,
+        ratedPower: t.ratedPower ?? undefined, crewSlots: t.crewSlots ?? undefined, itemSlots: t.itemSlots ?? undefined,
+        researchNode: t.researchNode ?? undefined, researchName: t.researchName ?? undefined,
+        researchTier: t.researchTier ?? undefined,
+        cost: (t.cost ?? undefined) as Prisma.InputJsonValue | undefined,
+      },
+    });
+    tramplerCount++;
+  }
+
+  console.log(`Seeded ${data.items.length} items, ${data.recipes.length} recipes, ${envCount} environment entities, ${tramplerCount} trampler parts.`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());

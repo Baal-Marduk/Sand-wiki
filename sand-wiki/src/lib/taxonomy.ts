@@ -24,6 +24,18 @@ const itemCategories: Category[] = [
   { slug: "misc", label: "Misc" },
 ];
 
+const tramplerCategories: Category[] = [
+  { slug: "chassis", label: "Chassis" },
+  { slug: "reactors", label: "Reactors" },
+  { slug: "engines", label: "Engines" },
+  { slug: "crew", label: "Crew Compartments" },
+  { slug: "driving", label: "Driving Compartments" },
+  { slug: "cargo", label: "Cargo" },
+  { slug: "turrets", label: "Turret Decks & Defenses" },
+  { slug: "stations", label: "Crafting Stations" },
+  { slug: "structure", label: "Structure & Decks" },
+];
+
 export const SECTIONS: Section[] = [
   { slug: "items", label: "Items", kind: "data", categories: itemCategories },
   {
@@ -37,7 +49,7 @@ export const SECTIONS: Section[] = [
       { slug: "npcs", label: "NPCs" },
     ],
   },
-  { slug: "tramplers", label: "Tramplers", kind: "placeholder", categories: [] },
+  { slug: "tramplers", label: "Tramplers", kind: "data", categories: tramplerCategories },
   { slug: "tech", label: "Tech Tree", kind: "placeholder", categories: [] },
   { slug: "tools", label: "Tools", kind: "placeholder", categories: [] },
 ];
@@ -50,7 +62,11 @@ export function isItemCategory(slug: string): boolean {
 }
 
 export function categoryLabel(slug: string): string {
-  return itemCategories.find((c) => c.slug === slug)?.label ?? slug;
+  return (
+    itemCategories.find((c) => c.slug === slug)?.label ??
+    tramplerCategories.find((c) => c.slug === slug)?.label ??
+    slug
+  );
 }
 
 export function getSection(slug: string): Section | undefined {
@@ -62,6 +78,35 @@ export const ENV_CATEGORY_SLUGS = envCategories.map((c) => c.slug);
 
 export function isEnvCategory(slug: string): boolean {
   return ENV_CATEGORY_SLUGS.includes(slug);
+}
+
+export const TRAMPLER_CATEGORIES = tramplerCategories;
+export const TRAMPLER_CATEGORY_SLUGS = tramplerCategories.map((c) => c.slug);
+
+export function isTramplerCategory(slug: string): boolean {
+  return TRAMPLER_CATEGORY_SLUGS.includes(slug);
+}
+
+/** Ordered keyword rules mapping a component name to a functional category.
+ *  Specific keywords MUST precede generic ones (e.g. "Turret Deck" before "Deck",
+ *  "Crew Cabin" before "Cabin"). Unmatched names fall back to "structure". */
+const TRAMPLER_NAME_RULES: { kw: RegExp; category: string }[] = [
+  { kw: /chassis/i, category: "chassis" },
+  { kw: /reactor/i, category: "reactors" },
+  { kw: /\bengine\b/i, category: "engines" },
+  { kw: /turret deck/i, category: "turrets" },
+  { kw: /armor plate|embrasure|battering ram|casemate/i, category: "turrets" },
+  { kw: /crew (cabin|module)|captain|\bcabin\b/i, category: "crew" }, // standalone "cabin" also maps to crew
+  { kw: /steering deck|flybridge|pilot bridge|wheelhouse/i, category: "driving" },
+  { kw: /cargo/i, category: "cargo" },
+  { kw: /workbench|workshop/i, category: "stations" },
+];
+
+export function tramplerCategoryForName(name: string): string {
+  for (const { kw, category } of TRAMPLER_NAME_RULES) {
+    if (kw.test(name)) return category;
+  }
+  return "structure";
 }
 
 /** Maps the scraper's game `type` enum to a wiki item category slug. Unknown/null -> "misc". */
@@ -129,6 +174,16 @@ export const CATEGORY_COLORS: Record<string, string> = {
   landmarks: "#7aa6b0",
   "game-modes": "#b07aa0",
   npcs: "#9b8b73",
+  // trampler categories
+  chassis: "#a6794f",
+  reactors: "#d4a23f",
+  engines: "#cf7a4f",
+  crew: "#6aa9c9",
+  driving: "#7fb069",
+  cargo: "#9b8b73",
+  turrets: "#8b94a6",
+  stations: "#4fb3a6",
+  structure: "#7a8a99",
 };
 
 export function categoryColor(slug: string): string {

@@ -1,0 +1,2947 @@
+{
+  "captain-crew-module": {
+    "slug": "captain-crew-module",
+    "name": "S&H Captain's Compartment",
+    "category": "crew",
+    "description": "One of the most common souvenirs brought by tourists from Sophie, it is a fairly valuable resource required in the production of some items.",
+    "sourceUrl": "https://sandgame.wiki/index.php/Captain_Crew_Module",
+    "dimensions": "1x1",
+    "health": 3500,
+    "weight": 1500,
+    "energyConsumption": 300,
+    "energyCapacity": 2000,
+    "ratedPower": 50,
+    "crewSlots": 1,
+    "researchNode": "II(c)",
+    "researchName": "Cargo Bay",
+    "researchTier": 4,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 500
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 20
+      },
+      {
+        "slug": "resource-metal-t3",
+        "name": "Computing Module",
+        "amount": 5
+      }
+    ]
+  },
+  "kf-b-hole-middling-chassis": {
+    "slug": "kf-b-hole-middling-chassis",
+    "name": "KF-B \"Hole\" Middling Chassis",
+    "category": "chassis",
+    "description": "Kaiser's Friends mechanics found out that the chassis can function perfectly well without its central section. However, it takes a few more materials to hold it together. They made sure to fully utilize this newfound discovery on every chassis variation they could lay their hands on.",
+    "sourceUrl": "https://sandgame.wiki/index.php/KF-B_%22Hole%22_Middling_Chassis",
+    "dimensions": "4x3",
+    "weightCapacity": 25000,
+    "energyConsumption": 5,
+    "researchNode": "II(b)",
+    "researchName": "Middling Chassis",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 75
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 200
+      }
+    ]
+  },
+  "kf-b-trench-great-chassis": {
+    "slug": "kf-b-trench-great-chassis",
+    "name": "KF-B \"Trench\" Great Chassis",
+    "category": "chassis",
+    "description": "Kaiser's Friends mechanics found out that the chassis can function perfectly well without its central section. However, it takes a few more materials to hold it together. They made sure to fully utilize this newfound discovery on every chassis variation they could lay their hands on.",
+    "sourceUrl": "https://sandgame.wiki/index.php/KF-B_%22Trench%22_Great_Chassis",
+    "dimensions": "5x3",
+    "weightCapacity": 40000,
+    "energyConsumption": 8,
+    "researchNode": "III(c)",
+    "researchName": "Great Chassis",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 100
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 275
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 80
+      }
+    ]
+  },
+  "kf-kormylo-wheelhouse": {
+    "slug": "kf-kormylo-wheelhouse",
+    "name": "KF \"Kormylo\" Wheelhouse",
+    "category": "driving",
+    "description": "The helm stripped from the civilian vessel and mounted on the Trampler Deck. One of the basic modifications that Kaiser's Friends Gang can provide for the Scavengers that work with them.",
+    "sourceUrl": "https://sandgame.wiki/index.php/KF_%22Kormylo%22_Wheelhouse",
+    "dimensions": "1x2",
+    "health": 3500,
+    "weight": 1000,
+    "energyConsumption": 5,
+    "researchNode": "II(a)",
+    "researchName": "Steering",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 50
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 125
+      }
+    ]
+  },
+  "kf-l-abyss-royal-chassis": {
+    "slug": "kf-l-abyss-royal-chassis",
+    "name": "KF-L \"Abyss\" Royal Chassis",
+    "category": "chassis",
+    "description": "Kaiser's Friends mechanics found out that the chassis can function perfectly well without its central section. However, it takes a few more materials to hold it together. They made sure to fully utilize this newfound discovery on every chassis variation they could lay their hands on.",
+    "sourceUrl": "https://sandgame.wiki/index.php/KF-L_%22Abyss%22_Royal_Chassis",
+    "dimensions": "4x6",
+    "weightCapacity": 55000,
+    "energyConsumption": 10,
+    "researchNode": "IV(b)",
+    "researchName": "Royal Chassis",
+    "researchTier": 4,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 250
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 450
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 125
+      },
+      {
+        "slug": "resource-metal-t3",
+        "name": "Computing Module",
+        "amount": 10
+      }
+    ]
+  },
+  "kf-l-hole-middling-chassis": {
+    "slug": "kf-l-hole-middling-chassis",
+    "name": "KF-L \"Hole\" Middling Chassis",
+    "category": "chassis",
+    "description": "Kaiser's Friends mechanics found out that the chassis can function perfectly well without its central section. However, it takes a few more materials to hold it together. They made sure to fully utilize this newfound discovery on every chassis variation they could lay their hands on.",
+    "sourceUrl": "https://sandgame.wiki/index.php/KF-L_%22Hole%22_Middling_Chassis",
+    "dimensions": "3x4",
+    "weightCapacity": 25000,
+    "energyConsumption": 5,
+    "researchNode": "II(b)",
+    "researchName": "Middling Chassis",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 75
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 200
+      }
+    ]
+  },
+  "kf-l-trench-great-chassis": {
+    "slug": "kf-l-trench-great-chassis",
+    "name": "KF-L \"Trench\" Great Chassis",
+    "category": "chassis",
+    "description": "Kaiser's Friends mechanics found out that the chassis can function perfectly well without its central section. However, it takes a few more materials to hold it together. They made sure to fully utilize this newfound discovery on every chassis variation they could lay their hands on.",
+    "sourceUrl": "https://sandgame.wiki/index.php/KF-L_%22Trench%22_Great_Chassis",
+    "dimensions": "3x5",
+    "weightCapacity": 40000,
+    "energyConsumption": 8,
+    "researchNode": "III(c)",
+    "researchName": "Great Chassis",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 100
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 275
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 80
+      }
+    ]
+  },
+  "kf-nest-framed-armored-turret-deck": {
+    "slug": "kf-nest-framed-armored-turret-deck",
+    "name": "KF \"Nest\" Framed Armored Turret Deck",
+    "category": "turrets",
+    "description": "The lower support of a gun carriage, mounted on a reinforced deck. Designed to accommodate the full range of available artillery weapons. Engineers from the Kaiser's Friends gang additionally equipped it with a supporting frame, which allows other compartments to be installed on it, and armored railings to provide cover during gunfights.",
+    "sourceUrl": "https://sandgame.wiki/index.php/KF_%22Nest%22_Framed_Armored_Turret_Deck",
+    "dimensions": "1x1",
+    "health": 4500,
+    "weight": 2000,
+    "researchNode": "III(a)",
+    "researchName": "Framed Armored Artillery Deck",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 150
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 300
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 100
+      }
+    ]
+  },
+  "kf-nest-framed-turret-deck": {
+    "slug": "kf-nest-framed-turret-deck",
+    "name": "KF \"Nest\" Framed Turret Deck",
+    "category": "turrets",
+    "description": "The lower support of the gun carriage, mounted on a reinforced deck. Designed to accommodate the full range of available artillery weapons. Engineers from the Kaiser's Friends gang additionally equipped it with a supporting frame, which allows other compartments to be installed on it.",
+    "sourceUrl": "https://sandgame.wiki/index.php/KF_%22Nest%22_Framed_Turret_Deck",
+    "dimensions": "1x1",
+    "health": 3000,
+    "weight": 1200,
+    "researchNode": "I(b)",
+    "researchName": "Framed Artillery Deck",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 75
+      }
+    ]
+  },
+  "kf-prolomnyk-battering-ram": {
+    "slug": "kf-prolomnyk-battering-ram",
+    "name": "KF \"Prolomnyk\" Battering Ram",
+    "category": "turrets",
+    "description": "The bow section stripped from the icebreaker. You might ask whether a tropical planet had ice. Who knows?",
+    "sourceUrl": "https://sandgame.wiki/index.php/KF_%22Prolomnyk%22_Battering_Ram",
+    "dimensions": "2x2",
+    "health": 8000,
+    "weight": 3500,
+    "researchNode": "II(c)",
+    "researchName": "Battering Ram",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 150
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 350
+      }
+    ]
+  },
+  "kf-q-abyss-royal-chassis": {
+    "slug": "kf-q-abyss-royal-chassis",
+    "name": "KF-Q \"Abyss\" Royal Chassis",
+    "category": "chassis",
+    "description": "Kaiser's Friends mechanics found out that the chassis can function perfectly well without its central section. However, it takes a few more materials to hold it together. They made sure to fully utilize this newfound discovery on every chassis variation they could lay their hands on.",
+    "sourceUrl": "https://sandgame.wiki/index.php/KF-Q_%22Abyss%22_Royal_Chassis",
+    "dimensions": "5x5",
+    "weightCapacity": 55000,
+    "energyConsumption": 10,
+    "researchNode": "IV(a)",
+    "researchName": "Royal Chassis",
+    "researchTier": 4,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 250
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 450
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 125
+      },
+      {
+        "slug": "resource-metal-t3",
+        "name": "Computing Module",
+        "amount": 10
+      }
+    ]
+  },
+  "kf-q-trench-great-chassis": {
+    "slug": "kf-q-trench-great-chassis",
+    "name": "KF-Q \"Trench\" Great Chassis",
+    "category": "chassis",
+    "description": "Kaiser's Friends mechanics found out that the chassis can function perfectly well without its central section. However, it takes a few more materials to hold it together. They made sure to fully utilize this newfound discovery on every chassis variation they could lay their hands on.",
+    "sourceUrl": "https://sandgame.wiki/index.php/KF-Q_%22Trench%22_Great_Chassis",
+    "dimensions": "4x4",
+    "weightCapacity": 40000,
+    "energyConsumption": 8,
+    "researchNode": "III(b)",
+    "researchName": "Great Chassis",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 100
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 275
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 80
+      }
+    ]
+  },
+  "kf-q-well-small-chassis": {
+    "slug": "kf-q-well-small-chassis",
+    "name": "KF-Q \"Well\" Small Chassis",
+    "category": "chassis",
+    "description": "Kaiser's Friends mechanics found out that the chassis can function perfectly well without its central section. However, it takes a few more materials to hold it together. They made sure to fully utilize this newfound discovery on every chassis variation they could lay their hands on.",
+    "sourceUrl": "https://sandgame.wiki/index.php/KF-Q_%22Well%22_Small_Chassis",
+    "dimensions": "3x3",
+    "weightCapacity": 20000,
+    "energyConsumption": 3,
+    "researchNode": "I(b)",
+    "researchName": "Small Chassis",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 45
+      }
+    ]
+  },
+  "nz-aze80-motor-reactor-covered-1x3": {
+    "slug": "nz-aze80-motor-reactor-covered-1x3",
+    "name": "NZ AzE80 Motor-Reactor, Covered (1x3)",
+    "category": "reactors",
+    "description": "The heart of the trampler. Provides power to all compartments of the trampler and its chassis. Created by Neue Zukunft, the motor-reactor converts aurogen from energy rods into huge amounts of energy. Destroying the reactor will cause a chain reaction throughout the whole trampler, detonating most of its compartments and rendering it completely inoperable. This model is enclosed in a solid compartment to protect it from any debris falling on the reactor during construction work.",
+    "sourceUrl": "https://sandgame.wiki/index.php/NZ_AzE80_Motor-Reactor%2C_Covered_(1x3)",
+    "dimensions": "1x3",
+    "health": 9500,
+    "weight": 3500,
+    "energyCapacity": 50000,
+    "ratedPower": 75,
+    "researchNode": "II(b)",
+    "researchName": "Motor-Reactor",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 100
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 250
+      }
+    ]
+  },
+  "nz-aze80-motor-reactor-covered-2x2": {
+    "slug": "nz-aze80-motor-reactor-covered-2x2",
+    "name": "NZ AzE80 Motor-Reactor, Covered (2x2)",
+    "category": "reactors",
+    "description": "The heart of the trampler. Provides power to all compartments of the trampler and its chassis. Created by Neue Zukunft, the motor-reactor converts aurogen from energy rods into huge amounts of energy. Destroying the reactor will cause a chain reaction throughout the whole trampler, detonating most of its compartments and rendering it completely inoperable. This model is enclosed in a solid compartment to protect it from any debris falling on the reactor during construction work.",
+    "sourceUrl": "https://sandgame.wiki/index.php/NZ_AzE80_Motor-Reactor%2C_Covered_(2x2)",
+    "dimensions": "2x2",
+    "health": 9500,
+    "weight": 3500,
+    "energyCapacity": 50000,
+    "ratedPower": 75,
+    "researchNode": "II(a)",
+    "researchName": "Motor-Reactor",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 100
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 250
+      }
+    ]
+  },
+  "nz-aze81-motor-reactor-armored": {
+    "slug": "nz-aze81-motor-reactor-armored",
+    "name": "NZ AzE81 Motor-Reactor, Armored",
+    "category": "reactors",
+    "description": "The heart of the trampler. Provides power to all compartments of the trampler and its chassis. Created by Neue Zukunft, the motor-reactor converts aurogen from energy rods into huge amounts of energy. Destroying the reactor will cause a chain reaction throughout the whole trampler, detonating most of its compartments and rendering it completely inoperable. This model features additional armor plates installed at Seearsenal Neues Triest factories, allowing this compartment to be installed on Imperial military tramplers.",
+    "sourceUrl": "https://sandgame.wiki/index.php/NZ_AzE81_Motor-Reactor%2C_Armored",
+    "dimensions": "2x2",
+    "health": 12500,
+    "weight": 5500,
+    "energyCapacity": 50000,
+    "ratedPower": 100,
+    "researchNode": "III(a)",
+    "researchName": "Motor-Reactor",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 350
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 110
+      }
+    ]
+  },
+  "nz-aze81l-deck-motor-reactor-rounded": {
+    "slug": "nz-aze81l-deck-motor-reactor-rounded",
+    "name": "NZ AzE81L Deck Motor-Reactor, Rounded",
+    "category": "reactors",
+    "description": "The heart of the trampler. Provides power to all compartments of the trampler and its chassis. Created by Neue Zukunft, the motor-reactor converts aurogen from energy rods into huge amounts of energy. Destroying the reactor will cause a chain reaction throughout the whole trampler, detonating most of its compartments and rendering it completely inoperable.",
+    "sourceUrl": "https://sandgame.wiki/index.php/NZ_AzE81L_Deck_Motor-Reactor%2C_Rounded",
+    "dimensions": "2x2",
+    "health": 6500,
+    "weight": 2200,
+    "energyCapacity": 40000,
+    "ratedPower": 75,
+    "researchName": "Godlewski's Expedition",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 50
+      }
+    ]
+  },
+  "nz-aze81s-deck-motor-reactor-long": {
+    "slug": "nz-aze81s-deck-motor-reactor-long",
+    "name": "NZ AzE81S Deck Motor-Reactor, Long",
+    "category": "reactors",
+    "description": "The heart of the trampler. Provides power to all compartments of the trampler and its chassis. Created by Neue Zukunft, the motor-reactor converts aurogen from energy rods into huge amounts of energy. Destroying the reactor will cause a chain reaction throughout the whole trampler, detonating most of its compartments and rendering it completely inoperable.",
+    "sourceUrl": "https://sandgame.wiki/index.php/NZ_AzE81S_Deck_Motor-Reactor%2C_Long",
+    "dimensions": "1x3",
+    "health": 6500,
+    "weight": 2200,
+    "energyCapacity": 40000,
+    "ratedPower": 75,
+    "researchNode": "I(a)",
+    "researchName": "Motor-Reactor",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 50
+      }
+    ]
+  },
+  "nz-aze81s-motor-reactor-framed-long": {
+    "slug": "nz-aze81s-motor-reactor-framed-long",
+    "name": "NZ AzE81S Motor-Reactor, Framed Long",
+    "category": "reactors",
+    "description": "The heart of the trampler. Provides power to all compartments of the trampler and its chassis. Created by Neue Zukunft, the motor-reactor converts aurogen from energy rods into huge amounts of energy. Destroying the reactor will cause a chain reaction throughout the whole trampler, detonating most of its compartments and rendering it completely inoperable. It has been further modified by Kaiser's Friends to be able to carry other compartments on top of the frames installed on this compartment.",
+    "sourceUrl": "https://sandgame.wiki/index.php/NZ_AzE81S_Motor-Reactor%2C_Framed_Long",
+    "dimensions": "1x3",
+    "health": 6500,
+    "weight": 2500,
+    "energyCapacity": 40000,
+    "ratedPower": 75,
+    "researchNode": "I(b)",
+    "researchName": "Motor-Reactor",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 55
+      }
+    ]
+  },
+  "nz-aze82-motor-reactor-armored": {
+    "slug": "nz-aze82-motor-reactor-armored",
+    "name": "NZ AzE82 Motor-Reactor, Armored",
+    "category": "reactors",
+    "description": "The heart of the trampler. Provides power to all compartments of the trampler and its chassis. Created by Neue Zukunft, the motor-reactor converts aurogen from energy rods into huge amounts of energy. Destroying the reactor will cause a chain reaction throughout the whole trampler, detonating most of its compartments and rendering it completely inoperable. This model features additional armor plates installed at Seearsenal Neues Triest factories, allowing this compartment to be installed on Imperial military tramplers.",
+    "sourceUrl": "https://sandgame.wiki/index.php/NZ_AzE82_Motor-Reactor%2C_Armored",
+    "dimensions": "1x3",
+    "health": 12500,
+    "weight": 5500,
+    "energyCapacity": 50000,
+    "ratedPower": 100,
+    "researchNode": "III(b)",
+    "researchName": "Motor-Reactor",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 350
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 110
+      }
+    ]
+  },
+  "nz-mb2k-maneuver-engine-small": {
+    "slug": "nz-mb2k-maneuver-engine-small",
+    "name": "NZ Mb2k Maneuver Engine, Small",
+    "category": "engines",
+    "description": "Specifically designed for small-sized tramplers operating in narrow places. Despite its small size, it is still able to moderately improve chassis maneuverability. It doesn't require an individual exhaust pipe.",
+    "sourceUrl": "https://sandgame.wiki/index.php/NZ_Mb2k_Maneuver_Engine%2C_Small",
+    "dimensions": "1x1",
+    "health": 1500,
+    "weight": 1500,
+    "weightCompensation": 10000,
+    "energyConsumption": 20,
+    "researchNode": "II(c)",
+    "researchName": "Small Engine",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 50
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 125
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 40
+      }
+    ]
+  },
+  "nz-mb3-maneuver-engine-medium": {
+    "slug": "nz-mb3-maneuver-engine-medium",
+    "name": "NZ Mb3 Maneuver Engine, Medium",
+    "category": "engines",
+    "description": "Used on heavy-duty transporters to improve chassis maneuverability when transporting extremely heavy loads. This model is increased in size and features a built-in exhaust pipe. These modifications are able to provide a considerable boost to chassis performance.",
+    "sourceUrl": "https://sandgame.wiki/index.php/NZ_Mb3_Maneuver_Engine%2C_Medium",
+    "dimensions": "1x2",
+    "health": 2500,
+    "weight": 2000,
+    "weightCompensation": 25000,
+    "energyConsumption": 35,
+    "researchNode": "III(a)",
+    "researchName": "Medium Engine",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 150
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 75
+      },
+      {
+        "slug": "resource-metal-t3",
+        "name": "Computing Module",
+        "amount": 5
+      }
+    ]
+  },
+  "s-h-armaments-workbench": {
+    "slug": "s-h-armaments-workbench",
+    "name": "S&H Armaments Workbench",
+    "category": "stations",
+    "description": "Such workshops are an essential part of warships, where they are used to maintain the crew's weapons and ammunition. It has been refitted by scavengers into a full-fledged armory to allow the construction of weapons and ammunition from even the most primitive components found on the planet during expeditions. You might ask, \"Why didn't they just use it on the space station?\" Well, you can check the Saint Cristopher Station's \"Rules of Habitat and Machinery Maintenance\" Chapter 5, Article 32, Lines 24 to 32.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Armaments_Workbench",
+    "dimensions": "1x1",
+    "health": 1500,
+    "weight": 700,
+    "energyConsumption": 5,
+    "researchName": "K.K. Landwehr",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 35
+      }
+    ]
+  },
+  "s-h-armaments-workshop": {
+    "slug": "s-h-armaments-workshop",
+    "name": "S&H Armaments Workshop",
+    "category": "stations",
+    "description": "Such workshops are an essential part of warships, where they are used to maintain the crew's weapons and ammunition. It has been refitted by scavengers into a full-fledged armory to allow the construction of weapons and ammunition from even the most primitive components found on the planet during expeditions. You might ask, \"Why didn't they just use it on the space station?\" Well, you can check the Saint Cristopher Station's \"Rules of Habitat and Machinery Maintenance\" Chapter 5, Article 32, Lines 24 to 32.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Armaments_Workshop",
+    "dimensions": "1x2",
+    "health": 3500,
+    "weight": 1500,
+    "energyConsumption": 10,
+    "researchNode": "II(a)",
+    "researchName": "Large Armament Workshop",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 100
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 150
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 50
+      }
+    ]
+  },
+  "s-h-atm-fs-77b-l-small-chassis": {
+    "slug": "s-h-atm-fs-77b-l-small-chassis",
+    "name": "S&H Atm.Fs 77B-L Small Chassis",
+    "category": "chassis",
+    "description": "Used by small construction tramplers owned by Sternenwerft Hofbauer GmbH & Co. KG. Tramplers built on this chassis are capable of operating in hard-to-reach places due to their compact design and high maneuverability. However, load capacity is not among their strong points.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Atm.Fs_77B-L_Small_Chassis",
+    "dimensions": "2x4",
+    "weightCapacity": 20000,
+    "energyConsumption": 3,
+    "researchName": "Godlewski's Expedition",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 35
+      }
+    ]
+  },
+  "s-h-atm-fs-77b-q-small-chassis": {
+    "slug": "s-h-atm-fs-77b-q-small-chassis",
+    "name": "S&H Atm.Fs 77B-Q Small Chassis",
+    "category": "chassis",
+    "description": "Used by small construction tramplers owned by Sternenwerft Hofbauer GmbH & Co. KG. Tramplers built on this chassis are capable of operating in hard-to-reach places due to their compact design and high maneuverability. However, load capacity is not among their strong points.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Atm.Fs_77B-Q_Small_Chassis",
+    "dimensions": "3x3",
+    "weightCapacity": 20000,
+    "energyConsumption": 3,
+    "researchNode": "I(a)",
+    "researchName": "Small Chassis",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 25
+      }
+    ]
+  },
+  "s-h-atm-fs-79h-b-great-chassis": {
+    "slug": "s-h-atm-fs-79h-b-great-chassis",
+    "name": "S&H Atm.Fs 79H-B Great Chassis",
+    "category": "chassis",
+    "description": "Made by Sternenwerft Hofbauer GmbH & Co. KG at the request of Sophie's government. It was designed for heavy-duty transporters that carried spacecraft parts. Much less maneuverable compared to smaller models but can withstand extremely high loads.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Atm.Fs_79H-B_Great_Chassis",
+    "dimensions": "5x3",
+    "weightCapacity": 50000,
+    "energyConsumption": 8,
+    "researchNode": "III(b)",
+    "researchName": "Great Chassis",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 90
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 250
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 70
+      }
+    ]
+  },
+  "s-h-atm-fs-79h-l-great-chassis": {
+    "slug": "s-h-atm-fs-79h-l-great-chassis",
+    "name": "S&H Atm.Fs 79H-L Great Chassis",
+    "category": "chassis",
+    "description": "Made by Sternenwerft Hofbauer GmbH & Co. KG at the request of Sophie's government. It was designed for heavy-duty transporters that carried spacecraft parts. Much less maneuverable compared to smaller models but can withstand extremely high loads.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Atm.Fs_79H-L_Great_Chassis",
+    "dimensions": "3x5",
+    "weightCapacity": 50000,
+    "energyConsumption": 8,
+    "researchNode": "III(b)",
+    "researchName": "Great Chassis",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 90
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 250
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 70
+      }
+    ]
+  },
+  "s-h-atm-fs-79h-q-great-chassis": {
+    "slug": "s-h-atm-fs-79h-q-great-chassis",
+    "name": "S&H Atm.Fs 79H-Q Great Chassis",
+    "category": "chassis",
+    "description": "Made by Sternenwerft Hofbauer GmbH & Co. KG at the request of Sophie's government. It was designed for heavy-duty transporters that carried spacecraft parts. Much less maneuverable compared to smaller models but can withstand extremely high loads.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Atm.Fs_79H-Q_Great_Chassis",
+    "dimensions": "4x4",
+    "weightCapacity": 50000,
+    "energyConsumption": 8,
+    "researchNode": "III(a)",
+    "researchName": "Great Chassis",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 90
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 250
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 70
+      }
+    ]
+  },
+  "s-h-atm-fs-83u-b-middling-chassis": {
+    "slug": "s-h-atm-fs-83u-b-middling-chassis",
+    "name": "S&H Atm.Fs 83U-B Middling Chassis",
+    "category": "chassis",
+    "description": "Maintains the perfect balance between maneuverability and carrying capacity. Chassis of this type, due to their extremely versatile design, have been used in many areas, from construction tramplers and cargo carriers to quick and agile military reconnaissance models.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Atm.Fs_83U-B_Middling_Chassis",
+    "dimensions": "4x3",
+    "weightCapacity": 35000,
+    "energyConsumption": 5,
+    "researchNode": "II(a)",
+    "researchName": "Middling Chassis",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 55
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 150
+      }
+    ]
+  },
+  "s-h-atm-fs-83u-l-middling-chassis": {
+    "slug": "s-h-atm-fs-83u-l-middling-chassis",
+    "name": "S&H Atm.Fs 83U-L Middling Chassis",
+    "category": "chassis",
+    "description": "Maintains the perfect balance between maneuverability and carrying capacity. Chassis of this type, due to their extremely versatile design, have been used in many areas, from construction tramplers and cargo carriers to quick and agile military reconnaissance models.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Atm.Fs_83U-L_Middling_Chassis",
+    "dimensions": "3x4",
+    "weightCapacity": 35000,
+    "energyConsumption": 5,
+    "researchNode": "II(a)",
+    "researchName": "Middling Chassis",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 55
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 150
+      }
+    ]
+  },
+  "s-h-auxiliary-corridor": {
+    "slug": "s-h-auxiliary-corridor",
+    "name": "S&H Auxiliary Corridor",
+    "category": "structure",
+    "description": "A compartment that can be installed to improve the trampler's ergonomics by creating more protected passages between functional compartments. Quite fragile.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Auxiliary_Corridor",
+    "dimensions": "1x1",
+    "health": 800,
+    "weight": 400,
+    "researchNode": "II(a)",
+    "researchName": "Wooden Corridor",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 100
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 50
+      }
+    ]
+  },
+  "s-h-balcony-extended-l-r": {
+    "slug": "s-h-balcony-extended-l-r",
+    "name": "S&H Balcony, Extended L&R",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Lightweight but fragile. This model extends beyond the dimensions of the standard compartment on both sides to allow for connection to additional balconies.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Balcony%2C_Extended_L%26R",
+    "dimensions": "3x1",
+    "health": 200,
+    "weight": 75,
+    "researchNode": "I(b)",
+    "researchName": "Balconies (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 20
+      }
+    ]
+  },
+  "s-h-balcony-extended-left": {
+    "slug": "s-h-balcony-extended-left",
+    "name": "S&H Balcony, Extended Left",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Lightweight but fragile. This model extends beyond the dimensions of the standard compartment leftwards to allow for connection to additional balconies.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Balcony%2C_Extended_Left",
+    "dimensions": "2x1",
+    "health": 200,
+    "weight": 75,
+    "researchNode": "I(b)",
+    "researchName": "Balconies (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 15
+      }
+    ]
+  },
+  "s-h-balcony-extended-right": {
+    "slug": "s-h-balcony-extended-right",
+    "name": "S&H Balcony, Extended Right",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Lightweight but fragile. This model extends beyond the dimensions of the standard compartment rightwards to allow for connection to additional balconies.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Balcony%2C_Extended_Right",
+    "dimensions": "2x1",
+    "health": 200,
+    "weight": 75,
+    "researchNode": "I(b)",
+    "researchName": "Balconies (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 15
+      }
+    ]
+  },
+  "s-h-balcony-inner-corner-l": {
+    "slug": "s-h-balcony-inner-corner-l",
+    "name": "S&H Balcony, Inner Corner (L)",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Lightweight but fragile. This model can be installed in the inner corner between compartments.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Balcony%2C_Inner_Corner_(L)",
+    "dimensions": "1x1",
+    "health": 300,
+    "weight": 100,
+    "researchNode": "I(b)",
+    "researchName": "Balconies (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 20
+      }
+    ]
+  },
+  "s-h-balcony-inner-corner-r": {
+    "slug": "s-h-balcony-inner-corner-r",
+    "name": "S&H Balcony, Inner Corner (R)",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Lightweight but fragile. This model can be installed in the inner corner between compartments.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Balcony%2C_Inner_Corner_(R)",
+    "dimensions": "1x1",
+    "health": 300,
+    "weight": 100,
+    "researchNode": "I(b)",
+    "researchName": "Balconies (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 20
+      }
+    ]
+  },
+  "s-h-bridge-balcony": {
+    "slug": "s-h-bridge-balcony",
+    "name": "S&H Bridge Balcony",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Lightweight but fragile. This particular model acts as a small bridge, allowing it to cover a 1x1 gap.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Bridge_Balcony",
+    "dimensions": "1x1",
+    "health": 200,
+    "weight": 100,
+    "researchNode": "I(b)",
+    "researchName": "Balconies (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 20
+      }
+    ]
+  },
+  "s-h-canopy-deck": {
+    "slug": "s-h-canopy-deck",
+    "name": "S&H Canopy Deck",
+    "category": "structure",
+    "description": "A simple set of decks covered with a canopy. Protects your head from the harsh heat of Sophie or anything that falls from above.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Canopy_Deck",
+    "dimensions": "1x2",
+    "health": 300,
+    "weight": 150,
+    "researchNode": "I(a)",
+    "researchName": "Wooden Decks (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 10
+      }
+    ]
+  },
+  "s-h-captain-s-cabin": {
+    "slug": "s-h-captain-s-cabin",
+    "name": "S&H Captain's Cabin",
+    "category": "crew",
+    "description": "A crew compartment specially designed for the trampler's captain. The standard equipment includes a personal refrigerator and reinforced armor. The cabin also houses the Trampler Ownership Device, \"IO\". Crew access to doors and other trampler functions is granted and overwritten exclusively through this device.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Captain's_Cabin",
+    "dimensions": "1x1+",
+    "health": 3500,
+    "weight": 2000,
+    "energyConsumption": 3,
+    "crewSlots": 1,
+    "researchName": "Godlewski's Expedition",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 25
+      }
+    ]
+  },
+  "s-h-cargo-bay-l-shape": {
+    "slug": "s-h-cargo-bay-l-shape",
+    "name": "S&H Cargo Bay, L-Shape",
+    "category": "cargo",
+    "description": "A cargo compartment that was used to transport a large number of various goods during long journeys before the cataclysm. Large and sturdy, it can hold quite a lot of things, which is why it is very heavy.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Cargo_Bay%2C_L-Shape",
+    "dimensions": "1x2",
+    "health": 7000,
+    "weight": 2500,
+    "itemSlots": 288,
+    "researchNode": "II(c)",
+    "researchName": "Cargo Bay",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 300
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 100
+      }
+    ]
+  },
+  "s-h-cargo-bay-parallel": {
+    "slug": "s-h-cargo-bay-parallel",
+    "name": "S&H Cargo Bay, Parallel",
+    "category": "cargo",
+    "description": "A cargo compartment that was used to transport a large number of various goods during long journeys before the cataclysm. Large and sturdy, it can hold quite a lot of things, which is why it is very heavy.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Cargo_Bay%2C_Parallel",
+    "dimensions": "1x2",
+    "health": 7000,
+    "weight": 2500,
+    "itemSlots": 288,
+    "researchNode": "II(c)",
+    "researchName": "Cargo Bay",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 300
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 100
+      }
+    ]
+  },
+  "s-h-cargo-bay-u-shape": {
+    "slug": "s-h-cargo-bay-u-shape",
+    "name": "S&H Cargo Bay, U-Shape",
+    "category": "cargo",
+    "description": "A cargo compartment that was used to transport a large number of various goods during long journeys before the cataclysm. Large and sturdy, it can hold quite a lot of things, which is why it is very heavy.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Cargo_Bay%2C_U-Shape",
+    "dimensions": "1x2",
+    "health": 7000,
+    "weight": 2500,
+    "itemSlots": 288,
+    "researchNode": "II(c)",
+    "researchName": "Cargo Bay",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 300
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 100
+      }
+    ]
+  },
+  "s-h-cargo-compartment-medium": {
+    "slug": "s-h-cargo-compartment-medium",
+    "name": "S&H Cargo Compartment, Medium",
+    "category": "cargo",
+    "description": "A compartment designed for transporting small loads. Ensures that all items placed on its shelves will remain intact during Trampler Deployment and Evacuation. Can hold off a burglar but won't protect your loot from an explosion.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Cargo_Compartment%2C_Medium",
+    "dimensions": "1x1",
+    "health": 3500,
+    "weight": 2000,
+    "itemSlots": 216,
+    "researchNode": "II(b)",
+    "researchName": "Cargo Hold",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 75
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 150
+      }
+    ]
+  },
+  "s-h-cargo-compartment-small": {
+    "slug": "s-h-cargo-compartment-small",
+    "name": "S&H Cargo Compartment, Small",
+    "category": "cargo",
+    "description": "A compartment designed for transporting small loads. Ensures that all items placed on its shelves will remain intact during Trampler Deployment and Evacuation. Can hold off a burglar but won't protect your loot from an explosion.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Cargo_Compartment%2C_Small",
+    "dimensions": "1x1",
+    "health": 2500,
+    "weight": 1500,
+    "itemSlots": 144,
+    "researchNode": "II(a)",
+    "researchName": "Cargo Hold",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 50
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 100
+      }
+    ]
+  },
+  "s-h-cargo-compartment-small-l-shape": {
+    "slug": "s-h-cargo-compartment-small-l-shape",
+    "name": "S&H Cargo Compartment, Small L-Shape",
+    "category": "cargo",
+    "description": "A compartment designed for transporting small loads. Ensures that all items placed on its shelves will remain intact during Trampler Deployment and Evacuation. Can hold off a burglar but won't protect your loot from an explosion.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Cargo_Compartment%2C_Small_L-Shape",
+    "dimensions": "1x1",
+    "health": 2500,
+    "weight": 1500,
+    "itemSlots": 144,
+    "researchNode": "II(a)",
+    "researchName": "Cargo Hold",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 50
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 100
+      }
+    ]
+  },
+  "s-h-cargo-deck": {
+    "slug": "s-h-cargo-deck",
+    "name": "S&H Cargo Deck",
+    "category": "cargo",
+    "description": "A compartment designed for transporting small loads. Ensures that all items placed on its shelves will remain intact during Trampler Deployment and Evacuation. An inexpensive option, the increase in capacity comes at the cost of no protection from explosions or burglars.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Cargo_Deck",
+    "dimensions": "1x1",
+    "health": 2000,
+    "weight": 800,
+    "itemSlots": 192,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 25
+      }
+    ]
+  },
+  "s-h-cargo-deck-framed": {
+    "slug": "s-h-cargo-deck-framed",
+    "name": "S&H Cargo Deck, Framed",
+    "category": "cargo",
+    "description": "A compartment designed for transporting small loads. Ensures that all items placed on its shelves will remain intact during Trampler Deployment and Evacuation. An inexpensive option, the increase in capacity comes at the cost of no protection from explosions or burglars.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Cargo_Deck%2C_Framed",
+    "dimensions": "1x1",
+    "health": 2500,
+    "weight": 1000,
+    "itemSlots": 192,
+    "researchNode": "I(a)",
+    "researchName": "Cargo Deck",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 45
+      }
+    ]
+  },
+  "s-h-cargo-deck-framed-l-shape": {
+    "slug": "s-h-cargo-deck-framed-l-shape",
+    "name": "S&H Cargo Deck, Framed L-Shape",
+    "category": "cargo",
+    "description": "A compartment designed for transporting small loads. Ensures that all items placed on its shelves will remain intact during Trampler Deployment and Evacuation. A cheaper version with increased capacity achieved through a complete lack of protection.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Cargo_Deck%2C_Framed_L-Shape",
+    "dimensions": "1x1",
+    "health": 2500,
+    "weight": 1000,
+    "itemSlots": 192,
+    "researchNode": "I(a)",
+    "researchName": "Cargo Deck",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 45
+      }
+    ]
+  },
+  "s-h-cargo-deck-framed-light": {
+    "slug": "s-h-cargo-deck-framed-light",
+    "name": "S&H Cargo Deck, Framed Light",
+    "category": "cargo",
+    "description": "A compartment designed for transporting small loads. Ensures that all items placed on its shelves will remain intact during trampler deployment and evacuation. An inexpensive option, at the cost of no protection from explosions or burglars. A lighter version of the regular cargo deck that has only one rack with shelves.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Cargo_Deck%2C_Framed_Light",
+    "dimensions": "1x1",
+    "health": 1750,
+    "weight": 500,
+    "itemSlots": 96,
+    "researchNode": "I(a)",
+    "researchName": "Cargo Deck",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 25
+      }
+    ]
+  },
+  "s-h-cargo-deck-l-shape": {
+    "slug": "s-h-cargo-deck-l-shape",
+    "name": "S&H Cargo Deck, L-Shape",
+    "category": "cargo",
+    "description": "A compartment designed for transporting small loads. Ensures that all items placed on its shelves will remain intact during Trampler Deployment and Evacuation. A cheaper version with increased capacity achieved through a complete lack of protection.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Cargo_Deck%2C_L-Shape",
+    "dimensions": "1x1",
+    "health": 2000,
+    "weight": 800,
+    "itemSlots": 192,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 25
+      }
+    ]
+  },
+  "s-h-cargo-deck-light": {
+    "slug": "s-h-cargo-deck-light",
+    "name": "S&H Cargo Deck, Light",
+    "category": "cargo",
+    "description": "A compartment designed for transporting small loads. Ensures that all items placed on its shelves will remain intact during trampler deployment and evacuation. An inexpensive option, at the cost of no protection from explosions or burglars. A lighter version of the regular cargo deck that has only one rack with shelves.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Cargo_Deck%2C_Light",
+    "dimensions": "1x1",
+    "health": 1500,
+    "weight": 400,
+    "itemSlots": 96,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 15
+      }
+    ]
+  },
+  "s-h-compact-armaments-workshop": {
+    "slug": "s-h-compact-armaments-workshop",
+    "name": "S&H Compact Armaments Workshop",
+    "category": "stations",
+    "description": "Such workshops are an essential part of warships, where they are used to maintain the crew's weapons and ammunition. It has been refitted by scavengers into a full-fledged armory to allow the construction of weapons and ammunition from even the most primitive components found on the planet during expeditions. Installed in a more compact compartment for better ergonomics. You might ask, \"Why didn't they just use it on the space station?\" Well, you can check the Saint Cristopher Station's \"Rules of Habitat and Machinery Maintenance\" Chapter 5, Article 32, Lines 24 to 32.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Compact_Armaments_Workshop",
+    "dimensions": "1x1",
+    "health": 2500,
+    "weight": 1000,
+    "energyConsumption": 7,
+    "researchNode": "I(a)",
+    "researchName": "Small Armament Workshop",
+    "researchTier": 1,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 50
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 100
+      }
+    ]
+  },
+  "s-h-deck-beveled-1x1": {
+    "slug": "s-h-deck-beveled-1x1",
+    "name": "S&H Deck, Beveled (1x1)",
+    "category": "structure",
+    "description": "A platform that improves the trampler's ergonomics. Provides more comfortable navigation on the roofs of compartments. Equipped with railings to prevent the crew from falling overboard or unauthorized persons from entering. Can only be installed on top of load-bearing structures like chassis and solid compartments.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Deck%2C_Beveled_(1x1)",
+    "dimensions": "1x1",
+    "health": 200,
+    "weight": 100,
+    "researchNode": "I(a)",
+    "researchName": "Wooden Decks (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 5
+      }
+    ]
+  },
+  "s-h-deck-beveled-1x2": {
+    "slug": "s-h-deck-beveled-1x2",
+    "name": "S&H Deck, Beveled (1x2)",
+    "category": "structure",
+    "description": "A platform that improves the trampler's ergonomics. Provides more comfortable navigation on the roofs of compartments. Equipped with railings to prevent the crew from falling overboard or unauthorized persons from entering. Can only be installed on top of load-bearing structures like chassis and solid compartments.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Deck%2C_Beveled_(1x2)",
+    "dimensions": "1x2",
+    "health": 300,
+    "weight": 150,
+    "researchNode": "I(a)",
+    "researchName": "Wooden Decks (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 10
+      }
+    ]
+  },
+  "s-h-deck-round-1x1": {
+    "slug": "s-h-deck-round-1x1",
+    "name": "S&H Deck, Round (1x1)",
+    "category": "structure",
+    "description": "A platform that improves the trampler's ergonomics. Provides more comfortable navigation on the roofs of compartments. Equipped with railings to prevent the crew from falling overboard or unauthorized persons from entering. Can only be installed on top of load-bearing structures like chassis and solid compartments.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Deck%2C_Round_(1x1)",
+    "dimensions": "1x1",
+    "health": 200,
+    "weight": 100,
+    "researchNode": "I(a)",
+    "researchName": "Wooden Decks (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 5
+      }
+    ]
+  },
+  "s-h-deck-round-2x1": {
+    "slug": "s-h-deck-round-2x1",
+    "name": "S&H Deck, Round (2x1)",
+    "category": "structure",
+    "description": "A platform that improves the trampler's ergonomics. Provides more comfortable navigation on the roofs of compartments. Equipped with railings to prevent the crew from falling overboard or unauthorized persons from entering. Can only be installed on top of load-bearing structures like chassis and solid compartments.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Deck%2C_Round_(2x1)",
+    "dimensions": "2x1",
+    "health": 300,
+    "weight": 150,
+    "researchNode": "I(a)",
+    "researchName": "Wooden Decks (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 10
+      }
+    ]
+  },
+  "s-h-deck-round-beveled": {
+    "slug": "s-h-deck-round-beveled",
+    "name": "S&H Deck, Round-Beveled",
+    "category": "structure",
+    "description": "A platform that improves the trampler's ergonomics. Provides more comfortable navigation on the roofs of compartments. Equipped with railings to prevent the crew from falling overboard or unauthorized persons from entering. Can only be installed on top of load-bearing structures like chassis and solid compartments.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Deck%2C_Round-Beveled",
+    "dimensions": "2x1",
+    "health": 300,
+    "weight": 150,
+    "researchNode": "I(a)",
+    "researchName": "Wooden Decks (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 10
+      }
+    ]
+  },
+  "s-h-deck-standard": {
+    "slug": "s-h-deck-standard",
+    "name": "S&H Deck, Standard",
+    "category": "structure",
+    "description": "A platform that improves the trampler's ergonomics. Provides more comfortable navigation on the roofs of compartments. Equipped with railings to prevent the crew from falling overboard or unauthorized persons from entering. Can only be installed on top of load-bearing structures like chassis and solid compartments.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Deck%2C_Standard",
+    "dimensions": "1x1",
+    "health": 200,
+    "weight": 100,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 5
+      }
+    ]
+  },
+  "s-h-deck-standard-no-railings": {
+    "slug": "s-h-deck-standard-no-railings",
+    "name": "S&H Deck, Standard (no railings)",
+    "category": "structure",
+    "description": "A platform that improves the trampler's ergonomics, it provides more comfortable navigation on the roofs of compartments. It can only be installed on top of load-bearing structures like chassis and solid compartments. This particular model comes with the railings removed.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Deck%2C_Standard_(no_railings)",
+    "dimensions": "1x1",
+    "health": 200,
+    "weight": 100,
+    "researchNode": "I(a)",
+    "researchName": "Wooden Decks (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 5
+      }
+    ]
+  },
+  "s-h-entrance-vestibule": {
+    "slug": "s-h-entrance-vestibule",
+    "name": "S&H Entrance Vestibule",
+    "category": "structure",
+    "description": "A crucial part of any trampler. The ladder significantly eases the process of climbing onto the trampler. A fully enclosed entrance with a vestibule provides enhanced security measures. This compartment cannot be installed on top of other compartments or chassis, as the access hatch with the ladder is mounted in its lower deck.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Entrance_Vestibule",
+    "dimensions": "1x1",
+    "health": 800,
+    "weight": 400,
+    "researchNode": "I(a)",
+    "researchName": "Wooden Vestibule",
+    "researchTier": 1,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 100
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 50
+      }
+    ]
+  },
+  "s-h-fortified-entrance-area": {
+    "slug": "s-h-fortified-entrance-area",
+    "name": "S&H Fortified Entrance Area",
+    "category": "structure",
+    "description": "A crucial part of any trampler. The ladder significantly eases the process of climbing onto the trampler. Solid walls and roof not only increase protection, but also allow for the installation of additional compartments on top.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Fortified_Entrance_Area",
+    "dimensions": "1x1",
+    "health": 500,
+    "weight": 200,
+    "researchName": "K.K. Landwehr",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 10
+      }
+    ]
+  },
+  "s-h-framed-stairs": {
+    "slug": "s-h-framed-stairs",
+    "name": "S&H Framed Stairs",
+    "category": "structure",
+    "description": "Stairs attached to a frame, making the traversal between trampler levels easier. This model provides more space for walking and is a bit sturdier than mounted stairs.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Framed_Stairs",
+    "dimensions": "1x1",
+    "health": 400,
+    "weight": 200,
+    "researchNode": "I(b)",
+    "researchName": "Framed Stairs",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 5
+      }
+    ]
+  },
+  "s-h-lower-corner-supporting-frame-l": {
+    "slug": "s-h-lower-corner-supporting-frame-l",
+    "name": "S&H Lower Corner Supporting Frame (L)",
+    "category": "structure",
+    "description": "Supporting frames that were designed to be mounted on walls to support decks and other structures above them. They were often used on Sternenwerft Hofbauer GmbH & Co. KG tramplers to save space and make them more maneuverable on construction sites.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Lower_Corner_Supporting_Frame_(L)",
+    "dimensions": "1x1",
+    "health": 400,
+    "weight": 150,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 5
+      }
+    ]
+  },
+  "s-h-lower-corner-supporting-frame-r": {
+    "slug": "s-h-lower-corner-supporting-frame-r",
+    "name": "S&H Lower Corner Supporting Frame (R)",
+    "category": "structure",
+    "description": "Supporting frames that were designed to be mounted on walls to support decks and other structures above them. They were often used on Sternenwerft Hofbauer GmbH & Co. KG tramplers to save space and make them more maneuverable on construction sites.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Lower_Corner_Supporting_Frame_(R)",
+    "dimensions": "1x1",
+    "health": 400,
+    "weight": 150,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 5
+      }
+    ]
+  },
+  "s-h-lower-supporting-frame": {
+    "slug": "s-h-lower-supporting-frame",
+    "name": "S&H Lower Supporting Frame",
+    "category": "structure",
+    "description": "Supporting frames that were designed to be mounted on walls to support decks and other structures above them. They were often used on Sternenwerft Hofbauer GmbH & Co. KG tramplers to save space and make them more maneuverable on construction sites.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Lower_Supporting_Frame",
+    "dimensions": "1x1",
+    "health": 400,
+    "weight": 200,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 5
+      }
+    ]
+  },
+  "s-h-lower-supporting-frame-extended-l": {
+    "slug": "s-h-lower-supporting-frame-extended-l",
+    "name": "S&H Lower Supporting Frame Extended (L)",
+    "category": "structure",
+    "description": "Supporting frames that were designed to be mounted on walls to support decks and other structures above them. They were often used on Sternenwerft Hofbauer GmbH & Co. KG tramplers to save space and make them more maneuverable on construction sites.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Lower_Supporting_Frame_Extended_(L)",
+    "dimensions": "1x2",
+    "health": 600,
+    "weight": 350,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 10
+      }
+    ]
+  },
+  "s-h-lower-supporting-frame-extended-l-r": {
+    "slug": "s-h-lower-supporting-frame-extended-l-r",
+    "name": "S&H Lower Supporting Frame Extended (L&R)",
+    "category": "structure",
+    "description": "Supporting frames that were designed to be mounted on walls to support decks and other structures above them. They were often used on Sternenwerft Hofbauer GmbH & Co. KG tramplers to save space and make them more maneuverable on construction sites.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Lower_Supporting_Frame_Extended_(L%26R)",
+    "dimensions": "1x3",
+    "health": 800,
+    "weight": 500,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 10
+      }
+    ]
+  },
+  "s-h-lower-supporting-frame-extended-r": {
+    "slug": "s-h-lower-supporting-frame-extended-r",
+    "name": "S&H Lower Supporting Frame Extended (R)",
+    "category": "structure",
+    "description": "Supporting frames that were designed to be mounted on walls to support decks and other structures above them. They were often used on Sternenwerft Hofbauer GmbH & Co. KG tramplers to save space and make them more maneuverable on construction sites.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Lower_Supporting_Frame_Extended_(R)",
+    "dimensions": "1x2",
+    "health": 600,
+    "weight": 350,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 10
+      }
+    ]
+  },
+  "s-h-m78-framed-steering-deck": {
+    "slug": "s-h-m78-framed-steering-deck",
+    "name": "S&H M78 Framed Steering Deck",
+    "category": "driving",
+    "description": "S&H engineers have combined every trampler movement control into one module, making it a universal control point. Marching, turning, sidestep, emergency brake. They even installed a horn! This version has improved ergonomics and allows you to install other compartments on top of it.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_M78_Framed_Steering_Deck",
+    "dimensions": "1x2",
+    "health": 2500,
+    "weight": 1000,
+    "energyConsumption": 3,
+    "researchNode": "I(c)",
+    "researchName": "Large Framed Steering (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 30
+      }
+    ]
+  },
+  "s-h-m78k-flybridge": {
+    "slug": "s-h-m78k-flybridge",
+    "name": "S&H M78k Flybridge",
+    "category": "driving",
+    "description": "S&H engineers have combined every trampler movement control into one compact module, making it a universal control point. Marching, turning, sidestep, emergency brake. They even installed a horn!",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_M78k_Flybridge",
+    "dimensions": "1x1",
+    "health": 2000,
+    "weight": 600,
+    "energyConsumption": 2,
+    "researchName": "K.K. Landwehr",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 15
+      }
+    ]
+  },
+  "s-h-m78k-framed-steering-deck": {
+    "slug": "s-h-m78k-framed-steering-deck",
+    "name": "S&H M78k Framed Steering Deck",
+    "category": "driving",
+    "description": "S&H engineers have combined every trampler movement control into one module, making it a universal control point. Marching, turning, sidestep, emergency brake. They even installed a horn! This version is more compact, has improved ergonomics and allows you to install other compartments on top of it.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_M78k_Framed_Steering_Deck",
+    "dimensions": "1x1",
+    "health": 2000,
+    "weight": 800,
+    "energyConsumption": 2,
+    "researchNode": "I(a)",
+    "researchName": "Framed Steering",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 20
+      }
+    ]
+  },
+  "s-h-m78l-flybridge": {
+    "slug": "s-h-m78l-flybridge",
+    "name": "S&H M78l Flybridge",
+    "category": "driving",
+    "description": "S&H engineers have combined every trampler movement control into one module, making it a universal control point. Marching, turning, sidestep, emergency brake. They even installed a horn!",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_M78l_Flybridge",
+    "dimensions": "1x2",
+    "health": 2500,
+    "weight": 800,
+    "energyConsumption": 3,
+    "researchNode": "I(b)",
+    "researchName": "Large Open Steering (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 20
+      }
+    ]
+  },
+  "s-h-m78r-flybridge": {
+    "slug": "s-h-m78r-flybridge",
+    "name": "S&H M78r Flybridge",
+    "category": "driving",
+    "description": "S&H engineers have combined every trampler movement control into one module, making it a universal control point. Marching, turning, sidestep, emergency brake. They even installed a horn!",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_M78r_Flybridge",
+    "dimensions": "2x1",
+    "health": 2500,
+    "weight": 800,
+    "energyConsumption": 3,
+    "researchNode": "I(b)",
+    "researchName": "Large Open Steering (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 20
+      }
+    ]
+  },
+  "s-h-m78r-framed-steering-deck": {
+    "slug": "s-h-m78r-framed-steering-deck",
+    "name": "S&H M78r Framed Steering Deck",
+    "category": "driving",
+    "description": "S&H engineers have combined every trampler movement control into one module, making it a universal control point. Marching, turning, sidestep, emergency brake. They even installed a horn! This version has improved ergonomics and allows you to install other compartments on top of it.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_M78r_Framed_Steering_Deck",
+    "dimensions": "2x1",
+    "health": 2500,
+    "weight": 1000,
+    "energyConsumption": 3,
+    "researchNode": "I(c)",
+    "researchName": "Large Framed Steering (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 30
+      }
+    ]
+  },
+  "s-h-mk1-crew-cabin-single": {
+    "slug": "s-h-mk1-crew-cabin-single",
+    "name": "S&H MK1 Crew Cabin, Single",
+    "category": "crew",
+    "description": "These cabins were designed to sustain a trampler crew during long journeys. Every new shift starts here. Provides all the necessary means of comfort, including a refrigerator to store provisions and a ventilation system that provides improved air circulation on hot days. The compact model is designed for personal use.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_MK1_Crew_Cabin%2C_Single",
+    "dimensions": "1x1",
+    "health": 1500,
+    "weight": 800,
+    "energyConsumption": 2,
+    "crewSlots": 1,
+    "researchName": "Godlewski's Expedition",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 15
+      }
+    ]
+  },
+  "s-h-mk2-crew-cabin-2-people": {
+    "slug": "s-h-mk2-crew-cabin-2-people",
+    "name": "S&H MK2 Crew Cabin, 2 People",
+    "category": "crew",
+    "description": "These cabins were designed to sustain a trampler crew during long journeys. Every new shift starts here. Provides all the necessary means of comfort, including a refrigerator to store provisions and a ventilation system that provides improved air circulation on hot days.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_MK2_Crew_Cabin%2C_2_People",
+    "dimensions": "1x2",
+    "health": 2000,
+    "weight": 1500,
+    "energyConsumption": 3,
+    "crewSlots": 2,
+    "researchName": "Godlewski's Expedition",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 20
+      }
+    ]
+  },
+  "s-h-mk4-crew-cabin-4-people": {
+    "slug": "s-h-mk4-crew-cabin-4-people",
+    "name": "S&H MK4 Crew Cabin, 4 People",
+    "category": "crew",
+    "description": "These cabins were designed to sustain a trampler crew during long journeys. Every new shift starts here. Provides all the necessary means of comfort, including a refrigerator to store provisions and a ventilation system that provides improved air circulation on hot days. This particular design features increased room capacity and can sustain up to four crew members.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_MK4_Crew_Cabin%2C_4_People",
+    "dimensions": "2x2",
+    "health": 3000,
+    "weight": 1800,
+    "energyConsumption": 5,
+    "crewSlots": 4,
+    "researchNode": "I(a)",
+    "researchName": "Crew Room",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 25
+      }
+    ]
+  },
+  "s-h-mounted-stairs-left": {
+    "slug": "s-h-mounted-stairs-left",
+    "name": "S&H Mounted Stairs, Left",
+    "category": "structure",
+    "description": "Designed to improve the trampler's ergonomics by allowing easier movement between trampler levels. Was commonly used by builders on \"Sternenwerft Hofbauer GmbH & Co. KG\" tramplers during colonization.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Mounted_Stairs%2C_Left",
+    "dimensions": "1x1",
+    "health": 250,
+    "weight": 100,
+    "researchNode": "I(a)",
+    "researchName": "Stairs (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 30
+      }
+    ]
+  },
+  "s-h-mounted-stairs-right": {
+    "slug": "s-h-mounted-stairs-right",
+    "name": "S&H Mounted Stairs, Right",
+    "category": "structure",
+    "description": "Designed to improve the trampler's ergonomics by allowing easier movement between trampler levels. Was commonly used by builders on \"Sternenwerft Hofbauer GmbH & Co. KG\" tramplers during colonization.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Mounted_Stairs%2C_Right",
+    "dimensions": "1x1",
+    "health": 250,
+    "weight": 100,
+    "researchNode": "I(a)",
+    "researchName": "Stairs (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 30
+      }
+    ]
+  },
+  "s-h-standard-balcony": {
+    "slug": "s-h-standard-balcony",
+    "name": "S&H Standard Balcony",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Lightweight but fragile.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Standard_Balcony",
+    "dimensions": "1x1",
+    "health": 200,
+    "weight": 50,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 10
+      }
+    ]
+  },
+  "s-h-supporting-frame": {
+    "slug": "s-h-supporting-frame",
+    "name": "S&H Supporting Frame",
+    "category": "structure",
+    "description": "An additional load-bearing frame that allows the placement of decks without blocking the space below them. More lightweight than solid compartments but more fragile.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Supporting_Frame",
+    "dimensions": "1x1",
+    "health": 400,
+    "weight": 200,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 5
+      }
+    ]
+  },
+  "s-h-supporting-frame-triangle": {
+    "slug": "s-h-supporting-frame-triangle",
+    "name": "S&H Supporting Frame, Triangle",
+    "category": "structure",
+    "description": "An additional load-bearing frame that allows the placement of decks without blocking the space below them. More lightweight than solid compartments but more fragile.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S%26H_Supporting_Frame%2C_Triangle",
+    "dimensions": "1x1",
+    "health": 400,
+    "weight": 150,
+    "researchName": "Kaiser's Friends",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 5
+      }
+    ]
+  },
+  "s-trs-albrecht-royal-chassis": {
+    "slug": "s-trs-albrecht-royal-chassis",
+    "name": "S.Trs \"Albrecht\" Royal Chassis",
+    "category": "chassis",
+    "description": "Specially Designed by Seearsenal Neues Triest engineers for the \"Albrecht\" Military Trampler, a trampler named after Franz Joseph's nephew. It loses in maneuverability to any civilian model but can literally carry a military fort on itself.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_%22Albrecht%22_Royal_Chassis",
+    "dimensions": "5x5",
+    "weightCapacity": 65000,
+    "energyConsumption": 10,
+    "researchNode": "IV(a)",
+    "researchName": "Royal Chassis",
+    "researchTier": 4,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 300
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 100
+      },
+      {
+        "slug": "resource-metal-t3",
+        "name": "Computing Module",
+        "amount": 10
+      }
+    ]
+  },
+  "s-trs-armored-balcony": {
+    "slug": "s-trs-armored-balcony",
+    "name": "S.Trs Armored Balcony",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Equipped with light armor that will protect against infantry weapons but will not withstand cannon fire.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Armored_Balcony",
+    "dimensions": "1x1",
+    "health": 500,
+    "weight": 100,
+    "researchNode": "II(a)",
+    "researchName": "Armored Balconies (multiple)",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 10
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 30
+      }
+    ]
+  },
+  "s-trs-armored-balcony-extended-l-r": {
+    "slug": "s-trs-armored-balcony-extended-l-r",
+    "name": "S.Trs Armored Balcony, Extended L&R",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Equipped with light armor that will protect against infantry weapons but will not withstand cannon fire. This model extends beyond the dimensions of the standard compartment on both sides to allow for connection to additional balconies.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Armored_Balcony%2C_Extended_L%26R",
+    "dimensions": "3x1",
+    "health": 500,
+    "weight": 150,
+    "researchNode": "II(a)",
+    "researchName": "Armored Balconies (multiple)",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 20
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 40
+      }
+    ]
+  },
+  "s-trs-armored-balcony-extended-left": {
+    "slug": "s-trs-armored-balcony-extended-left",
+    "name": "S.Trs Armored Balcony, Extended Left",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Equipped with light armor that will protect against infantry weapons but will not withstand cannon fire. This model extends beyond the dimensions of the standard compartment leftwards to allow for connection to additional balconies.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Armored_Balcony%2C_Extended_Left",
+    "dimensions": "2x1",
+    "health": 500,
+    "weight": 150,
+    "researchNode": "II(a)",
+    "researchName": "Armored Balconies (multiple)",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 15
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 30
+      }
+    ]
+  },
+  "s-trs-armored-balcony-extended-right": {
+    "slug": "s-trs-armored-balcony-extended-right",
+    "name": "S.Trs Armored Balcony, Extended Right",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Equipped with light armor that will protect against infantry weapons but will not withstand cannon fire. This model extends beyond the dimensions of the standard compartment rightwards to allow for connection to additional balconies.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Armored_Balcony%2C_Extended_Right",
+    "dimensions": "2x1",
+    "health": 500,
+    "weight": 150,
+    "researchNode": "II(a)",
+    "researchName": "Armored Balconies (multiple)",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 15
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 30
+      }
+    ]
+  },
+  "s-trs-armored-balcony-inner-corner-l": {
+    "slug": "s-trs-armored-balcony-inner-corner-l",
+    "name": "S.Trs Armored Balcony, Inner Corner (L)",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Equipped with light armor that will protect against infantry weapons but will not withstand cannon fire. This model can be installed in the inner corner between compartments.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Armored_Balcony%2C_Inner_Corner_(L)",
+    "dimensions": "1x1",
+    "health": 750,
+    "weight": 300,
+    "researchNode": "II(a)",
+    "researchName": "Armored Balconies (multiple)",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 15
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 30
+      }
+    ]
+  },
+  "s-trs-armored-balcony-inner-corner-r": {
+    "slug": "s-trs-armored-balcony-inner-corner-r",
+    "name": "S.Trs Armored Balcony, Inner Corner (R)",
+    "category": "structure",
+    "description": "One of many ways to improve the trampler's ergonomics. Designed to facilitate movement around the compartments. Equipped with light armor that will protect against infantry weapons but will not withstand cannon fire. This model can be installed in the inner corner between compartments.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Armored_Balcony%2C_Inner_Corner_(R)",
+    "dimensions": "1x1",
+    "health": 750,
+    "weight": 300,
+    "researchNode": "II(a)",
+    "researchName": "Armored Balconies (multiple)",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 15
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 30
+      }
+    ]
+  },
+  "s-trs-armored-deck": {
+    "slug": "s-trs-armored-deck",
+    "name": "S.Trs Armored Deck",
+    "category": "structure",
+    "description": "Platform that improves the trampler's ergonomics. Provides more comfortable navigation on the roofs of compartments. Equipped with railings to prevent the crew from falling overboard or unauthorized persons from entering. Can only be installed on top of load-bearing structures like chassis and solid compartments. A militarized version of the S&H design, improved with a reinforced floor and armored railings to provide cover during gunfights.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Armored_Deck",
+    "dimensions": "1x1",
+    "health": 1100,
+    "weight": 300,
+    "researchNode": "III(a)",
+    "researchName": "Armored Deck",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 30
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 50
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 15
+      }
+    ]
+  },
+  "s-trs-armored-deck-no-railings": {
+    "slug": "s-trs-armored-deck-no-railings",
+    "name": "S.Trs Armored Deck (no railings)",
+    "category": "structure",
+    "description": "A platform that improves the trampler's ergonomics, it provides more comfortable navigation on the roofs of compartments. It can only be installed on top of load-bearing structures like chassis and solid compartments. A militarized version of the S&H design, improved with a reinforced floor. This particular model comes with the railings removed.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Armored_Deck_(no_railings)",
+    "dimensions": "1x1",
+    "health": 1100,
+    "weight": 300,
+    "researchNode": "III(a)",
+    "researchName": "Armored Deck",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 30
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 50
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 15
+      }
+    ]
+  },
+  "s-trs-armored-frame": {
+    "slug": "s-trs-armored-frame",
+    "name": "S.Trs Armored Frame",
+    "category": "structure",
+    "description": "An additional load-bearing frame that allows the placement of decks without blocking the space below them. More lightweight than solid compartments but more fragile. A militarized version of the S&H design, improved with a reinforced floor and armored railings to provide cover during gunfights.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Armored_Frame",
+    "dimensions": "1x1",
+    "health": 1100,
+    "weight": 500,
+    "researchNode": "III(a)",
+    "researchName": "Armored Deck",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 40
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 60
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 20
+      }
+    ]
+  },
+  "s-trs-armored-frame-triangle": {
+    "slug": "s-trs-armored-frame-triangle",
+    "name": "S.Trs Armored Frame, Triangle",
+    "category": "structure",
+    "description": "An additional load-bearing frame that allows the placement of decks without blocking the space below them. More lightweight than solid compartments but more fragile. A militarized version of the S&H design, improved with a reinforced floor and armored railings to provide cover during gunfights.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Armored_Frame%2C_Triangle",
+    "dimensions": "1x1",
+    "health": 1100,
+    "weight": 300,
+    "researchNode": "III(a)",
+    "researchName": "Armored Deck",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 40
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 60
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 15
+      }
+    ]
+  },
+  "s-trs-armored-turret-deck": {
+    "slug": "s-trs-armored-turret-deck",
+    "name": "S.Trs Armored Turret Deck",
+    "category": "turrets",
+    "description": "The lower support of a gun carriage, mounted on a reinforced deck. Designed to accommodate the full range of available artillery weapons. Additionally equipped with armored railings to provide cover during gunfights.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Armored_Turret_Deck",
+    "dimensions": "1x1",
+    "health": 3500,
+    "weight": 2000,
+    "researchNode": "II(a)",
+    "researchName": "Armored Artillery Compartment",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 100
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 250
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 60
+      }
+    ]
+  },
+  "s-trs-armored-turret-deck-corner": {
+    "slug": "s-trs-armored-turret-deck-corner",
+    "name": "S.Trs Armored Turret Deck, Corner",
+    "category": "turrets",
+    "description": "The lower support of a gun carriage, mounted on a reinforced deck. Designed to accommodate the full range of available artillery weapons. Additionally equipped with armored railings to provide cover during gunfights.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Armored_Turret_Deck%2C_Corner",
+    "dimensions": "1x1",
+    "health": 3500,
+    "weight": 2000,
+    "researchNode": "II(b)",
+    "researchName": "Armored Artillery Decks (multiple)",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 100
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 250
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 60
+      }
+    ]
+  },
+  "s-trs-auxiliary-corridor": {
+    "slug": "s-trs-auxiliary-corridor",
+    "name": "S.Trs Auxiliary Corridor",
+    "category": "structure",
+    "description": "A compartment that can be installed to improve the trampler's ergonomics by creating more protected passages between functional compartments. Quite fragile.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Auxiliary_Corridor",
+    "dimensions": "1x1",
+    "health": 1100,
+    "weight": 700,
+    "researchNode": "III(a)",
+    "researchName": "Metal Corridor",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 75
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 20
+      }
+    ]
+  },
+  "s-trs-captain-s-cabin": {
+    "slug": "s-trs-captain-s-cabin",
+    "name": "S.Trs Captain's Cabin",
+    "category": "crew",
+    "description": "A crew compartment specially designed for the trampler's captain. The standard equipment includes a personal refrigerator and reinforced armor. The cabin also houses the Trampler Ownership Device, \"IO\". Crew access to doors and other trampler functions is granted and overwritten exclusively through this device. This modification of the compartment was designed for warships; therefore, it is equipped with additional armor.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Captain's_Cabin",
+    "dimensions": "1x1+",
+    "health": 5500,
+    "weight": 3000,
+    "energyConsumption": 3,
+    "crewSlots": 1,
+    "researchNode": "II(a)",
+    "researchName": "Captain's Cabin",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 50
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 175
+      }
+    ]
+  },
+  "s-trs-cargo-bay-l-shape": {
+    "slug": "s-trs-cargo-bay-l-shape",
+    "name": "S.Trs Cargo Bay, L-Shape",
+    "category": "cargo",
+    "description": "A modified version of the S&H cargo bay design, reinforced by armored walls. Even sturdier, but heavier. Was used on military cruisers to transport valuable cargo, such as weapons, spare parts, and even top-secret prototypes.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Cargo_Bay%2C_L-Shape",
+    "dimensions": "1x2",
+    "health": 11000,
+    "weight": 4000,
+    "itemSlots": 288,
+    "researchNode": "IV(a)",
+    "researchName": "Cargo Bay",
+    "researchTier": 4,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 225
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 400
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 125
+      },
+      {
+        "slug": "resource-metal-t3",
+        "name": "Computing Module",
+        "amount": 2
+      }
+    ]
+  },
+  "s-trs-cargo-bay-parallel": {
+    "slug": "s-trs-cargo-bay-parallel",
+    "name": "S.Trs Cargo Bay, Parallel",
+    "category": "cargo",
+    "description": "A modified version of the S&H cargo bay design, reinforced by armored walls. Even sturdier, but heavier. Was used on military cruisers to transport valuable cargo, such as weapons, spare parts, and even top-secret prototypes.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Cargo_Bay%2C_Parallel",
+    "dimensions": "1x2",
+    "health": 11000,
+    "weight": 4000,
+    "itemSlots": 288,
+    "researchNode": "IV(a)",
+    "researchName": "Cargo Bay",
+    "researchTier": 4,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 225
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 400
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 125
+      },
+      {
+        "slug": "resource-metal-t3",
+        "name": "Computing Module",
+        "amount": 2
+      }
+    ]
+  },
+  "s-trs-cargo-bay-u-shape": {
+    "slug": "s-trs-cargo-bay-u-shape",
+    "name": "S.Trs Cargo Bay, U-Shape",
+    "category": "cargo",
+    "description": "A modified version of the S&H cargo bay design, reinforced by armored walls. Even sturdier, but heavier. Was used on military cruisers to transport valuable cargo, such as weapons, spare parts, and even top-secret prototypes.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Cargo_Bay%2C_U-Shape",
+    "dimensions": "1x2",
+    "health": 11000,
+    "weight": 4000,
+    "itemSlots": 288,
+    "researchNode": "IV(a)",
+    "researchName": "Cargo Bay",
+    "researchTier": 4,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 225
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 400
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 125
+      },
+      {
+        "slug": "resource-metal-t3",
+        "name": "Computing Module",
+        "amount": 2
+      }
+    ]
+  },
+  "s-trs-cargo-compartment-medium": {
+    "slug": "s-trs-cargo-compartment-medium",
+    "name": "S.Trs Cargo Compartment, Medium",
+    "category": "cargo",
+    "description": "A compartment designed for transporting small loads. Has noticeably more armor compared to S&H cargo decks. Ensures that all items placed on its shelves will remain intact during Trampler Deployment and Evacuation. Can hold off a burglar but won't protect your loot from an explosion.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Cargo_Compartment%2C_Medium",
+    "dimensions": "1x1",
+    "health": 5500,
+    "weight": 3500,
+    "itemSlots": 216,
+    "researchNode": "III(b)",
+    "researchName": "Cargo Hold",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 165
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 300
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 100
+      }
+    ]
+  },
+  "s-trs-cargo-compartment-small": {
+    "slug": "s-trs-cargo-compartment-small",
+    "name": "S.Trs Cargo Compartment, Small",
+    "category": "cargo",
+    "description": "A compartment designed for transporting small loads. Has noticeably more armor compared to S&H cargo decks. Ensures that all items placed on its shelves will remain intact during Trampler Deployment and Evacuation. Can hold off a burglar but won't protect your loot from an explosion.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Cargo_Compartment%2C_Small",
+    "dimensions": "1x1",
+    "health": 4500,
+    "weight": 2500,
+    "itemSlots": 144,
+    "researchNode": "III(a)",
+    "researchName": "Cargo Hold",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 125
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 75
+      }
+    ]
+  },
+  "s-trs-cargo-compartment-small-l-shape": {
+    "slug": "s-trs-cargo-compartment-small-l-shape",
+    "name": "S.Trs Cargo Compartment, Small L-Shape",
+    "category": "cargo",
+    "description": "A compartment designed for transporting small loads. Has noticeably more armor compared to S&H cargo decks. Ensures that all items placed on its shelves will remain intact during Trampler Deployment and Evacuation. Can hold off a burglar but won't protect your loot from an explosion.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Cargo_Compartment%2C_Small_L-Shape",
+    "dimensions": "1x1",
+    "health": 4500,
+    "weight": 2500,
+    "itemSlots": 144,
+    "researchNode": "III(a)",
+    "researchName": "Cargo Hold",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 125
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 75
+      }
+    ]
+  },
+  "s-trs-entrance-vestibule": {
+    "slug": "s-trs-entrance-vestibule",
+    "name": "S.Trs Entrance Vestibule",
+    "category": "structure",
+    "description": "A crucial part of any trampler. The ladder significantly eases the process of climbing onto the trampler. A fully enclosed entrance with a vestibule provides enhanced security measures. This compartment cannot be installed on top of other compartments or chassis, as the access hatch with the ladder is mounted in its lower deck.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Entrance_Vestibule",
+    "dimensions": "1x1",
+    "health": 1100,
+    "weight": 700,
+    "researchNode": "III(a)",
+    "researchName": "Armored Vestibule",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 75
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 20
+      }
+    ]
+  },
+  "s-trs-ha-armor-plate": {
+    "slug": "s-trs-ha-armor-plate",
+    "name": "S.Trs HA Armor Plate",
+    "category": "turrets",
+    "description": "Armor plate scavenged from Imperial cruisers. Strong enough to withstand a couple of hits. Sloped to improve protection and the likelihood of ricochet. Due to the design specifics, it is not subject to field repairs.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_HA_Armor_Plate",
+    "dimensions": "1x1",
+    "health": 1500,
+    "weight": 250,
+    "researchNode": "II(b)",
+    "researchName": "Armor Plate",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 50
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 75
+      }
+    ]
+  },
+  "s-trs-has-framed-armor-plate": {
+    "slug": "s-trs-has-framed-armor-plate",
+    "name": "S.Trs HAs Framed Armor Plate",
+    "category": "turrets",
+    "description": "Armor plate scavenged from Imperial cruisers. Strong enough to withstand a couple of hits. Sloped to improve protection and the likelihood of ricochet. Due to the design specifics, it is not subject to field repairs. A frame, mounted around the armor plate, allows for another compartment to be installed above it.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_HAs_Framed_Armor_Plate",
+    "dimensions": "1x1",
+    "health": 1500,
+    "weight": 350,
+    "researchNode": "III(a)",
+    "researchName": "Armor Plate",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 60
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 85
+      }
+    ]
+  },
+  "s-trs-has-r-framed-armor-plate": {
+    "slug": "s-trs-has-r-framed-armor-plate",
+    "name": "S.Trs HAs-R Framed Armor Plate",
+    "category": "turrets",
+    "description": "Armor plate scavenged from Imperial cruisers. Strong enough to withstand a couple of hits. Sloped to improve protection and the likelihood of ricochet. Due to the design specifics, it is not subject to field repairs. This placement provides an additional angle, increasing the chance of ricochet from new directions.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_HAs-R_Framed_Armor_Plate",
+    "dimensions": "1x1",
+    "health": 1500,
+    "weight": 350,
+    "researchNode": "III(a)",
+    "researchName": "Armor Plate",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 60
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 85
+      }
+    ]
+  },
+  "s-trs-k81v-crew-cabin-2-people": {
+    "slug": "s-trs-k81v-crew-cabin-2-people",
+    "name": "S.Trs K81v Crew Cabin, 2 People",
+    "category": "crew",
+    "description": "These cabins were designed to sustain a trampler crew during long journeys. Every new shift starts here. Provides all the necessary means of comfort, including a refrigerator to store provisions and a ventilation system that provides improved air circulation on hot days.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_K81v_Crew_Cabin%2C_2_People",
+    "dimensions": "1x2",
+    "health": 3000,
+    "weight": 2000,
+    "energyConsumption": 5,
+    "crewSlots": 2,
+    "researchNode": "II(c)",
+    "researchName": "Crew Room",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 50
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 75
+      }
+    ]
+  },
+  "s-trs-k81v-pilot-bridge": {
+    "slug": "s-trs-k81v-pilot-bridge",
+    "name": "S.Trs K81v Pilot Bridge",
+    "category": "driving",
+    "description": "S&H engineers have combined every trampler movement control into one module, making it a universal control point. Marching, turning, sidestep, emergency brake. They even installed a horn! This modification has additional layers of armor and was commissioned by the Imperial Army for installation on Imperial military tramplers.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_K81v_Pilot_Bridge",
+    "dimensions": "1x2",
+    "health": 4500,
+    "weight": 1500,
+    "energyConsumption": 7,
+    "researchNode": "III(a)",
+    "researchName": "Steering",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 70
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 75
+      }
+    ]
+  },
+  "s-trs-k82v-pilot-bridge": {
+    "slug": "s-trs-k82v-pilot-bridge",
+    "name": "S.Trs K82v Pilot Bridge",
+    "category": "driving",
+    "description": "S&H engineers have combined every trampler movement control into one module, making it a universal control point. Marching, turning, sidestep, emergency brake. They even installed a horn! This modification has additional layers of armor and was commissioned by the Imperial Army for installation on Imperial military tramplers.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_K82v_Pilot_Bridge",
+    "dimensions": "2x1",
+    "health": 4500,
+    "weight": 1500,
+    "energyConsumption": 7,
+    "researchNode": "III(b)",
+    "researchName": "Steering",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 75
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 75
+      }
+    ]
+  },
+  "s-trs-karl-ludvig-royal-chassis": {
+    "slug": "s-trs-karl-ludvig-royal-chassis",
+    "name": "S.Trs \"Karl Ludvig\" Royal Chassis",
+    "category": "chassis",
+    "description": "Specially designed by Seearsenal Neues Triest engineers for the \"Karl Ludvig\" Flagman Trampler of Sophie's Military Fleet. It was named after Franz Joseph's brother. It loses in maneuverability to any civilian model but can literally carry a military fort on itself.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_%22Karl_Ludvig%22_Royal_Chassis",
+    "dimensions": "4x6",
+    "weightCapacity": 65000,
+    "energyConsumption": 10,
+    "researchNode": "IV(b)",
+    "researchName": "Royal Chassis",
+    "researchTier": 4,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 200
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 300
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 100
+      },
+      {
+        "slug": "resource-metal-t3",
+        "name": "Computing Module",
+        "amount": 10
+      }
+    ]
+  },
+  "s-trs-m78v-embrasure": {
+    "slug": "s-trs-m78v-embrasure",
+    "name": "S.Trs M78v Embrasure",
+    "category": "turrets",
+    "description": "The basic embrasure that was installed on most Imperial military tramplers in Sophie's military fleet. It provides decent cover for a soldier inside along with a good arc of fire to defend the trampler from approaching infantry.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_M78v_Embrasure",
+    "dimensions": "1x1",
+    "health": 3000,
+    "weight": 1200,
+    "researchNode": "III(b)",
+    "researchName": "Embrasure",
+    "researchTier": 3,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 40
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 75
+      }
+    ]
+  },
+  "s-trs-mb75-crew-cabin-single": {
+    "slug": "s-trs-mb75-crew-cabin-single",
+    "name": "S.Trs MB75 Crew Cabin, Single",
+    "category": "crew",
+    "description": "These cabins were designed to sustain a trampler crew during long journeys. Every new shift starts here. Provides all the necessary means of comfort, including a refrigerator to store provisions and a ventilation system that provides improved air circulation on hot days. The compact model is designed for personal use.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_MB75_Crew_Cabin%2C_Single",
+    "dimensions": "1x1",
+    "health": 2500,
+    "weight": 1100,
+    "energyConsumption": 3,
+    "crewSlots": 1,
+    "researchNode": "II(b)",
+    "researchName": "Crew Room",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 40
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 50
+      }
+    ]
+  },
+  "s-trs-mb77e-crew-cabin-4-people": {
+    "slug": "s-trs-mb77e-crew-cabin-4-people",
+    "name": "S.Trs MB77e Crew Cabin, 4 People",
+    "category": "crew",
+    "description": "These cabins were designed to sustain a trampler crew during long journeys. Every new shift starts here. Provides all the necessary means of comfort, including a refrigerator to store provisions and a ventilation system that provides improved air circulation on hot days. This particular design features increased room capacity and can sustain up to four crew members.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_MB77e_Crew_Cabin%2C_4_People",
+    "dimensions": "2x2",
+    "health": 4000,
+    "weight": 2300,
+    "energyConsumption": 7,
+    "crewSlots": 4,
+    "researchNode": "II(c)",
+    "researchName": "Crew Room",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 60
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 100
+      }
+    ]
+  },
+  "s-trs-turret-deck": {
+    "slug": "s-trs-turret-deck",
+    "name": "S.Trs Turret Deck",
+    "category": "turrets",
+    "description": "The lower support of the gun carriage, mounted on a reinforced deck. Designed to accommodate the full range of available artillery weapons.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Turret_Deck",
+    "dimensions": "1x1",
+    "health": 2000,
+    "weight": 1200,
+    "researchName": "K.K. Landwehr",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 50
+      }
+    ]
+  },
+  "s-trs-turret-deck-corner": {
+    "slug": "s-trs-turret-deck-corner",
+    "name": "S.Trs Turret Deck, Corner",
+    "category": "turrets",
+    "description": "The lower support of a gun carriage, mounted on a reinforced deck. Designed to accommodate the full range of available artillery weapons.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Turret_Deck%2C_Corner",
+    "dimensions": "1x1",
+    "health": 2000,
+    "weight": 1200,
+    "researchNode": "I(a)",
+    "researchName": "Artillery Decks (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 50
+      }
+    ]
+  },
+  "s-trs-wide-armored-turret-deck": {
+    "slug": "s-trs-wide-armored-turret-deck",
+    "name": "S.Trs Wide Armored Turret Deck",
+    "category": "turrets",
+    "description": "The lower support of a gun carriage, mounted on a reinforced deck. Designed to accommodate the full range of available artillery weapons. The wide deck improves the working conditions of the gun crew, but takes up more space. Additionally equipped with armored railings to provide cover during gunfights.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Wide_Armored_Turret_Deck",
+    "dimensions": "2x1",
+    "health": 4000,
+    "weight": 2000,
+    "researchNode": "II(b)",
+    "researchName": "Armored Artillery Decks (multiple)",
+    "researchTier": 2,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 125
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 300
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 100
+      }
+    ]
+  },
+  "s-trs-wide-turret-deck": {
+    "slug": "s-trs-wide-turret-deck",
+    "name": "S.Trs Wide Turret Deck",
+    "category": "turrets",
+    "description": "The lower support of the gun carriage, mounted on a reinforced deck. Designed to accommodate the full range of available artillery weapons. The wide deck improves the working conditions of the gun crew, but takes up more space.",
+    "sourceUrl": "https://sandgame.wiki/index.php/S.Trs_Wide_Turret_Deck",
+    "dimensions": "2x1",
+    "health": 2750,
+    "weight": 1200,
+    "researchNode": "I(a)",
+    "researchName": "Artillery Decks (multiple)",
+    "researchTier": 1,
+    "cost": [
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 100
+      }
+    ]
+  },
+  "sgow-universal-casemate": {
+    "slug": "sgow-universal-casemate",
+    "name": "SGOW Universal casemate",
+    "category": "turrets",
+    "description": "One of the prototypes created by SGOW for the flagship Imperial cruisers. It combines the ability to install any type of artillery weapons with a protected gun mount to shield its crew from enemy shots and explosions. However, such protection comes at a price: the gun has a smaller arc of fire compared to the deck model, it costs the same as a small ship, and refuses to work without external power.",
+    "sourceUrl": "https://sandgame.wiki/index.php/SGOW_Universal_casemate",
+    "dimensions": "1x1",
+    "health": 5000,
+    "weight": 3000,
+    "researchNode": "IV(a)",
+    "researchName": "Enclosed Artillery Compartment",
+    "researchTier": 4,
+    "cost": [
+      {
+        "name": "Crowns",
+        "amount": 300
+      },
+      {
+        "slug": "resource-metal-t1",
+        "name": "Mechanical Parts",
+        "amount": 400
+      },
+      {
+        "slug": "resource-metal-t2",
+        "name": "Pneumatic Parts",
+        "amount": 125
+      },
+      {
+        "slug": "resource-metal-t3",
+        "name": "Computing Module",
+        "amount": 10
+      }
+    ]
+  }
+}

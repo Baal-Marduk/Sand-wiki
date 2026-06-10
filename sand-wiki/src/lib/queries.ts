@@ -89,6 +89,24 @@ export async function envCategoryCounts(): Promise<Record<string, number>> {
   return Object.fromEntries(rows.map((r) => [r.category, r._count]));
 }
 
+/** Trampler parts, optionally filtered by functional category. */
+export async function listTramplerParts(category?: string) {
+  return prisma.tramplerPart.findMany({
+    where: category ? { category } : {},
+    orderBy: [{ researchTier: "asc" }, { name: "asc" }],
+  });
+}
+
+export async function getTramplerPartBySlug(slug: string) {
+  return prisma.tramplerPart.findUnique({ where: { slug } });
+}
+
+/** Count of trampler parts per category — for the Tramplers landing. */
+export async function tramplerCategoryCounts(): Promise<Record<string, number>> {
+  const rows = await prisma.tramplerPart.groupBy({ by: ["category"], _count: true });
+  return Object.fromEntries(rows.map((r) => [r.category, r._count]));
+}
+
 export interface CrateDrop { crateSlug: string; crateName: string; tier: string; columns: string[]; values: string[] }
 
 interface LootShape { tiers?: { tier: string; columns: string[]; entries: { slug?: string; values: string[] }[] }[] }

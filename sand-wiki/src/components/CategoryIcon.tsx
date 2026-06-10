@@ -2,6 +2,8 @@ import type { IconType } from "react-icons";
 import {
   GiPistolGun, GiFieldGun, GiWoodPile , GiArmorVest, GiFirstAidKit,
   GiAmmoBox, GiCardboardBox, GiOpenChest, GiCastle, GiGamepad, GiPerson,
+  GiTank, GiNuclearPlant, GiGears, GiHelmet, GiSteeringWheel,
+  GiCargoCrate, GiCannon, GiAnvil, GiCog,
 } from "react-icons/gi";
 import { BsTools } from "react-icons/bs";
 
@@ -20,6 +22,16 @@ const ICONS: Record<string, IconType> = {
   landmarks: GiCastle,
   "game-modes": GiGamepad,
   npcs: GiPerson,
+  // trampler categories
+  chassis: GiTank,
+  reactors: GiNuclearPlant,
+  engines: GiGears,
+  crew: GiHelmet,
+  driving: GiSteeringWheel,
+  cargo: GiCargoCrate,
+  turrets: GiCannon,
+  stations: GiAnvil,
+  structure: GiCog,
 };
 
 export function CategoryIcon({ slug, className }: { slug: string; className?: string }) {
