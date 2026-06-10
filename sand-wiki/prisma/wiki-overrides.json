@@ -2,5 +2,10 @@
   "blitz10r": "semi-automatic-pistol",
   "blitz15r": "semi-automatic-pistol-increased-mag",
   "blitzpps5": "semi-automatic-pistol-decreased-mag",
-  "12gaugeammo": "shotgun-ammo"
+  "12gaugeammo": "shotgun-ammo",
+  "12gaslug": "shotgun-ammo-slug",
+  "antireactorrifle": "anti-reactor-gun",
+  "av1rocketlauncher": "rocket-launcher",
+  "coralchunks": "resource-coral-piece",
+  "crateof1899chardonnay": "wine-box"
 }

@@ -1,4 +1,115 @@
 {
+  "anti-reactor-gun": {
+    "rarity": "Experimental"
+  },
+  "artefact-crystal": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Raw Materials"
+    }
+  },
+  "black-box": {
+    "rarity": "Noteworthy",
+    "stats": {
+      "type": "Carryable Object",
+      "value": 500
+    }
+  },
+  "c4-dynamite": {
+    "rarity": "Uncommon",
+    "stats": {
+      "value": 50
+    }
+  },
+  "canned-fish": {
+    "rarity": "Noteworthy",
+    "stats": {
+      "type": "Carryable Objects",
+      "value": 100
+    }
+  },
+  "coin-crown": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Money",
+      "value": 1
+    }
+  },
+  "crystal-handles": {
+    "rarity": "Noteworthy",
+    "stats": {
+      "type": "Carryable Objects",
+      "value": 500
+    }
+  },
+  "document-safe": {
+    "rarity": "Noteworthy",
+    "stats": {
+      "type": "Carryable Objects",
+      "value": 500
+    }
+  },
+  "food-can": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Food",
+      "value": 10
+    }
+  },
+  "game-key-island-door-fort": {
+    "stats": {
+      "type": "Keys"
+    }
+  },
+  "game-key-locked-box": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Keys"
+    }
+  },
+  "grenade-contact": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Grenade",
+      "value": 75
+    }
+  },
+  "med-kit": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Medical Supplies",
+      "value": 50
+    }
+  },
+  "orbital-strike-gun": {
+    "rarity": "Experimental"
+  },
+  "pistol-ammo": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Ammunition",
+      "tDamage": 0,
+      "sDamage": 0,
+      "value": 1
+    }
+  },
+  "pistol-ammo-armor": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Ammunition",
+      "tDamage": 0,
+      "sDamage": 0,
+      "value": 1
+    }
+  },
+  "pistol-ammo-high-velocity": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Ammunition",
+      "tDamage": 0,
+      "sDamage": 0
+    }
+  },
   "repeater-rifle": {
     "rarity": "Rare",
     "stats": {
@@ -8,6 +119,118 @@
       "value": 50,
       "ammoSlug": "rifle-ammo",
       "ammoName": "9x42 mm Ammo"
+    }
+  },
+  "resource-coral-dust": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 7
+    }
+  },
+  "resource-coral-piece": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 5
+    }
+  },
+  "resource-fabric": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 7
+    }
+  },
+  "resource-fabric-scraps": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 1
+    }
+  },
+  "resource-gunpowder": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 7
+    }
+  },
+  "resource-high-grade-gunpowder": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 75
+    }
+  },
+  "resource-leviathan-meat": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 7
+    }
+  },
+  "resource-leviathan-skin": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 7
+    }
+  },
+  "resource-metal-parts": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 1
+    }
+  },
+  "resource-metal-rods": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 7
+    }
+  },
+  "resource-mixtures": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 1
+    }
+  },
+  "resource-optic-lenses": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 75
+    }
+  },
+  "resource-reinforced-leather-strips": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 75
+    }
+  },
+  "resource-scrapped-ammo": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 1
+    }
+  },
+  "resource-threads": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 1
+    }
+  },
+  "resource-weapon-parts": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Raw Materials",
+      "value": 7
     }
   },
   "revolver-small": {
@@ -32,6 +255,33 @@
       "ammoName": "8x21 mm Ammo"
     }
   },
+  "rifle-ammo": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Ammunition",
+      "tDamage": 0,
+      "sDamage": 0,
+      "value": 3
+    }
+  },
+  "rifle-ammo-armor": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Ammunition",
+      "tDamage": 0,
+      "sDamage": 0,
+      "value": 3
+    }
+  },
+  "rifle-ammo-high-velocity": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Ammunition",
+      "tDamage": 0,
+      "sDamage": 0,
+      "value": 2
+    }
+  },
   "rifle-musket": {
     "rarity": "Common",
     "stats": {
@@ -52,6 +302,21 @@
       "value": 50,
       "ammoSlug": "rifle-ammo",
       "ammoName": "9x42 mm Ammo"
+    }
+  },
+  "rocket-launcher": {
+    "rarity": "Remarkable"
+  },
+  "rocket-launcher-ammo-armor-piercing": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Ammunition"
+    }
+  },
+  "rocket-launcher-ammo-high-explosion": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Ammunition"
     }
   },
   "semi-automatic-pistol": {
@@ -96,6 +361,23 @@
       "ammoName": "12 GA Ammo"
     }
   },
+  "shotgun-ammo": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Ammunition",
+      "tDamage": 0,
+      "sDamage": 0,
+      "value": 2
+    }
+  },
+  "shotgun-ammo-slug": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Ammunition",
+      "tDamage": 0,
+      "sDamage": 0
+    }
+  },
   "shotgun-handmade": {
     "rarity": "Common",
     "stats": {
@@ -129,6 +411,37 @@
       "ammoName": "12 GA Ammo"
     }
   },
+  "shotgun-turret-ammo": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Shells",
+      "value": 3
+    }
+  },
+  "small-cannon-ammo": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Shells",
+      "pDamage": 15,
+      "tDamage": 150,
+      "sDamage": 70,
+      "value": 3
+    }
+  },
+  "small-valuables": {
+    "rarity": "Common",
+    "stats": {
+      "type": "Valuables",
+      "value": 3
+    }
+  },
+  "smoke-grenade": {
+    "rarity": "Experimental",
+    "stats": {
+      "type": "Grenade",
+      "value": 100
+    }
+  },
   "sniper-rifle": {
     "rarity": "Noteworthy",
     "stats": {
@@ -137,6 +450,23 @@
       "magazine": 1,
       "ammoSlug": "sniper-rifle-ammo",
       "ammoName": "11x54 mm Ammo"
+    }
+  },
+  "sniper-rifle-ammo": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Ammunition",
+      "tDamage": 0,
+      "sDamage": 0,
+      "value": 3
+    }
+  },
+  "sniper-rifle-ammo-high-penetration": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Ammunition",
+      "tDamage": 0,
+      "sDamage": 0
     }
   },
   "sniper-rifle-iron-sights": {
@@ -158,6 +488,33 @@
       "magazine": 1,
       "ammoSlug": "sniper-rifle-ammo",
       "ammoName": "11x54 mm Ammo"
+    }
+  },
+  "treasure-shovel": {
+    "rarity": "Rare",
+    "stats": {
+      "value": 100
+    }
+  },
+  "turret-ammo": {
+    "rarity": "Uncommon",
+    "stats": {
+      "type": "Shells",
+      "value": 3
+    }
+  },
+  "valuable-papers": {
+    "rarity": "Rare",
+    "stats": {
+      "type": "Valuables",
+      "value": 6
+    }
+  },
+  "wine-box": {
+    "rarity": "Noteworthy",
+    "stats": {
+      "type": "Carryable Objects",
+      "value": 500
     }
   }
 }
