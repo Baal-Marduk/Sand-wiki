@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { searchSuggestions, type IndexItem } from "./search";
+import { searchSuggestions, type IndexItem, type IndexPlace } from "./search";
 
 const index: IndexItem[] = [
   { slug: "sniper-rifle", name: "1874s Petros Sniper Rifle", category: "weapons", derivedName: "Sniper Rifle" },
@@ -7,10 +7,16 @@ const index: IndexItem[] = [
   { slug: "energy-bar", name: "NZ Mk2 Energy Rod", category: "medical", derivedName: "Energy Bar" },
 ];
 
+const places: IndexPlace[] = [
+  { slug: "weapon-crate", name: "Weapon Crate", category: "loot-containers" },
+  { slug: "food-crate", name: "Food Crate", category: "loot-containers" },
+  { slug: "dreadnaught", name: "Dreadnaught", category: "landmarks" },
+];
+
 describe("searchSuggestions", () => {
   it("returns nothing for an empty/whitespace query", () => {
-    expect(searchSuggestions("", index)).toEqual({ categories: [], items: [] });
-    expect(searchSuggestions("   ", index)).toEqual({ categories: [], items: [] });
+    expect(searchSuggestions("", index)).toEqual({ categories: [], items: [], places: [] });
+    expect(searchSuggestions("   ", index)).toEqual({ categories: [], items: [], places: [] });
   });
 
   it("matches item names case-insensitively", () => {
@@ -46,5 +52,27 @@ describe("searchSuggestions", () => {
     // "petros" is in the display name but not the derived name "Sniper Rifle".
     const r = searchSuggestions("petros", index);
     expect(r.items.map((i) => i.slug)).toEqual(["sniper-rifle"]);
+  });
+
+  it("matches places by name and returns them in the places field", () => {
+    const r = searchSuggestions("crate", index, places);
+    expect(r.places.map((p) => p.slug)).toEqual(["weapon-crate", "food-crate"]);
+  });
+
+  it("returns places of both categories, tagged by category", () => {
+    const r = searchSuggestions("a", index, places);
+    expect(r.places.some((p) => p.category === "loot-containers")).toBe(true);
+    expect(r.places.some((p) => p.category === "landmarks")).toBe(true);
+  });
+
+  it("defaults places to empty when not provided", () => {
+    expect(searchSuggestions("crate", index).places).toEqual([]);
+  });
+
+  it("caps place results at 6", () => {
+    const many: IndexPlace[] = Array.from({ length: 20 }, (_, n) => ({
+      slug: `crate-${n}`, name: `Crate ${n}`, category: "loot-containers",
+    }));
+    expect(searchSuggestions("crate", index, many).places).toHaveLength(6);
   });
 });
