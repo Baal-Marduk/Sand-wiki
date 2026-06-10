@@ -1,0 +1,20 @@
+- [x] Import trampler parts from wiki
+- [x] Normalize buy/sell price on items details table and remove elsewhere
+- [x] Order items in list by rarity/alphanumeric
+- [x] Order weapons by types
+- [x] Order artillery by type
+- Add EMP and Delayed detonation ammo for 80mm
+- add alphanumeric ordering on tables columns
+- add hover effect on links and tabs and interactive ui in app
+- Make rarity background color slightly translucent like in game
+- Fix import from wiki in crates content sometimes mismatching "pneumatic components" for example being pneumatic parts
+- Add landmarks and loot containers to search auto fill
+- Add an aria-live region to SearchBox announcing the result count to screen readers (known a11y gap; dropdown currently only flips aria-expanded)
+- Disable buttons to currently WIP pages
+- Add backoffice to edit as admin datas from app
+- Add steam connection to allow user to correct informations, (will need vallidation by admin)
+- Add validation screen in backoffice to make validate corrections from steam authenticated user.
+- Add tips tab in items to allow user to share tips (might be moderated by admin) with vote system
+- Add legal statement about property and stuff
+- Add thanks to wiki
+
