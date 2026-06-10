@@ -110,7 +110,7 @@ test("loot container detail shows a description and a source link", async ({ pag
 });
 
 test("an unpopulated environment category shows coming soon", async ({ page }) => {
-  await page.goto("/environment?category=game-modes");
+  await page.goto("/environment?category=npcs");
   await expect(page.getByText(/coming soon/i)).toBeVisible();
 });
 
@@ -197,11 +197,26 @@ test("weapon detail shows a rarity badge and a stat box with ammo link", async (
   await expect(page.getByRole("link", { name: "9x42 mm Ammo" })).toBeVisible();
 });
 
-test("crate detail shows loot tier tabs with linked items", async ({ page }) => {
+test("crate detail shows loot tier tabs with linked item icons, no amount columns", async ({ page }) => {
   await page.goto("/environment/crate-of-shells");
   await expect(page.getByRole("tab", { name: "Normal" })).toBeVisible();
   await expect(page.getByRole("tab", { name: "Rare", exact: true })).toBeVisible();
   await expect(page.getByRole("link", { name: "40mm Shell" })).toBeVisible();
+  // amount columns were removed
+  await expect(page.getByRole("columnheader", { name: /Shipwreck|Landmark|Count/ })).toHaveCount(0);
+});
+
+test("landmarks and game modes are populated on the environment landing", async ({ page }) => {
+  await page.goto("/environment");
+  await page.getByRole("link", { name: /Landmarks/ }).click();
+  await expect(page).toHaveURL(/category=landmarks/);
+  await expect(page.getByRole("link", { name: "Fort Arpad" })).toBeVisible();
+});
+
+test("a game mode detail page shows its source link", async ({ page }) => {
+  await page.goto("/environment/storm-dive");
+  await expect(page.getByRole("heading", { name: "Storm Dive" })).toBeVisible();
+  await expect(page.getByRole("link", { name: /sandgame\.wiki/ })).toBeVisible();
 });
 
 test("item page links back to crates via a Loot tab", async ({ page }) => {
