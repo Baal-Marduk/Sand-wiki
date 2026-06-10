@@ -1,8 +1,8 @@
-import { listItems, listRarities } from "@/lib/queries";
+import { listItems, listRarities, listWorkbenchTiers, listItemClasses } from "@/lib/queries";
 import { ItemCard } from "@/components/ItemCard";
 import { CategoryQuickNav } from "@/components/CategoryQuickNav";
-import { RarityFilter } from "@/components/RarityFilter";
-import { ITEM_CATEGORIES, isItemCategory } from "@/lib/taxonomy";
+import { FilterSelect } from "@/components/FilterSelect";
+import { ITEM_CATEGORIES, isItemCategory, isWeaponClassCategory } from "@/lib/taxonomy";
 import { isRarity } from "@/lib/rarity";
 import type { ItemFilter } from "@/lib/item-filter";
 
@@ -19,16 +19,34 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
   const category = rawCategory && isItemCategory(rawCategory) ? rawCategory : undefined;
   const rawRarity = str(sp.rarity);
   const rarity = rawRarity && isRarity(rawRarity) ? rawRarity : undefined;
+  const sort: "rarity" | "name" = str(sp.sort) === "name" ? "name" : "rarity";
+
+  // Option lists are scoped to the current category + search, independent of the
+  // rarity/class/tier constraints (so they show every value available in this context).
+  const scope = { query: q || undefined, category: category || undefined };
+  const weaponClassMode = isWeaponClassCategory(category);
+  const [rarities, classes, tiers] = await Promise.all([
+    listRarities(scope),
+    weaponClassMode ? listItemClasses(scope) : Promise.resolve<string[]>([]),
+    weaponClassMode ? Promise.resolve<number[]>([]) : listWorkbenchTiers(scope),
+  ]);
+
+  // Validate the type-dependent params against what's actually available.
+  const rawClass = str(sp.class);
+  const weaponClass = rawClass && classes.includes(rawClass) ? rawClass : undefined;
+  const rawTier = str(sp.tier);
+  const tier = rawTier && tiers.includes(Number(rawTier)) ? Number(rawTier) : undefined;
+
   const filter: ItemFilter = {
     query: q || undefined,
     category: category || undefined,
     rarity: rarity || undefined,
+    sort,
+    weaponClass: weaponClass || undefined,
+    workbenchTier: tier,
   };
 
-  const [items, rarities] = await Promise.all([
-    listItems(filter),
-    listRarities({ query: q || undefined, category: category || undefined }),
-  ]);
+  const items = await listItems(filter);
 
   return (
     <section className="py-6">
@@ -38,7 +56,42 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
           <p className="text-sm text-base-content/70 mb-3" aria-live="polite">
             <span className="badge badge-ghost">{items.length} result(s)</span>
           </p>
-          <RarityFilter rarities={rarities} current={rarity} category={category} query={q} />
+          <div className="flex flex-wrap items-center gap-3 mb-4">
+            <FilterSelect
+              name="sort"
+              label="Sort"
+              allLabel="Rarity"
+              value={sort === "name" ? "name" : undefined}
+              options={[{ value: "name", label: "Name (A–Z)" }]}
+            />
+            {rarities.length > 0 && (
+              <FilterSelect
+                name="rarity"
+                label="Rarity"
+                allLabel="All rarities"
+                value={rarity}
+                options={rarities.map((r) => ({ value: r, label: r }))}
+              />
+            )}
+            {weaponClassMode && classes.length > 0 && (
+              <FilterSelect
+                name="class"
+                label="Class"
+                allLabel="All classes"
+                value={weaponClass}
+                options={classes.map((c) => ({ value: c, label: c }))}
+              />
+            )}
+            {!weaponClassMode && tiers.length > 0 && (
+              <FilterSelect
+                name="tier"
+                label="Tier"
+                allLabel="All tiers"
+                value={tier !== undefined ? String(tier) : undefined}
+                options={tiers.map((t) => ({ value: String(t), label: `Tier ${t}` }))}
+              />
+            )}
+          </div>
           {items.length === 0 ? (
             <p>No items match your filters.</p>
           ) : (
@@ -55,7 +108,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
           )}
         </div>
         <div className="order-1 lg:order-2">
-          <CategoryQuickNav categories={ITEM_CATEGORIES} current={category} query={q} />
+          <CategoryQuickNav categories={ITEM_CATEGORIES} current={category} query={q} sort={sort === "name" ? "name" : undefined} />
         </div>
       </div>
     </section>
