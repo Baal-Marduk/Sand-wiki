@@ -92,5 +92,6 @@ a, .tab, .btn, .select, .nav-link, .row-link, .card, .item-sprite {
 a.card:hover, a.card:focus-visible { background-color: var(--color-base-300); }
 .row-link:hover, .row-link:focus-visible { background-color: var(--color-base-200); }
 .select:hover, .select:focus-visible { border-color: var(--color-primary); }
-a:hover .item-sprite, a:focus-visible .item-sprite,
-.group:hover .item-sprite, .group:focus-within .item-sprite { filter: brightness(1.1); }
+/* Only brighten sprites inside an actual link/card — not the link-less ItemIconLink
+ * variant (its .group also drives the tooltip, but a hover cue there leads nowhere). */
+a:hover .item-sprite, a:focus-visible .item-sprite { filter: brightness(1.1); }
