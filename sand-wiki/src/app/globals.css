@@ -71,3 +71,26 @@
 [data-theme="desertday"] .theme-icon-day {
   display: inline;
 }
+
+/* ── App-wide hover/focus affordances (TODO #8) ──────────────────────────────
+ * Centralized so every interactive surface gets a consistent treatment and new
+ * components inherit it. Rules are intentionally UNLAYERED: Tailwind utilities live
+ * in `@layer utilities`, which wins over any @layer — these must override utility
+ * text/bg colors on hover (e.g. a non-active tab's `text-base-content/75`).
+ * Subtle vocabulary: color / background / underline / brightness only — no motion,
+ * so prefers-reduced-motion needs no special handling. Every :hover is paired with
+ * :focus-visible for keyboard parity. Colors come from the active theme's tokens. */
+a, .tab, .btn, .select, .nav-link, .row-link, .card, .item-sprite {
+  transition: color 0.15s, background-color 0.15s, border-color 0.15s, filter 0.15s, opacity 0.15s;
+}
+.link:hover, .link:focus-visible { color: var(--color-primary); }
+.nav-link:hover, .nav-link:focus-visible { color: var(--color-primary); }
+.tab:not(.tab-active):hover, .tab:not(.tab-active):focus-visible {
+  color: var(--color-base-content);
+  background-color: color-mix(in oklab, var(--color-base-200) 50%, transparent);
+}
+a.card:hover, a.card:focus-visible { background-color: var(--color-base-300); }
+.row-link:hover, .row-link:focus-visible { background-color: var(--color-base-200); }
+.select:hover { border-color: var(--color-primary); }
+a:hover .item-sprite, a:focus-visible .item-sprite,
+.group:hover .item-sprite, .group:focus-within .item-sprite { filter: brightness(1.1); }
