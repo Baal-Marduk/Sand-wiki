@@ -465,6 +465,7 @@
               ]
             },
             {
+              "slug": "resource-metal-t2",
               "name": "Pneumatic Components",
               "values": [
                 "15-24"
@@ -479,6 +480,7 @@
               ]
             },
             {
+              "slug": "energy-bar",
               "name": "Mk2 Energy Rod",
               "values": [
                 "0-1",
@@ -505,6 +507,7 @@
               ]
             },
             {
+              "slug": "resource-metal-t2",
               "name": "Pneumatic Components",
               "values": [
                 "20-29",
@@ -530,6 +533,7 @@
               ]
             },
             {
+              "slug": "energy-bar",
               "name": "Mk2 Energy Rod",
               "values": [
                 "0-1",
@@ -555,6 +559,7 @@
               ]
             },
             {
+              "slug": "resource-metal-t2",
               "name": "Pneumatic Components",
               "values": [
                 "42-49"
@@ -582,6 +587,7 @@
               ]
             },
             {
+              "slug": "energy-bar",
               "name": "Mk2 Energy Rod",
               "values": [
                 "0-2"
