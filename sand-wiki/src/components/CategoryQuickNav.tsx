@@ -5,10 +5,10 @@ import { CategoryIcon } from "@/components/CategoryIcon";
 /** Responsive category switcher. Sticky vertical list on lg+, horizontal scroll
  *  row of chips below lg. Highlights the active category and preserves ?q=. */
 export function CategoryQuickNav({
-  categories, current, query,
-}: { categories: Category[]; current?: string; query?: string }) {
+  categories, current, query, sort,
+}: { categories: Category[]; current?: string; query?: string; sort?: string }) {
   const href = (slug: string) =>
-    `/items?category=${slug}${query ? `&q=${encodeURIComponent(query)}` : ""}`;
+    `/items?category=${slug}${query ? `&q=${encodeURIComponent(query)}` : ""}${sort ? `&sort=${sort}` : ""}`;
 
   return (
     <nav aria-label="Item categories" className="lg:sticky lg:top-[4.5rem]">
