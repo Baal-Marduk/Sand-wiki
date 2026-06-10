@@ -3,6 +3,7 @@ import {
   SECTIONS, ITEM_CATEGORIES, ITEM_CATEGORY_SLUGS,
   isItemCategory, categoryLabel, getSection, categoryForType, categoryForItem,
   isEnvCategory, CATEGORY_COLORS, categoryColor,
+  isTramplerCategory, tramplerCategoryForName,
 } from "./taxonomy";
 
 describe("taxonomy", () => {
@@ -58,6 +59,34 @@ describe("taxonomy", () => {
     expect(isEnvCategory("loot-containers")).toBe(true);
     expect(isEnvCategory("landmarks")).toBe(true);
     expect(isEnvCategory("weapons")).toBe(false);
+  });
+
+  it("exposes the nine trampler categories as a data section", () => {
+    const tr = getSection("tramplers");
+    expect(tr?.kind).toBe("data");
+    expect(tr?.categories.map((c) => c.slug)).toEqual([
+      "chassis", "reactors", "engines", "crew", "driving",
+      "cargo", "turrets", "stations", "structure",
+    ]);
+    expect(isTramplerCategory("chassis")).toBe(true);
+    expect(isTramplerCategory("weapons")).toBe(false);
+  });
+
+  it("maps component names to functional categories, specific before generic", () => {
+    expect(tramplerCategoryForName("KF-B \"Hole\" Middling Chassis")).toBe("chassis");
+    expect(tramplerCategoryForName("NZ AzE80 Motor-Reactor, Covered (1x3)")).toBe("reactors");
+    expect(tramplerCategoryForName("NZ Mb2k Maneuver Engine, Small")).toBe("engines");
+    expect(tramplerCategoryForName("S&H MK4 Crew Cabin, 4 People")).toBe("crew");
+    expect(tramplerCategoryForName("S&H M78 Framed Steering Deck")).toBe("driving");
+    expect(tramplerCategoryForName("S&H Cargo Bay, L-Shape")).toBe("cargo");
+    expect(tramplerCategoryForName("S.Trs Turret Deck")).toBe("turrets");
+    expect(tramplerCategoryForName("S&H Armaments Workbench")).toBe("stations");
+    expect(tramplerCategoryForName("S&H Supporting Frame")).toBe("structure");
+  });
+
+  it("resolves trampler category labels", () => {
+    expect(categoryLabel("stations")).toBe("Crafting Stations");
+    expect(categoryLabel("chassis")).toBe("Chassis");
   });
 });
 
