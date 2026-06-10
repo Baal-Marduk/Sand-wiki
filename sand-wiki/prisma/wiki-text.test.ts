@@ -147,7 +147,8 @@ describe("parseResearch", () => {
 describe("parseCost", () => {
   it("maps cost 1..4 to resolved item slugs, dropping zeros", () => {
     const fields = { "cost 1": "75", "cost 2": "200", "cost 3": "0", "cost 4": "0" };
-    const resolve = (name) => ({ "Mechanical Parts": "resource-metal-t1" }[name]);
+    const resolve = (name: string): string | undefined =>
+      name === "Mechanical Parts" ? "resource-metal-t1" : undefined;
     expect(parseCost(fields, resolve)).toEqual([
       { name: "Crowns", amount: 75 },
       { slug: "resource-metal-t1", name: "Mechanical Parts", amount: 200 },

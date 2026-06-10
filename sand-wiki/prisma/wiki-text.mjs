@@ -103,7 +103,9 @@ export function parseLootTable(wikitext, crateName) {
 
 /** Parse a {{Module}} infobox into a flat { key: value } map. Line-based: collects
  *  `| key = value` lines until the closing `}}` on its own line, so inline templates
- *  in a value (e.g. {{Tag Tier2}}) are preserved. Returns {} if no Module block. */
+ *  in a value (e.g. {{Tag Tier2}}) are preserved. Returns {} if no Module block.
+ *  @param {string} wikitext
+ *  @returns {Record<string, string>} */
 export function parseModule(wikitext) {
   if (!wikitext) return {};
   const start = wikitext.indexOf("{{Module");
@@ -129,7 +131,10 @@ const COST_SLOTS = [
 ];
 
 /** Build a [{ slug?, name, amount }] cost array from Module fields, dropping zero/blank
- *  amounts. `resolve(name)` returns an item slug or undefined; Crowns stays slug-less. */
+ *  amounts. `resolve(name)` returns an item slug or undefined; Crowns stays slug-less.
+ *  @param {Record<string, string>} fields
+ *  @param {(name: string) => string | undefined} resolve
+ *  @returns {Array<{ slug?: string, name: string, amount: number }>} */
 export function parseCost(fields, resolve) {
   const out = [];
   for (const { field, name } of COST_SLOTS) {
@@ -143,7 +148,9 @@ export function parseCost(fields, resolve) {
 
 /** Parse `research = II(b). Middling Chassis {{Tag TierN}}` into { node, name, tier }.
  *  Roman-numeral node prefixes (I, II(b), …) are split off; dotted root names
- *  (e.g. "K.K. Landwehr") have no node and stay whole. */
+ *  (e.g. "K.K. Landwehr") have no node and stay whole.
+ *  @param {string} value
+ *  @returns {{ node: string | null, name: string | null, tier: number | null }} */
 export function parseResearch(value) {
   if (!value) return { node: null, name: null, tier: null };
   const tierMatch = value.match(/\{\{\s*Tag\s+Tier(\d+)\s*\}\}/i);
