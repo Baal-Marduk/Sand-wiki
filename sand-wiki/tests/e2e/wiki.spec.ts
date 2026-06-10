@@ -316,3 +316,33 @@ test("clicking a table header sorts rows and toggles aria-sort", async ({ page }
   );
   expect(after).toEqual(before);
 });
+
+test("interactive surfaces show a consistent hover affordance", async ({ page }) => {
+  await page.goto("/items");
+
+  // Clickable card: background lifts on hover.
+  const card = page.locator("a.card").first();
+  await expect(card).toBeVisible();
+  const cardBefore = await card.evaluate((el) => getComputedStyle(el).backgroundColor);
+  await card.hover();
+  await expect
+    .poll(() => card.evaluate((el) => getComputedStyle(el).backgroundColor))
+    .not.toBe(cardBefore);
+
+  // Nav link: color shifts on hover.
+  const about = page.getByRole("navigation", { name: "Primary" }).getByRole("link", { name: "About" });
+  const linkBefore = await about.evaluate((el) => getComputedStyle(el).color);
+  await about.hover();
+  await expect
+    .poll(() => about.evaluate((el) => getComputedStyle(el).color))
+    .not.toBe(linkBefore);
+
+  // Non-active tab: background appears on hover ("Crafted by" is the default-active tab).
+  await page.goto("/items/sniper-rifle-iron-sights-silencer");
+  const usedIn = page.getByRole("tab", { name: "Used in" });
+  const tabBefore = await usedIn.evaluate((el) => getComputedStyle(el).backgroundColor);
+  await usedIn.hover();
+  await expect
+    .poll(() => usedIn.evaluate((el) => getComputedStyle(el).backgroundColor))
+    .not.toBe(tabBefore);
+});
