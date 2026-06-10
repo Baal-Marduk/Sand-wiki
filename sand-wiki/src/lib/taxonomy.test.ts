@@ -145,6 +145,10 @@ describe("categoryForItem", () => {
     // Untyped weapon and a utility-typed medical item.
     expect(categoryForItem(null, 'M1866/9 "Einzel" Breechloader', "rifle-musket")).toBe("weapons");
     expect(categoryForItem("UTILITY_CONSUMABLE", "MedKit", "med-kit")).toBe("medical");
+    // Deployable defensive consumables: ATTACK_CONSUMABLE would map to weapons.
+    expect(categoryForItem("ATTACK_CONSUMABLE", "Pestkop Lorenz Amplifier", "projectile-amplifier")).toBe("tools");
+    expect(categoryForItem("ATTACK_CONSUMABLE", "Von Liebig Reflector", "projectile-deflect-shield")).toBe("tools");
+    expect(categoryForItem("ATTACK_CONSUMABLE", "Domovyk Protective Dome", "projectile-sphere-shield")).toBe("tools");
   });
 
   it("leaves non-overridden slugs to the normal mapping", () => {

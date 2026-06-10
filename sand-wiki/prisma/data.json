@@ -154,18 +154,6 @@
       "fromCatalog": true
     },
     {
-      "slug": "explosive-big",
-      "id": "item_explosiveBig",
-      "name": "Explosive Big",
-      "displayName": "Wok Bomb",
-      "description": "A sea mine cooked up according to a secret Molfar recipe, with the addition of local coral dust, a pinch of aurogen, and a countdown clock. Served inactivated. Once activated, an explosion is inevitable.",
-      "type": "RAID_EXPLOSIVES",
-      "isResource": false,
-      "storageStack": 100000,
-      "workbenchTier": null,
-      "fromCatalog": true
-    },
-    {
       "slug": "ficus",
       "id": "item_ficus",
       "name": "Ficus",
@@ -1438,6 +1426,30 @@
       "fromCatalog": true
     },
     {
+      "slug": "turret-ammo-delayed-detonation",
+      "id": "item_turretAmmo_delayedDetonation",
+      "name": "Turret Ammo Delayed Detonation",
+      "displayName": "Delayed Detonation 80 mm Shell",
+      "description": "TODO: add in-game description for the Delayed Detonation 80 mm Shell.",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
+      "slug": "turret-ammo-emp",
+      "id": "item_turretAmmo_emp",
+      "name": "Turret Ammo EMP",
+      "displayName": "EMP 80 mm Shell",
+      "description": "TODO: add in-game description for the EMP 80 mm Shell.",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": true
+    },
+    {
       "slug": "turret-ammo-high-velocity",
       "id": "item_turretAmmo_highVelocity",
       "name": "Turret Ammo High Velocity",
@@ -1477,7 +1489,7 @@
       "slug": "wok-bomb",
       "id": "item_wokBomb",
       "name": "Wok Bomb",
-      "displayName": "Wok Bomb",
+      "displayName": "E-Wok Bomb",
       "description": "A sea mine cooked up according to a secret Molfar recipe, with the addition of local coral dust, a pinch of aurogen, and a countdown clock. Served inactivated. Once activated, an explosion is inevitable. Extremely powerful!",
       "type": "RAID_EXPLOSIVES",
       "isResource": false,

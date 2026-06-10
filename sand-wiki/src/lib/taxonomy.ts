@@ -144,10 +144,14 @@ export function categoryForType(type: string | null | undefined): string {
 }
 
 /** Per-item category overrides, keyed by slug, for items the type mapping gets wrong:
- *  untyped weapons and a utility-typed medical item. Checked before the type mapping. */
+ *  untyped weapons, a utility-typed medical item, and deployable defensive consumables
+ *  (typed ATTACK_CONSUMABLE but functionally tools). Checked before the type mapping. */
 const CATEGORY_OVERRIDES: Record<string, string> = {
   "rifle-musket": "weapons", // M1866/9 "Einzel" Breechloader — has no game type
   "med-kit": "medical", // MedKit — typed UTILITY_CONSUMABLE but is medical
+  "projectile-amplifier": "tools", // Pestkop Lorenz Amplifier — deployable field station
+  "projectile-deflect-shield": "tools", // Von Liebig Reflector — deployable shield
+  "projectile-sphere-shield": "tools", // Domovyk Protective Dome — deployable shield
 };
 
 /** Name-aware category. Per-slug overrides win first; otherwise weapon-type items whose

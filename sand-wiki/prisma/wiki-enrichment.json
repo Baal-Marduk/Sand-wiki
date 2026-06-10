@@ -516,5 +516,12 @@
       "type": "Carryable Objects",
       "value": 500
     }
+  },
+  "wok-bomb": {
+    "rarity": "Experimental",
+    "stats": {
+      "type": "Carryable Objects",
+      "value": 300
+    }
   }
 }

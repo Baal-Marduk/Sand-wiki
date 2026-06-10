@@ -3,7 +3,7 @@
 - [x] Order items in list by rarity/alphanumeric
 - [x] Order weapons by types
 - [x] Order artillery by type
-- Add EMP and Delayed detonation ammo for 80mm
+- [x] Add EMP and Delayed detonation ammo for 80mm (icons added; descriptions are still TODO placeholders)
 - add alphanumeric ordering on tables columns
 - add hover effect on links and tabs and interactive ui in app
 - Make rarity background color slightly translucent like in game
