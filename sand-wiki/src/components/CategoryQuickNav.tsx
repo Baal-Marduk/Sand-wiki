@@ -26,7 +26,7 @@ export function CategoryQuickNav({
                 className={`flex items-center gap-2 rounded-field px-3 py-1.5 text-sm whitespace-nowrap border lg:border-0 ${
                   active
                     ? "bg-base-300 text-base-content font-semibold border-base-300"
-                    : "border-base-300 lg:border-transparent hover:bg-base-200 text-base-content"
+                    : "row-link border-base-300 lg:border-transparent text-base-content"
                 }`}
               >
                 <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
