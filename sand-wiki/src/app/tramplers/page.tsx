@@ -26,7 +26,7 @@ export default async function TramplersPage({ searchParams }: { searchParams: Se
               <li key={c.slug} className="list-none">
                 <Link
                   href={`/tramplers?category=${c.slug}`}
-                  className="card bg-base-200 hover:bg-base-300 transition-colors p-4 flex flex-row items-center gap-3"
+                  className="card bg-base-200 p-4 flex flex-row items-center gap-3"
                 >
                   <CategoryIcon slug={c.slug} className="size-5 shrink-0" />
                   <span className="font-medium flex-1">{c.label}</span>

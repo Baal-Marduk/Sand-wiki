@@ -35,7 +35,7 @@ export default function HomePage() {
             <Link
               key={section.slug}
               href={section.href ?? `/${section.slug}`}
-              className="card bg-base-200 hover:bg-base-300 transition-colors"
+              className="card bg-base-200"
             >
               <div className="card-body">
                 <h3 className="card-title font-display">{section.label}</h3>
