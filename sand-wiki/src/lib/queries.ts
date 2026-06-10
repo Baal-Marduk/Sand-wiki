@@ -45,8 +45,8 @@ export async function listWorkbenchTiers(filter: ItemFilter): Promise<number[]> 
 /** Distinct caliber-class labels (Pistol, Rifle, …) among items matching the filter,
  *  in canonical order — for the items-list class filter. Class is derived (not a stored
  *  column), so this fetches the matching rows and reduces them via itemClasses rather than
- *  using a DB `distinct`. The full `filter` is passed verbatim: `weaponClass` is app-level
- *  and not part of buildItemQuery's where clause, so nothing needs to be excluded. */
+ *  using a DB `distinct`. No field needs excluding: weaponClass is app-level and never part
+ *  of buildItemQuery's where clause. */
 export async function listItemClasses(filter: ItemFilter): Promise<string[]> {
   const { where } = buildItemQuery(filter);
   const rows = await prisma.item.findMany({

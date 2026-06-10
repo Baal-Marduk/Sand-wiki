@@ -58,4 +58,15 @@ describe("applyItemView", () => {
     ];
     expect(applyItemView(weapons, { sort: "name", weaponClass: "Rifle" }).map((i) => i.slug)).toEqual(["rifle"]);
   });
+
+  it("applies the weapon-class filter before the rarity sort", () => {
+    const weapons = [
+      mk("rifle-c", "Rifle Common", "Common", "9x42 mm Ammo"),    // Rifle, tier 1
+      mk("rifle-r", "Rifle Rare", "Rare", "9x42 mm Ammo"),        // Rifle, tier 4
+      mk("snip", "Sniper", "Remarkable", "11x54 mm Ammo"),        // Sniper — filtered out
+    ];
+    expect(
+      applyItemView(weapons, { sort: "rarity", weaponClass: "Rifle" }).map((i) => i.slug),
+    ).toEqual(["rifle-c", "rifle-r"]);
+  });
 });
