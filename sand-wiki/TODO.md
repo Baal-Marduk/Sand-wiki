@@ -4,7 +4,7 @@
 - [x] Order weapons by types
 - [x] Order artillery by type
 - [x] Add EMP and Delayed detonation ammo for 80mm (icons added; descriptions are still TODO placeholders)
-- add alphanumeric ordering on tables columns
+- [x] add alphanumeric ordering on tables columns (click headers: asc → desc → default)
 - add hover effect on links and tabs and interactive ui in app
 - Make rarity background color slightly translucent like in game
 - Fix import from wiki in crates content sometimes mismatching "pneumatic components" for example being pneumatic parts
