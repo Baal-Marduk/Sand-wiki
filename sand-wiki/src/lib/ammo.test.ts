@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ammoCaliber, weaponCaliber, caliberLabel } from "./ammo";
+import { ammoCaliber, weaponCaliber, caliberLabel, itemClass, itemClasses, CLASS_ORDER } from "./ammo";
 
 describe("ammoCaliber", () => {
   it("reads NxN mm without degrading to the second number", () => {
@@ -47,5 +47,35 @@ describe("caliberLabel", () => {
   it("returns null for unknown or null", () => {
     expect(caliberLabel("999 mm")).toBeNull();
     expect(caliberLabel(null)).toBeNull();
+  });
+});
+
+describe("itemClass", () => {
+  it("derives a weapon's class from its stats.ammoName", () => {
+    expect(itemClass("some-rifle", "Service Rifle", { ammoName: "9x42 mm Ammo" })).toBe("Rifle");
+  });
+  it("derives an ammo item's class from its own name when stats has no ammoName", () => {
+    expect(itemClass("ammo-1154", "11x54 mm AP Ammo", null)).toBe("Sniper");
+  });
+  it("derives a turret's class from its slug override", () => {
+    expect(itemClass("game-packed-shotgun-turret-t1-container", "Packed Shotgun Turret", null)).toBe("Shotgun");
+  });
+  it("returns null when no caliber can be derived", () => {
+    expect(itemClass("bandages", "Bandages", null)).toBeNull();
+  });
+});
+
+describe("itemClasses", () => {
+  it("returns distinct present classes in canonical order", () => {
+    const rows = [
+      { slug: "a", name: "11x54 mm Ammo", stats: null },     // Sniper
+      { slug: "b", name: "Rifle", stats: { ammoName: "9x42 mm Ammo" } }, // Rifle
+      { slug: "c", name: "Pistol", stats: { ammoName: "8x21 mm Ammo" } }, // Pistol
+      { slug: "d", name: "Bandages", stats: null },          // none
+    ];
+    expect(itemClasses(rows)).toEqual(["Pistol", "Rifle", "Sniper"]);
+  });
+  it("CLASS_ORDER lists every label caliberLabel can return", () => {
+    expect(CLASS_ORDER).toEqual(["Pistol", "Rifle", "Sniper", "Shotgun", "Autocannon", "Naval", "Rocket"]);
   });
 });
