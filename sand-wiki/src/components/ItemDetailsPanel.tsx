@@ -1,4 +1,5 @@
 import type { DetailRow } from "@/lib/item-view";
+import { CoinIcon } from "@/components/CoinIcon";
 
 export function ItemDetailsPanel({ rows }: { rows: DetailRow[] }) {
   return (
@@ -12,7 +13,9 @@ export function ItemDetailsPanel({ rows }: { rows: DetailRow[] }) {
             {rows.map((r) => (
               <tr key={r.label}>
                 <td className="text-base-content/70">{r.label}</td>
-                <td className="text-right font-medium">{r.value}</td>
+                <td className="text-right font-medium">
+                  {r.value}{r.coin && <> <CoinIcon /></>}{r.unit && ` ${r.unit}`}
+                </td>
               </tr>
             ))}
           </tbody>

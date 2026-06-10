@@ -133,7 +133,9 @@ test("sellable item lists all sell tiers with a best-price marker", async ({ pag
   await page.goto("/items/pistol-ammo");
   await expect(page.getByLabel("Sellable")).toBeVisible();
   await page.getByRole("tab", { name: "Sell" }).click();
-  await expect(page.getByText("1,000 ◈")).toBeVisible();
+  await expect(page.getByText("1,000")).toBeVisible();
+  // Price renders the Crowns coin sprite (replaces the old ◈ placeholder).
+  await expect(page.locator('[role="tabpanel"] img[src*="coinCrown"]').first()).toBeVisible();
   await expect(page.getByText("Best")).toBeVisible();
 });
 
@@ -190,11 +192,15 @@ test("items list exposes a rarity filter that narrows results", async ({ page })
   await expect(page).toHaveURL(/rarity=Common/);
 });
 
-test("weapon detail shows a rarity badge and a stat box with ammo link", async ({ page }) => {
+test("weapon detail shows a rarity badge, a stat box, and an Ammo tab", async ({ page }) => {
   await page.goto("/items/rifle-musket");
   await expect(page.getByText("Common")).toBeVisible();
   await expect(page.getByText("Damage")).toBeVisible();
-  await expect(page.getByRole("link", { name: "9x42 mm Ammo" })).toBeVisible();
+  // Ammo moved out of the stat box into its own tab: icon + name, linked to the ammo page.
+  await page.getByRole("tab", { name: "Ammo" }).click();
+  const ammoLink = page.locator('[role="tabpanel"] a[href="/items/rifle-ammo"]');
+  await expect(ammoLink).toBeVisible();
+  await expect(ammoLink).toContainText("9x42 mm Ammo");
 });
 
 test("crate detail shows loot tier tabs with linked item icons, no amount columns", async ({ page }) => {
@@ -232,5 +238,6 @@ test("ammo page lists the weapons that use it via a Used by tab", async ({ page 
   await tab.click();
   const weaponLink = page.locator('[role="tabpanel"] a[href="/items/semi-automatic-pistol"]');
   await expect(weaponLink).toBeVisible();
-  await expect(weaponLink).toHaveAttribute("aria-label", "Blitz 10R Pistol");
+  // Vertical list shows the weapon name as visible text beside its icon.
+  await expect(weaponLink).toContainText("Blitz 10R Pistol");
 });

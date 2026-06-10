@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getItemBySlug, getCratesContaining, getWeaponsUsingAmmo } from "@/lib/queries";
+import { getItemBySlug, getCratesContaining, getWeaponsUsingAmmo, getItemIconMap } from "@/lib/queries";
 import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
 import { CategoryTag } from "@/components/CategoryTag";
@@ -13,7 +13,7 @@ import { CraftTable } from "@/components/CraftTable";
 import { UsedInTable } from "@/components/UsedInTable";
 import { TradeTable } from "@/components/TradeTable";
 import { CrateDropList } from "@/components/CrateDropList";
-import { AmmoUsedByGrid } from "@/components/AmmoUsedByGrid";
+import { ItemLinkList } from "@/components/ItemLinkList";
 
 type Params = Promise<{ slug: string }>;
 
@@ -27,6 +27,13 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const drops = await getCratesContaining(item.slug);
   const ammoUsers = item.category === "ammo" ? await getWeaponsUsingAmmo(item.slug) : [];
 
+  // This item's ammo (for weapons/artillery): the stats blob names it; fetch its icon.
+  const stats = item.stats as unknown as ItemStats | null;
+  const ammo =
+    stats?.ammoSlug && stats.ammoName
+      ? [{ slug: stats.ammoSlug, name: stats.ammoName, icon: (await getItemIconMap([stats.ammoSlug]))[stats.ammoSlug] ?? null }]
+      : [];
+
   const tabContent: Partial<Record<TabId, React.ReactNode>> = {
     "crafted-by": <CraftTable recipes={crafts} />,
     "used-in": <UsedInTable recipes={usedInCrafts} />,
@@ -38,8 +45,11 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
     label: t.label,
     content: tabContent[t.id],
   }));
+  if (ammo.length > 0) {
+    tabs.push({ id: "ammo", label: "Ammo", content: <ItemLinkList items={ammo} /> });
+  }
   if (ammoUsers.length > 0) {
-    tabs.push({ id: "used-by", label: "Used by", content: <AmmoUsedByGrid items={ammoUsers} /> });
+    tabs.push({ id: "used-by", label: "Used by", content: <ItemLinkList items={ammoUsers} /> });
   }
   if (drops.length > 0) {
     tabs.push({ id: "loot", label: "Loot", content: <CrateDropList drops={drops} /> });
@@ -73,7 +83,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
             {sell.length > 0 && <span className="badge badge-warning" aria-label="Sellable">◈ Sellable</span>}
           </div>
           {item.description && <p className="text-base-content/80 max-w-prose">{item.description}</p>}
-          <StatBox stats={item.stats as unknown as ItemStats | null} />
+          <StatBox stats={stats} />
         </div>
       </header>
 

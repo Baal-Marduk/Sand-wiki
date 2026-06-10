@@ -1,4 +1,4 @@
-import Link from "next/link";
+import { CoinIcon } from "@/components/CoinIcon";
 
 /** Shape of the JSON stats blob stored on Item.stats (from the wiki enrichment). */
 export interface ItemStats {
@@ -25,12 +25,8 @@ export function StatBox({ stats }: { stats: ItemStats | null | undefined }) {
   if (stats.sDamage != null) cells.push({ label: "Splash Damage", node: stats.sDamage });
   if (stats.magazine != null) cells.push({ label: "Magazine", node: stats.magazine });
   if (stats.type) cells.push({ label: "Type", node: stats.type });
-  if (stats.ammoSlug && stats.ammoName)
-    cells.push({
-      label: "Ammo",
-      node: <Link href={`/items/${stats.ammoSlug}`} className="link">{stats.ammoName}</Link>,
-    });
-  if (stats.value != null) cells.push({ label: "Value", node: `${stats.value} ◈` });
+  if (stats.value != null)
+    cells.push({ label: "Value", node: <>{stats.value} <CoinIcon /></> });
 
   if (cells.length === 0) return null;
 

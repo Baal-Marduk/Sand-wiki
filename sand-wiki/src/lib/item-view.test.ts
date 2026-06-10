@@ -27,8 +27,8 @@ describe("itemDetailRows", () => {
 
   it("adds Buyable/Sellable summaries from trades", () => {
     const r = itemDetailRows(facts, { ...noTrades, buy: [buyOpt], sell: [sellOpt] });
-    expect(r).toContainEqual({ label: "Buyable", value: "10 ◈ / unit" });
-    expect(r).toContainEqual({ label: "Sellable", value: "10 ◈ / unit" });
+    expect(r).toContainEqual({ label: "Buyable", value: "10", coin: true, unit: "/ unit" });
+    expect(r).toContainEqual({ label: "Sellable", value: "10", coin: true, unit: "/ unit" });
   });
 });
 

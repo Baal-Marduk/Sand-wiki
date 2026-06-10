@@ -2,7 +2,9 @@ import type { ItemTrades } from "@/lib/trades";
 import { formatCrowns } from "@/lib/trades";
 import { categoryLabel } from "@/lib/taxonomy";
 
-export interface DetailRow { label: string; value: string }
+/** A detail-panel row. `coin` marks a price row so the panel renders the Crowns sprite
+ *  between the figure and `unit` (e.g. "10 [coin] / unit"). */
+export interface DetailRow { label: string; value: string; coin?: boolean; unit?: string }
 
 export interface ItemFacts {
   category: string;
@@ -19,16 +21,16 @@ export function itemDetailRows(facts: ItemFacts, trades: ItemTrades): DetailRow[
   if (facts.isResource) rows.push({ label: "Resource", value: "Yes" });
   if (trades.buy.length > 0) {
     const cheapest = Math.min(...trades.buy.map((b) => b.unitPrice));
-    rows.push({ label: "Buyable", value: `${formatCrowns(cheapest)} ◈ / unit` });
+    rows.push({ label: "Buyable", value: formatCrowns(cheapest), coin: true, unit: "/ unit" });
   }
   if (trades.sell.length > 0) {
     const best = Math.max(...trades.sell.map((s) => s.unitPrice));
-    rows.push({ label: "Sellable", value: `${formatCrowns(best)} ◈ / unit` });
+    rows.push({ label: "Sellable", value: formatCrowns(best), coin: true, unit: "/ unit" });
   }
   return rows;
 }
 
-export type TabId = "crafted-by" | "used-in" | "buy" | "sell" | "used-by" | "loot";
+export type TabId = "crafted-by" | "used-in" | "buy" | "sell" | "ammo" | "used-by" | "loot";
 export interface TabDef { id: TabId; label: string }
 
 /** Available relationship tabs in fixed order, only those with data. */

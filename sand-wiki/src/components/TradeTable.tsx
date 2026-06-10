@@ -1,4 +1,5 @@
 import { type TradeOption, formatCrowns, formatUnitPrice } from "@/lib/trades";
+import { CoinIcon } from "@/components/CoinIcon";
 
 export function TradeTable({ options }: { options: TradeOption[] }) {
   return (
@@ -11,9 +12,9 @@ export function TradeTable({ options }: { options: TradeOption[] }) {
           {options.map((o) => (
             <tr key={o.recipeSlug}>
               <td className="whitespace-nowrap">×{o.quantity}</td>
-              <td className="whitespace-nowrap">{formatCrowns(o.totalCrowns)} ◈</td>
+              <td className="whitespace-nowrap">{formatCrowns(o.totalCrowns)} <CoinIcon /></td>
               <td className="whitespace-nowrap">
-                {formatUnitPrice(o.unitPrice)} ◈
+                {formatUnitPrice(o.unitPrice)} <CoinIcon />
                 {o.isBest && <span className="badge badge-success badge-sm ml-2">Best</span>}
               </td>
             </tr>

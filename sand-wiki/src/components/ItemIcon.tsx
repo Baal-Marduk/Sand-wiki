@@ -18,7 +18,7 @@ export function ItemIcon({
   decorative?: boolean;
   rarity?: string | null;
 }) {
-  const px = { sm: "size-5", recipe: "size-11", md: "size-12", card: "size-18", lg: "size-28" }[size];
+  const px = { sm: "size-5", recipe: "size-14", md: "size-12", card: "size-18", lg: "size-28" }[size];
   const tint = rarityColor(rarity);
   const bg = tint ? "" : "bg-base-300";
   const style = tint ? { backgroundColor: tint } : undefined;
