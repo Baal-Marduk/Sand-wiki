@@ -75,6 +75,13 @@ export async function getEnvEntityBySlug(slug: string) {
   return prisma.envEntity.findUnique({ where: { slug } });
 }
 
+/** slug -> icon path for the given item slugs (for rendering loot item sprites). */
+export async function getItemIconMap(slugs: string[]): Promise<Record<string, string | null>> {
+  if (slugs.length === 0) return {};
+  const rows = await prisma.item.findMany({ where: { slug: { in: slugs } }, select: { slug: true, icon: true } });
+  return Object.fromEntries(rows.map((r) => [r.slug, r.icon]));
+}
+
 /** Count of env entities per category — for the Environment landing. */
 export async function envCategoryCounts(): Promise<Record<string, number>> {
   const rows = await prisma.envEntity.groupBy({ by: ["category"], _count: true });
