@@ -1,4 +1,4 @@
-import { rarityColor } from "@/lib/rarity";
+import { rarityBgColor } from "@/lib/rarity";
 
 /** Item image. When `icon` is set, render the sprite; otherwise a placeholder glyph.
  *  This is the single change point for item imagery.
@@ -19,7 +19,7 @@ export function ItemIcon({
   rarity?: string | null;
 }) {
   const px = { sm: "size-5", recipe: "size-14", md: "size-12", card: "size-18", lg: "size-28" }[size];
-  const tint = rarityColor(rarity);
+  const tint = rarityBgColor(rarity);
   const bg = tint ? "" : "bg-base-300";
   const style = tint ? { backgroundColor: tint } : undefined;
   if (icon) {
