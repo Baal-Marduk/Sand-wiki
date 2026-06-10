@@ -61,6 +61,13 @@ export function isItemCategory(slug: string): boolean {
   return ITEM_CATEGORY_SLUGS.includes(slug);
 }
 
+/** Categories whose items carry a caliber, so they get a "Class" filter instead of a tier filter. */
+export const WEAPON_CLASS_CATEGORIES = ["weapons", "artillery", "ammo"];
+
+export function isWeaponClassCategory(slug: string | undefined): boolean {
+  return slug !== undefined && WEAPON_CLASS_CATEGORIES.includes(slug);
+}
+
 export function categoryLabel(slug: string): string {
   return (
     itemCategories.find((c) => c.slug === slug)?.label ??

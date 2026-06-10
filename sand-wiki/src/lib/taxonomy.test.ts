@@ -4,6 +4,7 @@ import {
   isItemCategory, categoryLabel, getSection, categoryForType, categoryForItem,
   isEnvCategory, CATEGORY_COLORS, categoryColor,
   isTramplerCategory, tramplerCategoryForName, TRAMPLER_CATEGORY_SLUGS,
+  isWeaponClassCategory, WEAPON_CLASS_CATEGORIES,
 } from "./taxonomy";
 
 describe("taxonomy", () => {
@@ -168,5 +169,16 @@ describe("category colors", () => {
   it("falls back to the misc color for unknown slugs", () => {
     expect(categoryColor("nope")).toBe(CATEGORY_COLORS.misc);
     expect(categoryColor("weapons")).toBe("#d4654f");
+  });
+});
+
+describe("isWeaponClassCategory", () => {
+  it("is true only for caliber-bearing categories", () => {
+    expect(WEAPON_CLASS_CATEGORIES).toEqual(["weapons", "artillery", "ammo"]);
+    expect(isWeaponClassCategory("weapons")).toBe(true);
+    expect(isWeaponClassCategory("artillery")).toBe(true);
+    expect(isWeaponClassCategory("ammo")).toBe(true);
+    expect(isWeaponClassCategory("tools")).toBe(false);
+    expect(isWeaponClassCategory(undefined)).toBe(false);
   });
 });
