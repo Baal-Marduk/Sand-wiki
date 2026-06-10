@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { classifyTrades, formatCrowns, formatUnitPrice } from "./trades";
+import { classifyTrades, formatCrowns } from "./trades";
 import type { RecipeCard } from "./recipes";
 
 const buyC4: RecipeCard = {
@@ -61,9 +61,5 @@ describe("formatters", () => {
   it("formats crown totals with thousands separators", () => {
     expect(formatCrowns(1000)).toBe("1,000");
     expect(formatCrowns(5)).toBe("5");
-  });
-  it("formats unit price, trimming trailing zeros", () => {
-    expect(formatUnitPrice(10)).toBe("10");
-    expect(formatUnitPrice(2.5)).toBe("2.5");
   });
 });

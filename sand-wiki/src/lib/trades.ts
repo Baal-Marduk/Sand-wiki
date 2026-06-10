@@ -88,7 +88,3 @@ export function classifyTrades(
 export function formatCrowns(n: number): string {
   return n.toLocaleString("en-US");
 }
-
-export function formatUnitPrice(n: number): string {
-  return Number.isInteger(n) ? String(n) : Number(n.toFixed(2)).toString();
-}

@@ -12,7 +12,6 @@ import { ItemTabs, type Tab } from "@/components/ItemTabs";
 import { ItemDetailsPanel } from "@/components/ItemDetailsPanel";
 import { CraftTable } from "@/components/CraftTable";
 import { UsedInTable } from "@/components/UsedInTable";
-import { TradeTable } from "@/components/TradeTable";
 import { CrateDropList } from "@/components/CrateDropList";
 import { ItemLinkList } from "@/components/ItemLinkList";
 
@@ -24,7 +23,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   if (!item) notFound();
 
   const trades = classifyTrades(item.slug, item.craftedBy, item.usedIn);
-  const { buy, sell, crafts, usedInCrafts } = trades;
+  const { crafts, usedInCrafts } = trades;
   const drops = await getCratesContaining(item.slug);
   // Caliber family drives both directions: a weapon/turret lists every ammo of its
   // caliber; an ammo lists every weapon/turret of its caliber.
@@ -37,8 +36,6 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const tabContent: Partial<Record<TabId, React.ReactNode>> = {
     "crafted-by": <CraftTable recipes={crafts} />,
     "used-in": <UsedInTable recipes={usedInCrafts} />,
-    buy: <TradeTable options={buy} />,
-    sell: <TradeTable options={sell} />,
   };
   const tabs: Tab[] = availableTabs(trades).map((t) => ({
     id: t.id,
@@ -61,6 +58,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
       isResource: item.isResource,
       storageStack: item.storageStack,
       workbenchTier: item.workbenchTier,
+      value: stats?.value ?? null,
     },
     trades,
   );
@@ -79,8 +77,6 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
               </span>
             )}
             <CategoryTag slug={item.category} />
-            {buy.length > 0 && <span className="badge badge-success" aria-label="Buyable">◈ Buyable</span>}
-            {sell.length > 0 && <span className="badge badge-warning" aria-label="Sellable">◈ Sellable</span>}
           </div>
           {item.description && <p className="text-base-content/80 max-w-prose">{item.description}</p>}
           <StatBox stats={stats} typeLabel={isAmmo ? caliberLabel(caliber) ?? undefined : undefined} />
