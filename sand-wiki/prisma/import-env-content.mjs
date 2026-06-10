@@ -1,9 +1,11 @@
 // One-off importer: scrape Loot Container descriptions from sandgame.wiki (MediaWiki API)
 // into prisma/env-content.json keyed by slug.  node prisma/import-env-content.mjs
-import { writeFileSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { stripWikiMarkup, titleToSlug } from "./wiki-text.mjs";
+import { stripWikiMarkup, titleToSlug, parseLootTable } from "./wiki-text.mjs";
+
+const norm = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const API = "https://sandgame.wiki/api.php";
@@ -33,11 +35,24 @@ async function wikitext(title) {
 }
 
 async function main() {
+  // Build a normalized item-name -> slug index (+ overrides), shared with item enrichment.
+  const data = JSON.parse(readFileSync(join(__dirname, "data.json"), "utf-8"));
+  let overrides = {};
+  try { overrides = JSON.parse(readFileSync(join(__dirname, "wiki-overrides.json"), "utf-8")); } catch { /* none */ }
+  const index = new Map();
+  for (const it of data.items) for (const n of [it.displayName, it.name]) {
+    const k = norm(n);
+    if (k && !index.has(k)) index.set(k, it.slug);
+  }
+  const resolveSlug = (name) => overrides[norm(name)] ?? index.get(norm(name));
+
   const titles = await members("Loot Container");
   const out = {};
   const empty = [];
+  const unresolved = new Set();
   for (const title of titles) {
-    const description = stripWikiMarkup(await wikitext(title));
+    const wt = await wikitext(title);
+    const description = stripWikiMarkup(wt);
     const slug = titleToSlug(title);
     if (!description) empty.push(title);
     out[slug] = {
@@ -46,10 +61,23 @@ async function main() {
       description,
       sourceUrl: "https://sandgame.wiki/index.php/" + encodeURIComponent(title.replace(/ /g, "_")),
     };
+    const tiers = parseLootTable(wt, title).map((t) => ({
+      tier: t.tier,
+      columns: t.columns,
+      entries: t.entries.map((e) => {
+        const itemSlug = resolveSlug(e.name);
+        if (!itemSlug) unresolved.add(e.name);
+        return itemSlug ? { slug: itemSlug, name: e.name, values: e.values } : { name: e.name, values: e.values };
+      }),
+    }));
+    if (tiers.length) out[slug].loot = { tiers };
+    const entryCount = tiers.reduce((n, t) => n + t.entries.length, 0);
+    console.log(`  ${title}: ${tiers.length} tiers, ${entryCount} entries`);
   }
   const sorted = Object.fromEntries(Object.keys(out).sort().map((k) => [k, out[k]]));
   writeFileSync(join(__dirname, "env-content.json"), JSON.stringify(sorted, null, 2) + "\n");
   console.log(`Wrote ${Object.keys(sorted).length} loot containers. Empty descriptions: ${empty.join(", ") || "none"}`);
+  if (unresolved.size) console.log(`Unresolved loot items: ${[...unresolved].join(", ")}`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); });

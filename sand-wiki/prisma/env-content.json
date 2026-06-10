@@ -3,25 +3,540 @@
     "category": "loot-containers",
     "name": "Crate of Shells",
     "description": "The Crate of Shells is a Loot Container that can be found all across Sophie. Just like all containers, it has 3 tiers: Normal, Rare, and Very Rare.\nAll crates contain one type of Ammunition for mounted weapons and Fabric Scraps within. Rare crates additionally contain a second type of ammunition and Metal Rods within. Very rare crates contain all three type of ammunition and Reinforced Leather Strips additionally within.",
-    "sourceUrl": "https://sandgame.wiki/index.php/Crate_of_Shells"
+    "sourceUrl": "https://sandgame.wiki/index.php/Crate_of_Shells",
+    "loot": {
+      "tiers": [
+        {
+          "tier": "Normal",
+          "columns": [
+            "Shipwreck Amount",
+            "Landmark Amount"
+          ],
+          "entries": [
+            {
+              "slug": "small-cannon-ammo",
+              "name": "40mm Shell",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            },
+            {
+              "slug": "shotgun-turret-ammo",
+              "name": "70mm Shell",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            },
+            {
+              "slug": "turret-ammo",
+              "name": "80mm Shell",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            },
+            {
+              "slug": "resource-fabric-scraps",
+              "name": "Fabric Scraps",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            }
+          ]
+        },
+        {
+          "tier": "Rare",
+          "columns": [
+            "Shipwreck Amount",
+            "Landmark Amount"
+          ],
+          "entries": [
+            {
+              "slug": "small-cannon-ammo",
+              "name": "40mm Shell",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            },
+            {
+              "slug": "shotgun-turret-ammo",
+              "name": "70mm Shell",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            },
+            {
+              "slug": "turret-ammo",
+              "name": "80mm Shell",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            },
+            {
+              "slug": "resource-fabric-scraps",
+              "name": "Fabric Scraps",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            },
+            {
+              "slug": "resource-metal-rods",
+              "name": "Metal Rods",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            }
+          ]
+        },
+        {
+          "tier": "Very Rare",
+          "columns": [
+            "Shipwreck Amount",
+            "Landmark Amount"
+          ],
+          "entries": [
+            {
+              "slug": "small-cannon-ammo",
+              "name": "40mm Shell",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            },
+            {
+              "slug": "shotgun-turret-ammo",
+              "name": "70mm Shell",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            },
+            {
+              "slug": "turret-ammo",
+              "name": "80mm Shell",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            },
+            {
+              "slug": "resource-fabric-scraps",
+              "name": "Fabric Scraps",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            },
+            {
+              "slug": "resource-metal-rods",
+              "name": "Metal Rods",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            },
+            {
+              "slug": "resource-reinforced-leather-strips",
+              "name": "Reinforced Leather Strips",
+              "values": [
+                "10-20",
+                "10-20"
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   "food-crate": {
     "category": "loot-containers",
     "name": "Food Crate",
     "description": "The Rare Food Crate\nThe Food Crate is a Loot Container that can be found all across Sophie, most commonly at city and port Landmarks.\nJust like all containers, it has 3 \"Rarity\" tiers: Normal, Rare, and Very Rare. Normal crates contain Canned Food and Threads within. Rare and very rare crates additionally contain Leviathan Meat OR Coral Dust and Reinforced Leather Strips within, respectively.\nCrates also contain a hidden \"Quality\" tier that is primarily location driven based on where the crate spawns at.\nBoth the rarity and quality of a crate impact how much of each item the crate contains within.",
-    "sourceUrl": "https://sandgame.wiki/index.php/Food_Crate"
+    "sourceUrl": "https://sandgame.wiki/index.php/Food_Crate",
+    "loot": {
+      "tiers": [
+        {
+          "tier": "Normal",
+          "columns": [
+            "Lesser",
+            "Normal",
+            "Greater"
+          ],
+          "entries": [
+            {
+              "slug": "food-can",
+              "name": "Canned Food",
+              "values": [
+                "2",
+                "4-5",
+                "6"
+              ]
+            },
+            {
+              "slug": "resource-threads",
+              "name": "Threads",
+              "values": [
+                "10-14",
+                "25-28",
+                "48"
+              ]
+            }
+          ]
+        },
+        {
+          "tier": "Rare",
+          "columns": [
+            "Lesser",
+            "Normal",
+            "Greater"
+          ],
+          "entries": [
+            {
+              "slug": "food-can",
+              "name": "Canned Food",
+              "values": [
+                "4-5",
+                "5-6"
+              ]
+            },
+            {
+              "slug": "resource-threads",
+              "name": "Threads",
+              "values": [
+                "30-32",
+                "48"
+              ]
+            },
+            {
+              "slug": "resource-coral-dust",
+              "name": "Coral Dust",
+              "values": [
+                "8-9",
+                "10-11"
+              ]
+            },
+            {
+              "slug": "resource-leviathan-meat",
+              "name": "Leviathan Meat",
+              "values": [
+                "8-9",
+                "10-11"
+              ]
+            }
+          ]
+        },
+        {
+          "tier": "Very Rare",
+          "columns": [
+            "Lesser",
+            "Normal",
+            "Greater"
+          ],
+          "entries": [
+            {
+              "slug": "food-can",
+              "name": "Canned Food",
+              "values": [
+                "4-5",
+                "7"
+              ]
+            },
+            {
+              "slug": "resource-threads",
+              "name": "Threads",
+              "values": [
+                "42-43",
+                "51"
+              ]
+            },
+            {
+              "slug": "resource-coral-dust",
+              "name": "Coral Dust",
+              "values": [
+                "8-9",
+                "12"
+              ]
+            },
+            {
+              "slug": "resource-leviathan-meat",
+              "name": "Leviathan Meat",
+              "values": [
+                "8-9"
+              ]
+            },
+            {
+              "slug": "resource-reinforced-leather-strips",
+              "name": "Reinforced Leather Strips",
+              "values": [
+                "1",
+                "2"
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   "medical-cabinet": {
     "category": "loot-containers",
     "name": "Medical Cabinet",
     "description": "The Medical Cabinet is a Loot Container which can be found all across Sophie, most commonly at city and port Landmarks. Just like all containers, it has 3 tiers: Normal, Rare, and Very Rare.\nJust like all containers, it has 3 \"Rarity\" tiers: Normal, Rare, and Very Rare. Normal cabinets contain Medkits and Mixtures within. Rare and very rare cabinets additionally contain Fabric and Optic Lenses within, respetively.\nCabinets also contain a hidden \"Quality\" tier that is primarily location driven based on where the cabinet spawns at.\nBoth the rarity and quality of a cabinet impact how much of each item the cabinet contains within.",
-    "sourceUrl": "https://sandgame.wiki/index.php/Medical_Cabinet"
+    "sourceUrl": "https://sandgame.wiki/index.php/Medical_Cabinet",
+    "loot": {
+      "tiers": [
+        {
+          "tier": "Normal",
+          "columns": [
+            "Lesser",
+            "Normal",
+            "Greater"
+          ],
+          "entries": [
+            {
+              "slug": "med-kit",
+              "name": "Medkit",
+              "values": [
+                "1",
+                "2",
+                "3"
+              ]
+            },
+            {
+              "slug": "resource-mixtures",
+              "name": "Mixtures",
+              "values": [
+                "11-14",
+                "30-34",
+                "44"
+              ]
+            }
+          ]
+        },
+        {
+          "tier": "Rare",
+          "columns": [
+            "Lesser",
+            "Normal",
+            "Greater"
+          ],
+          "entries": [
+            {
+              "slug": "med-kit",
+              "name": "Medkit",
+              "values": [
+                "3",
+                "4"
+              ]
+            },
+            {
+              "slug": "resource-mixtures",
+              "name": "Mixtures",
+              "values": [
+                "36-38",
+                "51-54"
+              ]
+            },
+            {
+              "slug": "resource-fabric",
+              "name": "Fabric",
+              "values": [
+                "8-9",
+                "12-13"
+              ]
+            }
+          ]
+        },
+        {
+          "tier": "Very Rare",
+          "columns": [
+            "Lesser",
+            "Normal",
+            "Greater"
+          ],
+          "entries": [
+            {
+              "slug": "med-kit",
+              "name": "Medkit",
+              "values": []
+            },
+            {
+              "slug": "resource-mixtures",
+              "name": "Mixtures",
+              "values": []
+            },
+            {
+              "slug": "resource-fabric",
+              "name": "Fabric",
+              "values": []
+            },
+            {
+              "slug": "resource-optic-lenses",
+              "name": "Optic Lenses",
+              "values": []
+            }
+          ]
+        }
+      ]
+    }
   },
   "parts-crate": {
     "category": "loot-containers",
     "name": "Parts Crate",
     "description": "The Parts Crate is a Loot Container that can be found all across Sophie, mainly at Landmarks.\nJust like all containers, it has 3 \"Rarity\" tiers: Normal, Rare, and Very Rare. Normal Parts crates mainly store Mechanical Parts and Scrap Metal along with a chance to contain Mk2 Energy Rod within. Rare and very rare crates additionally contain Gunpowder and HG Gunpowder, respectively.\nCrates also contain a hidden \"Quality\" tier that is primarily location driven based on where the crate spawns at. Normal and greater crates additionally contain Pneumatic Components within.\nBoth the rarity and quality of a crate impact how much of each item the crate contains within.",
-    "sourceUrl": "https://sandgame.wiki/index.php/Parts_Crate"
+    "sourceUrl": "https://sandgame.wiki/index.php/Parts_Crate",
+    "loot": {
+      "tiers": [
+        {
+          "tier": "Normal",
+          "columns": [
+            "Lesser",
+            "Normal",
+            "Greater"
+          ],
+          "entries": [
+            {
+              "slug": "resource-metal-t1",
+              "name": "Mechanical Parts",
+              "values": [
+                "31-39",
+                "61-89"
+              ]
+            },
+            {
+              "name": "Pneumatic Components",
+              "values": [
+                "15-24"
+              ]
+            },
+            {
+              "slug": "resource-metal-parts",
+              "name": "Scrap Metal",
+              "values": [
+                "11-14",
+                "25-29"
+              ]
+            },
+            {
+              "name": "Mk2 Energy Rod",
+              "values": [
+                "0-1",
+                "0-1"
+              ]
+            }
+          ]
+        },
+        {
+          "tier": "Rare",
+          "columns": [
+            "Lesser",
+            "Normal",
+            "Greater"
+          ],
+          "entries": [
+            {
+              "slug": "resource-metal-t1",
+              "name": "Mechanical Parts",
+              "values": [
+                "43",
+                "73-94",
+                "82-105"
+              ]
+            },
+            {
+              "name": "Pneumatic Components",
+              "values": [
+                "20-29",
+                "35-44"
+              ]
+            },
+            {
+              "slug": "resource-metal-parts",
+              "name": "Scrap Metal",
+              "values": [
+                "17",
+                "30-34",
+                "50-54"
+              ]
+            },
+            {
+              "slug": "resource-gunpowder",
+              "name": "Gunpowder",
+              "values": [
+                "5",
+                "10-11",
+                "14-15"
+              ]
+            },
+            {
+              "name": "Mk2 Energy Rod",
+              "values": [
+                "0-1",
+                "0-1",
+                "0-2"
+              ]
+            }
+          ]
+        },
+        {
+          "tier": "Very Rare",
+          "columns": [
+            "Lesser",
+            "Normal",
+            "Greater"
+          ],
+          "entries": [
+            {
+              "slug": "resource-metal-t1",
+              "name": "Mechanical Parts",
+              "values": [
+                "90-114"
+              ]
+            },
+            {
+              "name": "Pneumatic Components",
+              "values": [
+                "42-49"
+              ]
+            },
+            {
+              "slug": "resource-metal-parts",
+              "name": "Scrap Metal",
+              "values": [
+                "57-59"
+              ]
+            },
+            {
+              "slug": "resource-gunpowder",
+              "name": "Gunpowder",
+              "values": [
+                "16-17"
+              ]
+            },
+            {
+              "slug": "resource-high-grade-gunpowder",
+              "name": "High-Grade Gunpowder",
+              "values": [
+                "1-2"
+              ]
+            },
+            {
+              "name": "Mk2 Energy Rod",
+              "values": [
+                "0-2"
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   "suspicious-pile-of-sand": {
     "category": "loot-containers",
@@ -33,12 +548,226 @@
     "category": "loot-containers",
     "name": "Valuables Safe",
     "description": "The Valuables Safe is a Loot Container that can be found all across Sophie, most commonly inside buildings at city and port Landmarks.\nJust like all containers, it has 3 \"Rarity\" tiers: Normal, Rare, and Very Rare. Normal safes contain Crowns, either Small Valuables OR Valuable Papers, and Coral Chunks within. Rare and very rare safes contain additional items, those being Leviathan Skin and Optic Lenses/Crystal, respectively.\nSafes also contain a hidden \"Quality\" tier that is primarily location driven based on where the crate spawns at.\nBoth the rarity and quality of a safe impact how much of each item the safe contains within.",
-    "sourceUrl": "https://sandgame.wiki/index.php/Valuables_Safe"
+    "sourceUrl": "https://sandgame.wiki/index.php/Valuables_Safe",
+    "loot": {
+      "tiers": [
+        {
+          "tier": "Normal",
+          "columns": [
+            "Lesser",
+            "Normal",
+            "Greater"
+          ],
+          "entries": [
+            {
+              "slug": "coin-crown",
+              "name": "Crowns",
+              "values": [
+                "141-159",
+                "245-274",
+                "352-373"
+              ]
+            },
+            {
+              "slug": "small-valuables",
+              "name": "Small Valuables",
+              "values": [
+                "26-29",
+                "51-58",
+                "72-79"
+              ]
+            },
+            {
+              "slug": "valuable-papers",
+              "name": "Valuable Papers",
+              "values": [
+                "10-14",
+                "21-29",
+                "35-36"
+              ]
+            },
+            {
+              "slug": "resource-coral-piece",
+              "name": "Coral Chunks",
+              "values": [
+                "2",
+                "6",
+                "11-15"
+              ]
+            }
+          ]
+        },
+        {
+          "tier": "Rare",
+          "columns": [
+            "Lesser",
+            "Normal",
+            "Greater"
+          ],
+          "entries": [
+            {
+              "slug": "coin-crown",
+              "name": "Crowns",
+              "values": [
+                "245-274",
+                "352-373"
+              ]
+            },
+            {
+              "slug": "small-valuables",
+              "name": "Small Valuables",
+              "values": [
+                "51-58",
+                "72-79"
+              ]
+            },
+            {
+              "slug": "valuable-papers",
+              "name": "Valuable Papers",
+              "values": [
+                "21-29",
+                "35-36"
+              ]
+            },
+            {
+              "slug": "resource-coral-piece",
+              "name": "Coral Chunks",
+              "values": [
+                "6",
+                "11-15"
+              ]
+            },
+            {
+              "slug": "resource-leviathan-skin",
+              "name": "Leviathan Skin",
+              "values": [
+                "8-9",
+                "12-13"
+              ]
+            }
+          ]
+        },
+        {
+          "tier": "Very Rare",
+          "columns": [
+            "Lesser",
+            "Normal",
+            "Greater"
+          ],
+          "entries": [
+            {
+              "slug": "coin-crown",
+              "name": "Crowns",
+              "values": [
+                "352-373"
+              ]
+            },
+            {
+              "slug": "small-valuables",
+              "name": "Small Valuables",
+              "values": [
+                "72-79"
+              ]
+            },
+            {
+              "slug": "valuable-papers",
+              "name": "Valuable Papers",
+              "values": [
+                "35-36"
+              ]
+            },
+            {
+              "slug": "resource-coral-piece",
+              "name": "Coral Chunks",
+              "values": [
+                "11-15"
+              ]
+            },
+            {
+              "slug": "resource-leviathan-skin",
+              "name": "Leviathan Skin",
+              "values": [
+                "12-13"
+              ]
+            },
+            {
+              "slug": "resource-optic-lenses",
+              "name": "Optic Lenses",
+              "values": [
+                "3"
+              ]
+            },
+            {
+              "slug": "artefact-crystal",
+              "name": "Crystal",
+              "values": [
+                "6"
+              ]
+            }
+          ]
+        }
+      ]
+    }
   },
   "weapon-crate": {
     "category": "loot-containers",
     "name": "Weapon Crate",
     "description": "The Weapon Crate is a Loot Container which mainly stores Player Weapons, Ammunition for player weapons, and Raw Materials like Scrapped Ammo. Just like all containers, it has 3 tiers: Normal, Rare, and Very Rare. it can be found all across Sophie.",
-    "sourceUrl": "https://sandgame.wiki/index.php/Weapon_Crate"
+    "sourceUrl": "https://sandgame.wiki/index.php/Weapon_Crate",
+    "loot": {
+      "tiers": [
+        {
+          "tier": "Normal",
+          "columns": [
+            "Count",
+            "Chance"
+          ],
+          "entries": [
+            {
+              "slug": "coin-crown",
+              "name": "Crowns",
+              "values": [
+                "10-20",
+                "100%"
+              ]
+            }
+          ]
+        },
+        {
+          "tier": "Rare",
+          "columns": [
+            "Count",
+            "Chance"
+          ],
+          "entries": [
+            {
+              "slug": "coin-crown",
+              "name": "Crowns",
+              "values": [
+                "10-20",
+                "100%"
+              ]
+            }
+          ]
+        },
+        {
+          "tier": "Very Rare",
+          "columns": [
+            "Count",
+            "Chance"
+          ],
+          "entries": [
+            {
+              "slug": "coin-crown",
+              "name": "Crowns",
+              "values": [
+                "10-20",
+                "100%"
+              ]
+            }
+          ]
+        }
+      ]
+    }
   }
 }
