@@ -122,27 +122,23 @@ test("tech section is a placeholder explaining the missing data", async ({ page 
   await expect(page.getByRole("button", { name: /calculate/i })).toHaveCount(0);
 });
 
-test("buyable item shows a Buy tab, header badge, and Details summary", async ({ page }) => {
+test("buyable item shows a Buyable price row in the Details panel", async ({ page }) => {
+  // Buy/sell were consolidated into the Details panel (no more Buy tab or header badge).
   await page.goto("/items/c4-dynamite");
-  await expect(page.getByLabel("Buyable")).toBeVisible();
-  await expect(page.getByRole("tab", { name: "Buy" })).toBeVisible();
-  await expect(page.getByText("Category")).toBeVisible();
+  const details = page.locator('aside:has(h2:text("Details"))');
+  await expect(details.getByText("Buyable")).toBeVisible();
+  // Price renders with the Crowns coin sprite and a per-unit suffix.
+  await expect(details.locator('img[src*="coinCrown"]').first()).toBeVisible();
+  await expect(details.getByText("/ unit").first()).toBeVisible();
 });
 
-test("sellable item lists all sell tiers with a best-price marker", async ({ page }) => {
+test("sellable item shows a Sellable best-price row in the Details panel", async ({ page }) => {
   await page.goto("/items/pistol-ammo");
-  await expect(page.getByLabel("Sellable")).toBeVisible();
-  await page.getByRole("tab", { name: "Sell" }).click();
-  await expect(page.getByText("1,000")).toBeVisible();
-  // Price renders the Crowns coin sprite (replaces the old ◈ placeholder).
-  await expect(page.locator('[role="tabpanel"] img[src*="coinCrown"]').first()).toBeVisible();
-  await expect(page.getByText("Best")).toBeVisible();
-});
-
-test("items grid marks buyable and sellable items", async ({ page }) => {
-  await page.goto("/items");
-  await expect(page.locator('a[href="/items/c4-dynamite"]').getByLabel("Buyable")).toBeVisible();
-  await expect(page.locator('a[href="/items/pistol-ammo"]').getByLabel("Sellable")).toBeVisible();
+  const details = page.locator('aside:has(h2:text("Details"))');
+  await expect(details.getByText("Sellable")).toBeVisible();
+  // The row shows the best (max) sell unit price with the Crowns coin sprite and per-unit suffix.
+  await expect(details.locator('img[src*="coinCrown"]').first()).toBeVisible();
+  await expect(details.getByText("/ unit").first()).toBeVisible();
 });
 
 test("navbar search is hidden on home but present elsewhere", async ({ page }) => {
@@ -186,9 +182,14 @@ test("item detail shows a real sprite image", async ({ page }) => {
 
 test("items list exposes a rarity filter that narrows results", async ({ page }) => {
   await page.goto("/items?category=weapons");
-  const f = page.getByRole("navigation", { name: "Rarity" });
-  await expect(f).toBeVisible();
-  await f.getByRole("link", { name: "Common", exact: true }).click();
+  // The rarity filter is now a URL-driven <select> (was a nav of links). Target it via
+  // its label span — the wrapping <label>'s full text also includes the option text.
+  const rarity = page
+    .locator("label")
+    .filter({ has: page.locator("span", { hasText: /^Rarity$/ }) })
+    .locator("select");
+  await expect(rarity).toBeVisible();
+  await rarity.selectOption("Common");
   await expect(page).toHaveURL(/rarity=Common/);
 });
 
