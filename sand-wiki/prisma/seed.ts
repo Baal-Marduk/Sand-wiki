@@ -1,8 +1,10 @@
 import { PrismaClient, Prisma } from "@prisma/client";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { categoryForItem, isItemCategory } from "../src/lib/taxonomy";
+import { categoryForItem, isItemCategory, isEnvCategory } from "../src/lib/taxonomy";
 import { isRarity } from "../src/lib/rarity";
+
+interface EnvContent { category: string; name: string; description?: string; sourceUrl?: string }
 
 const prisma = new PrismaClient();
 
@@ -42,6 +44,7 @@ async function main() {
   await prisma.recipeOutput.deleteMany();
   await prisma.recipe.deleteMany();
   await prisma.item.deleteMany();
+  await prisma.envEntity.deleteMany();
 
   for (const i of data.items) {
     const category = categoryForItem(i.type, i.displayName ?? i.name, i.slug);
@@ -88,7 +91,25 @@ async function main() {
     });
   }
 
-  console.log(`Seeded ${data.items.length} items and ${data.recipes.length} recipes.`);
+  const envContent: Record<string, EnvContent> = JSON.parse(
+    readFileSync(join(__dirname, "env-content.json"), "utf-8"),
+  );
+  let envCount = 0;
+  for (const [slug, e] of Object.entries(envContent)) {
+    if (!isEnvCategory(e.category)) {
+      console.warn(`Unknown env category "${e.category}" for ${slug} — skipped`);
+      continue;
+    }
+    await prisma.envEntity.create({
+      data: {
+        slug, category: e.category, name: e.name,
+        description: e.description ?? undefined, sourceUrl: e.sourceUrl ?? undefined,
+      },
+    });
+    envCount++;
+  }
+
+  console.log(`Seeded ${data.items.length} items, ${data.recipes.length} recipes, ${envCount} environment entities.`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());

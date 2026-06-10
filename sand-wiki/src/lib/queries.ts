@@ -63,6 +63,24 @@ export async function getTradeFlags(): Promise<{ buyable: Set<string>; sellable:
   return { buyable, sellable };
 }
 
+/** Environment entities (loot containers, etc.), optionally filtered by category. */
+export async function listEnvEntities(category?: string) {
+  return prisma.envEntity.findMany({
+    where: category ? { category } : {},
+    orderBy: { name: "asc" },
+  });
+}
+
+export async function getEnvEntityBySlug(slug: string) {
+  return prisma.envEntity.findUnique({ where: { slug } });
+}
+
+/** Count of env entities per category — for the Environment landing. */
+export async function envCategoryCounts(): Promise<Record<string, number>> {
+  const rows = await prisma.envEntity.groupBy({ by: ["category"], _count: true });
+  return Object.fromEntries(rows.map((r) => [r.category, r._count]));
+}
+
 export async function getItemBySlug(slug: string) {
   const item = await prisma.item.findUnique({
     where: { slug },
