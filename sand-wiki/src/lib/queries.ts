@@ -1,7 +1,7 @@
 import { prisma } from "./db";
-import { buildItemQuery, type ItemFilter } from "./item-filter";
+import { buildItemQuery, applyItemView, type ItemFilter } from "./item-filter";
+import { ammoCaliber, itemClasses, weaponCaliber } from "./ammo";
 import { toRecipeCard } from "./recipes";
-import { ammoCaliber, weaponCaliber } from "./ammo";
 
 const recipeInclude = {
   recipe: { include: { inputs: { include: { item: true } }, outputs: { include: { item: true } } } },
@@ -9,7 +9,8 @@ const recipeInclude = {
 
 export async function listItems(filter: ItemFilter) {
   const { where, orderBy } = buildItemQuery(filter);
-  return prisma.item.findMany({ where, orderBy });
+  const items = await prisma.item.findMany({ where, orderBy });
+  return applyItemView(items, { sort: filter.sort, weaponClass: filter.weaponClass });
 }
 
 /** Distinct rarities present among items matching the filter (ignoring any rarity
@@ -26,15 +27,33 @@ export async function listRarities(filter: ItemFilter): Promise<string[]> {
   return rows.map((r) => r.rarity).filter((r): r is string => r !== null);
 }
 
-/** Distinct non-null workbench tiers across items, ascending — for the items-list tier filter. */
-export async function listWorkbenchTiers(): Promise<number[]> {
+/** Distinct non-null workbench tiers among items matching the filter (ignoring any tier
+ *  constraint), ascending — for the items-list tier filter. */
+export async function listWorkbenchTiers(filter: ItemFilter): Promise<number[]> {
+  const rest = { ...filter };
+  delete rest.workbenchTier;
+  const { where } = buildItemQuery(rest);
   const rows = await prisma.item.findMany({
-    where: { workbenchTier: { not: null } },
+    where: { ...where, workbenchTier: { not: null } },
     distinct: ["workbenchTier"],
     select: { workbenchTier: true },
     orderBy: { workbenchTier: "asc" },
   });
   return rows.map((r) => r.workbenchTier).filter((t): t is number => t !== null);
+}
+
+/** Distinct caliber-class labels (Pistol, Rifle, …) among items matching the filter,
+ *  in canonical order — for the items-list class filter. Class is derived (not a stored
+ *  column), so this fetches the matching rows and reduces them via itemClasses rather than
+ *  using a DB `distinct`. The full `filter` is passed verbatim: `weaponClass` is app-level
+ *  and not part of buildItemQuery's where clause, so nothing needs to be excluded. */
+export async function listItemClasses(filter: ItemFilter): Promise<string[]> {
+  const { where } = buildItemQuery(filter);
+  const rows = await prisma.item.findMany({
+    where,
+    select: { slug: true, name: true, stats: true },
+  });
+  return itemClasses(rows);
 }
 
 /** Environment entities (loot containers, etc.), optionally filtered by category. */
