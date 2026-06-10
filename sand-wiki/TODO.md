@@ -6,7 +6,7 @@
 - [x] Add EMP and Delayed detonation ammo for 80mm (icons added; descriptions are still TODO placeholders)
 - [x] add alphanumeric ordering on tables columns (click headers: asc → desc → default)
 - [x] add hover effect on links and tabs and interactive ui in app (global hover system in globals.css)
-- Make rarity background color slightly translucent like in game
+- [x] Make rarity background color slightly translucent like in game (~65% tint; all items default to Common)
 - Fix import from wiki in crates content sometimes mismatching "pneumatic components" for example being pneumatic parts
 - Add landmarks and loot containers to search auto fill
 - Add an aria-live region to SearchBox announcing the result count to screen readers (known a11y gap; dropdown currently only flips aria-expanded)
