@@ -1,17 +1,18 @@
 import type { IconType } from "react-icons";
 import {
-  GiPistolGun, GiFieldGun, GiStoneStack, GiArmorVest, GiWrench, GiFirstAidKit,
+  GiPistolGun, GiFieldGun, GiWoodPile , GiArmorVest, GiFirstAidKit,
   GiAmmoBox, GiCardboardBox, GiOpenChest, GiCastle, GiGamepad, GiPerson,
 } from "react-icons/gi";
+import { BsTools } from "react-icons/bs";
 
 /** Monochrome category glyph (replaces the old color dot). Decorative — the category
  *  label text always sits beside it, so meaning is never icon-only. */
 const ICONS: Record<string, IconType> = {
   weapons: GiPistolGun,
   artillery: GiFieldGun,
-  resources: GiStoneStack,
+  resources: GiWoodPile,
   attire: GiArmorVest,
-  tools: GiWrench,
+  tools: BsTools,
   medical: GiFirstAidKit,
   ammo: GiAmmoBox,
   misc: GiCardboardBox,
