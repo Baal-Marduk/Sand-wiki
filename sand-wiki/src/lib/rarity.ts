@@ -1,15 +1,15 @@
 export interface Rarity { name: string; tier: number; color: string }
 
 /** Ordered rarity scale (names from sandgame.wiki) → game-palette colors
- *  (the in-game ItemColorSchemeUIConfig bgDefault per tier). Tier-6 "Exotic" name is
- *  provisional — no tier-6 item observed yet; the color slot is reserved. */
+ *  (the in-game ItemColorSchemeUIConfig bgDefault per tier). All six names are observed
+ *  in the wiki data; "Experimental" is the top crafted tier (e.g. endgame turret kits). */
 export const RARITIES: Rarity[] = [
   { name: "Common", tier: 1, color: "#ADADAD" },
   { name: "Uncommon", tier: 2, color: "#889F83" },
   { name: "Noteworthy", tier: 3, color: "#899FB7" },
   { name: "Rare", tier: 4, color: "#9C86B7" },
   { name: "Remarkable", tier: 5, color: "#E29554" },
-  { name: "Exotic", tier: 6, color: "#D16469" },
+  { name: "Experimental", tier: 6, color: "#D16469" },
 ];
 
 const byName = new Map(RARITIES.map((r) => [r.name.toLowerCase(), r]));

@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { parseWeaponInfoboxes, extractAmmoName } from "./wiki-parse.mjs";
+import { parseWeaponInfoboxes, parseInfoboxes, extractAmmoName } from "./wiki-parse.mjs";
 
 const TABBER = `Intro text [[9x42mm Ammo]].
 <tabber>
@@ -45,6 +45,64 @@ describe("parseWeaponInfoboxes", () => {
     });
     expect(r[1].value).toBeNull();
     expect(r[1].type).toBeNull();
+  });
+});
+
+const AMMO = `<tabber>
+A=
+{{Ammo
+ |Name = '''11x54mm Ammo'''
+ |Rarity = Rare
+ |Type = Ammunition
+ |Value = 3
+ |PDamage = 12
+ |TDamage = 0
+ |SDamage = 0
+}}
+</tabber>`;
+
+const ITEM = `{{Items
+ |name = '''Fabric'''
+ |rarity = Common
+ |type = Crafting Component
+ |value = 5
+}}`;
+
+describe("parseInfoboxes", () => {
+  it("parses an {{Ammo}} infobox with player/trampler/splash damage (incl. zeros)", () => {
+    const r = parseInfoboxes(AMMO);
+    expect(r).toHaveLength(1);
+    expect(r[0]).toMatchObject({
+      template: "ammo",
+      name: "11x54mm Ammo",
+      rarity: "Rare",
+      type: "Ammunition",
+      value: 3,
+      pDamage: 12,
+      tDamage: 0,
+      sDamage: 0,
+    });
+    expect(r[0].magazine).toBeNull();
+  });
+
+  it("parses a {{Items}} infobox (lowercase keys) with rarity/type/value", () => {
+    const r = parseInfoboxes(ITEM);
+    expect(r).toHaveLength(1);
+    expect(r[0]).toMatchObject({
+      template: "items",
+      name: "Fabric",
+      rarity: "Common",
+      type: "Crafting Component",
+      value: 5,
+    });
+    expect(r[0].damage).toBeNull();
+    expect(r[0].pDamage).toBeNull();
+  });
+
+  it("finds all three template types in one document", () => {
+    const doc = `${ITEM}\n${AMMO}\n{{Weapons|Name='''Gun'''|Damage=9}}`;
+    const r = parseInfoboxes(doc);
+    expect(r.map((e) => e.template)).toEqual(["items", "ammo", "weapons"]);
   });
 });
 

@@ -4,7 +4,7 @@ import { rarityColor, rarityTier, isRarity, RARITIES } from "./rarity";
 describe("rarity", () => {
   it("orders the known scale by tier", () => {
     expect(RARITIES.map((r) => r.name)).toEqual([
-      "Common", "Uncommon", "Noteworthy", "Rare", "Remarkable", "Exotic",
+      "Common", "Uncommon", "Noteworthy", "Rare", "Remarkable", "Experimental",
     ]);
     expect(RARITIES.map((r) => r.tier)).toEqual([1, 2, 3, 4, 5, 6]);
   });

@@ -3,7 +3,10 @@ import Link from "next/link";
 /** Shape of the JSON stats blob stored on Item.stats (from the wiki enrichment). */
 export interface ItemStats {
   type?: string;
-  damage?: number;
+  damage?: number;   // weapons
+  pDamage?: number;  // ammo: damage to players
+  tDamage?: number;  // ammo: damage to tramplers
+  sDamage?: number;  // ammo: splash damage
   magazine?: number;
   value?: number;
   ammoSlug?: string;
@@ -17,6 +20,9 @@ export function StatBox({ stats }: { stats: ItemStats | null | undefined }) {
 
   const cells: { label: string; node: React.ReactNode }[] = [];
   if (stats.damage != null) cells.push({ label: "Damage", node: stats.damage });
+  if (stats.pDamage != null) cells.push({ label: "Damage (Player)", node: stats.pDamage });
+  if (stats.tDamage != null) cells.push({ label: "Damage (Trampler)", node: stats.tDamage });
+  if (stats.sDamage != null) cells.push({ label: "Splash Damage", node: stats.sDamage });
   if (stats.magazine != null) cells.push({ label: "Magazine", node: stats.magazine });
   if (stats.type) cells.push({ label: "Type", node: stats.type });
   if (stats.ammoSlug && stats.ammoName)

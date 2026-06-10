@@ -8,11 +8,17 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
-import { parseWeaponInfoboxes } from "./wiki-parse.mjs";
+import { parseInfoboxes } from "./wiki-parse.mjs";
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const API = "https://sandgame.wiki/api.php";
-const CATEGORIES = ["Weapons", "Player_Weapons", "Mounted_Weapons"];
+// All item-bearing categories. Pages parse {{Weapons}}, {{Ammo}}, or {{Items}} infoboxes.
+const CATEGORIES = [
+  "Weapons", "Player_Weapons", "Mounted_Weapons",
+  "Ammunition", "Mounted_Weapon_Ammunition", "Throwables",
+  "Consumables", "Research_Components", "Crafting_Components",
+  "Carryable_Objects", "Player_Gear", "Valuables", "Key",
+];
 
 const norm = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
 
@@ -72,7 +78,7 @@ async function main() {
 
   for (const title of titles) {
     const wt = await wikitext(title);
-    for (const e of parseWeaponInfoboxes(wt)) {
+    for (const e of parseInfoboxes(wt)) {
       if (!e.name) continue;
       entryCount++;
       const item = resolve(e.name);
@@ -82,6 +88,9 @@ async function main() {
       const stats = {};
       if (e.type) stats.type = e.type;
       if (e.damage != null) stats.damage = e.damage;
+      if (e.pDamage != null) stats.pDamage = e.pDamage;
+      if (e.tDamage != null) stats.tDamage = e.tDamage;
+      if (e.sDamage != null) stats.sDamage = e.sDamage;
       if (e.magazine != null) stats.magazine = e.magazine;
       if (e.value != null) stats.value = e.value;
       if (e.ammoName) {

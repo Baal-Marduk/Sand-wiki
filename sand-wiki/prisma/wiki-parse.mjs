@@ -56,12 +56,15 @@ const num = (v) => {
 const clean = (v) =>
   v == null ? null : v.replace(/'''/g, "").replace(/\[\[|\]\]/g, "").trim() || null;
 
-/** Find every {{Weapons|...}} block (brace-matched) and map to a normalized entry. */
-export function parseWeaponInfoboxes(wikitext) {
+/** Find every {{Weapons|…}}, {{Ammo|…}}, or {{Items|…}} infobox (brace-matched) and map
+ *  to a unified entry. Common fields: name, rarity, type, value. Weapon-only: magazine,
+ *  damage, ammoName. Ammo-only: pDamage (player), tDamage (trampler), sDamage (splash). */
+export function parseInfoboxes(wikitext) {
   const out = [];
-  const re = /\{\{Weapons\b/gi;
+  const re = /\{\{\s*(Weapons|Ammo|Items)\b/gi;
   let m;
   while ((m = re.exec(wikitext))) {
+    const template = m[1].toLowerCase();
     let i = m.index + 2, depth = 1, body = "";
     while (i < wikitext.length && depth > 0) {
       const two = wikitext.slice(i, i + 2);
@@ -72,14 +75,23 @@ export function parseWeaponInfoboxes(wikitext) {
     re.lastIndex = i;
     const p = parseTemplateParams(body);
     out.push({
+      template,
       name: clean(p["name"]),
       rarity: clean(p["rarity"]),
       type: clean(p["type"]),
+      value: num(p["value"]),
       magazine: num(p["mag"]),
       damage: num(p["damage"]),
-      value: num(p["value"]),
       ammoName: extractAmmoName(p["ammo"] || ""),
+      pDamage: num(p["pdamage"]),
+      tDamage: num(p["tdamage"]),
+      sDamage: num(p["sdamage"]),
     });
   }
   return out;
+}
+
+/** Back-compat alias — only the {{Weapons}} subset. */
+export function parseWeaponInfoboxes(wikitext) {
+  return parseInfoboxes(wikitext).filter((e) => e.template === "weapons");
 }
