@@ -1,4 +1,4 @@
-import { listItems, listRarities, getTradeFlags } from "@/lib/queries";
+import { listItems, listRarities } from "@/lib/queries";
 import { ItemCard } from "@/components/ItemCard";
 import { CategoryQuickNav } from "@/components/CategoryQuickNav";
 import { RarityFilter } from "@/components/RarityFilter";
@@ -25,10 +25,9 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
     rarity: rarity || undefined,
   };
 
-  const [items, rarities, tradeFlags] = await Promise.all([
+  const [items, rarities] = await Promise.all([
     listItems(filter),
     listRarities({ query: q || undefined, category: category || undefined }),
-    getTradeFlags(),
   ]);
 
   return (
@@ -49,8 +48,6 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
                   key={i.id}
                   item={{
                     slug: i.slug, name: i.name, icon: i.icon, rarity: i.rarity,
-                    buyable: tradeFlags.buyable.has(i.slug),
-                    sellable: tradeFlags.sellable.has(i.slug),
                   }}
                 />
               ))}

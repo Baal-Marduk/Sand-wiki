@@ -3,7 +3,6 @@ import { ItemIcon } from "@/components/ItemIcon";
 
 export interface ItemCardData {
   slug: string; name: string; icon?: string | null; rarity?: string | null;
-  buyable?: boolean; sellable?: boolean;
 }
 
 export function ItemCard({ item }: { item: ItemCardData }) {
@@ -16,14 +15,6 @@ export function ItemCard({ item }: { item: ItemCardData }) {
         <ItemIcon name={item.name} icon={item.icon} size="card" decorative rarity={item.rarity} />
         <div className="flex-1 min-w-0">
           <div className="font-medium truncate">{item.name}</div>
-        </div>
-        <div className="flex flex-col items-end gap-1 shrink-0">
-          {item.buyable && (
-            <span className="badge badge-success badge-sm" aria-label="Buyable">◈ Buy</span>
-          )}
-          {item.sellable && (
-            <span className="badge badge-warning badge-sm" aria-label="Sellable">◈ Sell</span>
-          )}
         </div>
       </Link>
     </li>
