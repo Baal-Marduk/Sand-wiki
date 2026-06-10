@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getItemBySlug, getCratesContaining, getWeaponsUsingAmmo, getItemIconMap } from "@/lib/queries";
+import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCaliber } from "@/lib/queries";
+import { ammoCaliber, weaponCaliber, caliberLabel } from "@/lib/ammo";
 import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
 import { CategoryTag } from "@/components/CategoryTag";
@@ -25,14 +26,13 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const trades = classifyTrades(item.slug, item.craftedBy, item.usedIn);
   const { buy, sell, crafts, usedInCrafts } = trades;
   const drops = await getCratesContaining(item.slug);
-  const ammoUsers = item.category === "ammo" ? await getWeaponsUsingAmmo(item.slug) : [];
-
-  // This item's ammo (for weapons/artillery): the stats blob names it; fetch its icon.
+  // Caliber family drives both directions: a weapon/turret lists every ammo of its
+  // caliber; an ammo lists every weapon/turret of its caliber.
   const stats = item.stats as unknown as ItemStats | null;
-  const ammo =
-    stats?.ammoSlug && stats.ammoName
-      ? [{ slug: stats.ammoSlug, name: stats.ammoName, icon: (await getItemIconMap([stats.ammoSlug]))[stats.ammoSlug] ?? null }]
-      : [];
+  const isAmmo = item.category === "ammo";
+  const caliber = isAmmo ? ammoCaliber(item.name) : weaponCaliber(item.slug, stats?.ammoName);
+  const ammo = !isAmmo && caliber ? await getAmmoByCaliber(caliber) : [];
+  const ammoUsers = isAmmo && caliber ? await getWeaponsByCaliber(caliber) : [];
 
   const tabContent: Partial<Record<TabId, React.ReactNode>> = {
     "crafted-by": <CraftTable recipes={crafts} />,
@@ -83,7 +83,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
             {sell.length > 0 && <span className="badge badge-warning" aria-label="Sellable">◈ Sellable</span>}
           </div>
           {item.description && <p className="text-base-content/80 max-w-prose">{item.description}</p>}
-          <StatBox stats={stats} />
+          <StatBox stats={stats} typeLabel={isAmmo ? caliberLabel(caliber) ?? undefined : undefined} />
         </div>
       </header>
 
