@@ -29,12 +29,12 @@ export const SECTIONS: Section[] = [
   {
     slug: "environment",
     label: "Environment",
-    kind: "placeholder",
+    kind: "data",
     categories: [
       { slug: "loot-containers", label: "Loot Containers" },
-      { slug: "npcs", label: "NPCs" },
-      { slug: "outposts", label: "Outposts" },
+      { slug: "landmarks", label: "Landmarks" },
       { slug: "game-modes", label: "Game Modes" },
+      { slug: "npcs", label: "NPCs" },
     ],
   },
   { slug: "tramplers", label: "Tramplers", kind: "placeholder", categories: [] },
@@ -55,6 +55,13 @@ export function categoryLabel(slug: string): string {
 
 export function getSection(slug: string): Section | undefined {
   return SECTIONS.find((s) => s.slug === slug);
+}
+
+const envCategories = SECTIONS.find((s) => s.slug === "environment")?.categories ?? [];
+export const ENV_CATEGORY_SLUGS = envCategories.map((c) => c.slug);
+
+export function isEnvCategory(slug: string): boolean {
+  return ENV_CATEGORY_SLUGS.includes(slug);
 }
 
 /** Maps the scraper's game `type` enum to a wiki item category slug. Unknown/null -> "misc". */
@@ -117,6 +124,11 @@ export const CATEGORY_COLORS: Record<string, string> = {
   attire: "#6aa9c9",
   medical: "#d56a8c",
   misc: "#9b8b73",
+  // environment categories
+  "loot-containers": "#c9a24b",
+  landmarks: "#7aa6b0",
+  "game-modes": "#b07aa0",
+  npcs: "#9b8b73",
 };
 
 export function categoryColor(slug: string): string {

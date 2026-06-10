@@ -2,7 +2,7 @@ import { describe, it, expect } from "vitest";
 import {
   SECTIONS, ITEM_CATEGORIES, ITEM_CATEGORY_SLUGS,
   isItemCategory, categoryLabel, getSection, categoryForType, categoryForItem,
-  CATEGORY_COLORS, categoryColor,
+  isEnvCategory, CATEGORY_COLORS, categoryColor,
 } from "./taxonomy";
 
 describe("taxonomy", () => {
@@ -44,6 +44,20 @@ describe("taxonomy", () => {
   it("looks up a section by slug", () => {
     expect(getSection("environment")?.label).toBe("Environment");
     expect(getSection("missing")).toBeUndefined();
+  });
+
+  it("environment is a data section with the four env categories", () => {
+    const env = getSection("environment");
+    expect(env?.kind).toBe("data");
+    expect(env?.categories.map((c) => c.slug)).toEqual([
+      "loot-containers", "landmarks", "game-modes", "npcs",
+    ]);
+  });
+
+  it("validates env categories", () => {
+    expect(isEnvCategory("loot-containers")).toBe(true);
+    expect(isEnvCategory("landmarks")).toBe(true);
+    expect(isEnvCategory("weapons")).toBe(false);
   });
 });
 
