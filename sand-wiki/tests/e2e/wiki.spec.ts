@@ -346,3 +346,15 @@ test("interactive surfaces show a consistent hover affordance", async ({ page })
     .poll(() => usedIn.evaluate((el) => getComputedStyle(el).backgroundColor))
     .not.toBe(tabBefore);
 });
+
+test("autocomplete suggests a loot container and navigates to its environment page", async ({ page }) => {
+  await page.goto("/items");
+  const box = page.getByRole("navigation", { name: "Primary" }).getByRole("combobox");
+  await box.fill("Weapon Crate");
+  // Scope to the search listbox — "Loot Containers" also appears as a nav dropdown link.
+  const listbox = page.getByRole("listbox");
+  await expect(listbox.getByText("Loot Containers", { exact: true })).toBeVisible();
+  const option = listbox.getByRole("option", { name: /Weapon Crate/ });
+  await option.click();
+  await expect(page).toHaveURL(/\/environment\/weapon-crate/);
+});
