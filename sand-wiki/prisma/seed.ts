@@ -2,7 +2,7 @@ import { PrismaClient, Prisma } from "@prisma/client";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { categoryForItem, isItemCategory, isEnvCategory, isTramplerCategory } from "../src/lib/taxonomy";
-import { isRarity } from "../src/lib/rarity";
+import { isRarity, DEFAULT_RARITY } from "../src/lib/rarity";
 
 interface EnvContent { category: string; name: string; description?: string; sourceUrl?: string; loot?: unknown }
 
@@ -61,10 +61,10 @@ async function main() {
       console.warn(`Unmapped type "${i.type}" -> misc (${i.slug})`);
     }
     const e = enrichment[i.slug];
-    let rarity: string | undefined;
+    let rarity = DEFAULT_RARITY;
     if (e?.rarity) {
       if (isRarity(e.rarity)) rarity = e.rarity;
-      else console.warn(`Unknown rarity "${e.rarity}" for ${i.slug} — skipped`);
+      else console.warn(`Unknown rarity "${e.rarity}" for ${i.slug} — defaulting to ${DEFAULT_RARITY}`);
     }
     await prisma.item.create({
       data: {
