@@ -38,6 +38,7 @@ model EnvEntity {
   description String?
   sourceUrl   String?
   icon        String?
+  loot        Json?
 
   @@index([category])
 }

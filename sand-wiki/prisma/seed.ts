@@ -4,7 +4,7 @@ import { join } from "node:path";
 import { categoryForItem, isItemCategory, isEnvCategory } from "../src/lib/taxonomy";
 import { isRarity } from "../src/lib/rarity";
 
-interface EnvContent { category: string; name: string; description?: string; sourceUrl?: string }
+interface EnvContent { category: string; name: string; description?: string; sourceUrl?: string; loot?: unknown }
 
 const prisma = new PrismaClient();
 
@@ -104,6 +104,7 @@ async function main() {
       data: {
         slug, category: e.category, name: e.name,
         description: e.description ?? undefined, sourceUrl: e.sourceUrl ?? undefined,
+        loot: (e.loot ?? undefined) as Prisma.InputJsonValue | undefined,
       },
     });
     envCount++;
