@@ -30,6 +30,18 @@ model Item {
   @@index([rarity])
 }
 
+model EnvEntity {
+  id          String  @id @default(cuid())
+  slug        String  @unique
+  category    String
+  name        String
+  description String?
+  sourceUrl   String?
+  icon        String?
+
+  @@index([category])
+}
+
 model Recipe {
   id               String  @id @default(cuid())
   slug             String  @unique
