@@ -11,7 +11,7 @@ describe("rarity", () => {
 
   it("maps name to color (case-insensitive); null for unknown/absent", () => {
     expect(rarityColor("Common")).toBe("#ADADAD");
-    expect(rarityColor("noteworthy")).toBe("#899FB7");
+    expect(rarityColor("noteworthy")).toBe("#9C86B7");
     expect(rarityColor("nope")).toBeNull();
     expect(rarityColor(null)).toBeNull();
     expect(rarityColor(undefined)).toBeNull();
