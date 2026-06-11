@@ -20,7 +20,6 @@ model Item {
   icon          String?
   derivedName   String?
   rarity        String?
-  stats         Json?
 
   statType       String?
   statValue      Int?
@@ -53,7 +52,6 @@ model EnvEntity {
   description String?
   sourceUrl   String?
   icon        String?
-  loot        Json?
 
   lootTiers   LootTier[]
 
@@ -83,8 +81,6 @@ model TramplerPart {
   researchNode String?
   researchName String?
   researchTier Int?
-
-  cost Json?
 
   costEntries TramplerPartCost[]
 
