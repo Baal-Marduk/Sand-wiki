@@ -8,6 +8,8 @@ services:
     volumes:
       - ./directus/snapshots:/directus/snapshots
       - ./directus/extensions:/directus/extensions
+      # Uploaded files (mirrored item sprites) must survive container recreation.
+      - ./directus/uploads:/directus/uploads
     environment:
       SECRET: ${DIRECTUS_SECRET}
       ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}

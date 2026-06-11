@@ -22,6 +22,9 @@ model Item {
   icon          String?
   derivedName   String?
   rarity        String?
+  // Directus-files mirror of `icon` — backoffice card image only; app reads `icon`.
+  // Populated by prisma/sync-directus-icons.mjs (re-run after asset imports).
+  iconFile      String? @db.Uuid
 
   statType       String?
   statValue      Int?
@@ -50,6 +53,7 @@ model EnvEntity {
   description String?
   sourceUrl   String?
   icon        String?
+  iconFile    String? @db.Uuid
 
   lootTiers   LootTier[]
 
@@ -63,6 +67,7 @@ model TramplerPart {
   category    String
   description String?
   icon        String?
+  iconFile    String? @db.Uuid
   sourceUrl   String?
 
   dimensions         String?

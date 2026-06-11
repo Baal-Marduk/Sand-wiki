@@ -90,12 +90,21 @@ Imports copy what exists and link back via `sourceUrl`.
   (alias fields + `one_field` on the FK relations) — add/edit lines inline, item picked from a
   dropdown. NB: hand-authored recipes are still wiped by `npm run db:seed` (prune + line
   recreation) — avoid re-seeding after hand-authoring, or ask for the `manual`-flag seed change.
-- **Icons render in the Studio** via a local display extension
-  (`directus/extensions/directus-extension-display-image-path`, mounted by compose; no build
-  step — hand-written ESM): shows `icon` paths as thumbnails prefixed with a base URL
-  (configured to `http://localhost:3000`, where the Next app serves `public/icons/`). Needs the
-  compose CSP override `CONTENT_SECURITY_POLICY_DIRECTIVES__IMG_SRC` and the Next dev server
-  running. Applied to `Item`/`EnvEntity`/`TramplerPart.icon`; the Item list shows an icon column.
+- **Icons render in the Studio** two ways:
+  1. List/table thumbnails — local display extension
+     (`directus/extensions/directus-extension-display-image-path`, mounted by compose; no build
+     step — hand-written ESM): shows `icon` paths prefixed with a base URL (configured to
+     `http://localhost:3000`, where the Next app serves `public/icons/`). Needs the compose CSP
+     override `CONTENT_SECURITY_POLICY_DIRECTIVES__IMG_SRC` and the Next dev server running.
+  2. Card images — Directus layouts only accept directus_files relations, so sprites are
+     **mirrored into Directus storage** (`./directus/uploads`, gitignored compose volume) and
+     each row's **`iconFile`** (uuid, on Item/EnvEntity/TramplerPart) points at the upload; the
+     cards layout uses it as `imageSource`. `icon` stays the app's source of truth; the seed
+     never writes `iconFile` (upserts preserve it). **Re-run `npx tsx
+     prisma/sync-directus-icons.mjs` after any asset import** (idempotent — matches files by
+     name, links rows). NB: the iconFile→directus_files relation is metadata-only — the
+     cross-schema FK Directus creates was dropped on purpose so `prisma migrate diff` stays
+     clean; if `directus:apply` ever recreates it, drop it again.
   **Dev-only as configured** — the production checklist (baseUrl, CSP, PUBLIC_URL, hosting) is
   tracked in `TODO.md`.
 - Field interfaces (in the snapshot): taxonomy-owned sets are **closed dropdowns**

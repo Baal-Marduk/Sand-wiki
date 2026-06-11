@@ -49,3 +49,6 @@ next-env.d.ts
 
 # machine-local docker compose overrides
 docker-compose.override.yml
+
+# Directus runtime uploads (mirrored sprites; recreated by prisma/sync-directus-icons.mjs)
+/directus/uploads

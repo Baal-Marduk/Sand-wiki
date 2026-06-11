@@ -19,7 +19,9 @@
   `CONTENT_SECURITY_POLICY_DIRECTIVES__IMG_SRC` to that same public origin, (3) set `PUBLIC_URL`
   to the public Directus URL, (4) host Directus somewhere (Neon prod DB + the `directus` schema
   + `DIRECT_DATABASE_URL` non-pooler endpoint), (5) hand-authored recipes are wiped by
-  `npm run db:seed` — add the `manual`-flag seed change before authoring anything precious.
+  `npm run db:seed` — add the `manual`-flag seed change before authoring anything precious,
+  (6) `directus/uploads` (mirrored sprites for card images) is machine-local — on a new host run
+  `npx tsx prisma/sync-directus-icons.mjs` to repopulate files + `iconFile` links.
 - Add steam connection to allow user to offfer corrections, (will need vallidation by admin)
 - Add validation screen in backoffice to make validate corrections from steam authenticated user.
 - Add tips tab in items to allow user to share tips (might be moderated by admin) with vote system

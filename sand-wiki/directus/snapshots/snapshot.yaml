@@ -310,6 +310,49 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: EnvEntity
+    field: iconFile
+    type: uuid
+    meta:
+      collection: EnvEntity
+      conditions: null
+      display: image
+      display_options: null
+      field: iconFile
+      group: null
+      hidden: false
+      interface: file-image
+      note: >-
+        Backoffice card image (mirror of icon) - populated by
+        prisma/sync-directus-icons.mjs
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special:
+        - file
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: iconFile
+      table: EnvEntity
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: Item
     field: rarity
     type: text
@@ -617,6 +660,49 @@ fields:
       name: icon
       table: Item
       data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Item
+    field: iconFile
+    type: uuid
+    meta:
+      collection: Item
+      conditions: null
+      display: image
+      display_options: null
+      field: iconFile
+      group: null
+      hidden: false
+      interface: file-image
+      note: >-
+        Backoffice card image (mirror of icon) - populated by
+        prisma/sync-directus-icons.mjs
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special:
+        - file
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: iconFile
+      table: Item
+      data_type: uuid
       default_value: null
       max_length: null
       numeric_precision: null
@@ -1527,6 +1613,49 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: TramplerPart
+    field: iconFile
+    type: uuid
+    meta:
+      collection: TramplerPart
+      conditions: null
+      display: image
+      display_options: null
+      field: iconFile
+      group: null
+      hidden: false
+      interface: file-image
+      note: >-
+        Backoffice card image (mirror of icon) - populated by
+        prisma/sync-directus-icons.mjs
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special:
+        - file
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: iconFile
+      table: TramplerPart
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: TramplerPartCost
     field: itemId
     type: text
@@ -1625,6 +1754,32 @@ systemFields:
     schema:
       is_indexed: true
 relations:
+  - collection: EnvEntity
+    field: iconFile
+    related_collection: directus_files
+    meta:
+      junction_field: null
+      many_collection: EnvEntity
+      many_field: iconFile
+      one_allowed_collections: null
+      one_collection: directus_files
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+  - collection: Item
+    field: iconFile
+    related_collection: directus_files
+    meta:
+      junction_field: null
+      many_collection: Item
+      many_field: iconFile
+      one_allowed_collections: null
+      one_collection: directus_files
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
   - collection: RecipeInput
     field: recipeId
     related_collection: Recipe
@@ -1644,8 +1799,8 @@ relations:
       foreign_key_table: Recipe
       foreign_key_column: id
       constraint_name: RecipeInput_recipeId_fkey
-      on_update: NO ACTION
-      on_delete: NO ACTION
+      on_update: CASCADE
+      on_delete: CASCADE
   - collection: RecipeOutput
     field: recipeId
     related_collection: Recipe
@@ -1665,5 +1820,18 @@ relations:
       foreign_key_table: Recipe
       foreign_key_column: id
       constraint_name: RecipeOutput_recipeId_fkey
-      on_update: NO ACTION
-      on_delete: NO ACTION
+      on_update: CASCADE
+      on_delete: CASCADE
+  - collection: TramplerPart
+    field: iconFile
+    related_collection: directus_files
+    meta:
+      junction_field: null
+      many_collection: TramplerPart
+      many_field: iconFile
+      one_allowed_collections: null
+      one_collection: directus_files
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
