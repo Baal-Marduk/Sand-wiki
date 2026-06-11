@@ -107,6 +107,14 @@ Imports copy what exists and link back via `sourceUrl`.
      clean; if `directus:apply` ever recreates it, drop it again.
   **Dev-only as configured** — the production checklist (baseUrl, CSP, PUBLIC_URL, hosting) is
   tracked in `TODO.md`.
+- **Moderator role**: `npm run directus:moderator` provisions (idempotently) a `Moderator`
+  role + policy granting read/create/update on the content collections and read/create on
+  files (icons) — **no delete, no admin**. Roles/policies/permissions are Directus *data*,
+  not in `snapshot.yaml`, so this script is their source of truth; re-run it after a fresh
+  Directus DB. Add a person as a moderator in the Studio: User Directory → invite → assign
+  the `Moderator` role (per-user invites are not scripted). Caveat: moderator-*created* rows
+  are still pruned by `npm run db:seed` until the corrections workflow (TODO #15–16) lands —
+  edits to scraped rows survive, brand-new entities do not.
 - Field interfaces (in the snapshot): taxonomy-owned sets are **closed dropdowns**
   (`Item.rarity`/`Item.category`, `EnvEntity.category`, `TramplerPart.category`); wiki-sourced
   sets are **dropdowns with "other" allowed** (`Item.statType`/`ammoName`/`workbenchTier`,
