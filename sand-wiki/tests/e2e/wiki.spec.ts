@@ -358,3 +358,18 @@ test("autocomplete suggests a loot container and navigates to its environment pa
   await option.click();
   await expect(page).toHaveURL(/\/environment\/weapon-crate/);
 });
+
+test("WIP destinations are disabled (not links) in the nav", async ({ page }) => {
+  await page.goto("/items");
+  const nav = page.getByRole("navigation", { name: "Primary" });
+
+  // Placeholder sections are shown but not clickable.
+  await expect(nav.getByRole("link", { name: "Tech Tree" })).toHaveCount(0);
+  await expect(nav.getByRole("link", { name: "Tools", exact: true })).toHaveCount(0);
+  await expect(nav.getByText("Tech Tree")).toBeVisible();
+
+  // The Environment dropdown: NPCs is disabled, a populated category is a live link.
+  await nav.getByRole("button", { name: /Environment/ }).hover();
+  await expect(nav.getByRole("link", { name: "Loot Containers" })).toBeVisible();
+  await expect(nav.getByRole("link", { name: "NPCs" })).toHaveCount(0);
+});
