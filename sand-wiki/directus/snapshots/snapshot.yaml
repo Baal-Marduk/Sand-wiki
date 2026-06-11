@@ -466,6 +466,9 @@ fields:
       interface: select-dropdown-m2o
       note: null
       options:
+        filter:
+          category:
+            _eq: ammo
         template: '{{name}}'
       readonly: false
       required: false
