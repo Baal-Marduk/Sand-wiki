@@ -86,6 +86,16 @@ Imports copy what exists and link back via `sourceUrl`.
   (`npm run directus:snapshot` / `directus:apply`). After changing the data model in the Studio,
   re-snapshot and commit the diff. Directus names M2O fields after the FK column (`itemId`,
   `recipeId`, …), not Prisma's relation names.
+- **Recipes are editable as one document**: `Recipe.inputs`/`outputs` are O2M editor fields
+  (alias fields + `one_field` on the FK relations) — add/edit lines inline, item picked from a
+  dropdown. NB: hand-authored recipes are still wiped by `npm run db:seed` (prune + line
+  recreation) — avoid re-seeding after hand-authoring, or ask for the `manual`-flag seed change.
+- **Icons render in the Studio** via a local display extension
+  (`directus/extensions/directus-extension-display-image-path`, mounted by compose; no build
+  step — hand-written ESM): shows `icon` paths as thumbnails prefixed with a base URL
+  (configured to `http://localhost:3000`, where the Next app serves `public/icons/`). Needs the
+  compose CSP override `CONTENT_SECURITY_POLICY_DIRECTIVES__IMG_SRC` and the Next dev server
+  running. Applied to `Item`/`EnvEntity`/`TramplerPart.icon`; the Item list shows an icon column.
 - Field interfaces (in the snapshot): taxonomy-owned sets are **closed dropdowns**
   (`Item.rarity`/`Item.category`, `EnvEntity.category`, `TramplerPart.category`); wiki-sourced
   sets are **dropdowns with "other" allowed** (`Item.statType`/`ammoName`/`workbenchTier`,

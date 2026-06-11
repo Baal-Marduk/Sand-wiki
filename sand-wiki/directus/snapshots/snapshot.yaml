@@ -268,6 +268,48 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: EnvEntity
+    field: icon
+    type: text
+    meta:
+      collection: EnvEntity
+      conditions: null
+      display: image-path
+      display_options:
+        baseUrl: http://localhost:3000
+        size: 28
+      field: icon
+      group: null
+      hidden: false
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: icon
+      table: EnvEntity
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: Item
     field: rarity
     type: text
@@ -540,6 +582,48 @@ fields:
       is_nullable: true
       is_unique: false
       is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Item
+    field: icon
+    type: text
+    meta:
+      collection: Item
+      conditions: null
+      display: image-path
+      display_options:
+        baseUrl: http://localhost:3000
+        size: 28
+      field: icon
+      group: null
+      hidden: false
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: icon
+      table: Item
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
       is_primary_key: false
       is_generated: false
       generation_expression: null
@@ -934,6 +1018,58 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: Recipe
+    field: inputs
+    type: alias
+    meta:
+      collection: Recipe
+      conditions: null
+      display: null
+      display_options: null
+      field: inputs
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: null
+      options:
+        enableSelect: false
+        template: '{{itemId.name}} �-{{amount}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: 1
+      special:
+        - o2m
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: Recipe
+    field: outputs
+    type: alias
+    meta:
+      collection: Recipe
+      conditions: null
+      display: null
+      display_options: null
+      field: outputs
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: null
+      options:
+        enableSelect: false
+        template: '{{itemId.name}} �-{{amount}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special:
+        - o2m
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
   - collection: RecipeInput
     field: itemId
     type: text
@@ -1349,6 +1485,48 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: TramplerPart
+    field: icon
+    type: text
+    meta:
+      collection: TramplerPart
+      conditions: null
+      display: image-path
+      display_options:
+        baseUrl: http://localhost:3000
+        size: 28
+      field: icon
+      group: null
+      hidden: false
+      interface: null
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: icon
+      table: TramplerPart
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: TramplerPartCost
     field: itemId
     type: text
@@ -1446,4 +1624,46 @@ systemFields:
     field: parent
     schema:
       is_indexed: true
-relations: []
+relations:
+  - collection: RecipeInput
+    field: recipeId
+    related_collection: Recipe
+    meta:
+      junction_field: null
+      many_collection: RecipeInput
+      many_field: recipeId
+      one_allowed_collections: null
+      one_collection: Recipe
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: inputs
+      sort_field: null
+    schema:
+      table: RecipeInput
+      column: recipeId
+      foreign_key_table: Recipe
+      foreign_key_column: id
+      constraint_name: RecipeInput_recipeId_fkey
+      on_update: NO ACTION
+      on_delete: NO ACTION
+  - collection: RecipeOutput
+    field: recipeId
+    related_collection: Recipe
+    meta:
+      junction_field: null
+      many_collection: RecipeOutput
+      many_field: recipeId
+      one_allowed_collections: null
+      one_collection: Recipe
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: outputs
+      sort_field: null
+    schema:
+      table: RecipeOutput
+      column: recipeId
+      foreign_key_table: Recipe
+      foreign_key_column: id
+      constraint_name: RecipeOutput_recipeId_fkey
+      on_update: NO ACTION
+      on_delete: NO ACTION

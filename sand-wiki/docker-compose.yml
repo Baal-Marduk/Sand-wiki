@@ -7,6 +7,7 @@ services:
       - "8055:8055"
     volumes:
       - ./directus/snapshots:/directus/snapshots
+      - ./directus/extensions:/directus/extensions
     environment:
       SECRET: ${DIRECTUS_SECRET}
       ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
@@ -20,3 +21,5 @@ services:
       DB_SEARCH_PATH: directus,public
       PUBLIC_URL: http://localhost:8055
       WEBSOCKETS_ENABLED: "false"
+      # Allow item icons (served by the Next.js app) to render in the Studio.
+      CONTENT_SECURITY_POLICY_DIRECTIVES__IMG_SRC: "'self' data: blob: http://localhost:3000"
