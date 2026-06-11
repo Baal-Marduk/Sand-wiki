@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { ItemIcon } from "@/components/ItemIcon";
 
-export interface LinkListItem { slug: string; name: string; icon: string | null }
+export interface LinkListItem { slug: string; name: string; icon: string | null; rarity: string | null }
 
 /** Vertical list of items shown as icon + visible name, each row linking to the item page.
  *  Shared by an ammo's "Used by" tab (the weapons that fire it) and a weapon's "Ammo" tab
@@ -15,7 +15,7 @@ export function ItemLinkList({ items }: { items: LinkListItem[] }) {
             href={`/items/${it.slug}`}
             className="row-link flex items-center gap-3 rounded-box p-1"
           >
-            <ItemIcon name={it.name} icon={it.icon} size="recipe" decorative />
+            <ItemIcon name={it.name} icon={it.icon} size="recipe" decorative rarity={it.rarity} />
             <span className="font-medium">{it.name}</span>
           </Link>
         </li>

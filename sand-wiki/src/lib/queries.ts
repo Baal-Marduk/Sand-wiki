@@ -139,14 +139,14 @@ export async function getItemBySlug(slug: string) {
   return { ...item, craftedBy, usedIn };
 }
 
-/** {slug,name,icon} rows for ItemLinkList. */
-type LinkItem = { slug: string; name: string; icon: string | null };
+/** {slug,name,icon,rarity} rows for ItemLinkList. */
+type LinkItem = { slug: string; name: string; icon: string | null; rarity: string | null };
 
 /** Ammo items whose caliber family matches `caliber` (all interchangeable variants). */
 export async function getAmmoByCaliber(caliber: string): Promise<LinkItem[]> {
   const rows = await prisma.item.findMany({
     where: { category: "ammo" },
-    select: { slug: true, name: true, icon: true },
+    select: { slug: true, name: true, icon: true, rarity: true },
     orderBy: { name: "asc" },
   });
   return rows.filter((r) => ammoCaliber(r.name) === caliber);
@@ -156,10 +156,10 @@ export async function getAmmoByCaliber(caliber: string): Promise<LinkItem[]> {
 export async function getWeaponsByCaliber(caliber: string): Promise<LinkItem[]> {
   const rows = await prisma.item.findMany({
     where: { category: { in: ["weapons", "artillery"] } },
-    select: { slug: true, name: true, icon: true, ammoName: true },
+    select: { slug: true, name: true, icon: true, rarity: true, ammoName: true },
     orderBy: { name: "asc" },
   });
   return rows
     .filter((r) => weaponCaliber(r.slug, r.ammoName) === caliber)
-    .map(({ slug, name, icon }) => ({ slug, name, icon }));
+    .map(({ slug, name, icon, rarity }) => ({ slug, name, icon, rarity }));
 }
