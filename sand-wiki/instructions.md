@@ -18,11 +18,18 @@ Accessibility is a hard gate — axe must pass in both themes (`npm run test:e2e
 
 - **`Item`** — `slug`, `name`, `derivedName` (search-only), `description`, `category`,
   `isResource`, `storageStack`, `workbenchTier`, `icon`, **`rarity`** (string, indexed),
-  **`stats`** (JSON: weapon/ammo fields), plus recipe relations (`producedBy`/`usedIn`).
+  flat wiki-stat columns **`statType`/`statValue`/`damage`/`playerDamage`/`tramplerDamage`/
+  `splashDamage`/`magazine`/`ammoName`**, plus **`ammoItem`** (self-relation resolved from the
+  wiki's `ammoSlug` at seed time; reverse side `ammoForWeapons`) and recipe relations
+  (`producedBy`/`usedIn`).
 - **`Recipe`** / `RecipeInput` / `RecipeOutput` — crafting graph; ingredients reference items.
 - **`EnvEntity`** — environment content: `slug`, `category`, `name`, `description`, `sourceUrl`,
-  `icon`, **`loot`** (JSON: `{ tiers: [{ tier, columns, entries: [{ slug?, name, values }] }] }`,
-  only on loot containers).
+  `icon`; loot tables (loot containers only) are relational: **`lootTiers`** → **`LootTier`**
+  (`tier`, `col1–3Label`, `sortOrder`, unique per entity+tier) → **`LootEntry`** (`item?` FK with
+  `name` display fallback, `value1–3` strings like `"10-20"`, `sortOrder`, unique per
+  tier+sortOrder).
+- **`TramplerPart`** — `costEntries` → **`TramplerPartCost`** (`item?` — null for Crowns, `name`,
+  `amount`, `sortOrder`, unique per part+sortOrder).
 
 ## Taxonomy (`src/lib/taxonomy.ts` — single source of truth)
 
@@ -52,12 +59,44 @@ Accessibility is a hard gate — axe must pass in both themes (`npm run test:e2e
      (`stripWikiMarkup`, `titleToSlug`, `parseLootTable`).
    - `prisma/wiki-overrides.json` — normalized-name → slug overrides for match misses (shared by
      both importers).
-3. **Seed** (`prisma/seed.ts`) deletes + recreates Items/Recipes/EnvEntity, merging the committed
-   JSON snapshots. **Re-seed = `npm run db:seed`** (destructive, against the Neon dev DB).
+3. **Seed** (`prisma/seed.ts`) **upserts by `slug`**, merging the committed JSON snapshots —
+   row IDs stay stable across re-seeds. Update payloads omit fields the source has no value for,
+   so manual edits to source-empty fields survive; a field the scraper HAS a value for is
+   overwritten (values never transition back to NULL via the seed). Rows whose slug leaves the
+   snapshot are pruned (with a log line). Fully scraper-owned child rows (recipe lines, loot
+   tiers/entries, cost rows) are recreated each seed. Invalid categories now throw instead of
+   skipping; post-seed count assertions guard duplicate slugs.
+   **Re-seed = `npm run db:seed`** (against the Neon dev DB).
 4. **Refresh data** = run the relevant importer (`node prisma/import-*.mjs`) then re-seed.
 
 Community-wiki content is uneven/stubby (many landmark pages are empty; some loot tables sparse).
 Imports copy what exists and link back via `sourceUrl`.
+
+## Backoffice (Directus, local Docker)
+
+- `npm run directus:up` → http://localhost:8055 (admin creds in `.env`: `DIRECTUS_*`; image pinned
+  to the version the committed schema snapshot was taken with).
+- Runs against the same Neon dev DB. System tables live in the `directus` Postgres schema
+  (`DB_SEARCH_PATH=directus,public`) so `prisma migrate` never sees them — do NOT move them to
+  `public`. The schema must exist before first boot:
+  `'CREATE SCHEMA IF NOT EXISTS directus;' | npx prisma db execute --stdin --schema prisma/schema.prisma`.
+- Collection config is snapshotted to `directus/snapshots/snapshot.yaml`
+  (`npm run directus:snapshot` / `directus:apply`). After changing the data model in the Studio,
+  re-snapshot and commit the diff. Directus names M2O fields after the FK column (`itemId`,
+  `recipeId`, …), not Prisma's relation names.
+- Edits made in Directus survive `npm run db:seed` (upsert-by-slug), EXCEPT fields the scraper has
+  a value for — those are overwritten. Scraper-owned child rows (recipe lines, loot tiers/entries,
+  cost rows) are always recreated.
+- **This machine**: Docker lives inside WSL2 Ubuntu — run compose via
+  `wsl -e bash -lc "cd /mnt/d/Documents/SandLabs/sand-wiki && docker compose …"` (the npm scripts
+  are portable; the WSL wrapper is machine-specific). WSL's DNS is currently broken
+  (Tailscale-managed resolv.conf) — a gitignored `docker-compose.override.yml` pins container DNS
+  so Directus can reach Neon; fix WSL DNS to retire it. WSL idles out ~15s after the last wsl.exe
+  session closes, taking the container with it (`restart: unless-stopped` brings it back when WSL
+  returns).
+- Gotchas: `docker compose exec` right after `directus:up` can race a cold container (~10s boot);
+  `npm run directus:down` stops every service in the compose file; admin email must not use a
+  `.local` TLD (Directus validator rejects it).
 
 ## UI conventions
 
@@ -66,8 +105,34 @@ Imports copy what exists and link back via `sourceUrl`.
 - **Item detail**: header (rarity-tinted icon, rarity badge, category) + `StatBox` (Damage/Magazine/
   Type/Ammo/Value, player/trampler/splash for ammo) + tabs (Crafted by / Used in / Buy / Sell /
   **Loot**) + right details panel.
-- **Items list**: responsive `CategoryQuickNav` (sticky sidebar / mobile chip row) + a `RarityFilter`
-  chip row (`?rarity=`); search via the navbar.
+- **Items list — layout**: server component reading `searchParams`. Content grid is
+  `sm:grid-cols-2 xl:grid-cols-3 gap-3` inside an `lg:grid-cols-[1fr_220px]` shell (cards + sticky
+  nav) — this is the **canonical list grid**; new list pages (environment, future tramplers) should
+  match it. Ordered alphabetically by `name` (`item-filter.ts`, `orderBy:{name:"asc"}`) — this is the
+  default; rarity/type-based ordering is a *desired change*, tracked in `TODO.md`, not yet shipped.
+  `ItemCard` = `card card-side`, rarity-tinted icon, truncated name, Buyable/Sellable badges.
+  `CategoryQuickNav` is a sticky vertical sidebar on `lg+` and a horizontal-scroll chip row below;
+  active item uses `aria-current="page"`. Result count lives in an `aria-live="polite"` badge.
+- **Items list — filters**: all filtering is URL-driven and server-side — `?q=` (case-insensitive
+  substring on `name`/`derivedName`), `?category=`, `?rarity=` — and they always **AND-combine** in
+  the Prisma `where` (`item-filter.ts`); switching category preserves `q`/`rarity` and vice versa.
+  Treat this precedence as fixed. `RarityFilter` is a server component of `Link`s that preserves the
+  other params, renders **only** rarities present in the current (category+query) result set, ordered
+  by game tier, with an "All" reset chip. When filters match nothing, the list renders an explicit
+  `No items match your filters.` message (not a bare blank grid) and the count badge reads
+  `0 result(s)`. (Active-chip styling rule is the AA bullet below.)
+- **Search-as-you-type** (`SearchBox`, client): fetches `/api/search-index` once per page load
+  (singleton promise; route sends `Cache-Control: public, max-age=3600`, payload
+  `{slug,name,category,derivedName}`). Matching is instant (no debounce) — case-insensitive substring
+  over item `name`, `derivedName`, and category labels, capped at 8 results. Results mix
+  category-filter rows ("filter" badge → `/items?category=`) and item rows ("page" badge → detail).
+  Full combobox a11y: `role="combobox"` with `aria-expanded`/`-controls`/`-autocomplete="list"`/
+  `-activedescendant`, listbox/option roles, and ArrowUp/Down + Enter + Escape nav. The dropdown
+  renders only when there are matches, so the no-matches path leaves it closed (`aria-expanded`
+  flips to `false`) rather than showing an empty listbox — but there is currently **no live region
+  announcing the result count** to screen readers (known a11y gap). Two variants: `navbar` (hidden on
+  the homepage) and `hero`. Indexes items + categories only — landmarks/loot containers are not yet
+  searchable.
 - **Icon + tooltip**: `ItemIconLink` (shared by recipe ingredients and loot grids) — icon, hover/
   focus name tooltip, links to the item; recipes add `×amount`, loot shows no amount.
 - **Environment**: `/environment` landing (category cards with counts / "coming soon"),
@@ -78,7 +143,9 @@ Imports copy what exists and link back via `sourceUrl`.
 
 ## Gotchas
 
-- Re-seed is destructive (Neon dev DB). `prisma generate` can EPERM on Windows if a dev server holds
+- Re-seed upserts by slug (no longer destructive), but it still overwrites scraper-sourced fields
+  and recreates scraper-owned child rows — see Data pipeline step 3 before relying on manual edits.
+- `prisma generate` can EPERM on Windows if a dev server holds
   the engine DLL — the client still updates; verify with a quick query rather than killing processes.
 - Playwright `reuseExistingServer` will reuse a stale `:3000` dev server (serving old code) → false
   e2e failures; build + `next start -p <other>` + a throwaway `playwright.tmp.config.ts` to verify.

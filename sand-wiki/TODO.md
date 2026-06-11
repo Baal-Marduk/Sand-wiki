@@ -10,7 +10,7 @@
 - [x] Fix import from wiki in crates content sometimes mismatching "pneumatic components" for example being pneumatic parts (wiki-overrides for wiki↔game name drift; regression test)
 - [x] Add landmarks and loot containers to search auto fill
 - [x] Disable buttons to currently WIP pages (Tech, Tools, NPCs shown dimmed + "soon", non-interactive)
-- Flatening tables for directus and integration
+- [x] Flatening tables for directus and integration (flat stat columns + LootTier/LootEntry/TramplerPartCost; upsert-by-slug seed; local Directus via docker-compose)
 - Add backoffice to edit as admin datas from app (directus now handle this ?)
 - Add steam connection to allow user to offfer corrections, (will need vallidation by admin)
 - Add validation screen in backoffice to make validate corrections from steam authenticated user.
