@@ -11,7 +11,10 @@ datasource db {
 }
 
 model Item {
-  id            String  @id @default(cuid())
+  // DB-side default (not cuid()) so rows created outside Prisma — e.g. in the
+  // Directus Studio — get a generated id. Prisma now relies on it too. See
+  // migration 20260611150000_id_db_default.
+  id            String  @id @default(dbgenerated("(gen_random_uuid())::text"))
   slug          String  @unique
   name          String
   description   String?
@@ -46,7 +49,7 @@ model Item {
 }
 
 model EnvEntity {
-  id          String  @id @default(cuid())
+  id          String  @id @default(dbgenerated("(gen_random_uuid())::text"))
   slug        String  @unique
   category    String
   name        String
@@ -61,7 +64,7 @@ model EnvEntity {
 }
 
 model TramplerPart {
-  id          String  @id @default(cuid())
+  id          String  @id @default(dbgenerated("(gen_random_uuid())::text"))
   slug        String  @unique
   name        String
   category    String
@@ -92,7 +95,7 @@ model TramplerPart {
 }
 
 model Recipe {
-  id               String  @id @default(cuid())
+  id               String  @id @default(dbgenerated("(gen_random_uuid())::text"))
   slug             String  @unique
   workbench        String?
   tier             Int?
@@ -103,7 +106,7 @@ model Recipe {
 }
 
 model RecipeInput {
-  id       String @id @default(cuid())
+  id       String @id @default(dbgenerated("(gen_random_uuid())::text"))
   recipeId String
   recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   itemId   String
@@ -115,7 +118,7 @@ model RecipeInput {
 }
 
 model RecipeOutput {
-  id       String @id @default(cuid())
+  id       String @id @default(dbgenerated("(gen_random_uuid())::text"))
   recipeId String
   recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   itemId   String
@@ -127,7 +130,7 @@ model RecipeOutput {
 }
 
 model LootTier {
-  id          String    @id @default(cuid())
+  id          String    @id @default(dbgenerated("(gen_random_uuid())::text"))
   envEntityId String
   envEntity   EnvEntity @relation(fields: [envEntityId], references: [id], onDelete: Cascade)
   tier        String // "Normal" | "Rare" | "Very Rare"
@@ -141,7 +144,7 @@ model LootTier {
 }
 
 model LootEntry {
-  id         String   @id @default(cuid())
+  id         String   @id @default(dbgenerated("(gen_random_uuid())::text"))
   lootTierId String
   lootTier   LootTier @relation(fields: [lootTierId], references: [id], onDelete: Cascade)
   itemId     String?
@@ -157,7 +160,7 @@ model LootEntry {
 }
 
 model TramplerPartCost {
-  id        String       @id @default(cuid())
+  id        String       @id @default(dbgenerated("(gen_random_uuid())::text"))
   partId    String
   part      TramplerPart @relation(fields: [partId], references: [id], onDelete: Cascade)
   itemId    String?

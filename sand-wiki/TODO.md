@@ -11,7 +11,11 @@
 - [x] Add landmarks and loot containers to search auto fill
 - [x] Disable buttons to currently WIP pages (Tech, Tools, NPCs shown dimmed + "soon", non-interactive)
 - [x] Flatening tables for directus and integration (flat stat columns + LootTier/LootEntry/TramplerPartCost; upsert-by-slug seed; local Directus via docker-compose)
-- Add backoffice to edit as admin datas from app (directus now handle this ?)
+- [x] Add backoffice to edit as admin datas from app — Directus handles this. PKs
+  are DB-generated (migration 20260611150000_id_db_default: `gen_random_uuid()` default
+  on every `id`) so Studio-created rows get an id with no manual entry, and `id` is
+  read-only in Studio (field meta in `directus/snapshots/snapshot.yaml` — set it on any
+  new collection's `id`, then `npm run directus:snapshot`).
 - Directus in production: the current setup is dev-only — before deploying, (1) the icon
   thumbnail display (`image-path`) has `baseUrl = http://localhost:3000` hardcoded in field
   config: repoint it to the public app URL (Studio → Item/EnvEntity/TramplerPart `icon` field →
@@ -21,7 +25,10 @@
   + `DIRECT_DATABASE_URL` non-pooler endpoint), (5) hand-authored recipes are wiped by
   `npm run db:seed` — add the `manual`-flag seed change before authoring anything precious,
   (6) `directus/uploads` (mirrored sprites for card images) is machine-local — on a new host run
-  `npx tsx prisma/sync-directus-icons.mjs` to repopulate files + `iconFile` links.
+  `npx tsx prisma/sync-directus-icons.mjs` to repopulate files + `iconFile` links,
+  (7) the read-only `id` fields travel in `snapshot.yaml` (applied via `npm run directus:apply`)
+  and the `gen_random_uuid()` column default ships with `prisma migrate deploy` — both reproduce
+  on prod with no extra provisioning step.
 - Add steam connection to allow user to offfer corrections, (will need vallidation by admin)
 - Add validation screen in backoffice to make validate corrections from steam authenticated user.
 - Add tips tab in items to allow user to share tips (might be moderated by admin) with vote system
