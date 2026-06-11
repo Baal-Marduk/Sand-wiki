@@ -19,9 +19,10 @@ describe("steam openid", () => {
     expect(extractSteamId("https://steamcommunity.com/openid/id/notanumber")).toBeNull();
   });
 
-  it("returns the steamid when Steam validates the assertion", async () => {
+  it("returns the steamid when Steam validates a signed assertion", async () => {
     const params = new URLSearchParams({
       "openid.mode": "id_res",
+      "openid.signed": "signed,mode,identity,claimed_id",
       "openid.claimed_id": "https://steamcommunity.com/openid/id/76561198000000000",
     });
     const fakeFetch = async (_url: string, init?: RequestInit) => {
@@ -32,8 +33,21 @@ describe("steam openid", () => {
     expect(await verifyAssertion(params, fakeFetch as typeof fetch)).toBe("76561198000000000");
   });
 
+  it("returns null when claimed_id is not in the signed field list", async () => {
+    // Steam validates the signed subset, but claimed_id was not signed — untrustworthy.
+    const params = new URLSearchParams({
+      "openid.signed": "signed,mode,identity",
+      "openid.claimed_id": "https://steamcommunity.com/openid/id/76561198000000000",
+    });
+    const fakeFetch = async () => ({ text: async () => "is_valid:true\n" } as Response);
+    expect(await verifyAssertion(params, fakeFetch as typeof fetch)).toBeNull();
+  });
+
   it("returns null when Steam says is_valid:false", async () => {
-    const params = new URLSearchParams({ "openid.claimed_id": "https://steamcommunity.com/openid/id/76561198000000000" });
+    const params = new URLSearchParams({
+      "openid.signed": "signed,mode,identity,claimed_id",
+      "openid.claimed_id": "https://steamcommunity.com/openid/id/76561198000000000",
+    });
     const fakeFetch = async () => ({ text: async () => "is_valid:false\n" } as Response);
     expect(await verifyAssertion(params, fakeFetch as typeof fetch)).toBeNull();
   });

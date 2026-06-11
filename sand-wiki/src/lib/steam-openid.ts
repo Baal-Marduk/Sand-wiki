@@ -35,5 +35,10 @@ export async function verifyAssertion(
   });
   const text = await res.text();
   if (!/^is_valid:true$/m.test(text)) return null;
+  // Defense-in-depth: only trust claimed_id/identity if they were actually
+  // covered by the signature (listed in openid.signed). check_authentication
+  // only re-verifies the signed subset, so an unsigned field is not trustworthy.
+  const signed = (params.get("openid.signed") ?? "").split(",");
+  if (!signed.includes("claimed_id") || !signed.includes("identity")) return null;
   return extractSteamId(params.get("openid.claimed_id"));
 }
