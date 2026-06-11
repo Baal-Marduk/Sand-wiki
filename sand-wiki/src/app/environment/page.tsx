@@ -3,6 +3,7 @@ import { getSection, isEnvCategory } from "@/lib/taxonomy";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { listEnvEntities, envCategoryCounts } from "@/lib/queries";
 import { EnvCard } from "@/components/EnvCard";
+import { WipBadge } from "@/components/WipBadge";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 const str = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
@@ -24,14 +25,25 @@ export default async function EnvironmentPage({ searchParams }: { searchParams: 
             const n = counts[c.slug] ?? 0;
             return (
               <li key={c.slug} className="list-none">
-                <Link
-                  href={`/environment?category=${c.slug}`}
-                  className="card bg-base-200 p-4 flex flex-row items-center gap-3"
-                >
-                  <CategoryIcon slug={c.slug} className="size-5 shrink-0" />
-                  <span className="font-medium flex-1">{c.label}</span>
-                  <span className="badge badge-ghost badge-sm">{n > 0 ? n : "coming soon"}</span>
-                </Link>
+                {c.wip ? (
+                  <div
+                    className="card bg-base-200 p-4 flex flex-row items-center gap-3 opacity-60 cursor-not-allowed"
+                    aria-disabled="true"
+                  >
+                    <CategoryIcon slug={c.slug} className="size-5 shrink-0" />
+                    <span className="font-medium flex-1">{c.label}</span>
+                    <WipBadge />
+                  </div>
+                ) : (
+                  <Link
+                    href={`/environment?category=${c.slug}`}
+                    className="card bg-base-200 p-4 flex flex-row items-center gap-3"
+                  >
+                    <CategoryIcon slug={c.slug} className="size-5 shrink-0" />
+                    <span className="font-medium flex-1">{c.label}</span>
+                    <span className="badge badge-ghost badge-sm">{n > 0 ? n : "coming soon"}</span>
+                  </Link>
+                )}
               </li>
             );
           })}
