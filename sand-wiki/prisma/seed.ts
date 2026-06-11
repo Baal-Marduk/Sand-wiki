@@ -33,7 +33,9 @@ interface ScrapData { items: ScrapItem[]; recipes: ScrapRecipe[] }
 const INTENDED_MISC = new Set(["KEY", "MONEY", "LARGE_VALUABLE", "SMALL_VALUABLE"]);
 
 /** null/undefined → undefined: omit the field from the upsert payload instead of writing
- *  NULL, so a manual (Directus) edit survives a re-seed when the source has no value. */
+ *  NULL, so a manual (Directus) edit survives a re-seed when the source has no value.
+ *  Known limitation: a value can never transition back to NULL via the seed — once a
+ *  source supplied a value and later drops it, the old value persists. */
 const opt = <T>(v: T | null | undefined): T | undefined => v ?? undefined;
 
 async function main() {
@@ -133,10 +135,7 @@ async function main() {
   let envCount = 0;
   const envSlugs: string[] = [];
   for (const [slug, e] of Object.entries(envContent)) {
-    if (!isEnvCategory(e.category)) {
-      console.warn(`Unknown env category "${e.category}" for ${slug} — skipped`);
-      continue;
-    }
+    if (!isEnvCategory(e.category)) throw new Error(`Unknown env category "${e.category}" for ${slug}`);
     envSlugs.push(slug);
     const scraped = { category: e.category, name: e.name, description: opt(e.description), sourceUrl: opt(e.sourceUrl) };
     const entity = await prisma.envEntity.upsert({ where: { slug }, create: { slug, ...scraped }, update: scraped });
@@ -172,10 +171,7 @@ async function main() {
   let tramplerCount = 0;
   const tramplerSlugs: string[] = [];
   for (const [slug, t] of Object.entries(tramplers)) {
-    if (!isTramplerCategory(t.category)) {
-      console.warn(`Unknown trampler category "${t.category}" for ${slug} — skipped`);
-      continue;
-    }
+    if (!isTramplerCategory(t.category)) throw new Error(`Unknown trampler category "${t.category}" for ${slug}`);
     tramplerSlugs.push(slug);
     const scraped = {
       name: t.name, category: t.category,
@@ -204,6 +200,9 @@ async function main() {
   const prunedTramplers = await prisma.tramplerPart.deleteMany({ where: { slug: { notIn: tramplerSlugs } } });
   if (prunedTramplers.count > 0) console.log(`Pruned ${prunedTramplers.count} trampler part(s) no longer in the scrape`);
 
+  const [itemCount, recipeCount] = await Promise.all([prisma.item.count(), prisma.recipe.count()]);
+  if (itemCount !== data.items.length) throw new Error(`Item count mismatch after seed: DB has ${itemCount}, snapshot has ${data.items.length} (duplicate slugs?)`);
+  if (recipeCount !== data.recipes.length) throw new Error(`Recipe count mismatch after seed: DB has ${recipeCount}, snapshot has ${data.recipes.length} (duplicate slugs?)`);
   console.log(`Seeded ${data.items.length} items, ${data.recipes.length} recipes, ${envCount} environment entities, ${tramplerCount} trampler parts.`);
 }
 
