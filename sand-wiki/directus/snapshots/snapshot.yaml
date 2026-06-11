@@ -218,7 +218,659 @@ collections:
       versioning: false
     schema:
       name: TramplerPartCost
-fields: []
+fields:
+  - collection: Item
+    field: rarity
+    type: text
+    meta:
+      collection: Item
+      conditions: null
+      display: null
+      display_options: null
+      field: rarity
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        choices:
+          - text: Common
+            value: Common
+          - text: Uncommon
+            value: Uncommon
+          - text: Noteworthy
+            value: Noteworthy
+          - text: Rare
+            value: Rare
+          - text: Remarkable
+            value: Remarkable
+          - text: Experimental
+            value: Experimental
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: rarity
+      table: Item
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Item
+    field: category
+    type: text
+    meta:
+      collection: Item
+      conditions: null
+      display: null
+      display_options: null
+      field: category
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        choices:
+          - text: Weapons
+            value: weapons
+          - text: Artillery
+            value: artillery
+          - text: Resources
+            value: resources
+          - text: Attire
+            value: attire
+          - text: Tools
+            value: tools
+          - text: Medical
+            value: medical
+          - text: Ammo
+            value: ammo
+          - text: Misc
+            value: misc
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: category
+      table: Item
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Item
+    field: statType
+    type: text
+    meta:
+      collection: Item
+      conditions: null
+      display: null
+      display_options: null
+      field: statType
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: Ammunition
+            value: Ammunition
+          - text: Carryable Object
+            value: Carryable Object
+          - text: Carryable Objects
+            value: Carryable Objects
+          - text: Food
+            value: Food
+          - text: Grenade
+            value: Grenade
+          - text: Keys
+            value: Keys
+          - text: Medical Supplies
+            value: Medical Supplies
+          - text: Money
+            value: Money
+          - text: Raw Materials
+            value: Raw Materials
+          - text: Revolver
+            value: Revolver
+          - text: Semi-Automatic Pistol
+            value: Semi-Automatic Pistol
+          - text: Shells
+            value: Shells
+          - text: Shotgun
+            value: Shotgun
+          - text: Single-Shot Rifle
+            value: Single-Shot Rifle
+          - text: Valuables
+            value: Valuables
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: statType
+      table: Item
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Item
+    field: ammoName
+    type: text
+    meta:
+      collection: Item
+      conditions: null
+      display: null
+      display_options: null
+      field: ammoName
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: 8x21 mm Ammo
+            value: 8x21 mm Ammo
+          - text: 9x42 mm Ammo
+            value: 9x42 mm Ammo
+          - text: 11x54 mm Ammo
+            value: 11x54 mm Ammo
+          - text: 12 GA Ammo
+            value: 12 GA Ammo
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: ammoName
+      table: Item
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Item
+    field: ammoItemId
+    type: text
+    meta:
+      collection: Item
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{name}}'
+      field: ammoItemId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{name}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: ammoItemId
+      table: Item
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: Item
+      foreign_key_column: id
+  - collection: LootEntry
+    field: itemId
+    type: text
+    meta:
+      collection: LootEntry
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{name}}'
+      field: itemId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{name}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: itemId
+      table: LootEntry
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: Item
+      foreign_key_column: id
+  - collection: LootEntry
+    field: lootTierId
+    type: text
+    meta:
+      collection: LootEntry
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{tier}}'
+      field: lootTierId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{tier}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: lootTierId
+      table: LootEntry
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: LootTier
+      foreign_key_column: id
+  - collection: LootTier
+    field: envEntityId
+    type: text
+    meta:
+      collection: LootTier
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{name}}'
+      field: envEntityId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{name}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: envEntityId
+      table: LootTier
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: EnvEntity
+      foreign_key_column: id
+  - collection: RecipeInput
+    field: itemId
+    type: text
+    meta:
+      collection: RecipeInput
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{name}}'
+      field: itemId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{name}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: itemId
+      table: RecipeInput
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: Item
+      foreign_key_column: id
+  - collection: RecipeInput
+    field: recipeId
+    type: text
+    meta:
+      collection: RecipeInput
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{slug}}'
+      field: recipeId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{slug}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: recipeId
+      table: RecipeInput
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: Recipe
+      foreign_key_column: id
+  - collection: RecipeOutput
+    field: itemId
+    type: text
+    meta:
+      collection: RecipeOutput
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{name}}'
+      field: itemId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{name}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: itemId
+      table: RecipeOutput
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: Item
+      foreign_key_column: id
+  - collection: RecipeOutput
+    field: recipeId
+    type: text
+    meta:
+      collection: RecipeOutput
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{slug}}'
+      field: recipeId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{slug}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: recipeId
+      table: RecipeOutput
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: Recipe
+      foreign_key_column: id
+  - collection: TramplerPartCost
+    field: itemId
+    type: text
+    meta:
+      collection: TramplerPartCost
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{name}}'
+      field: itemId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{name}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: itemId
+      table: TramplerPartCost
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: Item
+      foreign_key_column: id
+  - collection: TramplerPartCost
+    field: partId
+    type: text
+    meta:
+      collection: TramplerPartCost
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{name}}'
+      field: partId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{name}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: partId
+      table: TramplerPartCost
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: TramplerPart
+      foreign_key_column: id
 systemFields:
   - collection: directus_activity
     field: timestamp

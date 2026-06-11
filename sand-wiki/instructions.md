@@ -86,6 +86,10 @@ Imports copy what exists and link back via `sourceUrl`.
   (`npm run directus:snapshot` / `directus:apply`). After changing the data model in the Studio,
   re-snapshot and commit the diff. Directus names M2O fields after the FK column (`itemId`,
   `recipeId`, …), not Prisma's relation names.
+- Field interfaces (in the snapshot): `rarity` + `category` are closed dropdowns (game tiers /
+  taxonomy slugs); `statType` + `ammoName` are dropdowns with "other" allowed (the wiki can
+  introduce new values — when it does, add them to the choice list); all FK fields are relational
+  selects displaying names instead of raw ids.
 - Edits made in Directus survive `npm run db:seed` (upsert-by-slug), EXCEPT fields the scraper has
   a value for — those are overwritten. Scraper-owned child rows (recipe lines, loot tiers/entries,
   cost rows) are always recreated. **Rows created in Directus are deleted on re-seed** (the prune
