@@ -100,15 +100,6 @@ async function main() {
     return id;
   };
 
-  // --- ammoSlug → ammoItem self-relation (second pass: every item now exists) ---
-  for (const i of data.items) {
-    const ammoSlug = enrichment[i.slug]?.stats?.ammoSlug;
-    if (!ammoSlug) continue;
-    const ammoItemId = idBySlug.get(ammoSlug) ?? null;
-    if (!ammoItemId) console.warn(`ammoSlug "${ammoSlug}" on ${i.slug} does not resolve to an item`);
-    await prisma.item.update({ where: { slug: i.slug }, data: { ammoItemId } });
-  }
-
   // --- Recipes: line rows are scraper-owned → recreate; recipe rows keep stable ids ---
   await prisma.recipeInput.deleteMany();
   await prisma.recipeOutput.deleteMany();

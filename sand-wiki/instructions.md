@@ -19,11 +19,10 @@ Accessibility is a hard gate — axe must pass in both themes (`npm run test:e2e
 - **`Item`** — `slug`, `name`, `derivedName` (search-only), `description`, `category`,
   `storageStack`, `workbenchTier`, `icon`, **`rarity`** (string, indexed),
   flat wiki-stat columns **`statType`/`statValue`/`damage`/`playerDamage`/`tramplerDamage`/
-  `splashDamage`/`magazine`/`ammoName`**, plus **`ammoItem`** (self-relation resolved from the
-  wiki's `ammoSlug` at seed time; reverse side `ammoForWeapons`) and recipe relations
-  (`producedBy`/`usedIn`). Note: the UI deliberately does NOT read `ammoItem` — the Ammo /
-  Used-by tabs use caliber families derived from `ammoName` (`src/lib/ammo.ts`), which are
-  broader than the 1:1 link. The relation exists for Directus linking and future use.
+  `splashDamage`/`magazine`/`ammoName`**, and recipe relations (`producedBy`/`usedIn`).
+  Ammo↔weapon linking is derived from `ammoName` caliber families (`src/lib/ammo.ts`) — there is
+  deliberately NO ammo FK: `ammoName` ↔ ammo item is 1:1 in the wiki data, so a relation column
+  (`ammoItemId`, removed 2026-06-11) added nothing. Resolve by name if an exact item is needed.
 - **`Recipe`** / `RecipeInput` / `RecipeOutput` — crafting graph; ingredients reference items.
 - **`EnvEntity`** — environment content: `slug`, `category`, `name`, `description`, `sourceUrl`,
   `icon`; loot tables (loot containers only) are relational: **`lootTiers`** → **`LootTier`**

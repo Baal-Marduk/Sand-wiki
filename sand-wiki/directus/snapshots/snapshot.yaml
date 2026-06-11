@@ -451,51 +451,6 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
-  - collection: Item
-    field: ammoItemId
-    type: text
-    meta:
-      collection: Item
-      conditions: null
-      display: related-values
-      display_options:
-        template: '{{name}}'
-      field: ammoItemId
-      group: null
-      hidden: false
-      interface: select-dropdown-m2o
-      note: null
-      options:
-        filter:
-          category:
-            _eq: ammo
-        template: '{{name}}'
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: ammoItemId
-      table: Item
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_indexed: true
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: Item
-      foreign_key_column: id
   - collection: LootEntry
     field: itemId
     type: text

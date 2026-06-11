@@ -28,9 +28,6 @@ model Item {
   splashDamage   Int?
   magazine       Int?
   ammoName       String?
-  ammoItemId     String?
-  ammoItem       Item?   @relation("ItemAmmo", fields: [ammoItemId], references: [id], onDelete: SetNull)
-  ammoForWeapons Item[]  @relation("ItemAmmo")
 
   producedBy    RecipeOutput[]
   usedIn        RecipeInput[]
@@ -40,7 +37,6 @@ model Item {
   @@index([category])
   @@index([workbenchTier])
   @@index([rarity])
-  @@index([ammoItemId])
 }
 
 model EnvEntity {
