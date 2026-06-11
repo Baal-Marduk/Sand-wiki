@@ -13,7 +13,6 @@ model Item {
   name          String
   description   String?
   category      String
-  isResource    Boolean @default(false)
   storageStack  Int?
   workbenchTier Int?
   imageAlt      String?

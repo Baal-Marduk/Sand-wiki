@@ -8,7 +8,6 @@ export interface DetailRow { label: string; value: string; coin?: boolean; unit?
 
 export interface ItemFacts {
   category: string;
-  isResource: boolean;
   storageStack: number | null;
   workbenchTier: number | null;
   value?: number | null;
@@ -19,7 +18,6 @@ export function itemDetailRows(facts: ItemFacts, trades: ItemTrades): DetailRow[
   const rows: DetailRow[] = [{ label: "Category", value: categoryLabel(facts.category) }];
   if (facts.storageStack !== null) rows.push({ label: "Stack size", value: `×${facts.storageStack}` });
   if (facts.workbenchTier !== null) rows.push({ label: "Workbench tier", value: String(facts.workbenchTier) });
-  if (facts.isResource) rows.push({ label: "Resource", value: "Yes" });
   if (facts.value != null) rows.push({ label: "Value", value: formatCrowns(facts.value), coin: true });
   if (trades.buy.length > 0) {
     const cheapest = Math.min(...trades.buy.map((b) => b.unitPrice));

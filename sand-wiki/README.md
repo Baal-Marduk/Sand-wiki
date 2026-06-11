@@ -178,7 +178,7 @@ functions in `queries.ts`; the database is only touched at request time.
 
 All entities live in `prisma/schema.prisma`:
 
-- **`Item`** — both manufacturable items **and** raw resources (distinguished by `isResource`),
+- **`Item`** — both manufacturable items **and** raw resources (the latter have `category: "resources"`),
   since recipes reference both. Fields: `slug`, `name`, `description`, `category` (validated against
   `src/lib/taxonomy.ts`), `workbenchLevel`, `craftTimeSeconds`, `unlockConditions`, `imageAlt`,
   optional `unlockedBy` (a `TechNode`).
@@ -245,7 +245,7 @@ it's safe to re-run after each game update.
    - `category` must be one of the item categories defined in `src/lib/taxonomy.ts`
      (`weapons`, `artillery`, `resources`, `attire`, `tools`, `medical`, `ammo`, `misc`); the seed
      rejects unknown categories.
-   - Raw resources are just items with `"isResource": true` (and usually no recipe).
+   - Raw resources are just items in the `resources` category (and usually no recipe).
 
 3. **Changing the schema?** Edit `prisma/schema.prisma`, then
    `npx prisma migrate dev --name <change>` and `npx prisma generate`.

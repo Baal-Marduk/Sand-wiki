@@ -17,7 +17,7 @@ Accessibility is a hard gate — axe must pass in both themes (`npm run test:e2e
 ## Data model (Prisma)
 
 - **`Item`** — `slug`, `name`, `derivedName` (search-only), `description`, `category`,
-  `isResource`, `storageStack`, `workbenchTier`, `icon`, **`rarity`** (string, indexed),
+  `storageStack`, `workbenchTier`, `icon`, **`rarity`** (string, indexed),
   flat wiki-stat columns **`statType`/`statValue`/`damage`/`playerDamage`/`tramplerDamage`/
   `splashDamage`/`magazine`/`ammoName`**, plus **`ammoItem`** (self-relation resolved from the
   wiki's `ammoSlug` at seed time; reverse side `ammoForWeapons`) and recipe relations

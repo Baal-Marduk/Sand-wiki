@@ -3,13 +3,13 @@ import { itemDetailRows, availableTabs, type ItemFacts } from "./item-view";
 import type { ItemTrades } from "@/lib/trades";
 
 const noTrades: ItemTrades = { buy: [], sell: [], crafts: [], usedInCrafts: [] };
-const facts: ItemFacts = { category: "weapons", isResource: false, storageStack: 5, workbenchTier: 2 };
+const facts: ItemFacts = { category: "weapons", storageStack: 5, workbenchTier: 2 };
 
 const buyOpt = { recipeSlug: "x", quantity: 1, totalCrowns: 10, unitPrice: 10, isBest: true };
 const sellOpt = { recipeSlug: "y", quantity: 100, totalCrowns: 1000, unitPrice: 10, isBest: true };
 
 describe("itemDetailRows", () => {
-  it("includes category, stack and tier; omits resource when false", () => {
+  it("includes category, stack and tier", () => {
     expect(itemDetailRows(facts, noTrades)).toEqual([
       { label: "Category", value: "Weapons" },
       { label: "Stack size", value: "×5" },
@@ -17,12 +17,9 @@ describe("itemDetailRows", () => {
     ]);
   });
 
-  it("omits stack and tier when null and shows Resource when true", () => {
-    const r = itemDetailRows({ category: "resources", isResource: true, storageStack: null, workbenchTier: null }, noTrades);
-    expect(r).toEqual([
-      { label: "Category", value: "Resources" },
-      { label: "Resource", value: "Yes" },
-    ]);
+  it("omits stack and tier when null", () => {
+    const r = itemDetailRows({ category: "resources", storageStack: null, workbenchTier: null }, noTrades);
+    expect(r).toEqual([{ label: "Category", value: "Resources" }]);
   });
 
   it("adds Buyable/Sellable summaries from trades", () => {

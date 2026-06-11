@@ -73,7 +73,6 @@ async function main() {
       derivedName: i.name,
       description: opt(i.description),
       category,
-      isResource: i.isResource,
       storageStack: opt(i.storageStack),
       workbenchTier: opt(i.workbenchTier),
       icon: iconFor(i.id),

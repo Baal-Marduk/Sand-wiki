@@ -54,7 +54,6 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const detailRows = itemDetailRows(
     {
       category: item.category,
-      isResource: item.isResource,
       storageStack: item.storageStack,
       workbenchTier: item.workbenchTier,
       value: item.statValue,
