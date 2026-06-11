@@ -21,7 +21,9 @@ Accessibility is a hard gate — axe must pass in both themes (`npm run test:e2e
   flat wiki-stat columns **`statType`/`statValue`/`damage`/`playerDamage`/`tramplerDamage`/
   `splashDamage`/`magazine`/`ammoName`**, plus **`ammoItem`** (self-relation resolved from the
   wiki's `ammoSlug` at seed time; reverse side `ammoForWeapons`) and recipe relations
-  (`producedBy`/`usedIn`).
+  (`producedBy`/`usedIn`). Note: the UI deliberately does NOT read `ammoItem` — the Ammo /
+  Used-by tabs use caliber families derived from `ammoName` (`src/lib/ammo.ts`), which are
+  broader than the 1:1 link. The relation exists for Directus linking and future use.
 - **`Recipe`** / `RecipeInput` / `RecipeOutput` — crafting graph; ingredients reference items.
 - **`EnvEntity`** — environment content: `slug`, `category`, `name`, `description`, `sourceUrl`,
   `icon`; loot tables (loot containers only) are relational: **`lootTiers`** → **`LootTier`**
@@ -86,7 +88,9 @@ Imports copy what exists and link back via `sourceUrl`.
   `recipeId`, …), not Prisma's relation names.
 - Edits made in Directus survive `npm run db:seed` (upsert-by-slug), EXCEPT fields the scraper has
   a value for — those are overwritten. Scraper-owned child rows (recipe lines, loot tiers/entries,
-  cost rows) are always recreated.
+  cost rows) are always recreated. **Rows created in Directus are deleted on re-seed** (the prune
+  removes any slug not in the snapshot) — don't author new entities there until the corrections
+  workflow (TODO #15–16) lands.
 - **This machine**: Docker lives inside WSL2 Ubuntu — run compose via
   `wsl -e bash -lc "cd /mnt/d/Documents/SandLabs/sand-wiki && docker compose …"` (the npm scripts
   are portable; the WSL wrapper is machine-specific). WSL's DNS is currently broken
