@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { SECTIONS, ITEM_CATEGORIES } from "@/lib/taxonomy";
+import { SECTIONS, ITEM_CATEGORIES, isWipSection } from "@/lib/taxonomy";
+import { WipBadge } from "@/components/WipBadge";
 import { CategoryTag } from "@/components/CategoryTag";
 import { SearchBox } from "@/components/SearchBox";
 
@@ -31,22 +32,31 @@ export default function HomePage() {
       <section>
         <h2 className="font-display text-xl font-semibold mb-3">Browse by section</h2>
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {SECTIONS.map((section) => (
-            <Link
-              key={section.slug}
-              href={section.href ?? `/${section.slug}`}
-              className="card bg-base-200"
-            >
-              <div className="card-body">
-                <h3 className="card-title font-display">{section.label}</h3>
-                <p className="text-sm text-base-content/70">
-                  {section.categories.length > 0
-                    ? section.categories.map((c) => c.label).join(", ")
-                    : "Explore"}
-                </p>
+          {SECTIONS.map((section) =>
+            isWipSection(section) ? (
+              <div
+                key={section.slug}
+                className="card bg-base-200 opacity-60 cursor-not-allowed"
+                aria-disabled="true"
+              >
+                <div className="card-body">
+                  <h3 className="card-title font-display">{section.label} <WipBadge /></h3>
+                  <p className="text-sm text-base-content/70">Coming soon</p>
+                </div>
               </div>
-            </Link>
-          ))}
+            ) : (
+              <Link key={section.slug} href={section.href ?? `/${section.slug}`} className="card bg-base-200">
+                <div className="card-body">
+                  <h3 className="card-title font-display">{section.label}</h3>
+                  <p className="text-sm text-base-content/70">
+                    {section.categories.length > 0
+                      ? section.categories.map((c) => c.label).join(", ")
+                      : "Explore"}
+                  </p>
+                </div>
+              </Link>
+            )
+          )}
         </div>
       </section>
     </div>
