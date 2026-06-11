@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { getEnvEntityBySlug } from "@/lib/queries";
 import { ItemTabs, type Tab } from "@/components/ItemTabs";
 import { LootTable } from "@/components/LootTable";
+import { byRarityThenName } from "@/lib/rarity";
 
 type Params = Promise<{ slug: string }>;
 
@@ -16,7 +17,9 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
     label: t.tier,
     content: (
       <LootTable
-        entries={t.entries.map((e) => ({ slug: e.item?.slug ?? null, name: e.name, icon: e.item?.icon ?? null, rarity: e.item?.rarity ?? null }))}
+        entries={t.entries
+          .map((e) => ({ slug: e.item?.slug ?? null, name: e.name, icon: e.item?.icon ?? null, rarity: e.item?.rarity ?? null }))
+          .sort(byRarityThenName)}
       />
     ),
   }));

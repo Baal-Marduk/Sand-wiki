@@ -15,7 +15,7 @@ export function ItemIconLink({
       ) : (
         <ItemIcon name={name} icon={icon} size="recipe" rarity={rarity} />
       )}
-      {amount != null && <span className="text-xs text-base-content/60">×{amount}</span>}
+      {amount != null && <span className="text-sm font-bold text-base-content">×{amount}</span>}
       <span
         role="tooltip"
         aria-hidden="true"

@@ -4,12 +4,12 @@ export interface Rarity { name: string; tier: number; color: string }
  *  (the in-game ItemColorSchemeUIConfig bgDefault per tier). All six names are observed
  *  in the wiki data; "Experimental" is the top crafted tier (e.g. endgame turret kits). */
 export const RARITIES: Rarity[] = [
-  { name: "Common", tier: 1, color: "#ADADAD" },
-  { name: "Uncommon", tier: 2, color: "#889F83" },
-  { name: "Rare", tier: 3, color: "#899FB7" },
-  { name: "Noteworthy", tier: 4, color: "#9C86B7" },
-  { name: "Remarkable", tier: 5, color: "#E29554" },
-  { name: "Experimental", tier: 6, color: "#D16469" },
+  { name: "Common", tier: 1, color: "#AEAEB2" },
+  { name: "Uncommon", tier: 2, color: "#7CB079" },
+  { name: "Rare", tier: 3, color: "#7AA8D2" },
+  { name: "Noteworthy", tier: 4, color: "#A37FC9" },
+  { name: "Remarkable", tier: 5, color: "#E59A52" },
+  { name: "Experimental", tier: 6, color: "#D85F64" },
 ];
 
 const byName = new Map(RARITIES.map((r) => [r.name.toLowerCase(), r]));
@@ -25,6 +25,15 @@ export const DEFAULT_RARITY = "Common";
 /** Tier (1–6) for ordering; unknown/absent → 0. */
 export function rarityTier(name?: string | null): number {
   return name ? byName.get(name.toLowerCase())?.tier ?? 0 : 0;
+}
+
+/** Array sort comparator: rarity tier ascending (Common→Experimental), unknown/absent
+ *  rarity last, then name A→Z. For ordering item lists by rarity. */
+export function byRarityThenName<T extends { rarity?: string | null; name: string }>(a: T, b: T): number {
+  const ta = rarityTier(a.rarity) || Infinity; // unknown (tier 0) sorts last
+  const tb = rarityTier(b.rarity) || Infinity;
+  if (ta !== tb) return ta - tb;
+  return a.name.localeCompare(b.name);
 }
 
 /** Whether a string is a known rarity name (case-insensitive). */
