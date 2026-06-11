@@ -101,7 +101,7 @@ export async function getTramplerPartBySlug(slug: string) {
     include: {
       costEntries: {
         orderBy: { sortOrder: "asc" },
-        include: { item: { select: { slug: true, icon: true } } },
+        include: { item: { select: { slug: true, icon: true, rarity: true } } },
       },
     },
   });
