@@ -4,6 +4,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { SearchBox } from "@/components/SearchBox";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { WipBadge } from "@/components/WipBadge";
+import { AuthMenu } from "@/components/AuthMenu";
 
 // Explicit full-contrast text (not DaisyUI's dimmed .menu links) so the nav
 // meets WCAG AA contrast in both the dark and light themes.
@@ -75,6 +76,7 @@ export function MainNav() {
       <div className="flex-none flex items-center gap-2">
         <SearchBox variant="navbar" />
         <Link href="/about" className={linkCls}>About</Link>
+        <AuthMenu />
         <ThemeToggle />
       </div>
     </nav>
