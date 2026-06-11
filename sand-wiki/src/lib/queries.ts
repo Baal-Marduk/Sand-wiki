@@ -113,20 +113,18 @@ export async function tramplerCategoryCounts(): Promise<Record<string, number>> 
   return Object.fromEntries(rows.map((r) => [r.category, r._count]));
 }
 
-export interface CrateDrop { crateSlug: string; crateName: string; tier: string; columns: string[]; values: string[] }
+export interface CrateDrop { crateSlug: string; crateName: string; tier: string }
 
-/** Crates (with tier + amounts) whose loot tables contain the given item slug. */
+/** Crates (with tier) whose loot tables contain the given item slug. */
 export async function getCratesContaining(itemSlug: string): Promise<CrateDrop[]> {
   const rows = await prisma.lootEntry.findMany({
     where: { item: { slug: itemSlug }, lootTier: { envEntity: { category: "loot-containers" } } },
     include: { lootTier: { include: { envEntity: { select: { slug: true, name: true } } } } },
-    orderBy: [{ lootTier: { sortOrder: "asc" } }, { sortOrder: "asc" }],
+    orderBy: [{ lootTier: { envEntity: { name: "asc" } } }, { lootTier: { sortOrder: "asc" } }, { sortOrder: "asc" }],
   });
   return rows.map((r) => {
     const t = r.lootTier;
-    const columns = [t.col1Label, t.col2Label, t.col3Label].filter((c): c is string => c !== null);
-    const values = [r.value1, r.value2, r.value3].slice(0, columns.length).map((v) => v ?? "");
-    return { crateSlug: t.envEntity.slug, crateName: t.envEntity.name, tier: t.tier, columns, values };
+    return { crateSlug: t.envEntity.slug, crateName: t.envEntity.name, tier: t.tier };
   });
 }
 
