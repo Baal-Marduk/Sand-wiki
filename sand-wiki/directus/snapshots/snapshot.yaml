@@ -35,7 +35,7 @@ collections:
       collapse: open
       collection: Item
       color: null
-      display_template: null
+      display_template: '{{name}}'
       group: null
       hidden: false
       icon: null
