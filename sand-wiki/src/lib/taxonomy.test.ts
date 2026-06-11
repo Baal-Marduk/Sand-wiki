@@ -5,6 +5,7 @@ import {
   isEnvCategory, CATEGORY_COLORS, categoryColor,
   isTramplerCategory, tramplerCategoryForName, TRAMPLER_CATEGORY_SLUGS,
   isWeaponClassCategory, WEAPON_CLASS_CATEGORIES,
+  isWipSection,
 } from "./taxonomy";
 
 describe("taxonomy", () => {
@@ -184,5 +185,25 @@ describe("isWeaponClassCategory", () => {
     expect(isWeaponClassCategory("ammo")).toBe(true);
     expect(isWeaponClassCategory("tools")).toBe(false);
     expect(isWeaponClassCategory(undefined)).toBe(false);
+  });
+});
+
+describe("WIP markers", () => {
+  it("flags placeholder sections as WIP", () => {
+    expect(isWipSection(getSection("tech")!)).toBe(true);
+    expect(isWipSection(getSection("tools")!)).toBe(true);
+  });
+  it("does not flag data sections as WIP", () => {
+    expect(isWipSection(getSection("items")!)).toBe(false);
+    expect(isWipSection(getSection("environment")!)).toBe(false);
+    expect(isWipSection(getSection("tramplers")!)).toBe(false);
+  });
+  it("marks the NPCs env category wip and leaves the others live", () => {
+    const env = getSection("environment")!;
+    const bySlug = Object.fromEntries(env.categories.map((c) => [c.slug, c]));
+    expect(bySlug["npcs"].wip).toBe(true);
+    expect(bySlug["loot-containers"].wip).toBeFalsy();
+    expect(bySlug["landmarks"].wip).toBeFalsy();
+    expect(bySlug["game-modes"].wip).toBeFalsy();
   });
 });

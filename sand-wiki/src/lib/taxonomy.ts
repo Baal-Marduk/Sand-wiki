@@ -3,6 +3,7 @@ export type SectionKind = "data" | "placeholder" | "link" | "tools";
 export interface Category {
   slug: string;
   label: string;
+  wip?: boolean;
 }
 
 export interface Section {
@@ -46,7 +47,7 @@ export const SECTIONS: Section[] = [
       { slug: "loot-containers", label: "Loot Containers" },
       { slug: "landmarks", label: "Landmarks" },
       { slug: "game-modes", label: "Game Modes" },
-      { slug: "npcs", label: "NPCs" },
+      { slug: "npcs", label: "NPCs", wip: true },
     ],
   },
   { slug: "tramplers", label: "Tramplers", kind: "data", categories: tramplerCategories },
@@ -78,6 +79,11 @@ export function categoryLabel(slug: string): string {
 
 export function getSection(slug: string): Section | undefined {
   return SECTIONS.find((s) => s.slug === slug);
+}
+
+/** A section whose page is a placeholder ("coming soon") rather than real data. */
+export function isWipSection(section: Section): boolean {
+  return section.kind === "placeholder";
 }
 
 const envCategories = SECTIONS.find((s) => s.slug === "environment")?.categories ?? [];
