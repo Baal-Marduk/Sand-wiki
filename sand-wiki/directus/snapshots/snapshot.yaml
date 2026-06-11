@@ -353,6 +353,46 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: EnvEntity
+    field: id
+    type: text
+    meta:
+      collection: EnvEntity
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: false
+      interface: null
+      note: Generated automatically. Read-only — do not edit.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: EnvEntity
+      data_type: text
+      default_value: (gen_random_uuid())
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: Item
     field: rarity
     type: text
@@ -716,6 +756,46 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: Item
+    field: id
+    type: text
+    meta:
+      collection: Item
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: false
+      interface: null
+      note: Generated automatically. Read-only — do not edit.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: Item
+      data_type: text
+      default_value: (gen_random_uuid())
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: LootEntry
     field: itemId
     type: text
@@ -800,6 +880,46 @@ fields:
       has_auto_increment: false
       foreign_key_table: LootTier
       foreign_key_column: id
+  - collection: LootEntry
+    field: id
+    type: text
+    meta:
+      collection: LootEntry
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: false
+      interface: null
+      note: Generated automatically. Read-only — do not edit.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: LootEntry
+      data_type: text
+      default_value: (gen_random_uuid())
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: LootTier
     field: envEntityId
     type: text
@@ -1058,6 +1178,46 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: LootTier
+    field: id
+    type: text
+    meta:
+      collection: LootTier
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: false
+      interface: null
+      note: Generated automatically. Read-only — do not edit.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: LootTier
+      data_type: text
+      default_value: (gen_random_uuid())
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: Recipe
     field: workbench
     type: text
@@ -1156,6 +1316,46 @@ fields:
       validation: null
       validation_message: null
       width: full
+  - collection: Recipe
+    field: id
+    type: text
+    meta:
+      collection: Recipe
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: false
+      interface: null
+      note: Generated automatically. Read-only — do not edit.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: Recipe
+      data_type: text
+      default_value: (gen_random_uuid())
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: RecipeInput
     field: itemId
     type: text
@@ -1240,6 +1440,46 @@ fields:
       has_auto_increment: false
       foreign_key_table: Recipe
       foreign_key_column: id
+  - collection: RecipeInput
+    field: id
+    type: text
+    meta:
+      collection: RecipeInput
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: false
+      interface: null
+      note: Generated automatically. Read-only — do not edit.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: RecipeInput
+      data_type: text
+      default_value: (gen_random_uuid())
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: RecipeOutput
     field: itemId
     type: text
@@ -1324,6 +1564,46 @@ fields:
       has_auto_increment: false
       foreign_key_table: Recipe
       foreign_key_column: id
+  - collection: RecipeOutput
+    field: id
+    type: text
+    meta:
+      collection: RecipeOutput
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: false
+      interface: null
+      note: Generated automatically. Read-only — do not edit.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: RecipeOutput
+      data_type: text
+      default_value: (gen_random_uuid())
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: TramplerPart
     field: category
     type: text
@@ -1656,6 +1936,46 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: TramplerPart
+    field: id
+    type: text
+    meta:
+      collection: TramplerPart
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: false
+      interface: null
+      note: Generated automatically. Read-only — do not edit.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: TramplerPart
+      data_type: text
+      default_value: (gen_random_uuid())
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: TramplerPartCost
     field: itemId
     type: text
@@ -1740,6 +2060,46 @@ fields:
       has_auto_increment: false
       foreign_key_table: TramplerPart
       foreign_key_column: id
+  - collection: TramplerPartCost
+    field: id
+    type: text
+    meta:
+      collection: TramplerPartCost
+      conditions: null
+      display: null
+      display_options: null
+      field: id
+      group: null
+      hidden: false
+      interface: null
+      note: Generated automatically. Read-only — do not edit.
+      options: null
+      readonly: true
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: id
+      table: TramplerPartCost
+      data_type: text
+      default_value: (gen_random_uuid())
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
 systemFields:
   - collection: directus_activity
     field: timestamp
