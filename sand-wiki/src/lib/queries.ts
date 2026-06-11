@@ -73,7 +73,7 @@ export async function getEnvEntityBySlug(slug: string) {
         include: {
           entries: {
             orderBy: { sortOrder: "asc" },
-            include: { item: { select: { slug: true, icon: true } } },
+            include: { item: { select: { slug: true, icon: true, rarity: true } } },
           },
         },
       },
