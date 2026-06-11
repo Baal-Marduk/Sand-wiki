@@ -22,8 +22,22 @@ model Item {
   rarity        String?
   stats         Json?
 
+  statType       String?
+  statValue      Int?
+  damage         Int?
+  playerDamage   Int?
+  tramplerDamage Int?
+  splashDamage   Int?
+  magazine       Int?
+  ammoName       String?
+  ammoItemId     String?
+  ammoItem       Item?   @relation("ItemAmmo", fields: [ammoItemId], references: [id], onDelete: SetNull)
+  ammoForWeapons Item[]  @relation("ItemAmmo")
+
   producedBy    RecipeOutput[]
   usedIn        RecipeInput[]
+  lootEntries   LootEntry[]
+  tramplerCosts TramplerPartCost[]
 
   @@index([category])
   @@index([workbenchTier])
@@ -39,6 +53,8 @@ model EnvEntity {
   sourceUrl   String?
   icon        String?
   loot        Json?
+
+  lootTiers   LootTier[]
 
   @@index([category])
 }
@@ -68,6 +84,8 @@ model TramplerPart {
   researchTier Int?
 
   cost Json?
+
+  costEntries TramplerPartCost[]
 
   @@index([category])
   @@index([researchTier])
@@ -106,4 +124,48 @@ model RecipeOutput {
 
   @@index([itemId])
   @@index([recipeId])
+}
+
+model LootTier {
+  id          String    @id @default(cuid())
+  envEntityId String
+  envEntity   EnvEntity @relation(fields: [envEntityId], references: [id], onDelete: Cascade)
+  tier        String // "Normal" | "Rare" | "Very Rare"
+  col1Label   String
+  col2Label   String?
+  col3Label   String?
+  sortOrder   Int
+  entries     LootEntry[]
+
+  @@unique([envEntityId, tier])
+}
+
+model LootEntry {
+  id         String   @id @default(cuid())
+  lootTierId String
+  lootTier   LootTier @relation(fields: [lootTierId], references: [id], onDelete: Cascade)
+  itemId     String?
+  item       Item?    @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  name       String // display fallback when itemId is null
+  value1     String? // wiki amounts are strings ("10-20"); rows can have fewer values than columns
+  value2     String?
+  value3     String?
+  sortOrder  Int
+
+  @@index([lootTierId])
+  @@index([itemId])
+}
+
+model TramplerPartCost {
+  id        String       @id @default(cuid())
+  partId    String
+  part      TramplerPart @relation(fields: [partId], references: [id], onDelete: Cascade)
+  itemId    String?
+  item      Item?        @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  name      String // "Crowns" lines have no item
+  amount    Int
+  sortOrder Int
+
+  @@index([partId])
+  @@index([itemId])
 }
