@@ -30,7 +30,7 @@ export function buildItemQuery(filter: ItemFilter): ItemQuery {
   return { where, orderBy: { name: "asc" } };
 }
 
-type ViewItem = { slug: string; name: string; rarity: string | null; stats: unknown };
+type ViewItem = { slug: string; name: string; rarity: string | null; ammoName: string | null };
 
 /** App-level view transform applied after the DB query: optional weapon-class filter, then
  *  rarity-tier ascending sort (Common→Experimental) with the DB's name-asc order as a stable
@@ -41,7 +41,7 @@ export function applyItemView<T extends ViewItem>(
 ): T[] {
   let out = items;
   if (opts.weaponClass) {
-    out = out.filter((i) => itemClass(i.slug, i.name, i.stats) === opts.weaponClass);
+    out = out.filter((i) => itemClass(i.slug, i.name, i.ammoName) === opts.weaponClass);
   }
   if (opts.sort !== "name") {
     out = [...out].sort((a, b) => rarityTier(a.rarity) - rarityTier(b.rarity));

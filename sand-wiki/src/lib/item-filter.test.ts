@@ -27,7 +27,7 @@ describe("buildItemQuery", () => {
 });
 
 const mk = (slug: string, name: string, rarity: string | null, ammoName?: string) => ({
-  slug, name, rarity, stats: ammoName ? { ammoName } : null,
+  slug, name, rarity, ammoName: ammoName ?? null,
 });
 
 describe("applyItemView", () => {

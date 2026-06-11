@@ -53,16 +53,15 @@ export const CLASS_ORDER = ["Pistol", "Rifle", "Sniper", "Shotgun", "Autocannon"
 /** The caliber-class label for an item. Weapons/turrets derive from ammoName/slug; ammo items
  *  fall back to their own name. Null when no caliber can be derived. Single source used by both
  *  the class filter and the class option list. */
-export function itemClass(slug: string, name: string, stats: unknown): string | null {
-  const ammoName = (stats as { ammoName?: string } | null)?.ammoName;
+export function itemClass(slug: string, name: string, ammoName: string | null | undefined): string | null {
   return caliberLabel(weaponCaliber(slug, ammoName) ?? ammoCaliber(name));
 }
 
 /** Distinct caliber-class labels present in the given rows, in CLASS_ORDER. */
-export function itemClasses(rows: { slug: string; name: string; stats: unknown }[]): string[] {
+export function itemClasses(rows: { slug: string; name: string; ammoName: string | null }[]): string[] {
   const present = new Set<string>();
   for (const r of rows) {
-    const c = itemClass(r.slug, r.name, r.stats);
+    const c = itemClass(r.slug, r.name, r.ammoName);
     if (c) present.add(c);
   }
   return CLASS_ORDER.filter((c) => present.has(c));

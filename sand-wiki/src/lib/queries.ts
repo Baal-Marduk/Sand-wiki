@@ -51,7 +51,7 @@ export async function listItemClasses(filter: ItemFilter): Promise<string[]> {
   const { where } = buildItemQuery(filter);
   const rows = await prisma.item.findMany({
     where,
-    select: { slug: true, name: true, stats: true },
+    select: { slug: true, name: true, ammoName: true },
   });
   return itemClasses(rows);
 }
@@ -151,10 +151,10 @@ export async function getAmmoByCaliber(caliber: string): Promise<LinkItem[]> {
 export async function getWeaponsByCaliber(caliber: string): Promise<LinkItem[]> {
   const rows = await prisma.item.findMany({
     where: { category: { in: ["weapons", "artillery"] } },
-    select: { slug: true, name: true, icon: true, stats: true },
+    select: { slug: true, name: true, icon: true, ammoName: true },
     orderBy: { name: "asc" },
   });
   return rows
-    .filter((r) => weaponCaliber(r.slug, (r.stats as { ammoName?: string } | null)?.ammoName) === caliber)
+    .filter((r) => weaponCaliber(r.slug, r.ammoName) === caliber)
     .map(({ slug, name, icon }) => ({ slug, name, icon }));
 }

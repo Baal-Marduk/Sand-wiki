@@ -51,10 +51,10 @@ describe("caliberLabel", () => {
 });
 
 describe("itemClass", () => {
-  it("derives a weapon's class from its stats.ammoName", () => {
-    expect(itemClass("some-rifle", "Service Rifle", { ammoName: "9x42 mm Ammo" })).toBe("Rifle");
+  it("derives a weapon's class from its ammoName", () => {
+    expect(itemClass("some-rifle", "Service Rifle", "9x42 mm Ammo")).toBe("Rifle");
   });
-  it("derives an ammo item's class from its own name when stats has no ammoName", () => {
+  it("derives an ammo item's class from its own name when ammoName is null", () => {
     expect(itemClass("ammo-1154", "11x54 mm AP Ammo", null)).toBe("Sniper");
   });
   it("derives a turret's class from its slug override", () => {
@@ -68,10 +68,10 @@ describe("itemClass", () => {
 describe("itemClasses", () => {
   it("returns distinct present classes in canonical order", () => {
     const rows = [
-      { slug: "a", name: "11x54 mm Ammo", stats: null },     // Sniper
-      { slug: "b", name: "Rifle", stats: { ammoName: "9x42 mm Ammo" } }, // Rifle
-      { slug: "c", name: "Pistol", stats: { ammoName: "8x21 mm Ammo" } }, // Pistol
-      { slug: "d", name: "Bandages", stats: null },          // none
+      { slug: "a", name: "11x54 mm Ammo", ammoName: null },     // Sniper
+      { slug: "b", name: "Rifle", ammoName: "9x42 mm Ammo" },   // Rifle
+      { slug: "c", name: "Pistol", ammoName: "8x21 mm Ammo" },  // Pistol
+      { slug: "d", name: "Bandages", ammoName: null },          // none
     ];
     expect(itemClasses(rows)).toEqual(["Pistol", "Rifle", "Sniper"]);
   });
