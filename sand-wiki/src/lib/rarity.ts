@@ -41,3 +41,28 @@ export function isRarity(name: string): boolean {
 }
 
 export const KNOWN_RARITY_NAMES = RARITIES.map((r) => r.name);
+
+/** Parse "#RRGGBB" → [r,g,b]. */
+function parseHex(hex: string): [number, number, number] {
+  const n = parseInt(hex.slice(1), 16);
+  return [(n >> 16) & 0xff, (n >> 8) & 0xff, n & 0xff];
+}
+
+/** Blend two "#RRGGBB" colors. `t` is the weight of `b` (0 → a, 1 → b). Uppercase output. */
+export function mixHex(a: string, b: string, t: number): string {
+  const [ar, ag, ab] = parseHex(a);
+  const [br, bg, bb] = parseHex(b);
+  const ch = (x: number, y: number) => Math.round(x + (y - x) * t).toString(16).padStart(2, "0");
+  return `#${ch(ar, br)}${ch(ag, bg)}${ch(ab, bb)}`.toUpperCase();
+}
+
+/** CSS background for the rarity tile: a 135° gradient with a bright rarity corner
+ *  fading to near-black. Concrete hex stops (no color-mix) so SSR and client match.
+ *  Null for unknown/absent rarity → caller paints the neutral slot. */
+export function rarityGradient(name?: string | null): string | null {
+  const c = rarityColor(name);
+  if (!c) return null;
+  const corner = mixHex(c, "#FFFFFF", 0.05);
+  const mid = mixHex(c, "#14171F", 0.65);
+  return `linear-gradient(135deg, ${corner} 0%, ${mid} 38%, #11131A 100%)`;
+}
