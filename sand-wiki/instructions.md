@@ -96,6 +96,8 @@ Imports copy what exists and link back via `sourceUrl`.
   (configured to `http://localhost:3000`, where the Next app serves `public/icons/`). Needs the
   compose CSP override `CONTENT_SECURITY_POLICY_DIRECTIVES__IMG_SRC` and the Next dev server
   running. Applied to `Item`/`EnvEntity`/`TramplerPart.icon`; the Item list shows an icon column.
+  **Dev-only as configured** — the production checklist (baseUrl, CSP, PUBLIC_URL, hosting) is
+  tracked in `TODO.md`.
 - Field interfaces (in the snapshot): taxonomy-owned sets are **closed dropdowns**
   (`Item.rarity`/`Item.category`, `EnvEntity.category`, `TramplerPart.category`); wiki-sourced
   sets are **dropdowns with "other" allowed** (`Item.statType`/`ammoName`/`workbenchTier`,

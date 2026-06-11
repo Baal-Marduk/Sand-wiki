@@ -12,6 +12,14 @@
 - [x] Disable buttons to currently WIP pages (Tech, Tools, NPCs shown dimmed + "soon", non-interactive)
 - [x] Flatening tables for directus and integration (flat stat columns + LootTier/LootEntry/TramplerPartCost; upsert-by-slug seed; local Directus via docker-compose)
 - Add backoffice to edit as admin datas from app (directus now handle this ?)
+- Directus in production: the current setup is dev-only — before deploying, (1) the icon
+  thumbnail display (`image-path`) has `baseUrl = http://localhost:3000` hardcoded in field
+  config: repoint it to the public app URL (Studio → Item/EnvEntity/TramplerPart `icon` field →
+  display options, then re-snapshot), (2) update the compose CSP override
+  `CONTENT_SECURITY_POLICY_DIRECTIVES__IMG_SRC` to that same public origin, (3) set `PUBLIC_URL`
+  to the public Directus URL, (4) host Directus somewhere (Neon prod DB + the `directus` schema
+  + `DIRECT_DATABASE_URL` non-pooler endpoint), (5) hand-authored recipes are wiped by
+  `npm run db:seed` — add the `manual`-flag seed change before authoring anything precious.
 - Add steam connection to allow user to offfer corrections, (will need vallidation by admin)
 - Add validation screen in backoffice to make validate corrections from steam authenticated user.
 - Add tips tab in items to allow user to share tips (might be moderated by admin) with vote system
