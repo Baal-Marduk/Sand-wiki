@@ -104,6 +104,9 @@ Imports copy what exists and link back via `sourceUrl`.
 - Gotchas: `docker compose exec` right after `directus:up` can race a cold container (~10s boot);
   `npm run directus:down` stops every service in the compose file; admin email must not use a
   `.local` TLD (Directus validator rejects it).
+- **Migrations need `DIRECT_DATABASE_URL`** (the Neon URL without `-pooler`): prisma migrate's
+  advisory lock sticks to pgbouncer backends that Directus reuses, hanging deploys on the pooler
+  URL — the schema's `directUrl` routes the CLI around the pooler (app + Directus stay pooled).
 
 ## UI conventions
 
