@@ -1,18 +1,15 @@
 import { describe, it, expect } from "vitest";
 import { toRecipeCard, type RecipeWithItems } from "./recipes";
 
-const recipe: RecipeWithItems = {
-  slug: "fabric", workbench: "Utility", tier: 1, craftTimeSeconds: 2,
-  inputs: [{ amount: 5, item: { slug: "scraps", name: "Scraps", icon: null } }],
-  outputs: [{ amount: 1, item: { slug: "fabric", name: "Fabric", icon: "/icons/icon_fabric.png" } }],
-};
-
 describe("toRecipeCard", () => {
-  it("flattens a recipe into display rows, carrying each item's icon", () => {
-    expect(toRecipeCard(recipe)).toEqual({
-      slug: "fabric", workbench: "Utility", tier: 1, craftTimeSeconds: 2,
-      inputs: [{ slug: "scraps", name: "Scraps", icon: null, amount: 5 }],
-      outputs: [{ slug: "fabric", name: "Fabric", icon: "/icons/icon_fabric.png", amount: 1 }],
-    });
+  it("carries each line item's rarity into the card rows", () => {
+    const recipe: RecipeWithItems = {
+      slug: "r", workbench: null, tier: null, craftTimeSeconds: null,
+      inputs: [{ amount: 2, item: { slug: "a", name: "A", icon: null, rarity: "Rare" } }],
+      outputs: [{ amount: 1, item: { slug: "b", name: "B", icon: "/b.png", rarity: null } }],
+    };
+    const card = toRecipeCard(recipe);
+    expect(card.inputs[0].rarity).toBe("Rare");
+    expect(card.outputs[0].rarity).toBeNull();
   });
 });

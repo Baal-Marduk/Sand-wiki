@@ -6,7 +6,7 @@ export function IngredientList({ rows }: { rows: RecipeCardRow[] }) {
   return (
     <div className="flex flex-wrap gap-3">
       {rows.map((r, i) => (
-        <ItemIconLink key={`${r.slug}-${i}`} slug={r.slug} name={r.name} icon={r.icon} amount={r.amount} />
+        <ItemIconLink key={`${r.slug}-${i}`} slug={r.slug} name={r.name} icon={r.icon} amount={r.amount} rarity={r.rarity} />
       ))}
     </div>
   );
