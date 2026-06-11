@@ -219,6 +219,55 @@ collections:
     schema:
       name: TramplerPartCost
 fields:
+  - collection: EnvEntity
+    field: category
+    type: text
+    meta:
+      collection: EnvEntity
+      conditions: null
+      display: null
+      display_options: null
+      field: category
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        choices:
+          - text: Loot Containers
+            value: loot-containers
+          - text: Landmarks
+            value: landmarks
+          - text: Game Modes
+            value: game-modes
+          - text: NPCs
+            value: npcs
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: category
+      table: EnvEntity
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: Item
     field: rarity
     type: text
@@ -451,6 +500,52 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: Item
+    field: workbenchTier
+    type: integer
+    meta:
+      collection: Item
+      conditions: null
+      display: null
+      display_options: null
+      field: workbenchTier
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: '1'
+            value: 1
+          - text: '2'
+            value: 2
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: workbenchTier
+      table: Item
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: LootEntry
     field: itemId
     type: text
@@ -577,6 +672,268 @@ fields:
       has_auto_increment: false
       foreign_key_table: EnvEntity
       foreign_key_column: id
+  - collection: LootTier
+    field: tier
+    type: text
+    meta:
+      collection: LootTier
+      conditions: null
+      display: null
+      display_options: null
+      field: tier
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: Normal
+            value: Normal
+          - text: Rare
+            value: Rare
+          - text: Very Rare
+            value: Very Rare
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: tier
+      table: LootTier
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: LootTier
+    field: col1Label
+    type: text
+    meta:
+      collection: LootTier
+      conditions: null
+      display: null
+      display_options: null
+      field: col1Label
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: Lesser
+            value: Lesser
+          - text: Normal
+            value: Normal
+          - text: Greater
+            value: Greater
+          - text: Shipwreck Amount
+            value: Shipwreck Amount
+          - text: Landmark Amount
+            value: Landmark Amount
+          - text: Count
+            value: Count
+          - text: Chance
+            value: Chance
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: col1Label
+      table: LootTier
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: LootTier
+    field: col2Label
+    type: text
+    meta:
+      collection: LootTier
+      conditions: null
+      display: null
+      display_options: null
+      field: col2Label
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: Lesser
+            value: Lesser
+          - text: Normal
+            value: Normal
+          - text: Greater
+            value: Greater
+          - text: Shipwreck Amount
+            value: Shipwreck Amount
+          - text: Landmark Amount
+            value: Landmark Amount
+          - text: Count
+            value: Count
+          - text: Chance
+            value: Chance
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: col2Label
+      table: LootTier
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: LootTier
+    field: col3Label
+    type: text
+    meta:
+      collection: LootTier
+      conditions: null
+      display: null
+      display_options: null
+      field: col3Label
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: Lesser
+            value: Lesser
+          - text: Normal
+            value: Normal
+          - text: Greater
+            value: Greater
+          - text: Shipwreck Amount
+            value: Shipwreck Amount
+          - text: Landmark Amount
+            value: Landmark Amount
+          - text: Count
+            value: Count
+          - text: Chance
+            value: Chance
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: col3Label
+      table: LootTier
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Recipe
+    field: workbench
+    type: text
+    meta:
+      collection: Recipe
+      conditions: null
+      display: null
+      display_options: null
+      field: workbench
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: Armament
+            value: Armament
+          - text: Utility
+            value: Utility
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: workbench
+      table: Recipe
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: RecipeInput
     field: itemId
     type: text
@@ -745,6 +1102,253 @@ fields:
       has_auto_increment: false
       foreign_key_table: Recipe
       foreign_key_column: id
+  - collection: TramplerPart
+    field: category
+    type: text
+    meta:
+      collection: TramplerPart
+      conditions: null
+      display: null
+      display_options: null
+      field: category
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        choices:
+          - text: Chassis
+            value: chassis
+          - text: Reactors
+            value: reactors
+          - text: Engines
+            value: engines
+          - text: Crew Compartments
+            value: crew
+          - text: Driving Compartments
+            value: driving
+          - text: Cargo
+            value: cargo
+          - text: Turret Decks & Defenses
+            value: turrets
+          - text: Crafting Stations
+            value: stations
+          - text: Structure & Decks
+            value: structure
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: category
+      table: TramplerPart
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerPart
+    field: dimensions
+    type: text
+    meta:
+      collection: TramplerPart
+      conditions: null
+      display: null
+      display_options: null
+      field: dimensions
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: 1x1
+            value: 1x1
+          - text: 1x1+
+            value: 1x1+
+          - text: 1x2
+            value: 1x2
+          - text: 1x3
+            value: 1x3
+          - text: 2x1
+            value: 2x1
+          - text: 2x2
+            value: 2x2
+          - text: 2x4
+            value: 2x4
+          - text: 3x1
+            value: 3x1
+          - text: 3x3
+            value: 3x3
+          - text: 3x4
+            value: 3x4
+          - text: 3x5
+            value: 3x5
+          - text: 4x3
+            value: 4x3
+          - text: 4x4
+            value: 4x4
+          - text: 4x6
+            value: 4x6
+          - text: 5x3
+            value: 5x3
+          - text: 5x5
+            value: 5x5
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: dimensions
+      table: TramplerPart
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerPart
+    field: researchNode
+    type: text
+    meta:
+      collection: TramplerPart
+      conditions: null
+      display: null
+      display_options: null
+      field: researchNode
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: I(a)
+            value: I(a)
+          - text: I(b)
+            value: I(b)
+          - text: I(c)
+            value: I(c)
+          - text: II(a)
+            value: II(a)
+          - text: II(b)
+            value: II(b)
+          - text: II(c)
+            value: II(c)
+          - text: III(a)
+            value: III(a)
+          - text: III(b)
+            value: III(b)
+          - text: III(c)
+            value: III(c)
+          - text: IV(a)
+            value: IV(a)
+          - text: IV(b)
+            value: IV(b)
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: researchNode
+      table: TramplerPart
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerPart
+    field: researchTier
+    type: integer
+    meta:
+      collection: TramplerPart
+      conditions: null
+      display: null
+      display_options: null
+      field: researchTier
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: '1'
+            value: 1
+          - text: '2'
+            value: 2
+          - text: '3'
+            value: 3
+          - text: '4'
+            value: 4
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: researchTier
+      table: TramplerPart
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
   - collection: TramplerPartCost
     field: itemId
     type: text

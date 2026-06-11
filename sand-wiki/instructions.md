@@ -85,10 +85,14 @@ Imports copy what exists and link back via `sourceUrl`.
   (`npm run directus:snapshot` / `directus:apply`). After changing the data model in the Studio,
   re-snapshot and commit the diff. Directus names M2O fields after the FK column (`itemId`,
   `recipeId`, …), not Prisma's relation names.
-- Field interfaces (in the snapshot): `rarity` + `category` are closed dropdowns (game tiers /
-  taxonomy slugs); `statType` + `ammoName` are dropdowns with "other" allowed (the wiki can
-  introduce new values — when it does, add them to the choice list); all FK fields are relational
-  selects displaying names instead of raw ids.
+- Field interfaces (in the snapshot): taxonomy-owned sets are **closed dropdowns**
+  (`Item.rarity`/`Item.category`, `EnvEntity.category`, `TramplerPart.category`); wiki-sourced
+  sets are **dropdowns with "other" allowed** (`Item.statType`/`ammoName`/`workbenchTier`,
+  `LootTier.tier`/`col1–3Label`, `Recipe.workbench`, `TramplerPart.dimensions`/`researchNode`/
+  `researchTier`) — when the wiki introduces a new value, add it to the choice list; all FK
+  fields are relational selects displaying names instead of raw ids. No DB-level enums on
+  purpose: Directus wouldn't auto-render them, value sets move (taxonomy + wiki), and the seed
+  already validates the closed sets.
 - Edits made in Directus survive `npm run db:seed` (upsert-by-slug), EXCEPT fields the scraper has
   a value for — those are overwritten. Scraper-owned child rows (recipe lines, loot tiers/entries,
   cost rows) are always recreated. **Rows created in Directus are deleted on re-seed** (the prune
@@ -104,9 +108,12 @@ Imports copy what exists and link back via `sourceUrl`.
 - Gotchas: `docker compose exec` right after `directus:up` can race a cold container (~10s boot);
   `npm run directus:down` stops every service in the compose file; admin email must not use a
   `.local` TLD (Directus validator rejects it).
-- **Migrations need `DIRECT_DATABASE_URL`** (the Neon URL without `-pooler`): prisma migrate's
-  advisory lock sticks to pgbouncer backends that Directus reuses, hanging deploys on the pooler
-  URL — the schema's `directUrl` routes the CLI around the pooler (app + Directus stay pooled).
+- **`DIRECT_DATABASE_URL` (the Neon URL without `-pooler`) is required twice**: prisma migrate's
+  advisory lock sticks to pgbouncer backends (hanging deploys on the pooler URL) — the schema's
+  `directUrl` routes the CLI around the pooler; and **Directus itself must use it** — its
+  `DB_SEARCH_PATH` relies on `SET search_path`, which Neon's transaction-mode pooler does not
+  preserve across queries (symptom: intermittent 500s / `42P01 relation does not exist` on
+  login). Only the Next.js app stays on the pooled `DATABASE_URL`.
 
 ## UI conventions
 
