@@ -172,3 +172,33 @@ model TramplerPartCost {
   @@unique([partId, sortOrder])
   @@index([itemId])
 }
+
+model SteamUser {
+  steamId     String   @id
+  personaName String?
+  avatar      String?
+  createdAt   DateTime @default(now())
+  lastSeenAt  DateTime @default(now())
+  proposals   Proposal[]
+}
+
+model Proposal {
+  id           String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  kind         String // "edit" | "new_page"
+  status       String    @default("pending") // "pending" | "applied" | "rejected"
+  targetType   String? // "item" | "envEntity" | "tramplerPart"
+  targetSlug   String?
+  changes      Json? // { field: { old, new } }
+  note         String?
+  proposedName String?
+  proposerId   String
+  proposer     SteamUser @relation(fields: [proposerId], references: [steamId])
+  createdAt    DateTime  @default(now())
+  reviewedById String?
+  reviewedAt   DateTime?
+  reviewNote   String?
+
+  @@index([status])
+  @@index([targetType, targetSlug])
+  @@index([proposerId])
+}
