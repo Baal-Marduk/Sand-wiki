@@ -8,7 +8,8 @@ import { WipBadge } from "@/components/WipBadge";
 // Explicit full-contrast text (not DaisyUI's dimmed .menu links) so the nav
 // meets WCAG AA contrast in both the dark and light themes.
 const linkCls = "nav-link text-base-content px-2 py-1 rounded";
-const dropdownItemCls = "flex items-center gap-2 px-2 py-1 rounded text-base-content hover:bg-base-300";
+const dropdownItemBaseCls = "flex items-center gap-2 px-2 py-1 rounded";
+const dropdownItemCls = `${dropdownItemBaseCls} text-base-content hover:bg-base-300`;
 const disabledCls = "text-base-content/40 cursor-not-allowed";
 
 export function MainNav() {
@@ -34,7 +35,7 @@ export function MainNav() {
                         {section.categories.map((c) => (
                           <li key={c.slug}>
                             {c.wip ? (
-                              <span className={`${dropdownItemCls} ${disabledCls}`} aria-disabled="true">
+                              <span className={`${dropdownItemBaseCls} ${disabledCls}`} aria-disabled="true">
                                 <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
                                 {c.label}
                                 <span className="ml-auto"><WipBadge /></span>
