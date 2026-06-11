@@ -1,0 +1,19 @@
+services:
+  directus:
+    image: directus/directus:11
+    restart: unless-stopped
+    ports:
+      - "8055:8055"
+    volumes:
+      - ./directus/snapshots:/directus/snapshots
+    environment:
+      SECRET: ${DIRECTUS_SECRET}
+      ADMIN_EMAIL: ${DIRECTUS_ADMIN_EMAIL}
+      ADMIN_PASSWORD: ${DIRECTUS_ADMIN_PASSWORD}
+      DB_CLIENT: pg
+      DB_CONNECTION_STRING: ${DATABASE_URL}
+      # System tables land in the "directus" schema; content stays in "public".
+      # This keeps prisma migrate's drift detection blind to Directus.
+      DB_SEARCH_PATH: directus,public
+      PUBLIC_URL: http://localhost:8055
+      WEBSOCKETS_ENABLED: "false"

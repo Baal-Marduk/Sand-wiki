@@ -46,3 +46,6 @@ next-env.d.ts
 
 # superpowers brainstorm
 /.superpowers/
+
+# machine-local docker compose overrides
+docker-compose.override.yml
