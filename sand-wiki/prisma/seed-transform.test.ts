@@ -10,14 +10,14 @@ describe("flattenStats", () => {
       }),
     ).toEqual({
       statType: "Revolver", statValue: 25, damage: 15, playerDamage: 1, tramplerDamage: 2,
-      splashDamage: 3, magazine: 6, ammoSlug: "pistol-ammo", ammoName: "8x21 mm Ammo",
+      splashDamage: 3, magazine: 6, ammoName: "8x21 mm Ammo",
     });
   });
 
   it("returns all-null when there are no stats", () => {
     expect(flattenStats(undefined)).toEqual({
       statType: null, statValue: null, damage: null, playerDamage: null, tramplerDamage: null,
-      splashDamage: null, magazine: null, ammoSlug: null, ammoName: null,
+      splashDamage: null, magazine: null, ammoName: null,
     });
   });
 });
@@ -30,7 +30,7 @@ describe("lootToTiers", () => {
         columns: ["Lesser", "Normal", "Greater"],
         entries: [
           { slug: "canned-food", name: "Canned Food", values: ["4-5", "5-6"] }, // short row (real data)
-          { name: "Crowns", values: [] },                                       // empty row (real data)
+          { name: "Crowns", values: [] },                                       // synthetic: slug is optional in the type; real loot entries all have slugs
         ],
       },
       { tier: "Rare", columns: ["Count", "Chance"], entries: [] },
@@ -63,9 +63,12 @@ describe("lootToTiers", () => {
     expect(lootToTiers({})).toEqual([]);
   });
 
-  it("throws on more than 3 columns", () => {
+  it("throws when columns are outside 1-3", () => {
     expect(() =>
       lootToTiers({ tiers: [{ tier: "X", columns: ["a", "b", "c", "d"], entries: [] }] }),
+    ).toThrow(/expected 1-3/);
+    expect(() =>
+      lootToTiers({ tiers: [{ tier: "X", columns: [], entries: [] }] }),
     ).toThrow(/expected 1-3/);
   });
 });

@@ -10,7 +10,7 @@ export interface RawStats {
 export interface FlatStats {
   statType: string | null; statValue: number | null; damage: number | null;
   playerDamage: number | null; tramplerDamage: number | null; splashDamage: number | null;
-  magazine: number | null; ammoSlug: string | null; ammoName: string | null;
+  magazine: number | null; ammoName: string | null;
 }
 
 export function flattenStats(stats: RawStats | null | undefined): FlatStats {
@@ -22,13 +22,15 @@ export function flattenStats(stats: RawStats | null | undefined): FlatStats {
     tramplerDamage: stats?.tDamage ?? null,
     splashDamage: stats?.sDamage ?? null,
     magazine: stats?.magazine ?? null,
-    ammoSlug: stats?.ammoSlug ?? null,
     ammoName: stats?.ammoName ?? null,
   };
 }
 
+export interface RawLootEntry { slug?: string; name: string; values: string[] }
+export interface RawLootTier { tier: string; columns: string[]; entries: RawLootEntry[] }
+
 export interface RawLoot {
-  tiers?: { tier: string; columns: string[]; entries: { slug?: string; name: string; values: string[] }[] }[];
+  tiers?: RawLootTier[];
 }
 
 export interface FlatLootEntry {
