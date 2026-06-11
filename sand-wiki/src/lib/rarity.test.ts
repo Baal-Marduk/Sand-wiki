@@ -4,7 +4,7 @@ import { rarityColor, rarityBgColor, rarityTier, isRarity, RARITIES, DEFAULT_RAR
 describe("rarity", () => {
   it("orders the known scale by tier", () => {
     expect(RARITIES.map((r) => r.name)).toEqual([
-      "Common", "Uncommon", "Noteworthy", "Rare", "Remarkable", "Experimental",
+      "Common", "Uncommon", "Rare", "Noteworthy", "Remarkable", "Experimental",
     ]);
     expect(RARITIES.map((r) => r.tier)).toEqual([1, 2, 3, 4, 5, 6]);
   });
@@ -18,7 +18,8 @@ describe("rarity", () => {
   });
 
   it("maps name to tier; unknown/absent -> 0", () => {
-    expect(rarityTier("Rare")).toBe(4);
+    expect(rarityTier("Rare")).toBe(3);
+    expect(rarityTier("Noteworthy")).toBe(4);
     expect(rarityTier("REMARKABLE")).toBe(5);
     expect(rarityTier(undefined)).toBe(0);
     expect(rarityTier("nope")).toBe(0);

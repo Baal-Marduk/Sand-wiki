@@ -40,8 +40,9 @@ Accessibility is a hard gate — axe must pass in both themes (`npm run test:e2e
     weapon types with a `\d+\s?mm` name → **artillery**; per-slug overrides in `CATEGORY_OVERRIDES`
     (e.g. untyped M1866 → weapons, MedKit → medical); `ENERGY` → tools.
 - **Environment categories**: loot-containers, landmarks, game-modes, npcs (npcs has no source yet).
-- **Rarity** (`src/lib/rarity.ts`): Common, Uncommon, Noteworthy, Rare, Remarkable, Experimental
-  (tiers 1–6) → fixed game-palette colors. Rarity tints the item icon background + drives a filter.
+- **Rarity** (`src/lib/rarity.ts`): Common, Uncommon, Rare, Noteworthy, Remarkable, Experimental
+  (tiers 1–6) → fixed game-palette colors (Rare=blue tier 3, Noteworthy=purple tier 4, matching
+  the in-game palette). Rarity tints the item icon background + drives a filter.
 - **Category icons** (`CategoryIcon.tsx`, react-icons `gi`): monochrome glyph per category — these
   replaced the old colored dots. `CATEGORY_COLORS`/`categoryColor` still exist but are no longer
   used in the UI.

@@ -287,10 +287,10 @@ fields:
             value: Common
           - text: Uncommon
             value: Uncommon
-          - text: Noteworthy
-            value: Noteworthy
           - text: Rare
             value: Rare
+          - text: Noteworthy
+            value: Noteworthy
           - text: Remarkable
             value: Remarkable
           - text: Experimental

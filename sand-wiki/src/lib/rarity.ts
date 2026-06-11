@@ -6,8 +6,8 @@ export interface Rarity { name: string; tier: number; color: string }
 export const RARITIES: Rarity[] = [
   { name: "Common", tier: 1, color: "#ADADAD" },
   { name: "Uncommon", tier: 2, color: "#889F83" },
-  { name: "Noteworthy", tier: 3, color: "#9C86B7" },
-  { name: "Rare", tier: 4, color: "#899FB7" },
+  { name: "Rare", tier: 3, color: "#899FB7" },
+  { name: "Noteworthy", tier: 4, color: "#9C86B7" },
   { name: "Remarkable", tier: 5, color: "#E29554" },
   { name: "Experimental", tier: 6, color: "#D16469" },
 ];
