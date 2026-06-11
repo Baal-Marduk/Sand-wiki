@@ -54,9 +54,9 @@ model LootEntry {
   itemId     String?  // FK to Item; null when no slug match
   item       Item?    @relation(fields: [itemId], references: [id])
   name       String   // display fallback
-  value1     String   // values stay strings, e.g. "10-20"
-  value2     String?
-  value3     String?
+  value1     String?  // values stay strings, e.g. "10-20"; nullable — 39/69 real
+  value2     String?  // entries have fewer values than their tier has columns
+  value3     String?  // (some have none at all)
   sortOrder  Int
 }
 ```
@@ -121,7 +121,8 @@ model TramplerPartCost {
 
 - Pure unit tests for the new seed transform functions (stats→columns,
   loot→tier/entry rows, cost→rows).
-- Update `prisma/loot-resolution.test.ts` to the new shape.
+- `prisma/loot-resolution.test.ts` operates on the JSON snapshots (unchanged pipeline) —
+  verify it still passes; no rewrite needed.
 - Existing e2e suite must pass (item stats, loot tabs, trampler costs, axe in both
   themes).
 - Manual verification: re-seed twice, confirm row IDs stable; edit a field in
