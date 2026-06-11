@@ -1,21 +1,18 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTramplerPartBySlug, getItemIconMap } from "@/lib/queries";
+import { getTramplerPartBySlug } from "@/lib/queries";
 import { ItemIcon } from "@/components/ItemIcon";
 import { ItemIconLink } from "@/components/ItemIconLink";
 import { CategoryTag } from "@/components/CategoryTag";
 
 type Params = Promise<{ slug: string }>;
 
-interface CostEntry { slug?: string; name: string; amount: number }
-
 export default async function TramplerPartPage({ params }: { params: Params }) {
   const { slug } = await params;
   const part = await getTramplerPartBySlug(slug);
   if (!part) notFound();
 
-  const cost = (part.cost as CostEntry[] | null) ?? [];
-  const icons = await getItemIconMap(cost.map((c) => c.slug).filter(Boolean) as string[]);
+  const cost = part.costEntries;
 
   const stats: { label: string; value: React.ReactNode }[] = [];
   if (part.dimensions) stats.push({ label: "Dimensions", value: part.dimensions });
@@ -69,7 +66,7 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
           <h2 className="font-display text-lg font-semibold mb-2">Build Cost</h2>
           <div className="flex flex-wrap gap-4">
             {cost.map((c) => (
-              <ItemIconLink key={c.name} slug={c.slug} name={c.name} icon={c.slug ? icons[c.slug] : null} amount={c.amount} />
+              <ItemIconLink key={c.name} slug={c.item?.slug ?? undefined} name={c.name} icon={c.item?.icon ?? null} amount={c.amount} />
             ))}
           </div>
         </section>

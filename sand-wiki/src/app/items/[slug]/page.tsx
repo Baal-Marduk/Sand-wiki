@@ -6,7 +6,7 @@ import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
 import { CategoryTag } from "@/components/CategoryTag";
 import { ItemIcon } from "@/components/ItemIcon";
-import { StatBox, type ItemStats } from "@/components/StatBox";
+import { StatBox } from "@/components/StatBox";
 import { rarityColor } from "@/lib/rarity";
 import { ItemTabs, type Tab } from "@/components/ItemTabs";
 import { ItemDetailsPanel } from "@/components/ItemDetailsPanel";
@@ -27,9 +27,8 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const drops = await getCratesContaining(item.slug);
   // Caliber family drives both directions: a weapon/turret lists every ammo of its
   // caliber; an ammo lists every weapon/turret of its caliber.
-  const stats = item.stats as unknown as ItemStats | null;
   const isAmmo = item.category === "ammo";
-  const caliber = isAmmo ? ammoCaliber(item.name) : weaponCaliber(item.slug, stats?.ammoName);
+  const caliber = isAmmo ? ammoCaliber(item.name) : weaponCaliber(item.slug, item.ammoName);
   const ammo = !isAmmo && caliber ? await getAmmoByCaliber(caliber) : [];
   const ammoUsers = isAmmo && caliber ? await getWeaponsByCaliber(caliber) : [];
 
@@ -58,7 +57,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
       isResource: item.isResource,
       storageStack: item.storageStack,
       workbenchTier: item.workbenchTier,
-      value: stats?.value ?? null,
+      value: item.statValue,
     },
     trades,
   );
@@ -79,7 +78,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
             <CategoryTag slug={item.category} />
           </div>
           {item.description && <p className="text-base-content/80 max-w-prose">{item.description}</p>}
-          <StatBox stats={stats} typeLabel={isAmmo ? caliberLabel(caliber) ?? undefined : undefined} />
+          <StatBox item={item} typeLabel={isAmmo ? caliberLabel(caliber) ?? undefined : undefined} />
         </div>
       </header>
 

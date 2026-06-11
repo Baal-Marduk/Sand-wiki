@@ -65,14 +65,20 @@ export async function listEnvEntities(category?: string) {
 }
 
 export async function getEnvEntityBySlug(slug: string) {
-  return prisma.envEntity.findUnique({ where: { slug } });
-}
-
-/** slug -> icon path for the given item slugs (for rendering loot item sprites). */
-export async function getItemIconMap(slugs: string[]): Promise<Record<string, string | null>> {
-  if (slugs.length === 0) return {};
-  const rows = await prisma.item.findMany({ where: { slug: { in: slugs } }, select: { slug: true, icon: true } });
-  return Object.fromEntries(rows.map((r) => [r.slug, r.icon]));
+  return prisma.envEntity.findUnique({
+    where: { slug },
+    include: {
+      lootTiers: {
+        orderBy: { sortOrder: "asc" },
+        include: {
+          entries: {
+            orderBy: { sortOrder: "asc" },
+            include: { item: { select: { slug: true, icon: true } } },
+          },
+        },
+      },
+    },
+  });
 }
 
 /** Count of env entities per category — for the Environment landing. */
@@ -90,7 +96,15 @@ export async function listTramplerParts(category?: string) {
 }
 
 export async function getTramplerPartBySlug(slug: string) {
-  return prisma.tramplerPart.findUnique({ where: { slug } });
+  return prisma.tramplerPart.findUnique({
+    where: { slug },
+    include: {
+      costEntries: {
+        orderBy: { sortOrder: "asc" },
+        include: { item: { select: { slug: true, icon: true } } },
+      },
+    },
+  });
 }
 
 /** Count of trampler parts per category — for the Tramplers landing. */
@@ -101,26 +115,19 @@ export async function tramplerCategoryCounts(): Promise<Record<string, number>> 
 
 export interface CrateDrop { crateSlug: string; crateName: string; tier: string; columns: string[]; values: string[] }
 
-interface LootShape { tiers?: { tier: string; columns: string[]; entries: { slug?: string; values: string[] }[] }[] }
-
 /** Crates (with tier + amounts) whose loot tables contain the given item slug. */
 export async function getCratesContaining(itemSlug: string): Promise<CrateDrop[]> {
-  const crates = await prisma.envEntity.findMany({
-    where: { category: "loot-containers" },
-    select: { slug: true, name: true, loot: true },
+  const rows = await prisma.lootEntry.findMany({
+    where: { item: { slug: itemSlug }, lootTier: { envEntity: { category: "loot-containers" } } },
+    include: { lootTier: { include: { envEntity: { select: { slug: true, name: true } } } } },
+    orderBy: [{ lootTier: { sortOrder: "asc" } }, { sortOrder: "asc" }],
   });
-  const drops: CrateDrop[] = [];
-  for (const c of crates) {
-    const tiers = (c.loot as LootShape | null)?.tiers ?? [];
-    for (const t of tiers) {
-      for (const e of t.entries) {
-        if (e.slug === itemSlug) {
-          drops.push({ crateSlug: c.slug, crateName: c.name, tier: t.tier, columns: t.columns, values: e.values });
-        }
-      }
-    }
-  }
-  return drops;
+  return rows.map((r) => {
+    const t = r.lootTier;
+    const columns = [t.col1Label, t.col2Label, t.col3Label].filter((c): c is string => c !== null);
+    const values = [r.value1, r.value2, r.value3].slice(0, columns.length).map((v) => v ?? "");
+    return { crateSlug: t.envEntity.slug, crateName: t.envEntity.name, tier: t.tier, columns, values };
+  });
 }
 
 export async function getItemBySlug(slug: string) {

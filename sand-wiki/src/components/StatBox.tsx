@@ -1,28 +1,23 @@
-/** Shape of the JSON stats blob stored on Item.stats (from the wiki enrichment). */
-export interface ItemStats {
-  type?: string;
-  damage?: number;   // weapons
-  pDamage?: number;  // ammo: damage to players
-  tDamage?: number;  // ammo: damage to tramplers
-  sDamage?: number;  // ammo: splash damage
-  magazine?: number;
-  value?: number;
-  ammoSlug?: string;
-  ammoName?: string;
+/** The flat wiki-stat columns on Item that StatBox renders. */
+export interface ItemStatFields {
+  statType: string | null;
+  damage: number | null;
+  playerDamage: number | null;
+  tramplerDamage: number | null;
+  splashDamage: number | null;
+  magazine: number | null;
 }
 
 /** Prominent grid of wiki-sourced gameplay stats, shown under the detail header.
  *  Renders nothing when there are no displayable stats. */
-export function StatBox({ stats, typeLabel }: { stats: ItemStats | null | undefined; typeLabel?: string }) {
-  if (!stats) return null;
-
+export function StatBox({ item, typeLabel }: { item: ItemStatFields; typeLabel?: string }) {
   const cells: { label: string; node: React.ReactNode }[] = [];
-  if (stats.damage != null) cells.push({ label: "Damage", node: stats.damage });
-  if (stats.pDamage != null) cells.push({ label: "Damage (Player)", node: stats.pDamage });
-  if (stats.tDamage != null) cells.push({ label: "Damage (Trampler)", node: stats.tDamage });
-  if (stats.sDamage != null) cells.push({ label: "Splash Damage", node: stats.sDamage });
-  if (stats.magazine != null) cells.push({ label: "Magazine", node: stats.magazine });
-  const typeValue = typeLabel ?? stats.type;
+  if (item.damage != null) cells.push({ label: "Damage", node: item.damage });
+  if (item.playerDamage != null) cells.push({ label: "Damage (Player)", node: item.playerDamage });
+  if (item.tramplerDamage != null) cells.push({ label: "Damage (Trampler)", node: item.tramplerDamage });
+  if (item.splashDamage != null) cells.push({ label: "Splash Damage", node: item.splashDamage });
+  if (item.magazine != null) cells.push({ label: "Magazine", node: item.magazine });
+  const typeValue = typeLabel ?? item.statType;
   if (typeValue) cells.push({ label: "Type", node: typeValue });
   if (cells.length === 0) return null;
 

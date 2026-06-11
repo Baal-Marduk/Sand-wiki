@@ -1,25 +1,24 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getEnvEntityBySlug, getItemIconMap } from "@/lib/queries";
+import { getEnvEntityBySlug } from "@/lib/queries";
 import { ItemTabs, type Tab } from "@/components/ItemTabs";
-import { LootTable, type LootEntry } from "@/components/LootTable";
+import { LootTable } from "@/components/LootTable";
 
 type Params = Promise<{ slug: string }>;
-
-interface LootShape { tiers?: { tier: string; columns?: string[]; entries: LootEntry[] }[] }
 
 export default async function EnvEntityPage({ params }: { params: Params }) {
   const { slug } = await params;
   const entity = await getEnvEntityBySlug(slug);
   if (!entity) notFound();
 
-  const tiers = (entity.loot as LootShape | null)?.tiers ?? [];
-  const lootSlugs = [...new Set(tiers.flatMap((t) => t.entries.map((e) => e.slug).filter(Boolean)))] as string[];
-  const icons = await getItemIconMap(lootSlugs);
-  const tabs: Tab[] = tiers.map((t) => ({
+  const tabs: Tab[] = entity.lootTiers.map((t) => ({
     id: t.tier.toLowerCase().replace(/\s+/g, "-"),
     label: t.tier,
-    content: <LootTable entries={t.entries} icons={icons} />,
+    content: (
+      <LootTable
+        entries={t.entries.map((e) => ({ slug: e.item?.slug ?? null, name: e.name, icon: e.item?.icon ?? null }))}
+      />
+    ),
   }));
 
   return (
