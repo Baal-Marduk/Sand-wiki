@@ -15,7 +15,8 @@
     "directus:up": "docker compose up -d directus",
     "directus:down": "docker compose down",
     "directus:snapshot": "docker compose exec directus npx directus schema snapshot --yes ./snapshots/snapshot.yaml",
-    "directus:apply": "docker compose exec directus npx directus schema apply --yes ./snapshots/snapshot.yaml"
+    "directus:apply": "docker compose exec directus npx directus schema apply --yes ./snapshots/snapshot.yaml",
+    "directus:moderator": "node prisma/setup-directus-moderator.mjs"
   },
   "dependencies": {
     "@prisma/client": "^6.19.3",
