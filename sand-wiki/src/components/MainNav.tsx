@@ -1,13 +1,15 @@
 import Link from "next/link";
-import { SECTIONS } from "@/lib/taxonomy";
+import { SECTIONS, isWipSection } from "@/lib/taxonomy";
 import { ThemeToggle } from "@/components/ThemeToggle";
 import { SearchBox } from "@/components/SearchBox";
 import { CategoryIcon } from "@/components/CategoryIcon";
+import { WipBadge } from "@/components/WipBadge";
 
 // Explicit full-contrast text (not DaisyUI's dimmed .menu links) so the nav
 // meets WCAG AA contrast in both the dark and light themes.
 const linkCls = "nav-link text-base-content px-2 py-1 rounded";
 const dropdownItemCls = "flex items-center gap-2 px-2 py-1 rounded text-base-content hover:bg-base-300";
+const disabledCls = "text-base-content/40 cursor-not-allowed";
 
 export function MainNav() {
   return (
@@ -31,15 +33,32 @@ export function MainNav() {
                       <ul className="space-y-1">
                         {section.categories.map((c) => (
                           <li key={c.slug}>
-                            <Link href={`/${section.slug}?category=${c.slug}`} className={dropdownItemCls}>
-                              <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
-                              {c.label}
-                            </Link>
+                            {c.wip ? (
+                              <span className={`${dropdownItemCls} ${disabledCls}`} aria-disabled="true">
+                                <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
+                                {c.label}
+                                <span className="ml-auto"><WipBadge /></span>
+                              </span>
+                            ) : (
+                              <Link href={`/${section.slug}?category=${c.slug}`} className={dropdownItemCls}>
+                                <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
+                                {c.label}
+                              </Link>
+                            )}
                           </li>
                         ))}
                       </ul>
                     </li>
                   </ul>
+                </li>
+              );
+            }
+            if (isWipSection(section)) {
+              return (
+                <li key={section.slug}>
+                  <span className={`${linkCls} ${disabledCls} inline-flex items-center gap-1`} aria-disabled="true">
+                    {section.label} <WipBadge />
+                  </span>
                 </li>
               );
             }
