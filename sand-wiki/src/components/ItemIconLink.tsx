@@ -4,16 +4,16 @@ import { ItemIcon } from "@/components/ItemIcon";
 /** A single item shown as an icon with a hover/focus tooltip of its name, linked to the item
  *  page when a slug is known. Optional ×amount below it (recipes). Shared by recipes + loot. */
 export function ItemIconLink({
-  slug, name, icon, amount,
-}: { slug?: string; name: string; icon?: string | null; amount?: number }) {
+  slug, name, icon, amount, rarity,
+}: { slug?: string; name: string; icon?: string | null; amount?: number; rarity?: string | null }) {
   return (
     <div className="group relative flex flex-col items-center gap-0.5">
       {slug ? (
         <Link href={`/items/${slug}`} aria-label={name} className="block">
-          <ItemIcon name={name} icon={icon} size="recipe" />
+          <ItemIcon name={name} icon={icon} size="recipe" rarity={rarity} />
         </Link>
       ) : (
-        <ItemIcon name={name} icon={icon} size="recipe" />
+        <ItemIcon name={name} icon={icon} size="recipe" rarity={rarity} />
       )}
       {amount != null && <span className="text-xs text-base-content/60">×{amount}</span>}
       <span
