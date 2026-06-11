@@ -6,7 +6,9 @@ export interface Change {
 }
 export type Diff = Record<string, Change>;
 
-function norm(v: unknown): string | number | null {
+/** Normalize a stored/submitted value for comparison: undefined and "" → null.
+ *  Shared with detectStale so the diff and the stale check agree on equality. */
+export function norm(v: unknown): string | number | null {
   return v === undefined || v === "" ? null : (v as string | number | null);
 }
 

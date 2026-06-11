@@ -1,7 +1,7 @@
 import { Prisma } from "@prisma/client";
 import { prisma } from "./db";
 import { fieldDef } from "./proposal-schema";
-import type { Diff } from "./proposal-diff";
+import { norm, type Diff } from "./proposal-diff";
 
 /** Build a Prisma update object containing only whitelisted fields' new values. */
 export function applyableUpdate(type: string, diff: Diff): Record<string, string | number | null> {
@@ -16,8 +16,9 @@ export function applyableUpdate(type: string, diff: Diff): Record<string, string
 export function detectStale(diff: Diff, current: Record<string, unknown>): string[] {
   const stale: string[] = [];
   for (const [field, change] of Object.entries(diff)) {
-    const cur = current[field] ?? null;
-    if (cur !== change.old) stale.push(field);
+    // Normalize the same way computeDiff did when it recorded `old`, so an
+    // empty-string column doesn't read as a spurious change against a null old.
+    if (norm(current[field]) !== change.old) stale.push(field);
   }
   return stale;
 }

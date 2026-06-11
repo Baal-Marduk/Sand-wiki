@@ -28,4 +28,9 @@ describe("detectStale", () => {
     const current = { rarity: "Common", statValue: 10 };
     expect(detectStale(diff, current)).toEqual([]);
   });
+
+  it("treats a current empty string as equal to a null old (no false stale flag)", () => {
+    const d: Diff = { ammoName: { old: null, new: "7.62" } };
+    expect(detectStale(d, { ammoName: "" })).toEqual([]);
+  });
 });
