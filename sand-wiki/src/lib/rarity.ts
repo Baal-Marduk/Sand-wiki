@@ -29,7 +29,7 @@ export function rarityTier(name?: string | null): number {
 
 /** Array sort comparator: rarity tier ascending (Common→Experimental), unknown/absent
  *  rarity last, then name A→Z. For ordering item lists by rarity. */
-export function byRarityThenName<A extends { rarity?: string | null; name: string }, B extends { rarity?: string | null; name: string }>(a: A, b: B): number {
+export function byRarityThenName<T extends { rarity?: string | null; name: string }>(a: T, b: T): number {
   const ta = rarityTier(a.rarity) || Infinity; // unknown (tier 0) sorts last
   const tb = rarityTier(b.rarity) || Infinity;
   if (ta !== tb) return ta - tb;

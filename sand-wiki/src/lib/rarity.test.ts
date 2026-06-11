@@ -56,10 +56,11 @@ describe("rarity", () => {
   });
 
   it("byRarityThenName orders by rarity tier asc, unknown last, then by name", () => {
-    const rare = { rarity: "Rare", name: "Bolt" };
-    const rareEarly = { rarity: "Rare", name: "Axle" };
-    const common = { rarity: "Common", name: "Zinc" };
-    const unknown = { rarity: null, name: "Mystery" };
+    type Row = { rarity: string | null; name: string };
+    const rare: Row = { rarity: "Rare", name: "Bolt" };
+    const rareEarly: Row = { rarity: "Rare", name: "Axle" };
+    const common: Row = { rarity: "Common", name: "Zinc" };
+    const unknown: Row = { rarity: null, name: "Mystery" };
     const sorted = [rare, unknown, common, rareEarly].sort(byRarityThenName);
     expect(sorted.map((x) => x.name)).toEqual(["Zinc", "Axle", "Bolt", "Mystery"]);
     expect(byRarityThenName(common, rare)).toBeLessThan(0);
