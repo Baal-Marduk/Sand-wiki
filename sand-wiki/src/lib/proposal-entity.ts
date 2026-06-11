@@ -11,14 +11,15 @@ export interface EntityFields {
 export async function getEntityFields(type: string, slug: string): Promise<EntityFields | null> {
   if (!isEditableTarget(type)) return null;
   const fields = editableFields(type).map((f) => f.field);
-  const select = Object.fromEntries([...fields, "name"].map((f) => [f, true]));
 
+  // Fetch the full row (single-row PK lookup) and pick whitelisted fields below;
+  // avoids a dynamically-built `select` that can't be typed against Prisma.
   const row =
     type === "item"
-      ? await prisma.item.findUnique({ where: { slug }, select: select as any })
+      ? await prisma.item.findUnique({ where: { slug } })
       : type === "envEntity"
-        ? await prisma.envEntity.findUnique({ where: { slug }, select: select as any })
-        : await prisma.tramplerPart.findUnique({ where: { slug }, select: select as any });
+        ? await prisma.envEntity.findUnique({ where: { slug } })
+        : await prisma.tramplerPart.findUnique({ where: { slug } });
 
   if (!row) return null;
   const r = row as unknown as Record<string, string | number | null>;
