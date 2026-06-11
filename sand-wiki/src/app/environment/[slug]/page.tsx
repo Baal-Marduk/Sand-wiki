@@ -16,7 +16,7 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
     label: t.tier,
     content: (
       <LootTable
-        entries={t.entries.map((e) => ({ slug: e.item?.slug ?? null, name: e.name, icon: e.item?.icon ?? null }))}
+        entries={t.entries.map((e) => ({ slug: e.item?.slug ?? null, name: e.name, icon: e.item?.icon ?? null, rarity: e.item?.rarity ?? null }))}
       />
     ),
   }));

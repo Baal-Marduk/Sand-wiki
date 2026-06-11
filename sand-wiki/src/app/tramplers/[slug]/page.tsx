@@ -66,7 +66,7 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
           <h2 className="font-display text-lg font-semibold mb-2">Build Cost</h2>
           <div className="flex flex-wrap gap-4">
             {cost.map((c) => (
-              <ItemIconLink key={c.name} slug={c.item?.slug ?? undefined} name={c.name} icon={c.item?.icon ?? null} amount={c.amount} />
+              <ItemIconLink key={c.name} slug={c.item?.slug ?? undefined} name={c.name} icon={c.item?.icon ?? null} amount={c.amount} rarity={c.item?.rarity ?? null} />
             ))}
           </div>
         </section>

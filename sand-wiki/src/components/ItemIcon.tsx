@@ -1,10 +1,13 @@
-import { rarityBgColor } from "@/lib/rarity";
+import { rarityGradient } from "@/lib/rarity";
 
-/** Item image. When `icon` is set, render the sprite; otherwise a placeholder glyph.
- *  This is the single change point for item imagery.
- *  Pass `decorative` when the item name is already shown as adjacent text, so screen
- *  readers don't announce the name twice. Pass `rarity` to tint the tile background with
- *  the item's rarity color (decorative — the rarity name is always shown as text elsewhere). */
+/** Neutral inventory slot for icons with no rarity (trampler parts, env entities). */
+const NEUTRAL_SLOT = "linear-gradient(135deg, #2A2E37 0%, #181B22 45%, #11131A 100%)";
+
+/** Item image on a rarity-tinted tile. When `icon` is set, render the sprite floated
+ *  inside the tile; otherwise a placeholder glyph. Single change point for item imagery.
+ *  Pass `decorative` when the name is already shown as adjacent text. Pass `rarity` to
+ *  paint the rarity gradient (decorative — the rarity name is shown as text elsewhere);
+ *  absent/unknown rarity falls back to the neutral slot. */
 export function ItemIcon({
   name,
   icon,
@@ -18,25 +21,28 @@ export function ItemIcon({
   decorative?: boolean;
   rarity?: string | null;
 }) {
-  const px = { sm: "size-5", recipe: "size-14", md: "size-12", card: "size-18", lg: "size-28" }[size];
-  const tint = rarityBgColor(rarity);
-  const bg = tint ? "" : "bg-base-300";
-  const style = tint ? { backgroundColor: tint } : undefined;
+  const px = { sm: "size-5", recipe: "size-14", md: "size-12", card: "size-18", lg: "size-54" }[size];
+  const gradient = rarityGradient(rarity);
+  const tile = `item-sprite ${px} rounded-box shrink-0 overflow-hidden inline-flex items-center justify-center`;
+  const style = { background: gradient ?? NEUTRAL_SLOT };
+
   if (icon) {
     return (
-      // eslint-disable-next-line @next/next/no-img-element
-      <img
-        src={icon}
-        alt={decorative ? "" : name}
-        style={style}
-        className={`item-sprite ${px} rounded-box ${bg} object-contain shrink-0`}
-      />
+      <span style={style} className={tile}>
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
+          src={icon}
+          alt={decorative ? "" : name}
+          aria-hidden={decorative || undefined}
+          className="size-[80%] object-contain [filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.45))]"
+        />
+      </span>
     );
   }
   return (
     <span
       style={style}
-      className={`item-sprite ${px} inline-flex items-center justify-center rounded-box ${bg} shrink-0 ${tint ? "text-base-100" : "text-base-content/40"}`}
+      className={`${tile} ${gradient ? "text-base-100" : "text-base-content/40"}`}
       {...(decorative ? { "aria-hidden": true } : { role: "img", "aria-label": name, title: name })}
     >
       <span aria-hidden="true">▦</span>
