@@ -1,6 +1,7 @@
 services:
   directus:
-    image: directus/directus:11
+    # Pinned to the exact version the committed schema snapshot was taken with.
+    image: directus/directus:11.17.4
     restart: unless-stopped
     ports:
       - "8055:8055"
