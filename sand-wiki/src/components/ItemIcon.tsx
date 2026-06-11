@@ -33,6 +33,7 @@ export function ItemIcon({
         <img
           src={icon}
           alt={decorative ? "" : name}
+          aria-hidden={decorative || undefined}
           className="size-[80%] object-contain [filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.45))]"
         />
       </span>
