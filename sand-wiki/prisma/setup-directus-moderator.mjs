@@ -24,7 +24,11 @@ const env = Object.fromEntries(
 );
 const DIRECTUS_URL = env.DIRECTUS_URL ?? "http://localhost:8055";
 
+if (!env.DIRECTUS_ADMIN_EMAIL || !env.DIRECTUS_ADMIN_PASSWORD)
+  throw new Error("DIRECTUS_ADMIN_EMAIL and DIRECTUS_ADMIN_PASSWORD must be set in .env");
+
 // Content collections moderators may read/create/update (no delete).
+// Keep in sync with the schema: add any new content collection here, then re-run.
 const CONTENT_COLLECTIONS = [
   "Item", "EnvEntity", "TramplerPart", "Recipe", "RecipeInput",
   "RecipeOutput", "LootTier", "LootEntry", "TramplerPartCost",
