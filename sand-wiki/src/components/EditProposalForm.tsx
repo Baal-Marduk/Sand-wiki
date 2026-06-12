@@ -1,18 +1,20 @@
 import Link from "next/link";
 import { submitEdit } from "@/app/contribute/actions";
-import type { EditableField } from "@/lib/proposal-schema";
-import { entityHref } from "@/lib/proposal-schema";
+import { entityHref, type EditableField } from "@/lib/proposal-schema";
+import { EnumField } from "@/components/EnumField";
 
 export function EditProposalForm({
   type,
   slug,
   fields,
   values,
+  options,
 }: {
   type: string;
   slug: string;
   fields: EditableField[];
   values: Record<string, string | number | null>;
+  options: Record<string, string[]>;
 }) {
   return (
     <form action={submitEdit} className="space-y-4 max-w-2xl">
@@ -21,7 +23,9 @@ export function EditProposalForm({
       {fields.map((f) => (
         <label key={f.field} className="block space-y-1">
           <span className="text-sm font-medium">{f.label}</span>
-          {f.type === "text" ? (
+          {f.type === "enum" ? (
+            <EnumField field={f.field} value={String(values[f.field] ?? "")} options={options[f.field] ?? []} />
+          ) : f.type === "text" ? (
             <textarea name={f.field} defaultValue={values[f.field] ?? ""} className="textarea textarea-bordered w-full" rows={3} />
           ) : (
             <input

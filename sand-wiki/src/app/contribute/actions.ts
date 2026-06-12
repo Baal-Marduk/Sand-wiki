@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
-import { editableFields, isEditableTarget, coerceValue, fieldDef, entityHref } from "@/lib/proposal-schema";
+import { editableFields, isEditableTarget, coerceValue, fieldDef, entityHref, baseType, resolveEnumSubmission } from "@/lib/proposal-schema";
 import { computeDiff } from "@/lib/proposal-diff";
 import { getEntityFields } from "@/lib/proposal-entity";
 
@@ -31,7 +31,11 @@ export async function submitEdit(formData: FormData) {
   const submitted: Record<string, string | number | null> = {};
   for (const f of editableFields(type)) {
     const def = fieldDef(type, f.field)!;
-    submitted[f.field] = coerceValue(def.type, String(formData.get(f.field) ?? ""));
+    let raw = String(formData.get(f.field) ?? "");
+    if (def.type === "enum") {
+      raw = resolveEnumSubmission(raw, String(formData.get(`${f.field}__custom`) ?? ""));
+    }
+    submitted[f.field] = coerceValue(baseType(def), raw);
   }
 
   const changes = computeDiff(current.values, submitted, editableFields(type));
