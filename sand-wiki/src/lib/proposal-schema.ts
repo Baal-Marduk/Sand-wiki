@@ -1,3 +1,6 @@
+import { KNOWN_RARITY_NAMES } from "./rarity";
+import { ITEM_CATEGORY_SLUGS, TRAMPLER_CATEGORY_SLUGS, ENV_CATEGORY_SLUGS, categoryLabel } from "./taxonomy";
+
 export type FieldType = "string" | "text" | "int" | "enum";
 
 export interface EditableField {
@@ -101,4 +104,27 @@ export function coerceFloat(raw: string): number | null {
 export function entityHref(type: string, slug: string): string {
   const seg = type === "envEntity" ? "environment" : type === "item" ? "items" : "tramplers";
   return `/${seg}/${slug}`;
+}
+
+export interface SelectOption {
+  value: string;
+  label: string;
+}
+
+/** Option set/order/labels for a correction-form enum select. rarity → tier order
+ *  (closed set); category → the entity type's canonical slugs in declaration order,
+ *  labelled; any other field → its distinct DB values (already sorted) as value=label. */
+export function enumOptionsFor(type: string, field: string, dbValues: string[]): SelectOption[] {
+  if (field === "rarity") {
+    return KNOWN_RARITY_NAMES.map((n) => ({ value: n, label: n }));
+  }
+  if (field === "category") {
+    const slugs =
+      type === "item" ? ITEM_CATEGORY_SLUGS
+      : type === "tramplerPart" ? TRAMPLER_CATEGORY_SLUGS
+      : type === "envEntity" ? ENV_CATEGORY_SLUGS
+      : [];
+    return slugs.map((slug) => ({ value: slug, label: categoryLabel(slug) }));
+  }
+  return dbValues.map((v) => ({ value: v, label: v }));
 }
