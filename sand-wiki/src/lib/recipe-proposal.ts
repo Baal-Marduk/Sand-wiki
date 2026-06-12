@@ -50,14 +50,15 @@ export interface ParsedLines {
 }
 
 /** Pair index-aligned slug/amount arrays into validated lines. Blank rows (no
- *  slug) are dropped. Returns an error if a kept row has an unknown slug or a
- *  non-positive / non-integer amount. */
+ *  slug) are dropped. Returns an error if a kept row has an unknown slug, a
+ *  non-positive / non-integer amount, or a slug that appears more than once. */
 export function parseRecipeLines(
   slugs: string[],
   amounts: string[],
   nameBySlug: Map<string, string>,
 ): ParsedLines {
   const lines: RecipeLineDraft[] = [];
+  const seen = new Set<string>();
   for (let i = 0; i < slugs.length; i++) {
     const slug = (slugs[i] ?? "").trim();
     if (slug === "") continue;
@@ -67,6 +68,8 @@ export function parseRecipeLines(
     if (!Number.isInteger(n) || n <= 0) {
       return { lines: [], error: `Amount for ${name} must be a positive whole number.` };
     }
+    if (seen.has(slug)) return { lines: [], error: `${name} is listed twice.` };
+    seen.add(slug);
     lines.push({ slug, name, amount: n });
   }
   return { lines, error: null };
@@ -75,7 +78,9 @@ export function parseRecipeLines(
 const linesEqual = (a: RecipeLineDraft[], b: RecipeLineDraft[]): boolean =>
   a.length === b.length && a.every((l, i) => l.slug === b[i].slug && l.amount === b[i].amount);
 
-/** True when two snapshots match on meta and ordered lines. */
+/** True when two snapshots match on meta and lines. Line comparison is
+ *  ORDER-SENSITIVE (positional): callers must keep both lists in the same order
+ *  (the stored order) or a pure reordering reads as a change. */
 export function snapshotsEqual(a: RecipeSnapshot, b: RecipeSnapshot): boolean {
   return (
     a.workbench === b.workbench &&
@@ -86,11 +91,16 @@ export function snapshotsEqual(a: RecipeSnapshot, b: RecipeSnapshot): boolean {
   );
 }
 
+export interface RecipeLineCreate {
+  itemId: string;
+  amount: number;
+}
+
 /** Resolve draft lines to {itemId, amount} create rows. Throws on a missing slug. */
 export function buildLineCreates(
   lines: RecipeLineDraft[],
   idBySlug: Map<string, string>,
-): { itemId: string; amount: number }[] {
+): RecipeLineCreate[] {
   return lines.map((l) => {
     const itemId = idBySlug.get(l.slug);
     if (!itemId) throw new Error(`Cannot resolve item ${l.slug}`);

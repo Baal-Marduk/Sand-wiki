@@ -6,6 +6,7 @@ import {
   buildLineCreates,
   diffRecipeLines,
   type RecipeSnapshot,
+  type RecipeLineCreate,
 } from "./recipe-proposal";
 
 const names = new Map([["iron", "Iron"], ["bolt", "Bolt"], ["screw", "Screw"]]);
@@ -26,6 +27,11 @@ describe("recipeToSnapshot", () => {
       inputs: [{ slug: "iron", name: "Iron", amount: 2 }],
       outputs: [{ slug: "bolt", name: "Bolt", amount: 1 }],
     });
+  });
+
+  it("preserves null meta fields", () => {
+    const snap = recipeToSnapshot({ workbench: null, tier: null, craftTimeSeconds: null, inputs: [], outputs: [] });
+    expect(snap).toEqual({ workbench: null, tier: null, craftTimeSeconds: null, inputs: [], outputs: [] });
   });
 });
 
@@ -50,6 +56,12 @@ describe("parseRecipeLines", () => {
     expect(parseRecipeLines(["iron"], ["1.5"], names).error).toMatch(/positive whole number/i);
     expect(parseRecipeLines(["iron"], [""], names).error).toMatch(/positive whole number/i);
   });
+
+  it("rejects the same slug listed twice", () => {
+    const r = parseRecipeLines(["iron", "iron"], ["1", "2"], names);
+    expect(r.lines).toEqual([]);
+    expect(r.error).toMatch(/twice/i);
+  });
 });
 
 describe("snapshotsEqual", () => {
@@ -70,6 +82,15 @@ describe("snapshotsEqual", () => {
     const b = JSON.parse(JSON.stringify(base)) as RecipeSnapshot;
     b.tier = 2;
     expect(snapshotsEqual(base, b)).toBe(false);
+  });
+
+  it("is false when only line order differs", () => {
+    const twoIn: RecipeSnapshot = { ...base, inputs: [
+      { slug: "iron", name: "Iron", amount: 2 },
+      { slug: "bolt", name: "Bolt", amount: 1 },
+    ] };
+    const reordered: RecipeSnapshot = { ...twoIn, inputs: [twoIn.inputs[1], twoIn.inputs[0]] };
+    expect(snapshotsEqual(twoIn, reordered)).toBe(false);
   });
 });
 
