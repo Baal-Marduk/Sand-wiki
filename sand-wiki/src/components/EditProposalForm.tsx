@@ -35,6 +35,11 @@ export function EditProposalForm({
               className="input input-bordered w-full"
             />
           )}
+          {f.field === "description" && (
+            <span className="text-xs text-base-content/50">
+              Link an item with <code>[[item-slug]]</code>.
+            </span>
+          )}
         </label>
       ))}
       <label className="block space-y-1">
