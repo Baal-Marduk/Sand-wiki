@@ -6,6 +6,7 @@ import { EntityDetail } from "@/components/EntityDetail";
 import { CategoryTag } from "@/components/CategoryTag";
 import { ItemIconLink } from "@/components/ItemIconLink";
 import { type Tab } from "@/components/ItemTabs";
+import { getSession } from "@/lib/auth";
 
 type Params = Promise<{ slug: string }>;
 
@@ -14,6 +15,7 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
   const part = await getTramplerPartBySlug(slug);
   if (!part) notFound();
 
+  const canSuggest = !!(await getSession());
   const cost = part.costEntries;
 
   const tabs: Tab[] = [];
@@ -46,6 +48,7 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
         { label: part.name },
       ]}
       suggest={{ type: "tramplerPart", slug }}
+      canSuggest={canSuggest}
       icon={{ name: part.name, icon: part.icon, decorative: true }}
       title={part.name}
       badges={<CategoryTag slug={part.category} />}

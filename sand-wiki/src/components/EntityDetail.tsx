@@ -16,6 +16,7 @@ export interface EntityIcon {
 export interface EntityDetailProps {
   breadcrumb: Crumb[];
   suggest: { type: string; slug: string };
+  canSuggest?: boolean;
   icon?: EntityIcon;
   title: string;
   badges?: React.ReactNode;
@@ -34,6 +35,7 @@ export interface EntityDetailProps {
 export function EntityDetail({
   breadcrumb,
   suggest,
+  canSuggest,
   icon,
   title,
   badges,
@@ -52,7 +54,7 @@ export function EntityDetail({
     <article className={`py-6 space-y-6 mx-auto ${hasSidebar ? "max-w-5xl" : "max-w-3xl"}`}>
       <div className="flex items-center justify-between gap-2">
         <Breadcrumb items={breadcrumb} />
-        <SuggestCorrectionLink type={suggest.type} slug={suggest.slug} />
+        {canSuggest && <SuggestCorrectionLink type={suggest.type} slug={suggest.slug} />}
       </div>
 
       <header className="flex flex-wrap items-start gap-4">

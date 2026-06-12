@@ -6,6 +6,7 @@ import { EntityDetail } from "@/components/EntityDetail";
 import { CategoryTag } from "@/components/CategoryTag";
 import { LootTable } from "@/components/LootTable";
 import { type Tab } from "@/components/ItemTabs";
+import { getSession } from "@/lib/auth";
 
 type Params = Promise<{ slug: string }>;
 
@@ -14,6 +15,7 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
   const entity = await getEnvEntityBySlug(slug);
   if (!entity) notFound();
 
+  const canSuggest = !!(await getSession());
   const tabs: Tab[] = entity.lootTiers.map((t) => ({
     id: t.tier.toLowerCase().replace(/\s+/g, "-"),
     label: t.tier,
@@ -34,6 +36,7 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
         { label: entity.name },
       ]}
       suggest={{ type: "envEntity", slug }}
+      canSuggest={canSuggest}
       icon={{ name: entity.name, icon: entity.icon, decorative: true }}
       title={entity.name}
       badges={<CategoryTag slug={entity.category} />}
