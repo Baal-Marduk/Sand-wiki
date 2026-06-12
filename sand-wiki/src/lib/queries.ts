@@ -163,3 +163,16 @@ export async function getWeaponsByCaliber(caliber: string): Promise<LinkItem[]> 
     .filter((r) => weaponCaliber(r.slug, r.ammoName) === caliber)
     .map(({ slug, name, icon, rarity }) => ({ slug, name, icon, rarity }));
 }
+
+/** Minimal item fields for the items referenced by `[[slug]]` links in a
+ *  description, keyed by slug. Empty input → empty map (no query). */
+export async function getItemsBySlugs(
+  slugs: string[],
+): Promise<Map<string, { slug: string; name: string; rarity: string | null }>> {
+  if (slugs.length === 0) return new Map();
+  const rows = await prisma.item.findMany({
+    where: { slug: { in: slugs } },
+    select: { slug: true, name: true, rarity: true },
+  });
+  return new Map(rows.map((r) => [r.slug, r]));
+}
