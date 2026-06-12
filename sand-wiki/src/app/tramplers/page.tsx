@@ -3,7 +3,7 @@ import { getSection, isTramplerCategory, TRAMPLER_CATEGORIES } from "@/lib/taxon
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { listTramplerParts, tramplerCategoryCounts } from "@/lib/queries";
 import { TramplerCard } from "@/components/TramplerCard";
-import { CategoryQuickNav } from "@/components/CategoryQuickNav";
+import { CategoryQuickNav, categoryNavHref } from "@/components/CategoryQuickNav";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 const str = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
@@ -26,7 +26,7 @@ export default async function TramplersPage({ searchParams }: { searchParams: Se
             return (
               <li key={c.slug} className="list-none">
                 <Link
-                  href={`/tramplers?category=${c.slug}`}
+                  href={categoryNavHref("/tramplers", c.slug)}
                   className="card bg-base-200 p-4 flex flex-row items-center gap-3"
                 >
                   <CategoryIcon slug={c.slug} className="size-5 shrink-0" />
