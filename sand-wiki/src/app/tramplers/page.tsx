@@ -43,7 +43,6 @@ export default async function TramplersPage({ searchParams }: { searchParams: Se
   const parts = await listTramplerParts(category);
   return (
     <section className="py-6">
-      <p className="mb-2"><Link href="/tramplers" className="btn btn-ghost btn-sm">← Tramplers</Link></p>
       <h1 className="font-display text-2xl font-bold mb-4">{labelOf(category)}</h1>
       {parts.length === 0 ? (
         <div role="alert" className="alert alert-warning max-w-2xl">

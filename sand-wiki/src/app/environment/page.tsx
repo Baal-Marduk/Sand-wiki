@@ -55,7 +55,6 @@ export default async function EnvironmentPage({ searchParams }: { searchParams: 
   const entities = await listEnvEntities(category);
   return (
     <section className="py-6">
-      <p className="mb-2"><Link href="/environment" className="btn btn-ghost btn-sm">← Environment</Link></p>
       <h1 className="font-display text-2xl font-bold mb-4">{labelOf(category)}</h1>
       {entities.length === 0 ? (
         <div role="alert" className="alert alert-warning max-w-2xl">
