@@ -110,7 +110,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
             </ul>
           )}
         </div>
-        <div className="order-1 lg:order-2">
+        <div className="order-1 lg:order-2 lg:self-stretch">
           <CategoryQuickNav categories={ITEM_CATEGORIES} current={category} query={q} sort={sortParam} label="Item categories" />
         </div>
       </div>

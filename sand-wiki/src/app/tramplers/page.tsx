@@ -62,7 +62,7 @@ export default async function TramplersPage({ searchParams }: { searchParams: Se
             </ul>
           )}
         </div>
-        <div className="order-1 lg:order-2">
+        <div className="order-1 lg:order-2 lg:self-stretch">
           <CategoryQuickNav
             categories={TRAMPLER_CATEGORIES}
             current={category}
