@@ -6,6 +6,8 @@ import { sortRows, type SortKey, type SortDir } from "@/lib/table-sort";
 export interface SortColumn {
   label: string;
   alignRight?: boolean;
+  /** default true; set false for action columns that never reorder */
+  sortable?: boolean;
 }
 
 export interface SortableTableRow {
@@ -59,21 +61,30 @@ export function SortableTable({
       {caption && <caption className="sr-only">{caption}</caption>}
       <thead>
         <tr>
-          {columns.map((c, col) => (
-            <th key={c.label} aria-sort={ariaSort(col)} className={c.alignRight ? "text-right" : undefined}>
-              <button
-                type="button"
-                aria-label={`${c.label}${dirSuffix(col)}, activate to sort`}
-                className="inline-flex items-center gap-1 cursor-pointer hover:text-base-content"
-                onClick={() => onHeaderClick(col)}
-              >
-                {c.label}
-                <span aria-hidden="true" className="text-xs opacity-70">
-                  {sort && sort.col === col ? ARROW[sort.dir] : ""}
-                </span>
-              </button>
-            </th>
-          ))}
+          {columns.map((c, col) => {
+            if (c.sortable === false) {
+              return (
+                <th key={c.label} className={c.alignRight ? "text-right" : undefined}>
+                  <span className="inline-flex items-center gap-1">{c.label}</span>
+                </th>
+              );
+            }
+            return (
+              <th key={c.label} aria-sort={ariaSort(col)} className={c.alignRight ? "text-right" : undefined}>
+                <button
+                  type="button"
+                  aria-label={`${c.label}${dirSuffix(col)}, activate to sort`}
+                  className="inline-flex items-center gap-1 cursor-pointer hover:text-base-content"
+                  onClick={() => onHeaderClick(col)}
+                >
+                  {c.label}
+                  <span aria-hidden="true" className="text-xs opacity-70">
+                    {sort && sort.col === col ? ARROW[sort.dir] : ""}
+                  </span>
+                </button>
+              </th>
+            );
+          })}
         </tr>
       </thead>
       <tbody>
