@@ -1,10 +1,15 @@
-export type FieldType = "string" | "text" | "int";
+export type FieldType = "string" | "text" | "int" | "enum";
 
 export interface EditableField {
   field: string;
   label: string;
   type: FieldType;
+  /** Only for type "enum": the scalar type the chosen value coerces to. */
+  enumValueType?: "string" | "int";
 }
+
+/** Sentinel select value meaning "let me type a value not in the list". */
+export const OTHER_OPTION = "__other__";
 
 /** Whitelist of scalar fields a community edit may touch, per target type.
  *  Anything not listed here can never be proposed or applied. */
@@ -12,9 +17,10 @@ export const EDITABLE_FIELDS: Record<string, EditableField[]> = {
   item: [
     { field: "name", label: "Name", type: "string" },
     { field: "description", label: "Description", type: "text" },
-    { field: "rarity", label: "Rarity", type: "string" },
+    { field: "category", label: "Category", type: "enum", enumValueType: "string" },
+    { field: "rarity", label: "Rarity", type: "enum", enumValueType: "string" },
     { field: "storageStack", label: "Storage stack", type: "int" },
-    { field: "workbenchTier", label: "Workbench tier", type: "int" },
+    { field: "workbenchTier", label: "Workbench tier", type: "enum", enumValueType: "int" },
     { field: "statValue", label: "Value", type: "int" },
     { field: "damage", label: "Damage", type: "int" },
     { field: "playerDamage", label: "Player damage", type: "int" },
@@ -26,11 +32,13 @@ export const EDITABLE_FIELDS: Record<string, EditableField[]> = {
   envEntity: [
     { field: "name", label: "Name", type: "string" },
     { field: "description", label: "Description", type: "text" },
+    { field: "category", label: "Category", type: "enum", enumValueType: "string" },
     { field: "sourceUrl", label: "Source URL", type: "string" },
   ],
   tramplerPart: [
     { field: "name", label: "Name", type: "string" },
     { field: "description", label: "Description", type: "text" },
+    { field: "category", label: "Category", type: "enum", enumValueType: "string" },
     { field: "dimensions", label: "Dimensions", type: "string" },
     { field: "health", label: "Health", type: "int" },
     { field: "weight", label: "Weight", type: "int" },
@@ -41,6 +49,7 @@ export const EDITABLE_FIELDS: Record<string, EditableField[]> = {
     { field: "ratedPower", label: "Rated power", type: "int" },
     { field: "crewSlots", label: "Crew slots", type: "int" },
     { field: "itemSlots", label: "Item slots", type: "int" },
+    { field: "researchTier", label: "Research tier", type: "enum", enumValueType: "int" },
   ],
 };
 
@@ -65,6 +74,26 @@ export function coerceValue(type: FieldType, raw: string): string | number | nul
     return Number.isInteger(n) ? n : null;
   }
   return trimmed;
+}
+
+/** Underlying scalar type used to coerce a field's submitted value. Enum fields
+ *  defer to their enumValueType (default string); others use their own type. */
+export function baseType(def: EditableField): FieldType {
+  return def.type === "enum" ? (def.enumValueType ?? "string") : def.type;
+}
+
+/** Resolve an enum submission: the free-text custom value wins when the select
+ *  value is the OTHER_OPTION sentinel. */
+export function resolveEnumSubmission(raw: string, custom: string): string {
+  return raw === OTHER_OPTION ? custom : raw;
+}
+
+/** Coerce a raw form string to a float. Empty/blank/non-numeric → null. */
+export function coerceFloat(raw: string): number | null {
+  const trimmed = raw.trim();
+  if (trimmed === "") return null;
+  const n = Number(trimmed);
+  return Number.isFinite(n) ? n : null;
 }
 
 /** Public route for a correctable entity. Mirrors the segment names used by the
