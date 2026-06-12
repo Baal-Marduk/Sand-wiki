@@ -34,6 +34,7 @@ export async function getEntityFields(type: string, slug: string): Promise<Entit
  *  Numeric values sort ascending; strings sort lexically. */
 export async function getFieldOptions(type: string, field: string): Promise<string[]> {
   if (!isEditableTarget(type)) return [];
+  if (!editableFields(type).some((f) => f.field === field)) return [];
   const rows =
     type === "item"
       ? await prisma.item.findMany()
