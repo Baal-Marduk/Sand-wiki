@@ -4,6 +4,7 @@ import { ItemIcon } from "@/components/ItemIcon";
 import { StatGrid } from "@/components/StatGrid";
 import { ItemTabs, type Tab } from "@/components/ItemTabs";
 import { ItemDetailsPanel } from "@/components/ItemDetailsPanel";
+import { DescriptionText } from "@/components/DescriptionText";
 import type { StatCell, DetailRow } from "@/lib/item-view";
 
 export interface EntityIcon {
@@ -47,7 +48,6 @@ export function EntityDetail({
   sourceUrl,
 }: EntityDetailProps) {
   const hasSidebar = !!detailRows && detailRows.length > 0;
-  const paragraphs = description ? description.split(/\n+/).filter(Boolean) : [];
   const main = tabs && tabs.length > 0 ? <ItemTabs tabs={tabs} /> : tabsEmptyFallback ?? null;
 
   return (
@@ -70,9 +70,7 @@ export function EntityDetail({
         <div className="flex-1 min-w-[16rem] space-y-2">
           <h1 className="font-display text-3xl font-bold">{title}</h1>
           {badges && <div className="flex flex-wrap gap-2">{badges}</div>}
-          {paragraphs.map((p, i) => (
-            <p key={i} className="text-base-content/80 max-w-prose">{p}</p>
-          ))}
+          {description && <DescriptionText text={description} />}
           {stats && stats.length > 0 && <StatGrid cells={stats} />}
         </div>
       </header>
