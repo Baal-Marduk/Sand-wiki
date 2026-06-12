@@ -1,4 +1,4 @@
-import { describe, it, expect } from "vitest";
+import { describe, it, expect, test } from "vitest";
 import {
   SECTIONS, ITEM_CATEGORIES, ITEM_CATEGORY_SLUGS,
   isItemCategory, categoryLabel, getSection, categoryForType, categoryForItem,
@@ -186,6 +186,17 @@ describe("isWeaponClassCategory", () => {
     expect(isWeaponClassCategory("tools")).toBe(false);
     expect(isWeaponClassCategory(undefined)).toBe(false);
   });
+});
+
+test("categoryLabel resolves environment category slugs", () => {
+  expect(categoryLabel("loot-containers")).toBe("Loot Containers");
+  expect(categoryLabel("game-modes")).toBe("Game Modes");
+});
+
+test("categoryLabel still resolves item and trampler slugs and falls back to the slug", () => {
+  expect(categoryLabel("weapons")).toBe("Weapons");
+  expect(categoryLabel("chassis")).toBe("Chassis");
+  expect(categoryLabel("does-not-exist")).toBe("does-not-exist");
 });
 
 describe("WIP markers", () => {
