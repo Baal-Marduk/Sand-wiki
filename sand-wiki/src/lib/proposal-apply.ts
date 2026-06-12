@@ -73,6 +73,8 @@ export async function applyRecipeProposal(proposalId: string, reviewerSteamId: s
     const inputCreates = buildLineCreates(snap.inputs, idBySlug).map((c) => ({ ...c, recipeId: recipe.id }));
     const outputCreates = buildLineCreates(snap.outputs, idBySlug).map((c) => ({ ...c, recipeId: recipe.id }));
 
+    if (outputCreates.length === 0) throw new Error("Recipe edit has no output lines; refusing to apply.");
+
     await tx.recipe.update({
       where: { id: recipe.id },
       data: { workbench: snap.workbench, tier: snap.tier, craftTimeSeconds: snap.craftTimeSeconds },
