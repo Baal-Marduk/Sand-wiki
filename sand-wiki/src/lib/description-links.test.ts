@@ -34,6 +34,31 @@ describe("parseDescription", () => {
   it("treats empty [[]] as literal text", () => {
     expect(parseDescription("nothing [[]] here")).toEqual([{ type: "text", value: "nothing [[]] here" }]);
   });
+
+  it("keeps extra pipes as part of the label (split only on the first pipe)", () => {
+    expect(parseDescription("[[iron|raw|refined]]")).toEqual([
+      { type: "link", slug: "iron", label: "raw|refined" },
+    ]);
+  });
+
+  it("treats an unterminated [[ as literal text", () => {
+    expect(parseDescription("broken [[foo bar")).toEqual([
+      { type: "text", value: "broken [[foo bar" },
+    ]);
+  });
+
+  it("treats an empty label [[slug|]] as literal text", () => {
+    expect(parseDescription("see [[iron-plate|]] now")).toEqual([
+      { type: "text", value: "see [[iron-plate|]] now" },
+    ]);
+  });
+
+  it("parses adjacent links with no text between", () => {
+    expect(parseDescription("[[a]][[b]]")).toEqual([
+      { type: "link", slug: "a" },
+      { type: "link", slug: "b" },
+    ]);
+  });
 });
 
 describe("collectSlugs", () => {

@@ -2,6 +2,8 @@ export type Segment =
   | { type: "text"; value: string }
   | { type: "link"; slug: string; label?: string };
 
+// Label may itself contain "|" (only the FIRST pipe splits slug from label); an
+// empty/whitespace-only label group doesn't match, so [[slug|]] stays literal.
 // [[slug]] or [[slug|label]] — slug excludes ] and |; label excludes ].
 const LINK_RE = /\[\[([^\]|]+)(?:\|([^\]]+))?\]\]/g;
 
