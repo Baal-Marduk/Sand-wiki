@@ -58,7 +58,10 @@ model EnvEntity {
   icon        String?
   iconFile    String? @db.Uuid
 
-  lootTiers   LootTier[]
+  lootCurated Boolean @default(false) // when true, the seed won't overwrite this entity's loot table
+
+  lootTiers     LootTier[]
+  droppedInLoot LootEntry[] @relation("LootEntryContainer") // loot entries that reference this entity as a container
 
   @@index([category])
 }
@@ -144,19 +147,22 @@ model LootTier {
 }
 
 model LootEntry {
-  id         String   @id @default(dbgenerated("(gen_random_uuid())::text"))
-  lootTierId String
-  lootTier   LootTier @relation(fields: [lootTierId], references: [id], onDelete: Cascade)
-  itemId     String?
-  item       Item?    @relation(fields: [itemId], references: [id], onDelete: SetNull)
-  name       String // display fallback when itemId is null
-  value1     String? // wiki amounts are strings ("10-20"); rows can have fewer values than columns
-  value2     String?
-  value3     String?
-  sortOrder  Int
+  id          String   @id @default(dbgenerated("(gen_random_uuid())::text"))
+  lootTierId  String
+  lootTier    LootTier @relation(fields: [lootTierId], references: [id], onDelete: Cascade)
+  itemId      String?
+  item        Item?    @relation(fields: [itemId], references: [id], onDelete: SetNull)
+  containerId String?
+  container   EnvEntity? @relation("LootEntryContainer", fields: [containerId], references: [id], onDelete: SetNull)
+  name        String // display fallback; also the label for an item/container entry
+  value1      String? // wiki amounts are strings ("10-20"); rows can have fewer values than columns
+  value2      String?
+  value3      String?
+  sortOrder   Int
 
   @@unique([lootTierId, sortOrder])
   @@index([itemId])
+  @@index([containerId])
 }
 
 model TramplerPartCost {
@@ -165,7 +171,7 @@ model TramplerPartCost {
   part      TramplerPart @relation(fields: [partId], references: [id], onDelete: Cascade)
   itemId    String?
   item      Item?        @relation(fields: [itemId], references: [id], onDelete: SetNull)
-  name      String // "Crowns" lines have no item
+  name      String // display label; itemId is null only for an unresolved cost line
   amount    Int
   sortOrder Int
 
