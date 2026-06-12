@@ -74,12 +74,11 @@ export function costToRows(cost: RawCostLine[] | null | undefined): FlatCostRow[
   }));
 }
 
-/** Merge wiki-authored gear items after the scraped items. Throws if a gear slug
- *  collides with a scraped slug, so a duplicate can't silently shadow scraped data. */
+/** Merge wiki-authored gear items after the scraped items. Throws if a gear slug duplicates a scraped slug or another gear slug, so a duplicate can't silently shadow another item. */
 export function mergeItems<T extends { slug: string }>(scraped: T[], gear: T[]): T[] {
   const seen = new Set(scraped.map((i) => i.slug));
   for (const g of gear) {
-    if (seen.has(g.slug)) throw new Error(`Gear item slug "${g.slug}" collides with a scraped item`);
+    if (seen.has(g.slug)) throw new Error(`Gear item slug "${g.slug}" collides with an existing item`);
     seen.add(g.slug);
   }
   return [...scraped, ...gear];

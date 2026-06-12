@@ -102,4 +102,9 @@ describe("mergeItems", () => {
     expect(() => mergeItems([{ slug: "a" }], [{ slug: "a" }]))
       .toThrow(/collides/);
   });
+
+  it("throws when two gear items share a slug", () => {
+    expect(() => mergeItems([], [{ slug: "a" }, { slug: "a" }]))
+      .toThrow(/collides/);
+  });
 });
