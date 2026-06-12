@@ -376,10 +376,12 @@ test("WIP destinations are disabled (not links) in the nav", async ({ page }) =>
 
 test("environment detail now shows a category badge and a decorative icon", async ({ page }) => {
   await page.goto("/environment/weapon-crate");
-  // Category badge resolves to a label (not the raw slug).
-  await expect(page.getByText("Loot Containers")).toBeVisible();
-  // A sprite image is present in the header.
-  await expect(page.locator("article img").first()).toBeVisible();
+  // The category badge resolves the slug to its label ("loot-containers" -> "Loot Containers").
+  // Scope to the badge so we don't collide with the breadcrumb crumb or the nav dropdown link.
+  await expect(page.locator("article .badge").filter({ hasText: "Loot Containers" })).toBeVisible();
+  // The header now renders an icon tile (a real sprite when available, else a neutral placeholder).
+  // Scope to <header> so we don't also match loot-item icons inside the tab panel.
+  await expect(page.locator("article header .item-sprite")).toBeVisible();
 });
 
 test("detail articles are horizontally centered (mx-auto)", async ({ page }) => {
@@ -396,14 +398,14 @@ test("detail articles are horizontally centered (mx-auto)", async ({ page }) => 
 });
 
 test("trampler part page shows a prominent stat grid and Build Cost tab", async ({ page }) => {
-  // Navigate from the tramplers landing to the first available part, so no slug is hard-coded.
-  await page.goto("/tramplers");
-  await page.locator('a[href^="/tramplers?category="]').first().click();
-  const firstPart = page.locator('a[href^="/tramplers/"]').first();
+  // Go straight to a populated category (chassis parts always carry stats), then open the
+  // first part card. Scope to <section> so we match a visible card, not a hidden nav link.
+  await page.goto("/tramplers?category=chassis");
+  const firstPart = page.locator('section a[href^="/tramplers/"]').first();
   await expect(firstPart).toBeVisible();
   await firstPart.click();
   await expect(page).toHaveURL(/\/tramplers\/[^/]+$/);
-  // Prominent stat grid is a <dl> in the header (present for parts that have stats).
+  // Prominent stat grid is the only <dl> on the page (the Details sidebar uses a table).
   await expect(page.locator("article dl").first()).toBeVisible();
   // Suggest-a-correction sits in the top row.
   await expect(page.getByRole("link", { name: /Suggest a correction/i })).toBeVisible();
