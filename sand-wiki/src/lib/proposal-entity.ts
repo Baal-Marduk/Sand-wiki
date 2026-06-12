@@ -1,5 +1,5 @@
 import { prisma } from "./db";
-import { editableFields, isEditableTarget } from "./proposal-schema";
+import { editableFields, isEditableTarget, enumOptionsFor, type SelectOption } from "./proposal-schema";
 
 export interface EntityFields {
   name: string;
@@ -53,6 +53,15 @@ export async function getFieldOptions(type: string, field: string): Promise<stri
     ? (vals as number[]).sort((a, b) => a - b)
     : (vals as (string | number)[]).map(String).sort();
   return sorted.map(String);
+}
+
+/** Correction-form select options for an enum field: canonical order/labels for
+ *  rarity & category (which ignore DB values), DB-derived values otherwise. The
+ *  closed-set fields skip the table scan. */
+export async function getEnumOptions(type: string, field: string): Promise<SelectOption[]> {
+  const needsDb = field !== "rarity" && field !== "category";
+  const dbValues = needsDb ? await getFieldOptions(type, field) : [];
+  return enumOptionsFor(type, field, dbValues);
 }
 
 /** Distinct workbench names used by existing recipes (for the recipe editor). */

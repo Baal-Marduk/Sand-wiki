@@ -2,6 +2,7 @@ import { prisma } from "./db";
 import { buildItemQuery, applyItemView, type ItemFilter } from "./item-filter";
 import { ammoCaliber, itemClasses, weaponCaliber } from "./ammo";
 import { toRecipeCard } from "./recipes";
+import { entityHref } from "./proposal-schema";
 
 const recipeInclude = {
   recipe: { include: { inputs: { include: { item: true } }, outputs: { include: { item: true } } } },
@@ -162,4 +163,26 @@ export async function getWeaponsByCaliber(caliber: string): Promise<LinkItem[]> 
   return rows
     .filter((r) => weaponCaliber(r.slug, r.ammoName) === caliber)
     .map(({ slug, name, icon, rarity }) => ({ slug, name, icon, rarity }));
+}
+
+/** Resolve the entities referenced by `[[slug]]` links in a description, keyed by
+ *  slug, to { name, href, rarity }. Looks across items, trampler parts, and
+ *  environment entities; on a slug collision, Item wins, then Trampler, then
+ *  Environment. rarity is non-null only for items (drives the link's color tint).
+ *  Empty input → empty map (no queries). */
+export async function getLinkTargetsBySlugs(
+  slugs: string[],
+): Promise<Map<string, { name: string; href: string; rarity: string | null }>> {
+  const result = new Map<string, { name: string; href: string; rarity: string | null }>();
+  if (slugs.length === 0) return result;
+  const [items, parts, envs] = await Promise.all([
+    prisma.item.findMany({ where: { slug: { in: slugs } }, select: { slug: true, name: true, rarity: true } }),
+    prisma.tramplerPart.findMany({ where: { slug: { in: slugs } }, select: { slug: true, name: true } }),
+    prisma.envEntity.findMany({ where: { slug: { in: slugs } }, select: { slug: true, name: true } }),
+  ]);
+  // Fill lowest priority first so higher priority overwrites: Env → Trampler → Item.
+  for (const e of envs) result.set(e.slug, { name: e.name, href: entityHref("envEntity", e.slug), rarity: null });
+  for (const p of parts) result.set(p.slug, { name: p.name, href: entityHref("tramplerPart", p.slug), rarity: null });
+  for (const i of items) result.set(i.slug, { name: i.name, href: entityHref("item", i.slug), rarity: i.rarity });
+  return result;
 }

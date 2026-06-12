@@ -1,13 +1,10 @@
 "use client";
 
 import { useState } from "react";
-import { OTHER_OPTION } from "@/lib/proposal-schema";
+import { OTHER_OPTION, type SelectOption } from "@/lib/proposal-schema";
 
-/** A select of known values plus an "Other…" option that reveals a free-text
- *  input. The select posts `name`; the reveal posts `name__custom`. The server
- *  (resolveEnumSubmission) takes the custom value when OTHER_OPTION is chosen. */
-export function EnumField({ field, value, options }: { field: string; value: string; options: string[] }) {
-  const isKnown = value !== "" && options.includes(value);
+export function EnumField({ field, value, options }: { field: string; value: string; options: SelectOption[] }) {
+  const isKnown = value !== "" && options.some((o) => o.value === value);
   const [sel, setSel] = useState(value === "" ? "" : isKnown ? value : OTHER_OPTION);
   return (
     <>
@@ -19,7 +16,7 @@ export function EnumField({ field, value, options }: { field: string; value: str
       >
         <option value="">—</option>
         {options.map((o) => (
-          <option key={o} value={o}>{o}</option>
+          <option key={o.value} value={o.value}>{o.label}</option>
         ))}
         <option value={OTHER_OPTION}>Other…</option>
       </select>

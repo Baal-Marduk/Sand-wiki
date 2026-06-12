@@ -88,7 +88,7 @@ export function RecipeEditForm({
 
       <label className="block space-y-1">
         <span className="text-sm font-medium">Workbench</span>
-        <EnumField field="workbench" value={snapshot.workbench ?? ""} options={workbenches} />
+        <EnumField field="workbench" value={snapshot.workbench ?? ""} options={workbenches.map((w) => ({ value: w, label: w }))} />
       </label>
       <div className="flex gap-4">
         <label className="block space-y-1">

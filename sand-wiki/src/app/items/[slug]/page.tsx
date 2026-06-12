@@ -13,6 +13,7 @@ import { CraftTable } from "@/components/CraftTable";
 import { UsedInTable } from "@/components/UsedInTable";
 import { CrateDropList } from "@/components/CrateDropList";
 import { ItemLinkList } from "@/components/ItemLinkList";
+import { getSession } from "@/lib/auth";
 
 type Params = Promise<{ slug: string }>;
 
@@ -31,9 +32,10 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const ammo = !isAmmo && caliber ? await getAmmoByCaliber(caliber) : [];
   const ammoUsers = isAmmo && caliber ? await getWeaponsByCaliber(caliber) : [];
 
+  const canSuggest = !!(await getSession());
   const tabContent: Partial<Record<TabId, React.ReactNode>> = {
-    "crafted-by": <CraftTable recipes={crafts} />,
-    "used-in": <UsedInTable recipes={usedInCrafts} />,
+    "crafted-by": <CraftTable recipes={crafts} canSuggest={canSuggest} />,
+    "used-in": <UsedInTable recipes={usedInCrafts} canSuggest={canSuggest} />,
   };
   const tabs: Tab[] = availableTabs(trades).map((t) => ({
     id: t.id,
@@ -68,6 +70,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
         { label: item.name },
       ]}
       suggest={{ type: "item", slug: item.slug }}
+      canSuggest={canSuggest}
       icon={{ name: item.name, icon: item.icon, rarity: item.rarity }}
       title={item.name}
       badges={

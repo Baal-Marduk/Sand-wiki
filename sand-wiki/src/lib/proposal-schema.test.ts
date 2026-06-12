@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { editableFields, fieldDef, coerceValue, isEditableTarget, entityHref, baseType, resolveEnumSubmission, coerceFloat, OTHER_OPTION } from "./proposal-schema";
+import { editableFields, fieldDef, coerceValue, isEditableTarget, entityHref, baseType, resolveEnumSubmission, coerceFloat, OTHER_OPTION, enumOptionsFor } from "./proposal-schema";
 
 describe("proposal schema", () => {
   it("exposes editable fields per known type", () => {
@@ -63,5 +63,36 @@ describe("proposal schema", () => {
     expect(coerceFloat("  ")).toBeNull();
     expect(coerceFloat("0")).toBe(0);
     expect(coerceFloat("abc")).toBeNull();
+  });
+
+  describe("enumOptionsFor", () => {
+    it("orders rarity by tier with name labels", () => {
+      const opts = enumOptionsFor("item", "rarity", ["Rare", "Common"]);
+      expect(opts.map((o) => o.value)).toEqual([
+        "Common", "Uncommon", "Rare", "Noteworthy", "Remarkable", "Experimental",
+      ]);
+      expect(opts.every((o) => o.label === o.value)).toBe(true);
+    });
+
+    it("orders item categories canonically with friendly labels", () => {
+      const opts = enumOptionsFor("item", "category", ["misc", "weapons"]);
+      expect(opts.slice(0, 3)).toEqual([
+        { value: "weapons", label: "Weapons" },
+        { value: "artillery", label: "Artillery" },
+        { value: "resources", label: "Resources" },
+      ]);
+    });
+
+    it("uses the entity type's own category set", () => {
+      expect(enumOptionsFor("tramplerPart", "category", [])[0]).toEqual({ value: "chassis", label: "Chassis" });
+      expect(enumOptionsFor("envEntity", "category", [])[0]).toEqual({ value: "loot-containers", label: "Loot Containers" });
+    });
+
+    it("passes other fields through as value=label in the given order", () => {
+      expect(enumOptionsFor("item", "workbenchTier", ["1", "2"])).toEqual([
+        { value: "1", label: "1" },
+        { value: "2", label: "2" },
+      ]);
+    });
   });
 });
