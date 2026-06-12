@@ -14,6 +14,7 @@ import { CraftTable } from "@/components/CraftTable";
 import { UsedInTable } from "@/components/UsedInTable";
 import { CrateDropList } from "@/components/CrateDropList";
 import { ItemLinkList } from "@/components/ItemLinkList";
+import { SuggestCorrectionLink } from "@/components/SuggestCorrectionLink";
 
 type Params = Promise<{ slug: string }>;
 
@@ -92,7 +93,10 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
         <ItemDetailsPanel rows={detailRows} />
       </div>
 
-      <p><Link href="/items" className="btn btn-ghost btn-sm">← Back to items</Link></p>
+      <div className="flex gap-2">
+        <Link href="/items" className="btn btn-ghost btn-sm">← Back to items</Link>
+        <SuggestCorrectionLink type="item" slug={item.slug} />
+      </div>
     </article>
   );
 }

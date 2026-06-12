@@ -4,6 +4,7 @@ import { getEnvEntityBySlug } from "@/lib/queries";
 import { ItemTabs, type Tab } from "@/components/ItemTabs";
 import { LootTable } from "@/components/LootTable";
 import { byRarityThenName } from "@/lib/rarity";
+import { SuggestCorrectionLink } from "@/components/SuggestCorrectionLink";
 
 type Params = Promise<{ slug: string }>;
 
@@ -26,7 +27,10 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
 
   return (
     <article className="py-6 space-y-4 max-w-3xl">
-      <p><Link href="/environment" className="btn btn-ghost btn-sm">← Environment</Link></p>
+      <div className="flex gap-2">
+        <Link href="/environment" className="btn btn-ghost btn-sm">← Environment</Link>
+        <SuggestCorrectionLink type="envEntity" slug={slug} />
+      </div>
       <h1 className="font-display text-3xl font-bold">{entity.name}</h1>
       {entity.description &&
         entity.description.split(/\n+/).map((p, i) => (

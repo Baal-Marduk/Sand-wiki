@@ -4,6 +4,7 @@ import { getTramplerPartBySlug } from "@/lib/queries";
 import { ItemIcon } from "@/components/ItemIcon";
 import { ItemIconLink } from "@/components/ItemIconLink";
 import { CategoryTag } from "@/components/CategoryTag";
+import { SuggestCorrectionLink } from "@/components/SuggestCorrectionLink";
 
 type Params = Promise<{ slug: string }>;
 
@@ -30,7 +31,10 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
 
   return (
     <article className="py-6 space-y-6 max-w-3xl">
-      <p><Link href="/tramplers" className="btn btn-ghost btn-sm">← Tramplers</Link></p>
+      <div className="flex gap-2">
+        <Link href="/tramplers" className="btn btn-ghost btn-sm">← Tramplers</Link>
+        <SuggestCorrectionLink type="tramplerPart" slug={slug} />
+      </div>
       <header className="flex flex-wrap items-start gap-4">
         <ItemIcon name={part.name} icon={part.icon} size="lg" decorative />
         <div className="flex-1 min-w-[16rem] space-y-2">

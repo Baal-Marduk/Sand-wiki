@@ -29,8 +29,12 @@
   (7) the read-only `id` fields travel in `snapshot.yaml` (applied via `npm run directus:apply`)
   and the `gen_random_uuid()` column default ships with `prisma migrate deploy` — both reproduce
   on prod with no extra provisioning step.
-- Add steam connection to allow user to offfer corrections, (will need vallidation by admin)
-- Add validation screen in backoffice to make validate corrections from steam authenticated user.
+- [x] Add steam connection to allow user to offfer corrections, (will need vallidation by admin)
+  (Steam OpenID login + signed session cookie; logged-in users propose structured
+  field corrections or free-text new-page requests. See docs/superpowers/specs/2026-06-11-steam-community-contributions-design.md)
+- [x] Add validation screen in backoffice to make validate corrections from steam authenticated user.
+  (Implemented as an in-app `/admin/proposals` screen — Steam-id allowlist admins, side-by-side
+  diff + one-click Approve & apply — rather than in Directus; Directus diff display/apply was too clunky.)
 - Add tips tab in items to allow user to share tips (might be moderated by admin) with vote system
 - Add legal statement about property and stuff
 - Add thanks to wiki
