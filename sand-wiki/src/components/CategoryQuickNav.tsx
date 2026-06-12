@@ -17,12 +17,12 @@ export function categoryNavHref(
 /** Responsive category switcher. Sticky vertical list on lg+, horizontal scroll
  *  row of chips below lg. Highlights the active category and preserves ?q=. */
 export function CategoryQuickNav({
-  categories, current, query, sort, basePath = "/items",
-}: { categories: Category[]; current?: string; query?: string; sort?: string; basePath?: string }) {
+  categories, current, query, sort, basePath = "/items", label = "Categories",
+}: { categories: Category[]; current?: string; query?: string; sort?: string; basePath?: string; label?: string }) {
   const href = (slug: string) => categoryNavHref(basePath, slug, { query, sort });
 
   return (
-    <nav aria-label="Item categories" className="lg:sticky lg:top-[4.5rem]">
+    <nav aria-label={label} className="lg:sticky lg:top-[4.5rem]">
       <h2 className="hidden lg:block font-display text-xs font-semibold uppercase tracking-wide text-base-content/60 mb-2">
         Jump to
       </h2>

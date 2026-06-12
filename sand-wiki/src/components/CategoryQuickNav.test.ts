@@ -7,6 +7,7 @@ describe("categoryNavHref", () => {
   });
 
   it("appends q and sort when provided", () => {
+    // spaces encode as + (form-urlencoded) — intentional, decoded identically by Next.js
     expect(categoryNavHref("/items", "weapons", { query: "rifle scope", sort: "name" }))
       .toBe("/items?category=weapons&q=rifle+scope&sort=name");
   });
