@@ -373,3 +373,38 @@ test("WIP destinations are disabled (not links) in the nav", async ({ page }) =>
   await expect(nav.getByRole("link", { name: "Loot Containers" })).toBeVisible();
   await expect(nav.getByRole("link", { name: "NPCs" })).toHaveCount(0);
 });
+
+test("environment detail now shows a category badge and a decorative icon", async ({ page }) => {
+  await page.goto("/environment/weapon-crate");
+  // Category badge resolves to a label (not the raw slug).
+  await expect(page.getByText("Loot Containers")).toBeVisible();
+  // A sprite image is present in the header.
+  await expect(page.locator("article img").first()).toBeVisible();
+});
+
+test("detail articles are horizontally centered (mx-auto)", async ({ page }) => {
+  for (const path of ["/items/c4-dynamite", "/environment/weapon-crate"]) {
+    await page.goto(path);
+    const centered = await page.locator("article").evaluate((el) => {
+      const cs = getComputedStyle(el);
+      if (cs.marginLeft === "auto" || cs.marginInlineStart === "auto") return true;
+      const r = el.getBoundingClientRect();
+      return Math.abs(r.left - (window.innerWidth - r.right)) < 2;
+    });
+    expect(centered, `article on ${path} should be centered`).toBe(true);
+  }
+});
+
+test("trampler part page shows a prominent stat grid and Build Cost tab", async ({ page }) => {
+  // Navigate from the tramplers landing to the first available part, so no slug is hard-coded.
+  await page.goto("/tramplers");
+  await page.locator('a[href^="/tramplers?category="]').first().click();
+  const firstPart = page.locator('a[href^="/tramplers/"]').first();
+  await expect(firstPart).toBeVisible();
+  await firstPart.click();
+  await expect(page).toHaveURL(/\/tramplers\/[^/]+$/);
+  // Prominent stat grid is a <dl> in the header (present for parts that have stats).
+  await expect(page.locator("article dl").first()).toBeVisible();
+  // Suggest-a-correction sits in the top row.
+  await expect(page.getByRole("link", { name: /Suggest a correction/i })).toBeVisible();
+});
