@@ -6,7 +6,6 @@ import {
   buildLineCreates,
   diffRecipeLines,
   type RecipeSnapshot,
-  type RecipeLineCreate,
 } from "./recipe-proposal";
 
 const names = new Map([["iron", "Iron"], ["bolt", "Bolt"], ["screw", "Screw"]]);
