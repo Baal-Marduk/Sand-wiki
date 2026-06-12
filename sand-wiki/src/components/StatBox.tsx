@@ -11,9 +11,7 @@ export interface ItemStatFields {
   magazine: number | null;
 }
 
-/** Prominent grid of wiki-sourced gameplay stats, shown under the detail header.
- *  Renders nothing when there are no displayable stats. */
-export function StatBox({ item, typeLabel }: { item: ItemStatFields; typeLabel?: string }) {
+export function itemStatCells(item: ItemStatFields, typeLabel?: string): StatCell[] {
   const cells: StatCell[] = [];
   if (item.damage != null) cells.push({ label: "Damage", value: item.damage });
   if (item.playerDamage != null) cells.push({ label: "Damage (Player)", value: item.playerDamage });
@@ -22,5 +20,11 @@ export function StatBox({ item, typeLabel }: { item: ItemStatFields; typeLabel?:
   if (item.magazine != null) cells.push({ label: "Magazine", value: item.magazine });
   const typeValue = typeLabel ?? item.statType;
   if (typeValue) cells.push({ label: "Type", value: typeValue });
-  return <StatGrid cells={cells} />;
+  return cells;
+}
+
+/** Prominent grid of wiki-sourced gameplay stats, shown under the detail header.
+ *  Renders nothing when there are no displayable stats. */
+export function StatBox({ item, typeLabel }: { item: ItemStatFields; typeLabel?: string }) {
+  return <StatGrid cells={itemStatCells(item, typeLabel)} />;
 }
