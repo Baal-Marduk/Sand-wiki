@@ -158,6 +158,11 @@ const CATEGORY_OVERRIDES: Record<string, string> = {
   "projectile-amplifier": "tools", // Pestkop Lorenz Amplifier — deployable field station
   "projectile-deflect-shield": "tools", // Von Liebig Reflector — deployable shield
   "projectile-sphere-shield": "tools", // Domovyk Protective Dome — deployable shield
+  binoculars: "tools", // Player Gear — no game type
+  flashlight: "tools", // Player Gear (wiki: Lamp)
+  multitool: "tools", // Player Gear (wiki: Repair Tool)
+  map: "tools", // Player Gear
+  "flare-gun": "tools", // Player Gear
 };
 
 /** Name-aware category. Per-slug overrides win first; otherwise weapon-type items whose
