@@ -37,7 +37,7 @@ export function EditProposalForm({
           )}
           {f.field === "description" && (
             <span className="text-xs text-base-content/50">
-              Link an item with <code>[[item-slug]]</code>.
+              Link to any wiki page with <code>[[slug]]</code>.
             </span>
           )}
         </label>

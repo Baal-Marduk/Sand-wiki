@@ -2,6 +2,7 @@ import { prisma } from "./db";
 import { buildItemQuery, applyItemView, type ItemFilter } from "./item-filter";
 import { ammoCaliber, itemClasses, weaponCaliber } from "./ammo";
 import { toRecipeCard } from "./recipes";
+import { entityHref } from "./proposal-schema";
 
 const recipeInclude = {
   recipe: { include: { inputs: { include: { item: true } }, outputs: { include: { item: true } } } },
@@ -164,15 +165,24 @@ export async function getWeaponsByCaliber(caliber: string): Promise<LinkItem[]> 
     .map(({ slug, name, icon, rarity }) => ({ slug, name, icon, rarity }));
 }
 
-/** Minimal item fields for the items referenced by `[[slug]]` links in a
- *  description, keyed by slug. Empty input → empty map (no query). */
-export async function getItemsBySlugs(
+/** Resolve the entities referenced by `[[slug]]` links in a description, keyed by
+ *  slug, to { name, href, rarity }. Looks across items, trampler parts, and
+ *  environment entities; on a slug collision, Item wins, then Trampler, then
+ *  Environment. rarity is non-null only for items (drives the link's color tint).
+ *  Empty input → empty map (no queries). */
+export async function getLinkTargetsBySlugs(
   slugs: string[],
-): Promise<Map<string, { slug: string; name: string; rarity: string | null }>> {
-  if (slugs.length === 0) return new Map();
-  const rows = await prisma.item.findMany({
-    where: { slug: { in: slugs } },
-    select: { slug: true, name: true, rarity: true },
-  });
-  return new Map(rows.map((r) => [r.slug, r]));
+): Promise<Map<string, { name: string; href: string; rarity: string | null }>> {
+  const result = new Map<string, { name: string; href: string; rarity: string | null }>();
+  if (slugs.length === 0) return result;
+  const [items, parts, envs] = await Promise.all([
+    prisma.item.findMany({ where: { slug: { in: slugs } }, select: { slug: true, name: true, rarity: true } }),
+    prisma.tramplerPart.findMany({ where: { slug: { in: slugs } }, select: { slug: true, name: true } }),
+    prisma.envEntity.findMany({ where: { slug: { in: slugs } }, select: { slug: true, name: true } }),
+  ]);
+  // Fill lowest priority first so higher priority overwrites: Env → Trampler → Item.
+  for (const e of envs) result.set(e.slug, { name: e.name, href: entityHref("envEntity", e.slug), rarity: null });
+  for (const p of parts) result.set(p.slug, { name: p.name, href: entityHref("tramplerPart", p.slug), rarity: null });
+  for (const i of items) result.set(i.slug, { name: i.name, href: entityHref("item", i.slug), rarity: i.rarity });
+  return result;
 }
