@@ -1,3 +1,4 @@
+import type { ReactNode } from "react";
 import type { ItemTrades } from "@/lib/trades";
 import { formatCrowns } from "@/lib/trades";
 import { categoryLabel } from "@/lib/taxonomy";
@@ -5,6 +6,9 @@ import { categoryLabel } from "@/lib/taxonomy";
 /** A detail-panel row. `coin` marks a price row so the panel renders the Crowns sprite
  *  between the figure and `unit` (e.g. "10 [coin] / unit"). */
 export interface DetailRow { label: string; value: string; coin?: boolean; unit?: string }
+
+/** A cell in the prominent stat grid (StatGrid). */
+export interface StatCell { label: string; value: ReactNode }
 
 export interface ItemFacts {
   category: string;
