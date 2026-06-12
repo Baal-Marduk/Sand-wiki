@@ -1,8 +1,9 @@
 import Link from "next/link";
-import { getSection, isTramplerCategory } from "@/lib/taxonomy";
+import { getSection, isTramplerCategory, TRAMPLER_CATEGORIES } from "@/lib/taxonomy";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { listTramplerParts, tramplerCategoryCounts } from "@/lib/queries";
 import { TramplerCard } from "@/components/TramplerCard";
+import { CategoryQuickNav } from "@/components/CategoryQuickNav";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 const str = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
@@ -44,20 +45,32 @@ export default async function TramplersPage({ searchParams }: { searchParams: Se
   return (
     <section className="py-6">
       <h1 className="font-display text-2xl font-bold mb-4">{labelOf(category)}</h1>
-      {parts.length === 0 ? (
-        <div role="alert" className="alert alert-warning max-w-2xl">
-          <span>Coming soon — no entries yet for this category.</span>
+      <div className="grid gap-6 lg:grid-cols-[1fr_220px] items-start">
+        <div className="min-w-0 order-2 lg:order-1">
+          {parts.length === 0 ? (
+            <div role="alert" className="alert alert-warning max-w-2xl">
+              <span>Coming soon — no entries yet for this category.</span>
+            </div>
+          ) : (
+            <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+              {parts.map((p) => (
+                <TramplerCard
+                  key={p.id}
+                  part={{ slug: p.slug, name: p.name, icon: p.icon, dimensions: p.dimensions, researchTier: p.researchTier }}
+                />
+              ))}
+            </ul>
+          )}
         </div>
-      ) : (
-        <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-          {parts.map((p) => (
-            <TramplerCard
-              key={p.id}
-              part={{ slug: p.slug, name: p.name, icon: p.icon, dimensions: p.dimensions, researchTier: p.researchTier }}
-            />
-          ))}
-        </ul>
-      )}
+        <div className="order-1 lg:order-2">
+          <CategoryQuickNav
+            categories={TRAMPLER_CATEGORIES}
+            current={category}
+            basePath="/tramplers"
+            label="Trampler categories"
+          />
+        </div>
+      </div>
     </section>
   );
 }
