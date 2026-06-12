@@ -60,6 +60,8 @@ describe("proposal schema", () => {
   it("coerces floats, blanking empties and non-numbers to null", () => {
     expect(coerceFloat("2.5")).toBe(2.5);
     expect(coerceFloat("")).toBeNull();
+    expect(coerceFloat("  ")).toBeNull();
+    expect(coerceFloat("0")).toBe(0);
     expect(coerceFloat("abc")).toBeNull();
   });
 });
