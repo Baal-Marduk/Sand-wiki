@@ -50,6 +50,14 @@ async function main() {
     return rel ? "/icons/" + rel.split("/").pop() : undefined;
   };
 
+  const tramplerIconRel: Record<string, string> = JSON.parse(
+    readFileSync(join(__dirname, "trampler-icons.json"), "utf-8"),
+  );
+  const tramplerIconFor = (slug: string): string | undefined => {
+    const rel = tramplerIconRel[slug];
+    return rel ? "/tramplers/" + rel.split("/").pop() : undefined;
+  };
+
   const enrichment: Record<string, Enrichment> = JSON.parse(
     readFileSync(join(__dirname, "wiki-enrichment.json"), "utf-8"),
   );
@@ -165,7 +173,7 @@ async function main() {
     tramplerSlugs.push(slug);
     const scraped = {
       name: t.name, category: t.category,
-      description: opt(t.description), icon: opt(t.icon), sourceUrl: opt(t.sourceUrl),
+      description: opt(t.description), icon: tramplerIconFor(slug) ?? opt(t.icon), sourceUrl: opt(t.sourceUrl),
       dimensions: opt(t.dimensions),
       health: opt(t.health), weight: opt(t.weight),
       weightCapacity: opt(t.weightCapacity), weightCompensation: opt(t.weightCompensation),
