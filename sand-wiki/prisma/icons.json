@@ -120,6 +120,11 @@
   "item_turretAmmo_delayedDetonation": "icons/icon_ammo_turret_delayedDetonation.png",
   "item_turretAmmo_emp": "icons/icon_ammo_turret_EMP.png",
   "item_turretAmmo_highVelocity": "icons/icon_ammo_turret_highVelocity.png",
+  "item_binocular": "icons/icon_item_binocular.png",
+  "item_flareGun": "icons/icon_tool_flaregun.png",
+  "item_lamp": "icons/icon_flashlight_on.png",
+  "item_map": "icons/icon_tool_map.png",
+  "item_multiTool": "icons/icon_multiTool.png",
   "item_valuablePapers": "icons/icon_item_valuablePapers.png",
   "item_wineBox": "icons/icon_item_game_wineBox.png",
   "item_wokBomb": "icons/icon_wokBomb.png"

@@ -158,6 +158,14 @@ describe("categoryForItem", () => {
     expect(categoryForItem("UTILITY_CONSUMABLE", "Repair Kit", "repair-kit")).toBe("tools");
     expect(categoryForItem("ENERGY", "NZ Mk2 Energy Rod", "energy-rod-mk2")).toBe("tools");
   });
+
+  it("maps Player Gear slugs to tools", () => {
+    expect(categoryForItem(null, "Binoculars", "binoculars")).toBe("tools");
+    expect(categoryForItem(null, "Flashlight", "flashlight")).toBe("tools");
+    expect(categoryForItem(null, "Multitool", "multitool")).toBe("tools");
+    expect(categoryForItem(null, "Map", "map")).toBe("tools");
+    expect(categoryForItem(null, "Flare Gun", "flare-gun")).toBe("tools");
+  });
 });
 
 describe("category colors", () => {

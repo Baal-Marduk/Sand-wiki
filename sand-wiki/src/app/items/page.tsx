@@ -111,7 +111,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
           )}
         </div>
         <div className="order-1 lg:order-2">
-          <CategoryQuickNav categories={ITEM_CATEGORIES} current={category} query={q} sort={sortParam} />
+          <CategoryQuickNav categories={ITEM_CATEGORIES} current={category} query={q} sort={sortParam} label="Item categories" />
         </div>
       </div>
     </section>
