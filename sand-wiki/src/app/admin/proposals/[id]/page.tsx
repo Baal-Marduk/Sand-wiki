@@ -100,7 +100,7 @@ export default async function ProposalDetail({ params }: { params: Params }) {
         <div className="whitespace-pre-wrap rounded-box border border-base-300 p-3">{p.note}</div>
       )}
 
-      {p.note && p.kind === "edit" && <p className="text-base-content/80"><strong>Note:</strong> {p.note}</p>}
+      {p.note && (p.kind === "edit" || p.kind === "recipe_edit") && <p className="text-base-content/80"><strong>Note:</strong> {p.note}</p>}
 
       {p.status === "pending" && (
         <div className="flex flex-wrap gap-4 items-start">
