@@ -81,7 +81,7 @@ export function EntityDetail({
           <ItemDetailsPanel rows={detailRows!} />
         </div>
       ) : (
-        main && <div className="min-w-0">{main}</div>
+        main !== null && <div className="min-w-0">{main}</div>
       )}
 
       {sourceUrl && (
