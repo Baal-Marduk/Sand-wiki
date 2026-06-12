@@ -2,13 +2,24 @@ import Link from "next/link";
 import type { Category } from "@/lib/taxonomy";
 import { CategoryIcon } from "@/components/CategoryIcon";
 
+/** Build a category-switch link. `q`/`sort` are preserved only when present. */
+export function categoryNavHref(
+  basePath: string,
+  slug: string,
+  opts: { query?: string; sort?: string } = {},
+): string {
+  const params = new URLSearchParams({ category: slug });
+  if (opts.query) params.set("q", opts.query);
+  if (opts.sort) params.set("sort", opts.sort);
+  return `${basePath}?${params.toString()}`;
+}
+
 /** Responsive category switcher. Sticky vertical list on lg+, horizontal scroll
  *  row of chips below lg. Highlights the active category and preserves ?q=. */
 export function CategoryQuickNav({
-  categories, current, query, sort,
-}: { categories: Category[]; current?: string; query?: string; sort?: string }) {
-  const href = (slug: string) =>
-    `/items?category=${slug}${query ? `&q=${encodeURIComponent(query)}` : ""}${sort ? `&sort=${sort}` : ""}`;
+  categories, current, query, sort, basePath = "/items",
+}: { categories: Category[]; current?: string; query?: string; sort?: string; basePath?: string }) {
+  const href = (slug: string) => categoryNavHref(basePath, slug, { query, sort });
 
   return (
     <nav aria-label="Item categories" className="lg:sticky lg:top-[4.5rem]">
