@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { editableFields, fieldDef, coerceValue, isEditableTarget } from "./proposal-schema";
+import { editableFields, fieldDef, coerceValue, isEditableTarget, entityHref } from "./proposal-schema";
 
 describe("proposal schema", () => {
   it("exposes editable fields per known type", () => {
@@ -31,5 +31,11 @@ describe("proposal schema", () => {
 
   it("returns NaN sentinel as null for non-numeric int input", () => {
     expect(coerceValue("int", "abc")).toBeNull();
+  });
+
+  it("maps target types to their public route", () => {
+    expect(entityHref("item", "iron")).toBe("/items/iron");
+    expect(entityHref("envEntity", "cave")).toBe("/environment/cave");
+    expect(entityHref("tramplerPart", "wheel")).toBe("/tramplers/wheel");
   });
 });

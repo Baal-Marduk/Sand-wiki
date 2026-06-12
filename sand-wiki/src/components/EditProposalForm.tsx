@@ -1,5 +1,7 @@
+import Link from "next/link";
 import { submitEdit } from "@/app/contribute/actions";
 import type { EditableField } from "@/lib/proposal-schema";
+import { entityHref } from "@/lib/proposal-schema";
 
 export function EditProposalForm({
   type,
@@ -35,7 +37,10 @@ export function EditProposalForm({
         <span className="text-sm font-medium">Note / source (optional)</span>
         <textarea name="note" className="textarea textarea-bordered w-full" rows={2} placeholder="Where did you confirm this?" />
       </label>
-      <button type="submit" className="btn btn-primary">Submit correction</button>
+      <div className="flex gap-2">
+        <button type="submit" className="btn btn-primary">Submit correction</button>
+        <Link href={entityHref(type, slug)} className="btn btn-ghost">Cancel</Link>
+      </div>
     </form>
   );
 }

@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireUser } from "@/lib/auth";
-import { editableFields, isEditableTarget, coerceValue, fieldDef } from "@/lib/proposal-schema";
+import { editableFields, isEditableTarget, coerceValue, fieldDef, entityHref } from "@/lib/proposal-schema";
 import { computeDiff } from "@/lib/proposal-diff";
 import { getEntityFields } from "@/lib/proposal-entity";
 
@@ -40,7 +40,7 @@ export async function submitEdit(formData: FormData) {
   await prisma.proposal.create({
     data: { kind: "edit", targetType: type, targetSlug: slug, changes: changes as object, note, proposerId: session.steamId },
   });
-  redirect(`/${type === "envEntity" ? "environment" : type === "item" ? "items" : "tramplers"}/${slug}?proposed=1`);
+  redirect(`${entityHref(type, slug)}?proposed=1`);
 }
 
 export async function submitNewPage(formData: FormData) {

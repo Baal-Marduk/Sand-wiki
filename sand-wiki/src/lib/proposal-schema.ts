@@ -66,3 +66,10 @@ export function coerceValue(type: FieldType, raw: string): string | number | nul
   }
   return trimmed;
 }
+
+/** Public route for a correctable entity. Mirrors the segment names used by the
+ *  app router (envEntity → /environment, item → /items, else /tramplers). */
+export function entityHref(type: string, slug: string): string {
+  const seg = type === "envEntity" ? "environment" : type === "item" ? "items" : "tramplers";
+  return `/${seg}/${slug}`;
+}
