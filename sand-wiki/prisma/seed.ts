@@ -3,7 +3,7 @@ import { readFileSync } from "node:fs";
 import { join } from "node:path";
 import { categoryForItem, isItemCategory, isEnvCategory, isTramplerCategory } from "../src/lib/taxonomy";
 import { isRarity, DEFAULT_RARITY } from "../src/lib/rarity";
-import { flattenStats, lootToTiers, costToRows, type RawStats, type RawLoot, type RawCostLine } from "./seed-transform";
+import { flattenStats, lootToTiers, costToRows, mergeItems, type RawStats, type RawLoot, type RawCostLine } from "./seed-transform";
 
 interface EnvContent { category: string; name: string; description?: string; sourceUrl?: string; loot?: RawLoot }
 
@@ -41,6 +41,10 @@ const opt = <T>(v: T | null | undefined): T | undefined => v ?? undefined;
 async function main() {
   const file = process.env.SEED_FILE ?? join(__dirname, "data.json");
   const data: ScrapData = JSON.parse(readFileSync(file, "utf-8"));
+  const gear: ScrapItem[] = JSON.parse(
+    readFileSync(join(__dirname, "gear.json"), "utf-8"),
+  );
+  const items = mergeItems(data.items, gear);
 
   const iconRel: Record<string, string> = JSON.parse(
     readFileSync(join(__dirname, "icons.json"), "utf-8"),
@@ -63,7 +67,7 @@ async function main() {
   );
 
   // --- Items: upsert by slug (stable ids), prune slugs gone from the scrape ---
-  for (const i of data.items) {
+  for (const i of items) {
     const category = categoryForItem(i.type, i.displayName ?? i.name, i.slug);
     if (!isItemCategory(category)) throw new Error(`Mapped category "${category}" is not a known category`);
     if (i.type && category === "misc" && !INTENDED_MISC.has(i.type)) {
@@ -96,7 +100,7 @@ async function main() {
     };
     await prisma.item.upsert({ where: { slug: i.slug }, create: { slug: i.slug, ...scraped }, update: scraped });
   }
-  const prunedItems = await prisma.item.deleteMany({ where: { slug: { notIn: data.items.map((i) => i.slug) } } });
+  const prunedItems = await prisma.item.deleteMany({ where: { slug: { notIn: items.map((i) => i.slug) } } });
   if (prunedItems.count > 0) console.log(`Pruned ${prunedItems.count} item(s) no longer in the scrape`);
 
   const idBySlug = new Map(
@@ -199,9 +203,9 @@ async function main() {
   if (prunedTramplers.count > 0) console.log(`Pruned ${prunedTramplers.count} trampler part(s) no longer in the scrape`);
 
   const [itemCount, recipeCount] = await Promise.all([prisma.item.count(), prisma.recipe.count()]);
-  if (itemCount !== data.items.length) throw new Error(`Item count mismatch after seed: DB has ${itemCount}, snapshot has ${data.items.length} (duplicate slugs?)`);
+  if (itemCount !== items.length) throw new Error(`Item count mismatch after seed: DB has ${itemCount}, snapshot has ${items.length} (duplicate slugs?)`);
   if (recipeCount !== data.recipes.length) throw new Error(`Recipe count mismatch after seed: DB has ${recipeCount}, snapshot has ${data.recipes.length} (duplicate slugs?)`);
-  console.log(`Seeded ${data.items.length} items, ${data.recipes.length} recipes, ${envCount} environment entities, ${tramplerCount} trampler parts.`);
+  console.log(`Seeded ${items.length} items, ${data.recipes.length} recipes, ${envCount} environment entities, ${tramplerCount} trampler parts.`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());

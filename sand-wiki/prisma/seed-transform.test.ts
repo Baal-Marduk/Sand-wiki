@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { flattenStats, lootToTiers, costToRows } from "./seed-transform";
+import { flattenStats, lootToTiers, costToRows, mergeItems } from "./seed-transform";
 
 describe("flattenStats", () => {
   it("maps wiki stat keys to flat column names", () => {
@@ -88,5 +88,18 @@ describe("costToRows", () => {
 
   it("returns [] when there is no cost", () => {
     expect(costToRows(undefined)).toEqual([]);
+  });
+});
+
+describe("mergeItems", () => {
+  it("concatenates gear after scraped items", () => {
+    const scraped = [{ slug: "a" }, { slug: "b" }];
+    const gear = [{ slug: "c" }];
+    expect(mergeItems(scraped, gear).map((i) => i.slug)).toEqual(["a", "b", "c"]);
+  });
+
+  it("throws when a gear slug collides with a scraped slug", () => {
+    expect(() => mergeItems([{ slug: "a" }], [{ slug: "a" }]))
+      .toThrow(/collides/);
   });
 });
