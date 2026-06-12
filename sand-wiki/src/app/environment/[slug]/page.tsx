@@ -1,10 +1,11 @@
-import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getEnvEntityBySlug } from "@/lib/queries";
-import { ItemTabs, type Tab } from "@/components/ItemTabs";
-import { LootTable } from "@/components/LootTable";
+import { categoryLabel } from "@/lib/taxonomy";
 import { byRarityThenName } from "@/lib/rarity";
-import { SuggestCorrectionLink } from "@/components/SuggestCorrectionLink";
+import { EntityDetail } from "@/components/EntityDetail";
+import { CategoryTag } from "@/components/CategoryTag";
+import { LootTable } from "@/components/LootTable";
+import { type Tab } from "@/components/ItemTabs";
 
 type Params = Promise<{ slug: string }>;
 
@@ -26,30 +27,19 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
   }));
 
   return (
-    <article className="py-6 space-y-4 max-w-3xl">
-      <div className="flex gap-2">
-        <Link href="/environment" className="btn btn-ghost btn-sm">← Environment</Link>
-        <SuggestCorrectionLink type="envEntity" slug={slug} />
-      </div>
-      <h1 className="font-display text-3xl font-bold">{entity.name}</h1>
-      {entity.description &&
-        entity.description.split(/\n+/).map((p, i) => (
-          <p key={i} className="text-base-content/80">{p}</p>
-        ))}
-      {tabs.length > 0 && (
-        <section>
-          <h2 className="font-display text-lg font-semibold mb-2">Loot</h2>
-          <ItemTabs tabs={tabs} />
-        </section>
-      )}
-      {entity.sourceUrl && (
-        <p className="text-sm text-base-content/60">
-          Source:{" "}
-          <a href={entity.sourceUrl} target="_blank" rel="noopener noreferrer" className="link">
-            sandgame.wiki ↗
-          </a>
-        </p>
-      )}
-    </article>
+    <EntityDetail
+      breadcrumb={[
+        { label: "Environment", href: "/environment" },
+        { label: categoryLabel(entity.category), href: `/environment?category=${entity.category}` },
+        { label: entity.name },
+      ]}
+      suggest={{ type: "envEntity", slug }}
+      icon={{ name: entity.name, icon: entity.icon, decorative: true }}
+      title={entity.name}
+      badges={<CategoryTag slug={entity.category} />}
+      description={entity.description}
+      tabs={tabs}
+      sourceUrl={entity.sourceUrl}
+    />
   );
 }

@@ -373,3 +373,40 @@ test("WIP destinations are disabled (not links) in the nav", async ({ page }) =>
   await expect(nav.getByRole("link", { name: "Loot Containers" })).toBeVisible();
   await expect(nav.getByRole("link", { name: "NPCs" })).toHaveCount(0);
 });
+
+test("environment detail now shows a category badge and a decorative icon", async ({ page }) => {
+  await page.goto("/environment/weapon-crate");
+  // The category badge resolves the slug to its label ("loot-containers" -> "Loot Containers").
+  // Scope to the badge so we don't collide with the breadcrumb crumb or the nav dropdown link.
+  await expect(page.locator("article .badge").filter({ hasText: "Loot Containers" })).toBeVisible();
+  // The header now renders an icon tile (a real sprite when available, else a neutral placeholder).
+  // Scope to <header> so we don't also match loot-item icons inside the tab panel.
+  await expect(page.locator("article header .item-sprite")).toBeVisible();
+});
+
+test("detail articles are horizontally centered (mx-auto)", async ({ page }) => {
+  for (const path of ["/items/c4-dynamite", "/environment/weapon-crate"]) {
+    await page.goto(path);
+    const centered = await page.locator("article").evaluate((el) => {
+      const cs = getComputedStyle(el);
+      if (cs.marginLeft === "auto" || cs.marginInlineStart === "auto") return true;
+      const r = el.getBoundingClientRect();
+      return Math.abs(r.left - (window.innerWidth - r.right)) < 2;
+    });
+    expect(centered, `article on ${path} should be centered`).toBe(true);
+  }
+});
+
+test("trampler part page shows a prominent stat grid and Build Cost tab", async ({ page }) => {
+  // Go straight to a populated category (chassis parts always carry stats), then open the
+  // first part card. Scope to <section> so we match a visible card, not a hidden nav link.
+  await page.goto("/tramplers?category=chassis");
+  const firstPart = page.locator('section a[href^="/tramplers/"]').first();
+  await expect(firstPart).toBeVisible();
+  await firstPart.click();
+  await expect(page).toHaveURL(/\/tramplers\/[^/]+$/);
+  // Prominent stat grid is the only <dl> on the page (the Details sidebar uses a table).
+  await expect(page.locator("article dl").first()).toBeVisible();
+  // Suggest-a-correction sits in the top row.
+  await expect(page.getByRole("link", { name: /Suggest a correction/i })).toBeVisible();
+});

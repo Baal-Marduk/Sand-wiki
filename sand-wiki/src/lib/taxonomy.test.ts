@@ -41,6 +41,8 @@ describe("taxonomy", () => {
 
   it("maps a category slug to its label, falling back to the slug", () => {
     expect(categoryLabel("weapons")).toBe("Weapons");
+    expect(categoryLabel("loot-containers")).toBe("Loot Containers");
+    expect(categoryLabel("game-modes")).toBe("Game Modes");
     expect(categoryLabel("unknown")).toBe("unknown");
   });
 

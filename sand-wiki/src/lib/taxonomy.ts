@@ -70,11 +70,11 @@ export function isWeaponClassCategory(slug: string | undefined): boolean {
 }
 
 export function categoryLabel(slug: string): string {
-  return (
-    itemCategories.find((c) => c.slug === slug)?.label ??
-    tramplerCategories.find((c) => c.slug === slug)?.label ??
-    slug
-  );
+  for (const section of SECTIONS) {
+    const found = section.categories.find((c) => c.slug === slug);
+    if (found) return found.label;
+  }
+  return slug;
 }
 
 export function getSection(slug: string): Section | undefined {
