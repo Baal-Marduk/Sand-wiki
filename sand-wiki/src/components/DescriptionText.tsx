@@ -1,3 +1,4 @@
+import { Fragment } from "react";
 import { parseDescription, collectSlugs } from "@/lib/description-links";
 import { getItemsBySlugs } from "@/lib/queries";
 import { ItemTextLink } from "@/components/ItemTextLink";
@@ -16,9 +17,9 @@ export async function DescriptionText({ text }: { text: string }) {
       {parsed.map((segments, i) => (
         <p key={i} className="text-base-content/80 max-w-prose">
           {segments.map((s, j) => {
-            if (s.type === "text") return s.value;
+            if (s.type === "text") return <Fragment key={j}>{s.value}</Fragment>;
             const item = items.get(s.slug);
-            if (!item) return s.label ?? s.slug;
+            if (!item) return <Fragment key={j}>{s.label ?? s.slug}</Fragment>;
             return <ItemTextLink key={j} slug={item.slug} label={s.label ?? item.name} rarity={item.rarity} />;
           })}
         </p>
