@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
-import { applyProposal } from "@/lib/proposal-apply";
+import { applyProposal, applyRecipeProposal } from "@/lib/proposal-apply";
 
 export async function approveProposal(formData: FormData) {
   const session = await requireAdmin();
@@ -13,6 +13,8 @@ export async function approveProposal(formData: FormData) {
 
   if (p.kind === "edit") {
     await applyProposal(id, session.steamId); // writes canonical row + marks applied
+  } else if (p.kind === "recipe_edit") {
+    await applyRecipeProposal(id, session.steamId); // rewrites relation rows + marks applied
   } else {
     // new_page: admin creates the row in Directus manually; just close it out.
     await prisma.proposal.update({
