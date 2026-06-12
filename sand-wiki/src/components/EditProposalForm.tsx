@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { submitEdit } from "@/app/contribute/actions";
-import { entityHref, type EditableField } from "@/lib/proposal-schema";
+import { entityHref, type EditableField, type SelectOption } from "@/lib/proposal-schema";
 import { EnumField } from "@/components/EnumField";
 
 export function EditProposalForm({
@@ -14,7 +14,7 @@ export function EditProposalForm({
   slug: string;
   fields: EditableField[];
   values: Record<string, string | number | null>;
-  options: Record<string, string[]>;
+  options: Record<string, SelectOption[]>;
 }) {
   return (
     <form action={submitEdit} className="space-y-4 max-w-2xl">

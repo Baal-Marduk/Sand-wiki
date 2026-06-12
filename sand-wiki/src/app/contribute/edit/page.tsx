@@ -1,7 +1,8 @@
 import { notFound } from "next/navigation";
 import { requireUser } from "@/lib/auth";
 import { editableFields, isEditableTarget } from "@/lib/proposal-schema";
-import { getEntityFields, getFieldOptions } from "@/lib/proposal-entity";
+import { getEntityFields, getEnumOptions } from "@/lib/proposal-entity";
+import type { SelectOption } from "@/lib/proposal-schema";
 import { EditProposalForm } from "@/components/EditProposalForm";
 
 type SP = Promise<{ type?: string; slug?: string }>;
@@ -15,9 +16,9 @@ export default async function EditProposalPage({ searchParams }: { searchParams:
   if (!current) notFound();
 
   const fields = editableFields(type);
-  const options: Record<string, string[]> = {};
+  const options: Record<string, SelectOption[]> = {};
   for (const f of fields) {
-    if (f.type === "enum") options[f.field] = await getFieldOptions(type, f.field);
+    if (f.type === "enum") options[f.field] = await getEnumOptions(type, f.field);
   }
 
   return (
