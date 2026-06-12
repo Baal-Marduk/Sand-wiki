@@ -70,7 +70,7 @@ export default async function ProposalDetail({ params }: { params: Params }) {
             <thead><tr><th>Meta</th><th>Current</th><th>Proposed</th></tr></thead>
             <tbody>
               {(["workbench", "tier", "craftTimeSeconds"] as const).map((k) => (
-                <tr key={k} className={recipeChange!.old[k] !== recipeChange!.new[k] ? "bg-warning/10" : ""}>
+                <tr key={k} className={recipeChange!.old[k] !== recipeChange!.new[k] ? "bg-warning/20" : ""}>
                   <td>{k}</td>
                   <td>{String(recipeChange!.old[k] ?? "—")}</td>
                   <td className="font-medium">{String(recipeChange!.new[k] ?? "—")}</td>
@@ -85,7 +85,7 @@ export default async function ProposalDetail({ params }: { params: Params }) {
                 <thead><tr><th>Item</th><th>Current</th><th>Proposed</th></tr></thead>
                 <tbody>
                   {diffRecipeLines(recipeChange!.old[side], recipeChange!.new[side]).map((row) => (
-                    <tr key={row.slug} className={row.status === "same" ? "" : "bg-warning/10"}>
+                    <tr key={row.slug} className={row.status === "same" ? "" : "bg-warning/20"}>
                       <td>{row.name}{row.status !== "same" && <span className="badge badge-sm ml-2">{row.status}</span>}</td>
                       <td>{row.oldAmount ?? "—"}</td>
                       <td className="font-medium">{row.newAmount ?? "—"}</td>
@@ -107,7 +107,7 @@ export default async function ProposalDetail({ params }: { params: Params }) {
           <form action={approveProposal}>
             <input type="hidden" name="id" value={p.id} />
             <button type="submit" className="btn btn-success">
-              {p.kind === "edit" ? "Approve & apply" : "Mark created"}
+              {p.kind === "new_page" ? "Mark created" : "Approve & apply"}
             </button>
           </form>
           <form action={rejectProposal} className="flex gap-2 items-end">
