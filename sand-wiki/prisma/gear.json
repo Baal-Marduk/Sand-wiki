@@ -1,0 +1,57 @@
+[
+  {
+    "slug": "binoculars",
+    "id": "item_binocular",
+    "name": "Binoculars",
+    "description": "The Binoculars are one of the pieces of Player Gear carried by all explorers of Sophie. They can be used to see across far distances and are useful for scouting out locations as well as keeping a lookout for other players and Tramplers.",
+    "type": null,
+    "isResource": false,
+    "storageStack": null,
+    "workbenchTier": null,
+    "fromCatalog": false
+  },
+  {
+    "slug": "flashlight",
+    "id": "item_lamp",
+    "name": "Flashlight",
+    "description": "The Lamp is one of the pieces of Player Gear carried by all explorers of Sophie. It can be toggled on and off by clicking on the item inside the player's inventory. When on, the lamp provides limited illumination in front of the player, which can be useful during the night when visibility is poor. Note: other players are able to see the illumination provided by your lamp, so keep an eye on your surroundings.",
+    "type": null,
+    "isResource": false,
+    "storageStack": null,
+    "workbenchTier": null,
+    "fromCatalog": false
+  },
+  {
+    "slug": "multitool",
+    "id": "item_multiTool",
+    "name": "Multitool",
+    "description": "The Repair Tool, or Multitool, is one of the pieces of Player Gear carried by all explorers of Sophie. It can be used in or out of battle to quickly repair damage to doors, compartments, pipes, and hatches on your Trampler.",
+    "type": null,
+    "isResource": false,
+    "storageStack": null,
+    "workbenchTier": null,
+    "fromCatalog": false
+  },
+  {
+    "slug": "map",
+    "id": "item_map",
+    "name": "Map",
+    "description": "The Map is one of the pieces of Player Gear carried by all explorers of Sophie; Tramplers also come equipped with a map mounted to the central steering column of the steering deck. The map takes the form of old nautical charts from back when Sophie still had liquid water on its surface. As this is no longer the case, maps now contain little useful information beyond the locations of Landmarks such as ports and military forts — the rest is out of date, shrouded in a fog of war. As the player traverses the dried-up sea floors of Sophie they slowly fill in the chart to reflect the land's new topography, and updates are reflected across both the player's personal map and the map of any Trampler they own. Because landmarks and terrain are randomly generated for each lobby, any progress filling in a map is lost upon extraction; every expedition begins with a fresh map obscured by fog of war, except for the player's immediate surroundings at spawn.",
+    "type": null,
+    "isResource": false,
+    "storageStack": null,
+    "workbenchTier": null,
+    "fromCatalog": false
+  },
+  {
+    "slug": "flare-gun",
+    "id": "item_flareGun",
+    "name": "Flare Gun",
+    "description": "The Flare Gun is one of the pieces of Player Gear carried by all explorers of Sophie. It is able to shoot colored flares high into the sky, where they burst into a colored cloud depending on the flare that is loaded. Flares deal no damage and do not burst unless shot upwards, although they leave a smaller smoke trail of their color in their wake regardless of how they are fired. Flares are useful for signaling to teammates and other Tramplers.",
+    "type": null,
+    "isResource": false,
+    "storageStack": null,
+    "workbenchTier": null,
+    "fromCatalog": false
+  }
+]
