@@ -9,8 +9,12 @@ import type { RecipeLineDraft, RecipeSnapshot } from "@/lib/recipe-proposal";
 type ItemOption = { slug: string; name: string };
 type Side = "input" | "output";
 
-function blankLine(): RecipeLineDraft {
-  return { slug: "", name: "", amount: 1 };
+let nextKey = 0;
+type Row = RecipeLineDraft & { key: number };
+const toRow = (l: RecipeLineDraft): Row => ({ ...l, key: nextKey++ });
+
+function blankLine(): Row {
+  return { slug: "", name: "", amount: 1, key: nextKey++ };
 }
 
 function LineEditor({
@@ -20,8 +24,8 @@ function LineEditor({
   items,
 }: {
   side: Side;
-  lines: RecipeLineDraft[];
-  setLines: (next: RecipeLineDraft[]) => void;
+  lines: Row[];
+  setLines: (next: Row[]) => void;
   items: ItemOption[];
 }) {
   const update = (i: number, patch: Partial<RecipeLineDraft>) =>
@@ -30,7 +34,7 @@ function LineEditor({
     <fieldset className="space-y-2">
       <legend className="text-sm font-medium">{side === "input" ? "Inputs" : "Outputs"}</legend>
       {lines.map((l, i) => (
-        <div key={i} className="flex gap-2 items-center">
+        <div key={l.key} className="flex gap-2 items-center">
           <select
             name={`${side}Slug`}
             value={l.slug}
@@ -75,8 +79,8 @@ export function RecipeEditForm({
   workbenches: string[];
   backHref: string;
 }) {
-  const [inputs, setInputs] = useState<RecipeLineDraft[]>(snapshot.inputs.length ? snapshot.inputs : [blankLine()]);
-  const [outputs, setOutputs] = useState<RecipeLineDraft[]>(snapshot.outputs.length ? snapshot.outputs : [blankLine()]);
+  const [inputs, setInputs] = useState<Row[]>(snapshot.inputs.length ? snapshot.inputs.map(toRow) : [blankLine()]);
+  const [outputs, setOutputs] = useState<Row[]>(snapshot.outputs.length ? snapshot.outputs.map(toRow) : [blankLine()]);
 
   return (
     <form action={submitRecipeEdit} className="space-y-5 max-w-2xl">
