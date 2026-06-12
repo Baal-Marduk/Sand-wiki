@@ -20,7 +20,7 @@ export function UsedInTable({ recipes }: { recipes: RecipeCard[] }) {
   return (
     <SortableTable
       caption="Recipes that use this item"
-      columns={[{ label: "Produces" }, { label: "Ingredients" }, { label: "Workbench" }, { label: "Edit", alignRight: true }]}
+      columns={[{ label: "Produces" }, { label: "Ingredients" }, { label: "Workbench" }, { label: "Edit", alignRight: true, sortable: false }]}
       rows={rows}
     />
   );

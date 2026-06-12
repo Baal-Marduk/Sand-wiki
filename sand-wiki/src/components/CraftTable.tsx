@@ -21,7 +21,7 @@ export function CraftTable({ recipes }: { recipes: RecipeCard[] }) {
   return (
     <SortableTable
       caption="Recipes that craft this item"
-      columns={[{ label: "Ingredients" }, { label: "Time" }, { label: "Workbench" }, { label: "Edit", alignRight: true }]}
+      columns={[{ label: "Ingredients" }, { label: "Time" }, { label: "Workbench" }, { label: "Edit", alignRight: true, sortable: false }]}
       rows={rows}
     />
   );
