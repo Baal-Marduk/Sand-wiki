@@ -65,5 +65,17 @@
     "storageStack": 100000,
     "workbenchTier": null,
     "fromCatalog": false
+  },
+  {
+    "slug": "resource-weird-coral",
+    "id": "item_resourceWeirdCoral",
+    "name": "Resource Weird Coral",
+    "displayName": "Weird Coral",
+    "description": "An unusual coral formation prized as a crafting and research material.",
+    "type": "RESOURCE_T2",
+    "isResource": true,
+    "storageStack": 100000,
+    "workbenchTier": null,
+    "fromCatalog": false
   }
 ]
