@@ -4,7 +4,7 @@ import { StatGrid } from "@/components/StatGrid";
 import { ItemTabs, type Tab } from "@/components/ItemTabs";
 import { ItemDetailsPanel } from "@/components/ItemDetailsPanel";
 import { DescriptionText } from "@/components/DescriptionText";
-import { rarityColor } from "@/lib/rarity";
+import { ItemIcon } from "@/components/ItemIcon";
 import type { StatCell, DetailRow } from "@/lib/item-view";
 
 export interface EntityIcon {
@@ -35,36 +35,6 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
     <h2 className="mb-2.5 font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
       {children}
     </h2>
-  );
-}
-
-/** Large neutral sprite tile carrying the rarity color as a left rail (per the
- *  redesign: rail not full tint). Keeps the `item-sprite` hook and the
- *  name-as-accessible-image behavior unless decorative. */
-function DetailSprite({ icon }: { icon: EntityIcon }) {
-  const rail = rarityColor(icon.rarity) ?? "var(--border-strong)";
-  return (
-    <span
-      className="item-sprite grid size-28 shrink-0 place-items-center overflow-hidden border border-border bg-card-elevated"
-      style={{ borderLeftWidth: 3, borderLeftColor: rail }}
-    >
-      {icon.icon ? (
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={icon.icon}
-          alt={icon.decorative ? "" : icon.name}
-          aria-hidden={icon.decorative || undefined}
-          className="size-[80%] object-contain [filter:drop-shadow(0_2px_4px_rgba(0,0,0,0.5))]"
-        />
-      ) : (
-        <span
-          className="text-5xl text-dim"
-          {...(icon.decorative ? { "aria-hidden": true } : { role: "img", "aria-label": icon.name })}
-        >
-          ▦
-        </span>
-      )}
-    </span>
   );
 }
 
@@ -118,7 +88,15 @@ export function EntityDetail({
       </div>
 
       <header className="flex flex-wrap items-start gap-5">
-        {icon && <DetailSprite icon={icon} />}
+        {icon && (
+          <ItemIcon
+            name={icon.name}
+            icon={icon.icon}
+            size="lg"
+            rarity={icon.rarity ?? undefined}
+            decorative={icon.decorative ?? false}
+          />
+        )}
         <div className="min-w-[16rem] flex-1 space-y-3">
           {badges && <div className="flex flex-wrap items-center gap-2">{badges}</div>}
           <h1 className="font-display text-3xl font-bold uppercase leading-none tracking-[0.01em] sm:text-4xl">
