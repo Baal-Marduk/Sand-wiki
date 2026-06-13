@@ -48,11 +48,14 @@ export default async function HomePage() {
   return (
     <div className="-m-4">
       {/* Hero */}
+      {/* No overflow-hidden: the hero-search autocomplete panel is absolutely
+          positioned inside here and must escape the hero's bottom edge. The grid
+          overlay is inset-0 so it stays bounded without clipping. */}
       <section
-        className="relative overflow-hidden border-b border-border px-6 py-16 sm:py-20"
+        className="relative border-b border-border px-6 py-16 sm:py-20"
         style={{ background: heroBackground }}
       >
-        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-35" style={gridStyle} />
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden opacity-35" style={gridStyle} />
         <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-5 text-center">
           <span className="font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
             Unofficial database
