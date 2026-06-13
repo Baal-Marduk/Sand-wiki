@@ -11,13 +11,13 @@ import {
 const names = new Map([["iron", "Iron"], ["bolt", "Bolt"], ["screw", "Screw"]]);
 
 describe("recipeToSnapshot", () => {
-  it("flattens a recipe row with included items into a snapshot", () => {
+  it("flattens a recipe row with included entities into a snapshot", () => {
     const snap = recipeToSnapshot({
       workbench: "Forge",
       tier: 1,
       craftTimeSeconds: 5,
-      inputs: [{ amount: 2, item: { slug: "iron", name: "Iron" } }],
-      outputs: [{ amount: 1, item: { slug: "bolt", name: "Bolt" } }],
+      inputs: [{ amount: 2, entity: { slug: "iron", name: "Iron" } }],
+      outputs: [{ amount: 1, entity: { slug: "bolt", name: "Bolt" } }],
     });
     expect(snap).toEqual({
       workbench: "Forge",
