@@ -11,3 +11,13 @@ node_modules/
 
 *.log
 .superpowers/
+
+# Claude Code local config / worktrees
+.claude/
+
+# Playwright output (repo root)
+/test-results/
+
+# Separate tools living alongside the wiki (tracked elsewhere / not part of sand-wiki)
+/sand-scraper/
+/tech-tree/
