@@ -141,25 +141,29 @@ async function main() {
     envSlugs.push(slug);
     const scraped = { category: e.category, name: e.name, description: opt(e.description), sourceUrl: opt(e.sourceUrl) };
     const entity = await prisma.envEntity.upsert({ where: { slug }, create: { slug, ...scraped }, update: scraped });
-    await prisma.lootTier.deleteMany({ where: { envEntityId: entity.id } });
-    for (const t of lootToTiers(e.loot)) {
-      await prisma.lootTier.create({
-        data: {
-          envEntityId: entity.id,
-          tier: t.tier,
-          col1Label: t.col1Label,
-          col2Label: t.col2Label,
-          col3Label: t.col3Label,
-          sortOrder: t.sortOrder,
-          entries: {
-            create: t.entries.map((en) => {
-              const itemId = en.itemSlug ? idBySlug.get(en.itemSlug) ?? null : null;
-              if (en.itemSlug && !itemId) console.warn(`Loot slug "${en.itemSlug}" in ${slug}/${t.tier} does not resolve to an item`);
-              return { itemId, name: en.name, value1: en.value1, value2: en.value2, value3: en.value3, sortOrder: en.sortOrder };
-            }),
+    if (entity.lootCurated) {
+      console.log(`Skipping loot recreate for ${slug} (lootCurated = true)`);
+    } else {
+      await prisma.lootTier.deleteMany({ where: { envEntityId: entity.id } });
+      for (const t of lootToTiers(e.loot)) {
+        await prisma.lootTier.create({
+          data: {
+            envEntityId: entity.id,
+            tier: t.tier,
+            col1Label: t.col1Label,
+            col2Label: t.col2Label,
+            col3Label: t.col3Label,
+            sortOrder: t.sortOrder,
+            entries: {
+              create: t.entries.map((en) => {
+                const itemId = en.itemSlug ? idBySlug.get(en.itemSlug) ?? null : null;
+                if (en.itemSlug && !itemId) console.warn(`Loot slug "${en.itemSlug}" in ${slug}/${t.tier} does not resolve to an item`);
+                return { itemId, name: en.name, value1: en.value1, value2: en.value2, value3: en.value3, sortOrder: en.sortOrder };
+              }),
+            },
           },
-        },
-      });
+        });
+      }
     }
     envCount++;
   }

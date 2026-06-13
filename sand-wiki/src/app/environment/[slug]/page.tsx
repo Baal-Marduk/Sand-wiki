@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
 import { getEnvEntityBySlug } from "@/lib/queries";
+import { lootEntryView } from "@/lib/loot";
 import { categoryLabel } from "@/lib/taxonomy";
 import { byRarityThenName } from "@/lib/rarity";
 import { EntityDetail } from "@/components/EntityDetail";
@@ -20,11 +21,7 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
     id: t.tier.toLowerCase().replace(/\s+/g, "-"),
     label: t.tier,
     content: (
-      <LootTable
-        entries={t.entries
-          .map((e) => ({ slug: e.item?.slug ?? null, name: e.name, icon: e.item?.icon ?? null, rarity: e.item?.rarity ?? null }))
-          .sort(byRarityThenName)}
-      />
+      <LootTable entries={t.entries.map(lootEntryView).sort(byRarityThenName)} />
     ),
   }));
 
