@@ -115,6 +115,14 @@ async function main() {
   const idBySlug = new Map(
     (await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, id: true } })).map((it) => [it.slug, it.id]),
   );
+  // name → Entity id (lowercased), for cost lines that reference an item by name
+  // only (e.g. the "Crowns" currency, which carries no slug in the source data).
+  const idByName = new Map(
+    (await prisma.entity.findMany({ where: { kind: "item" }, select: { name: true, id: true } })).map((it) => [
+      it.name.toLowerCase(),
+      it.id,
+    ]),
+  );
   const need = (slug: string) => {
     const id = idBySlug.get(slug);
     if (!id) throw new Error(`Recipe references unknown item slug: ${slug}`);
@@ -217,7 +225,10 @@ async function main() {
     if (rows.length > 0) {
       await prisma.entityLink.createMany({
         data: rows.map((c) => {
-          const targetId = c.itemSlug ? idBySlug.get(c.itemSlug) ?? null : null;
+          // Resolve by slug; fall back to name (currency lines like "Crowns" carry no slug).
+          const targetId = c.itemSlug
+            ? idBySlug.get(c.itemSlug) ?? null
+            : idByName.get(c.name.toLowerCase()) ?? null;
           if (c.itemSlug && !targetId) console.warn(`Cost slug "${c.itemSlug}" on ${slug} does not resolve to an item`);
           return { sourceId: part.id, role: "cost", targetId, name: c.name, amount: c.amount, sortOrder: c.sortOrder };
         }),
