@@ -108,3 +108,66 @@ describe("mergeItems", () => {
       .toThrow(/collides/);
   });
 });
+
+import {
+  techNodeSlug, unlockRows, prereqRows, researchCostRows, validateTechTree,
+  type RawTechNode,
+} from "./seed-transform";
+
+const node = (over: Partial<RawTechNode> = {}): RawTechNode => ({
+  slug: "tech-godlewski-t1-crew-room", name: "Crew Room",
+  faction: "godlewski", tier: 1, category: "Cabins", ...over,
+});
+
+describe("techNodeSlug", () => {
+  it("builds tech-<faction>-t<tier>-<kebab>", () => {
+    expect(techNodeSlug("kaiser", 2, "Wooden Decks (multiple)")).toBe("tech-kaiser-t2-wooden-decks-multiple");
+  });
+});
+
+describe("tech link row mappers", () => {
+  it("unlockRows preserves order and uses slug as name", () => {
+    expect(unlockRows(node({ unlocks: ["medkit", "shovel"] }))).toEqual([
+      { targetSlug: "medkit", name: "medkit", amount: null, sortOrder: 0 },
+      { targetSlug: "shovel", name: "shovel", amount: null, sortOrder: 1 },
+    ]);
+  });
+  it("prereqRows maps node slugs", () => {
+    expect(prereqRows(node({ prereqs: ["tech-godlewski-t1-stairs"] }))).toEqual([
+      { targetSlug: "tech-godlewski-t1-stairs", name: "tech-godlewski-t1-stairs", amount: null, sortOrder: 0 },
+    ]);
+  });
+  it("researchCostRows carries amounts and null slug for unresolved", () => {
+    expect(researchCostRows(node({ researchCostItems: [{ name: "Mechanical Parts", amount: 5 }] }))).toEqual([
+      { targetSlug: null, name: "Mechanical Parts", amount: 5, sortOrder: 0 },
+    ]);
+  });
+  it("empty arrays produce no rows", () => {
+    expect(unlockRows(node())).toEqual([]);
+    expect(prereqRows(node())).toEqual([]);
+    expect(researchCostRows(node())).toEqual([]);
+  });
+});
+
+describe("validateTechTree", () => {
+  const known = new Set(["medkit"]);
+  it("passes a clean tree", () => {
+    expect(validateTechTree([node({ unlocks: ["medkit"] })], known)).toEqual([]);
+  });
+  it("errors on bad faction, tier, dup slug, and unknown prereq node", () => {
+    const issues = validateTechTree([
+      node({ faction: "bogus" }),
+      node({ tier: 9 }),
+      node({ prereqs: ["tech-missing"] }),
+    ], known);
+    const errs = issues.filter((i) => i.kind === "error").map((i) => i.message);
+    expect(errs.some((m) => m.includes("invalid faction"))).toBe(true);
+    expect(errs.some((m) => m.includes("tier out of range"))).toBe(true);
+    expect(errs.some((m) => m.includes("duplicate node slug"))).toBe(true);
+    expect(errs.some((m) => m.includes("is not a known node"))).toBe(true);
+  });
+  it("warns (not errors) on an unlock with no matching entity", () => {
+    const issues = validateTechTree([node({ unlocks: ["ghost-item"] })], known);
+    expect(issues).toEqual([{ node: node().slug, kind: "warning", message: 'unlock "ghost-item" has no matching item/part entity' }]);
+  });
+});
