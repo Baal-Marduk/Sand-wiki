@@ -1,9 +1,9 @@
 import { PrismaClient } from "@prisma/client";
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { categoryForItem, isItemCategory, isEnvCategory, isTramplerCategory } from "../src/lib/taxonomy";
+import { categoryForItem, isItemCategory, isEnvCategory, isTramplerCategory, isFaction } from "../src/lib/taxonomy";
 import { isRarity, DEFAULT_RARITY } from "../src/lib/rarity";
-import { flattenStats, lootToTiers, costToRows, mergeItems, type RawStats, type RawLoot, type RawCostLine } from "./seed-transform";
+import { flattenStats, lootToTiers, costToRows, mergeItems, techNodeSlug, parsePrereqLabel, validateTechTreeV2, type RawStats, type RawLoot, type RawCostLine, type RawTechNode } from "./seed-transform";
 
 interface EnvContent { category: string; name: string; description?: string; sourceUrl?: string; loot?: RawLoot }
 
@@ -227,6 +227,125 @@ async function main() {
   }
   const prunedTramplers = await prisma.entity.deleteMany({ where: { kind: "trampler-part", slug: { notIn: tramplerSlugs } } });
   if (prunedTramplers.count > 0) console.log(`Pruned ${prunedTramplers.count} trampler part(s) no longer in the scrape`);
+
+  // --- Tech nodes + link rows (unlocks, unlock costs, prereqs) ---
+  const techRaw: { nodes: RawTechNode[] } = JSON.parse(
+    readFileSync(join(__dirname, "tech-tree-extracted.json"), "utf-8"),
+  );
+  const nodeList = techRaw.nodes;
+
+  // Validate structure before touching the DB.
+  const issues = validateTechTreeV2(nodeList, { factionOk: isFaction });
+  for (const iss of issues) {
+    if (iss.kind === "error") console.error(`[tech-tree] ERROR ${iss.node}: ${iss.message}`);
+    else console.warn(`[tech-tree] WARN ${iss.node}: ${iss.message}`);
+  }
+  if (issues.some((i) => i.kind === "error")) throw new Error("Tech-tree validation errors — aborting seed");
+
+  // Build display-name → entity slug index from items + trampler-parts.
+  const normalize = (s: string) => s.toLowerCase().replace(/[^a-z0-9]/g, "");
+  const nameIndex = new Map<string, string>();
+  const nameEntities = await prisma.entity.findMany({
+    where: { kind: { in: ["item", "trampler-part"] } },
+    select: { slug: true, name: true, derivedName: true },
+  });
+  for (const e of nameEntities) {
+    nameIndex.set(normalize(e.name), e.slug);
+    if (e.derivedName) nameIndex.set(normalize(e.derivedName), e.slug);
+  }
+
+  // Upsert each tech node as an Entity(kind:"tech-node").
+  const techSlugs: string[] = [];
+  for (const n of nodeList) {
+    const slug = techNodeSlug(n);
+    techSlugs.push(slug);
+    const displayName = n.variant ? `${n.name} (${n.variant})` : n.name;
+    const identity = { name: displayName, category: "tech" };
+    const stats = { faction: n.faction, tier: n.tier };
+    await prisma.entity.upsert({
+      where: { slug },
+      create: { slug, kind: "tech-node", ...identity, techNodeStats: { create: stats } },
+      update: { ...identity, techNodeStats: { upsert: { create: stats, update: stats } } },
+    });
+  }
+
+  // Prune tech-node entities no longer in the generated set.
+  const prunedTech = await prisma.entity.deleteMany({ where: { kind: "tech-node", slug: { notIn: techSlugs } } });
+  if (prunedTech.count > 0) console.log(`Pruned ${prunedTech.count} tech-node(s) no longer in the source`);
+
+  // Build a combined slug→id index for all link targets (items + trampler-parts + tech-nodes).
+  const allTargets = await prisma.entity.findMany({
+    where: { kind: { in: ["item", "trampler-part", "tech-node"] } },
+    select: { slug: true, id: true },
+  });
+  const slugToId = new Map(allTargets.map((e) => [e.slug, e.id]));
+
+  // Build label → tech-node slug resolver using (tier, letter, name) match.
+  // Prefer same faction as the source node; fall back to any faction.
+  function resolvePrereqLabel(label: string, sourceFaction: string): string | null {
+    const parsed = parsePrereqLabel(label);
+    if (!parsed) return null;
+    const candidates = nodeList.filter(
+      (c) => c.tier === parsed.tier && c.letter === parsed.letter && c.name === parsed.name,
+    );
+    if (candidates.length === 0) return null;
+    const sameFaction = candidates.find((c) => c.faction === sourceFaction);
+    return techNodeSlug(sameFaction ?? candidates[0]);
+  }
+
+  // Recreate link rows per role for each tech node.
+  for (const n of nodeList) {
+    const slug = techNodeSlug(n);
+    const sourceId = slugToId.get(slug);
+    if (!sourceId) { console.warn(`[tech-tree] Could not find entity id for ${slug}`); continue; }
+
+    // tech-unlocks
+    await prisma.entityLink.deleteMany({ where: { sourceId, role: "tech-unlocks" } });
+    if (n.unlocks.length > 0) {
+      await prisma.entityLink.createMany({
+        data: n.unlocks.map((displayName, i) => {
+          const targetSlug = nameIndex.get(normalize(displayName)) ?? null;
+          const targetId = targetSlug ? slugToId.get(targetSlug) ?? null : null;
+          if (!targetId) console.warn(`[tech-tree] WARN ${slug}: unlock "${displayName}" unresolved`);
+          return { sourceId, role: "tech-unlocks", targetId, name: displayName, sortOrder: i };
+        }),
+      });
+    }
+
+    // tech-unlock-cost
+    await prisma.entityLink.deleteMany({ where: { sourceId, role: "tech-unlock-cost" } });
+    if (n.unlockCost.length > 0) {
+      await prisma.entityLink.createMany({
+        data: n.unlockCost.map((c, i) => {
+          const isCrowns = normalize(c.name) === "crowns";
+          const targetId = isCrowns ? null : (() => {
+            const tSlug = nameIndex.get(normalize(c.name)) ?? null;
+            const tid = tSlug ? slugToId.get(tSlug) ?? null : null;
+            if (!tid) console.warn(`[tech-tree] WARN ${slug}: unlock cost "${c.name}" unresolved`);
+            return tid;
+          })();
+          return { sourceId, role: "tech-unlock-cost", targetId, name: c.name, amount: c.amount, sortOrder: i };
+        }),
+      });
+    }
+
+    // tech-prereq
+    await prisma.entityLink.deleteMany({ where: { sourceId, role: "tech-prereq" } });
+    const prereqRows: Array<{ sourceId: string; role: string; targetId: string | null; name: string; sortOrder: number }> = [];
+    for (let i = 0; i < n.prereqs.length; i++) {
+      const label = n.prereqs[i];
+      const prereqSlug = resolvePrereqLabel(label, n.faction);
+      if (!prereqSlug) { console.warn(`[tech-tree] WARN ${slug}: prereq "${label}" could not be resolved — skipping`); continue; }
+      const targetId = slugToId.get(prereqSlug) ?? null;
+      if (!targetId) { console.warn(`[tech-tree] WARN ${slug}: prereq slug "${prereqSlug}" has no entity — skipping`); continue; }
+      prereqRows.push({ sourceId, role: "tech-prereq", targetId, name: label, sortOrder: i });
+    }
+    if (prereqRows.length > 0) await prisma.entityLink.createMany({ data: prereqRows });
+  }
+
+  const techNodeCount = await prisma.entity.count({ where: { kind: "tech-node" } });
+  if (techNodeCount !== nodeList.length) throw new Error(`Tech-node count mismatch: DB has ${techNodeCount}, source has ${nodeList.length}`);
+  console.log(`Seeded ${techNodeCount} tech nodes.`);
 
   const [itemCount, recipeCount] = await Promise.all([prisma.entity.count({ where: { kind: "item" } }), prisma.recipe.count()]);
   if (itemCount !== items.length) throw new Error(`Item count mismatch after seed: DB has ${itemCount}, snapshot has ${items.length} (duplicate slugs?)`);
