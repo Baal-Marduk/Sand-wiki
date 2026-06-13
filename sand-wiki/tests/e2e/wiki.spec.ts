@@ -354,8 +354,8 @@ test("WIP destinations are disabled (not links) in the nav", async ({ page }) =>
 test("environment detail now shows a category badge and a decorative icon", async ({ page }) => {
   await page.goto("/environment/weapon-crate");
   // The category badge resolves the slug to its label ("loot-containers" -> "Loot Containers").
-  // Scope to the badge so we don't collide with the breadcrumb crumb or the nav dropdown link.
-  await expect(page.locator("article .badge").filter({ hasText: "Loot Containers" })).toBeVisible();
+  // Scope to the header so we don't collide with the breadcrumb crumb or the nav dropdown link.
+  await expect(page.locator("article header").getByText("Loot Containers", { exact: true })).toBeVisible();
   // The header now renders an icon tile (a real sprite when available, else a neutral placeholder).
   // Scope to <header> so we don't also match loot-item icons inside the tab panel.
   await expect(page.locator("article header .item-sprite")).toBeVisible();

@@ -15,7 +15,7 @@ export async function DescriptionText({ text }: { text: string }) {
   return (
     <>
       {parsed.map((segments, i) => (
-        <p key={i} className="text-base-content/80 max-w-prose">
+        <p key={i} className="max-w-prose text-muted-foreground">
           {segments.map((s, j) => {
             if (s.type === "text") return <Fragment key={j}>{s.value}</Fragment>;
             const target = targets.get(s.slug);

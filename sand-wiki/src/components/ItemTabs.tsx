@@ -11,9 +11,11 @@ export function ItemTabs({ tabs }: { tabs: Tab[] }) {
   const [activeId, setActiveId] = useState(tabs[0]?.id ?? "");
   if (tabs.length === 0) return null;
   const activeTab = tabs.find((t) => t.id === activeId) ?? tabs[0];
+  const tabBase =
+    "-mb-px inline-flex items-center gap-2 border-b-2 px-4 py-2.5 font-display text-[13px] font-semibold uppercase tracking-[0.06em] transition-colors";
   return (
     <div>
-      <div role="tablist" className="tabs tabs-border">
+      <div role="tablist" className="flex border-b border-border-strong">
         {tabs.map((t) => {
           const isActive = t.id === activeId;
           return (
@@ -24,7 +26,11 @@ export function ItemTabs({ tabs }: { tabs: Tab[] }) {
               aria-selected={isActive}
               aria-controls={`tabpanel-${t.id}`}
               id={`tab-${t.id}`}
-              className={`tab${isActive ? " tab-active" : " text-base-content/75"}`}
+              className={`${tabBase} ${
+                isActive
+                  ? "border-primary text-primary"
+                  : "border-transparent text-muted-foreground hover:bg-card-elevated hover:text-foreground"
+              }`}
               onClick={() => setActiveId(t.id)}
             >
               {t.label}

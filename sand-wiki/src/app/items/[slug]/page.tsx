@@ -4,9 +4,9 @@ import { ammoCaliber, weaponCaliber, caliberLabel } from "@/lib/ammo";
 import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
 import { categoryLabel } from "@/lib/taxonomy";
-import { rarityColor } from "@/lib/rarity";
 import { EntityDetail } from "@/components/EntityDetail";
 import { CategoryTag } from "@/components/CategoryTag";
+import { RarityBadge } from "@/components/RarityBadge";
 import { itemStatCells } from "@/components/StatBox";
 import { type Tab } from "@/components/ItemTabs";
 import { CraftTable } from "@/components/CraftTable";
@@ -76,16 +76,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
       title={item.name}
       badges={
         <>
-          {item.rarity && (
-            <span className="badge badge-outline gap-1.5">
-              <span
-                className="size-2 rounded-full"
-                style={{ backgroundColor: rarityColor(item.rarity) ?? "transparent" }}
-                aria-hidden="true"
-              />
-              {item.rarity}
-            </span>
-          )}
+          {item.rarity && <RarityBadge rarity={item.rarity} />}
           <CategoryTag slug={item.category} />
         </>
       }
@@ -97,7 +88,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
       detailRows={detailRows}
       tabs={tabs}
       tabsEmptyFallback={
-        <p className="text-base-content/70">No crafting, usage, or trade data for this item.</p>
+        <p className="text-muted-foreground">No crafting, usage, or trade data for this item.</p>
       }
     />
   );
