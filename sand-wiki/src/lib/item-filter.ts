@@ -12,24 +12,30 @@ export interface ItemFilter {
 }
 
 export interface ItemQuery {
-  where: Prisma.ItemWhereInput;
-  orderBy: Prisma.ItemOrderByWithRelationInput;
+  where: Prisma.EntityWhereInput;
+  orderBy: Prisma.EntityOrderByWithRelationInput;
 }
 
+/** Build a `prisma.entity` query for the items catalog. The `where` is always
+ *  scoped to `kind:"item"`. name/derivedName/category/rarity live on Entity;
+ *  workbenchTier is a stat and is filtered through the `itemStats` relation. */
 export function buildItemQuery(filter: ItemFilter): ItemQuery {
-  const where: Prisma.ItemWhereInput = {};
+  const where: Prisma.EntityWhereInput = { kind: "item" };
   if (filter.query)
     where.OR = [
       { name: { contains: filter.query, mode: "insensitive" } },
       { derivedName: { contains: filter.query, mode: "insensitive" } },
     ];
   if (filter.category) where.category = filter.category;
-  if (filter.workbenchTier !== undefined) where.workbenchTier = filter.workbenchTier;
+  if (filter.workbenchTier !== undefined) where.itemStats = { workbenchTier: filter.workbenchTier };
   if (filter.rarity) where.rarity = filter.rarity;
 
   return { where, orderBy: { name: "asc" } };
 }
 
+// ViewItem reads ammoName, which now lives on the ItemStats extension. listItems
+// flattens itemStats onto each row before calling applyItemView, so the field is
+// read here as a plain top-level `ammoName` (see queries.ts listItems).
 type ViewItem = { slug: string; name: string; rarity: string | null; ammoName: string | null };
 
 /** App-level view transform applied after the DB query: optional weapon-class filter, then
