@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Tech-tree fill tool</title>
+<style>
+  :root {
+    --bg: #0e1116; --panel: #161b22; --panel2: #1c232d; --border: #2a3340;
+    --text: #e6edf3; --muted: #8b98a8; --accent: #4493f8;
+    --godlewski: #4493f8; --kaiser: #e3a008; --landwehr: #6fb24a;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; font: 14px/1.45 system-ui, -apple-system, Segoe UI, sans-serif; background: var(--bg); color: var(--text); }
+  header { position: sticky; top: 0; z-index: 20; display: flex; gap: 12px; align-items: center; flex-wrap: wrap;
+    padding: 10px 16px; background: var(--panel); border-bottom: 1px solid var(--border); }
+  header h1 { font-size: 15px; margin: 0 8px 0 0; }
+  header .spacer { flex: 1; }
+  .stat { color: var(--muted); font-size: 12px; }
+  .stat b { color: var(--text); }
+  button, .btn { background: var(--panel2); color: var(--text); border: 1px solid var(--border); border-radius: 6px;
+    padding: 6px 12px; cursor: pointer; font-size: 13px; }
+  button:hover { border-color: var(--accent); }
+  button.primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+  button.sm { padding: 2px 8px; font-size: 12px; }
+  .layout { display: grid; grid-template-columns: minmax(0,1fr) minmax(0,1fr); }
+  .left { padding: 16px; overflow: auto; height: calc(100vh - 52px); }
+  .right { position: sticky; top: 52px; height: calc(100vh - 52px); border-left: 1px solid var(--border);
+    display: flex; flex-direction: column; background: #000; }
+  .tier-h { margin: 20px 0 8px; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+  .card { background: var(--panel); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+  .card.done { border-left: 3px solid var(--accent); }
+  .card .row1 { display: flex; align-items: baseline; gap: 8px; flex-wrap: wrap; }
+  .card .label { font-weight: 600; }
+  .card .cat { color: var(--muted); font-size: 12px; }
+  .unlocks { color: var(--muted); font-size: 12px; margin: 4px 0 8px; }
+  .unlocks code { color: #b8c4d0; }
+  .controls { display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: flex-start; }
+  .fseg { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .fseg button { border: 0; border-radius: 0; padding: 4px 10px; background: transparent; color: var(--muted); }
+  .fseg button[data-on="1"] { color: #fff; }
+  .fseg button[data-f="godlewski"][data-on="1"] { background: var(--godlewski); }
+  .fseg button[data-f="kaiser"][data-on="1"] { background: var(--kaiser); color:#1a1a1a; }
+  .fseg button[data-f="landwehr"][data-on="1"] { background: var(--landwehr); color:#1a1a1a; }
+  label.fld { display: inline-flex; align-items: center; gap: 6px; color: var(--muted); font-size: 12px; }
+  label.fld.col { flex-direction: column; align-items: flex-start; }
+  input[type=number], input[type=text], select { background: var(--bg); color: var(--text); border: 1px solid var(--border);
+    border-radius: 6px; padding: 4px 8px; font-size: 13px; }
+  input[type=number] { width: 80px; }
+  .cost-ed { display: flex; flex-direction: column; gap: 4px; }
+  .cost-line { display: flex; gap: 6px; align-items: center; }
+  .cost-line input.res { width: 200px; }
+  .cost-line .x { cursor: pointer; color: var(--muted); font-weight: 700; padding: 0 4px; }
+  .cost-line .x:hover { color: #f85149; }
+  .chips { display: inline-flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+  .chip { background: var(--panel2); border: 1px solid var(--border); border-radius: 12px; padding: 1px 6px 1px 8px;
+    font-size: 11px; display: inline-flex; align-items: center; gap: 4px; }
+  .chip span { cursor: pointer; color: var(--muted); font-weight: 700; }
+  .chip span:hover { color: #f85149; }
+  .prereq-add { font-size: 12px; max-width: 240px; }
+  .imgbar { display: flex; gap: 8px; padding: 8px; background: var(--panel); border-bottom: 1px solid var(--border); align-items:center; flex-wrap: wrap; }
+  .imgwrap { flex: 1; overflow: hidden; position: relative; cursor: grab; }
+  .imgwrap.drag { cursor: grabbing; }
+  .imgwrap img { position: absolute; top: 0; left: 0; transform-origin: 0 0; user-select: none; -webkit-user-drag: none; max-width: none; }
+  .hint { color: var(--muted); font-size: 11px; }
+  .empty { color: var(--muted); display: flex; align-items: center; justify-content: center; height: 100%; padding: 20px; text-align:center;}
+  .badge { font-size: 10px; padding: 1px 6px; border-radius: 4px; background: var(--panel2); color: var(--muted); border:1px solid var(--border); }
+</style>
+</head>
+<body>
+<header>
+  <h1>Tech-tree fill</h1>
+  <span class="stat">faction <b id="st-fac">0/0</b></span>
+  <span class="stat">unlock cost <b id="st-cost">0/0</b></span>
+  <span class="stat">prereqs <b id="st-pre">0/0</b></span>
+  <span class="spacer"></span>
+  <button id="btn-additem">+ item/gate node</button>
+  <button id="btn-import">Import…</button>
+  <button id="btn-export" class="primary">Export JSON</button>
+  <input type="file" id="file-import" accept="application/json" hidden />
+</header>
+<div class="layout">
+  <div class="left" id="left"></div>
+  <div class="right">
+    <div class="imgbar">
+      <button id="btn-img">Load screenshot…</button>
+      <button id="btn-img2">+ second image</button>
+      <span id="img-tabs"></span>
+      <span class="spacer"></span>
+      <button id="zoom-out">−</button><button id="zoom-in">+</button><button id="zoom-reset">reset</button>
+      <span class="hint">wheel = zoom · drag = pan</span>
+      <input type="file" id="file-img" accept="image/*" hidden />
+    </div>
+    <div class="imgwrap" id="imgwrap"><div class="empty" id="img-empty">Open a node's detail panel in-game, screenshot it, load it here, then read the <b>grey right-hand</b> required amounts (Crowns + materials) into the node's Unlock cost on the left. The red left-hand numbers are just your inventory — ignore them.</div><img id="img" hidden /></div>
+  </div>
+</div>
+
+<datalist id="res-list"></datalist>
+
+<script src="tech-tree-tool-data.js"></script>
+<script>
+const D = window.TECH_DATA;
+const LS_KEY = "techTreeFill_v2"; // bumped: unlock cost is now a resource list, not a number
+const FACTIONS = ["godlewski", "kaiser", "landwehr"];
+const RES_BY_NAME = new Map((D.resources || []).map((r) => [r.name.toLowerCase(), r.slug]));
+
+// populate datalist
+const dl = document.getElementById("res-list");
+for (const r of (D.resources || [])) { const o = document.createElement("option"); o.value = r.name; dl.appendChild(o); }
+
+// ---- state ----
+let state = load() || init();
+function init() {
+  const nodes = {};
+  for (const n of D.nodes) nodes[n.id] = { faction: n.factionGuess, unlockCost: [], prereqs: [] };
+  const roots = {};
+  for (const r of D.roots) roots[r.faction] = { unlockCost: [], prereqs: [] };
+  const itemNodes = D.itemNodes.map((i) => ({ ...i, unlockCost: [], prereqs: [], dropped: false }));
+  return { nodes, roots, itemNodes };
+}
+function load() { try { return JSON.parse(localStorage.getItem(LS_KEY)); } catch { return null; } }
+function save() { try { localStorage.setItem(LS_KEY, JSON.stringify(state)); } catch {} updateStats(); }
+
+const PRE_OPTIONS = () => [...D.roots.map((r) => r.id), ...D.nodes.map((n) => n.id), ...state.itemNodes.filter((i)=>!i.dropped).map((i)=>itemId(i))];
+const itemId = (i) => "item:" + i.name;
+
+// ---- reusable cost editor ----
+function costEditor(arr, onChange) {
+  const box = document.createElement("div"); box.className = "cost-ed";
+  const lines = document.createElement("div");
+  function renderLines() {
+    lines.innerHTML = "";
+    arr.forEach((line, idx) => {
+      const row = document.createElement("div"); row.className = "cost-line";
+      const res = document.createElement("input"); res.type = "text"; res.className = "res"; res.setAttribute("list", "res-list");
+      res.placeholder = "resource (e.g. Crowns)"; res.value = line.name || "";
+      res.oninput = () => { line.name = res.value; line.slug = RES_BY_NAME.has(res.value.toLowerCase()) ? RES_BY_NAME.get(res.value.toLowerCase()) : undefined; onChange(); };
+      const amt = document.createElement("input"); amt.type = "number"; amt.min = "0"; amt.placeholder = "amt"; amt.value = line.amount ?? "";
+      amt.oninput = () => { line.amount = amt.value === "" ? "" : Number(amt.value); onChange(); };
+      const x = document.createElement("span"); x.className = "x"; x.textContent = "×"; x.onclick = () => { arr.splice(idx, 1); renderLines(); onChange(); };
+      row.append(res, amt, x); lines.appendChild(row);
+    });
+  }
+  const add = document.createElement("button"); add.className = "sm"; add.textContent = "+ cost line";
+  add.onclick = () => { arr.push({ name: "", amount: "" }); renderLines(); onChange(); };
+  renderLines();
+  box.append(lines, add);
+  return box;
+}
+
+function prereqField(selfId, arr, after) {
+  const wrap = document.createElement("span"); wrap.style.display = "inline-flex"; wrap.style.flexDirection = "column"; wrap.style.gap = "4px";
+  const chips = document.createElement("span"); chips.className = "chips";
+  const sel = document.createElement("select"); sel.className = "prereq-add";
+  function fill() {
+    sel.innerHTML = ""; const o0 = document.createElement("option"); o0.value = ""; o0.textContent = "+ add prereq…"; sel.appendChild(o0);
+    for (const id of PRE_OPTIONS()) { if (id === selfId) continue; const o = document.createElement("option"); o.value = id; o.textContent = id; sel.appendChild(o); }
+  }
+  function renderChips() {
+    chips.innerHTML = "";
+    for (const p of arr) { const ch = document.createElement("span"); ch.className = "chip"; ch.append(p);
+      const x = document.createElement("span"); x.textContent = "×"; x.onclick = () => { const k = arr.indexOf(p); if (k>=0) arr.splice(k,1); renderChips(); after(); }; ch.appendChild(x); chips.appendChild(ch); }
+  }
+  sel.onfocus = fill;
+  sel.onchange = () => { const v = sel.value; if (v && !arr.includes(v)) { arr.push(v); renderChips(); after(); } sel.value = ""; };
+  fill(); renderChips();
+  const l = document.createElement("label"); l.className = "fld col"; l.append("prereqs", wrap); wrap.append(chips, sel); return l;
+}
+
+function factionSeg(getF, setF) {
+  const seg = document.createElement("div"); seg.className = "fseg";
+  for (const f of FACTIONS) {
+    const b = document.createElement("button"); b.dataset.f = f; b.textContent = f[0].toUpperCase() + f.slice(1, 4);
+    b.dataset.on = getF() === f ? "1" : "0";
+    b.onclick = () => { setF(f); [...seg.children].forEach((x) => x.dataset.on = x.dataset.f === f ? "1" : "0"); };
+    seg.appendChild(b);
+  }
+  const l = document.createElement("label"); l.className = "fld"; l.append("faction", seg); return l;
+}
+
+// ---- render ----
+const left = document.getElementById("left");
+function render() {
+  left.innerHTML = "";
+  const rh = document.createElement("div"); rh.className = "tier-h"; rh.textContent = "Faction roots (entry nodes)"; left.appendChild(rh);
+  for (const r of D.roots) left.appendChild(rootCard(r));
+  for (const tier of [1, 2, 3, 4]) {
+    const inTier = D.nodes.filter((n) => n.tier === tier);
+    if (!inTier.length) continue;
+    const h = document.createElement("div"); h.className = "tier-h"; h.textContent = "Tier " + tier + " — " + inTier.length + " nodes"; left.appendChild(h);
+    for (const n of inTier) left.appendChild(nodeCard(n));
+  }
+  const ih = document.createElement("div"); ih.className = "tier-h"; ih.textContent = "Item / gate nodes (edit · gate · drop)"; left.appendChild(ih);
+  const ihint = document.createElement("div"); ihint.className = "unlocks"; ihint.style.marginBottom = "8px";
+  ihint.innerHTML = "Item slug(s) = the unlocked merchant item(s), read from the card's <b>second row</b> in image 1 (comma-separate multiple). Tick <b>Gate</b> for progression-only nodes that unlock nothing (Resources). <b>Drop</b> removes a non-node row. Use <b>+ item/gate node</b> (top) to add ones I missed.";
+  left.appendChild(ihint);
+  for (const it of state.itemNodes) left.appendChild(itemCard(it));
+  updateStats();
+}
+
+function rootCard(r) {
+  const s = state.roots[r.faction];
+  const c = document.createElement("div"); c.className = "card";
+  const parts = r.parts.map((p) => `<code>${p.slug}</code>`).join(", ");
+  c.innerHTML = `<div class="row1"><span class="label" style="color:var(--${r.faction})">${r.label}</span><span class="cat">root · ${r.faction}</span></div>
+    <div class="unlocks">unlocks: ${parts}</div>`;
+  const ctrl = document.createElement("div"); ctrl.className = "controls";
+  ctrl.appendChild(labelCol("unlock cost", costEditor(s.unlockCost, () => { save(); markDone(c, s); })));
+  ctrl.appendChild(prereqField(r.id, s.prereqs, () => save()));
+  c.appendChild(ctrl); markDone(c, s); return c;
+}
+
+function nodeCard(n) {
+  const s = state.nodes[n.id];
+  const c = document.createElement("div"); c.className = "card";
+  const unlocks = n.parts.map((p) => `<code title="build: ${p.cost}">${p.slug}</code>`).join(", ");
+  c.innerHTML = `<div class="row1"><span class="label">${n.id}</span><span class="cat">${n.cat}</span></div>
+    <div class="unlocks">unlocks: ${unlocks}</div>`;
+  const ctrl = document.createElement("div"); ctrl.className = "controls";
+  ctrl.appendChild(factionSeg(() => s.faction, (f) => { s.faction = f; save(); markDone(c, s); }));
+  ctrl.appendChild(labelCol("unlock cost", costEditor(s.unlockCost, () => { save(); markDone(c, s); })));
+  ctrl.appendChild(prereqField(n.id, s.prereqs, () => save()));
+  c.appendChild(ctrl); markDone(c, s); return c;
+}
+
+function itemCard(it) {
+  const c = document.createElement("div"); c.className = "card"; if (it.dropped) c.style.opacity = .4;
+  const top = document.createElement("div"); top.className = "row1";
+  const nameI = document.createElement("input"); nameI.type = "text"; nameI.value = it.name; nameI.style.width = "180px"; nameI.oninput = () => { it.name = nameI.value; save(); };
+  const tierI = document.createElement("input"); tierI.type = "number"; tierI.min = "1"; tierI.max = "4"; tierI.value = it.tier ?? ""; tierI.style.width = "55px"; tierI.oninput = () => { it.tier = tierI.value === "" ? "" : Number(tierI.value); save(); };
+  const badge = document.createElement("span"); badge.className = "badge"; badge.textContent = it.gate ? "gate" : "item";
+  top.append(nameI, document.createTextNode("T"), tierI, badge);
+  c.appendChild(top);
+
+  const ctrl = document.createElement("div"); ctrl.className = "controls"; ctrl.style.marginTop = "8px";
+  ctrl.appendChild(factionSeg(() => it.faction, (f) => { it.faction = f; save(); }));
+
+  const slugWrap = document.createElement("label"); slugWrap.className = "fld col";
+  const slugI = document.createElement("input"); slugI.type = "text"; slugI.placeholder = "item-slug, item-slug2"; slugI.value = it.itemSlug || ""; slugI.style.width = "260px";
+  slugI.oninput = () => { it.itemSlug = slugI.value; save(); }; slugI.disabled = !!it.gate;
+  slugWrap.append("unlock item slug(s)", slugI); ctrl.appendChild(slugWrap);
+
+  ctrl.appendChild(labelCol("unlock cost", costEditor(it.unlockCost, () => save())));
+  ctrl.appendChild(prereqField(itemId(it), it.prereqs, () => save()));
+
+  const flags = document.createElement("label"); flags.className = "fld";
+  const gate = document.createElement("input"); gate.type = "checkbox"; gate.checked = !!it.gate;
+  gate.onchange = () => { it.gate = gate.checked; if (gate.checked) { it.itemSlug = ""; } save(); render(); };
+  const drop = document.createElement("input"); drop.type = "checkbox"; drop.checked = !!it.dropped;
+  drop.onchange = () => { it.dropped = drop.checked; save(); render(); };
+  flags.append("gate", gate, document.createTextNode("  drop"), drop); ctrl.appendChild(flags);
+
+  c.appendChild(ctrl); return c;
+}
+
+function labelCol(text, child) { const l = document.createElement("label"); l.className = "fld col"; l.append(text, child); return l; }
+function markDone(card, s) { card.classList.toggle("done", s.unlockCost.some((l) => l.name && l.amount !== "")); }
+
+function updateStats() {
+  const ids = D.nodes.map((n) => n.id);
+  const facSet = ids.filter((id) => state.nodes[id].faction).length;
+  const costSet = ids.filter((id) => state.nodes[id].unlockCost.some((l) => l.name && l.amount !== "")).length;
+  const preSet = ids.filter((id) => state.nodes[id].prereqs.length).length;
+  document.getElementById("st-fac").textContent = facSet + "/" + ids.length;
+  document.getElementById("st-cost").textContent = costSet + "/" + ids.length;
+  document.getElementById("st-pre").textContent = preSet + "/" + ids.length;
+}
+
+// ---- export / import ----
+function cleanCost(arr) {
+  return arr.filter((l) => l.name && l.amount !== "" && l.amount != null)
+    .map((l, i) => ({ name: l.name, slug: RES_BY_NAME.has(l.name.toLowerCase()) ? RES_BY_NAME.get(l.name.toLowerCase()) : (l.slug || ""), amount: Number(l.amount), sortOrder: i }));
+}
+function buildExport() {
+  return {
+    roots: D.roots.map((r) => ({ faction: r.faction, unlockCost: cleanCost(state.roots[r.faction].unlockCost), prereqs: state.roots[r.faction].prereqs })),
+    nodes: D.nodes.map((n) => ({ id: n.id, tier: n.tier, letter: n.letter, name: n.name, cat: n.cat,
+      faction: state.nodes[n.id].faction, unlockCost: cleanCost(state.nodes[n.id].unlockCost), prereqs: state.nodes[n.id].prereqs })),
+    itemNodes: state.itemNodes.filter((i) => !i.dropped).map((i) => ({ name: i.name, tier: i.tier, faction: i.faction,
+      gate: !!i.gate, itemSlugs: (i.itemSlug || "").split(",").map((s) => s.trim()).filter(Boolean), unlockCost: cleanCost(i.unlockCost), prereqs: i.prereqs })),
+  };
+}
+document.getElementById("btn-export").onclick = () => {
+  const blob = new Blob([JSON.stringify(buildExport(), null, 2)], { type: "application/json" });
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "tech-tree-fill.json"; a.click();
+};
+document.getElementById("btn-import").onclick = () => document.getElementById("file-import").click();
+document.getElementById("file-import").onchange = (e) => {
+  const f = e.target.files[0]; if (!f) return; const r = new FileReader();
+  r.onload = () => { try {
+    const imp = JSON.parse(r.result);
+    for (const n of imp.nodes || []) if (state.nodes[n.id]) state.nodes[n.id] = { faction: n.faction, unlockCost: (n.unlockCost||[]).map((l)=>({name:l.name,amount:l.amount,slug:l.slug})), prereqs: n.prereqs || [] };
+    for (const r2 of imp.roots || []) if (state.roots[r2.faction]) state.roots[r2.faction] = { unlockCost: (r2.unlockCost||[]).map((l)=>({name:l.name,amount:l.amount,slug:l.slug})), prereqs: r2.prereqs || [] };
+    if (imp.itemNodes) state.itemNodes = imp.itemNodes.map((i) => ({ name: i.name, tier: i.tier, faction: i.faction, gate: !!i.gate,
+      itemSlug: (i.itemSlugs || []).join(", "), unlockCost: (i.unlockCost||[]).map((l)=>({name:l.name,amount:l.amount,slug:l.slug})), prereqs: i.prereqs || [], dropped: false }));
+    save(); render();
+  } catch (err) { alert("Bad JSON: " + err); } };
+  r.readAsText(f);
+};
+document.getElementById("btn-additem").onclick = () => { state.itemNodes.push({ name: "New node", tier: 1, faction: "godlewski", itemSlug: "", gate: false, unlockCost: [], prereqs: [], dropped: false }); save(); render(); };
+
+// ---- image viewer ----
+const imgEl = document.getElementById("img"), wrap = document.getElementById("imgwrap"), empty = document.getElementById("img-empty");
+const tabsEl = document.getElementById("img-tabs");
+let images = [], curImg = 0, view = { x: 0, y: 0, s: 1 };
+function applyView() { imgEl.style.transform = `translate(${view.x}px, ${view.y}px) scale(${view.s})`; }
+function showImage(i) { if (!images[i]) return; curImg = i; imgEl.src = images[i]; imgEl.hidden = false; empty.style.display = "none"; view = { x: 0, y: 0, s: 1 }; applyView(); renderTabs(); }
+function renderTabs() { tabsEl.innerHTML = ""; images.forEach((_, i) => { const b = document.createElement("button"); b.textContent = "img " + (i + 1); if (i === curImg) b.classList.add("primary"); b.onclick = () => showImage(i); tabsEl.appendChild(b); }); }
+function loadImg(slot) { const inp = document.getElementById("file-img"); inp.onchange = (e) => { const f = e.target.files[0]; if (!f) return; const r = new FileReader(); r.onload = () => { images[slot] = r.result; showImage(slot); }; r.readAsDataURL(f); e.target.value = ""; }; inp.click(); }
+document.getElementById("btn-img").onclick = () => loadImg(0);
+document.getElementById("btn-img2").onclick = () => loadImg(images.length ? 1 : 0);
+document.getElementById("zoom-in").onclick = () => { view.s *= 1.25; applyView(); };
+document.getElementById("zoom-out").onclick = () => { view.s /= 1.25; applyView(); };
+document.getElementById("zoom-reset").onclick = () => { view = { x: 0, y: 0, s: 1 }; applyView(); };
+wrap.addEventListener("wheel", (e) => { if (imgEl.hidden) return; e.preventDefault(); const r = wrap.getBoundingClientRect();
+  const mx = e.clientX - r.left, my = e.clientY - r.top; const k = e.deltaY < 0 ? 1.15 : 1 / 1.15;
+  view.x = mx - (mx - view.x) * k; view.y = my - (my - view.y) * k; view.s *= k; applyView(); }, { passive: false });
+let drag = null;
+wrap.addEventListener("pointerdown", (e) => { if (imgEl.hidden) return; drag = { x: e.clientX, y: e.clientY, ox: view.x, oy: view.y }; wrap.classList.add("drag"); wrap.setPointerCapture(e.pointerId); });
+wrap.addEventListener("pointermove", (e) => { if (!drag) return; view.x = drag.ox + (e.clientX - drag.x); view.y = drag.oy + (e.clientY - drag.y); applyView(); });
+wrap.addEventListener("pointerup", () => { drag = null; wrap.classList.remove("drag"); });
+
+render();
+</script>
+</body>
+</html>
