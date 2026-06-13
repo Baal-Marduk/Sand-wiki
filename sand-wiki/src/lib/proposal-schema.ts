@@ -100,7 +100,11 @@ export function coerceFloat(raw: string): number | null {
 }
 
 /** Public route for a correctable entity. Mirrors the segment names used by the
- *  app router (envEntity → /environment, item → /items, else /tramplers). */
+ *  app router (envEntity → /environment, item → /items, else /tramplers).
+ *  NOTE: distinct from `entityHref` in entity-links.ts, which keys on `Entity.kind`
+ *  ("environment"/"trampler-part") and returns null for unknown kinds. This one keys
+ *  on the legacy proposal *type* names and always returns a string. Keep them separate
+ *  unless you reconcile the two input vocabularies. */
 export function entityHref(type: string, slug: string): string {
   const seg = type === "envEntity" ? "environment" : type === "item" ? "items" : "tramplers";
   return `/${seg}/${slug}`;

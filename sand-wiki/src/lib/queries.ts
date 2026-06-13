@@ -129,7 +129,9 @@ export async function listTramplerParts(category?: string) {
   return prisma.entity.findMany({
     where: { kind: "trampler-part", ...(category ? { category } : {}) },
     include: { tramplerStats: true },
-    orderBy: { name: "asc" },
+    // researchTier now lives on the tramplerStats extension; order through the relation
+    // to preserve the original tier-then-name list ordering.
+    orderBy: [{ tramplerStats: { researchTier: "asc" } }, { name: "asc" }],
   });
 }
 

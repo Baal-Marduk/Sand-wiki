@@ -38,7 +38,11 @@ export function groupLootByTier(rows: LinkRow[]): LootTierGroup[] {
     .map(([tier, rs]) => ({ tier, rows: rs.sort((a, b) => a.sortOrder - b.sortOrder) }));
 }
 
-/** Map an entity `kind` to its detail-page href prefix. */
+/** Map an entity `kind` to its detail-page href prefix.
+ *  NOTE: distinct from `entityHref` in proposal-schema.ts, which keys on the legacy
+ *  proposal *type* names ("item"|"envEntity"|"tramplerPart"). This one keys on
+ *  `Entity.kind` ("item"|"environment"|"trampler-part") and returns null for unknown
+ *  kinds. Do not merge them without reconciling the two input vocabularies. */
 export function entityHref(kind: string | null, slug: string): string | null {
   switch (kind) {
     case "item": return `/items/${slug}`;
