@@ -2,6 +2,9 @@
   "anti-reactor-gun": {
     "rarity": "Experimental"
   },
+  "resource-alloy-steel": {
+    "rarity": "Noteworthy"
+  },
   "artefact-crystal": {
     "rarity": "Rare",
     "stats": {

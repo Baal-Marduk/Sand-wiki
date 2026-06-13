@@ -1,26 +1,35 @@
 import type { DetailRow } from "@/lib/item-view";
 import { CoinIcon } from "@/components/CoinIcon";
 
+/** Facts panel for the EntityDetail sidebar: a "Details" title over label/value
+ *  rows. Coin-suffixed rows render the Crowns sprite; unit-suffixed rows append
+ *  their unit. */
 export function ItemDetailsPanel({ rows }: { rows: DetailRow[] }) {
   return (
-    <aside className="card bg-base-200">
-      <div className="card-body p-0">
-        <h2 className="font-display text-sm font-semibold uppercase tracking-wide text-base-content/60 px-4 pt-3 pb-1">
-          Details
-        </h2>
-        <table className="table table-sm">
-          <tbody>
-            {rows.map((r) => (
-              <tr key={r.label}>
-                <td className="text-base-content/70">{r.label}</td>
-                <td className="text-right font-medium">
-                  {r.value}{r.coin && <> <CoinIcon /></>}{r.unit && ` ${r.unit}`}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+    <aside>
+      <h2 className="mb-2.5 font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+        Details
+      </h2>
+      <dl className="text-[13px]">
+        {rows.map((r) => (
+          <div
+            key={r.label}
+            className="flex items-center justify-between gap-3 border-b border-border py-2 last:border-0"
+          >
+            <dt className="text-muted-foreground">{r.label}</dt>
+            <dd className="text-right font-medium text-foreground">
+              {r.value}
+              {r.coin && (
+                <>
+                  {" "}
+                  <CoinIcon />
+                </>
+              )}
+              {r.unit && ` ${r.unit}`}
+            </dd>
+          </div>
+        ))}
+      </dl>
     </aside>
   );
 }

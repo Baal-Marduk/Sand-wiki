@@ -2,7 +2,7 @@ import { ItemIconLink } from "@/components/ItemIconLink";
 import type { RecipeCard, RecipeCardRow } from "@/lib/recipes";
 
 export function IngredientList({ rows }: { rows: RecipeCardRow[] }) {
-  if (rows.length === 0) return <span className="text-base-content/50">—</span>;
+  if (rows.length === 0) return <span className="text-muted-foreground">—</span>;
   return (
     <div className="flex flex-wrap gap-3">
       {rows.map((r, i) => (
@@ -13,9 +13,9 @@ export function IngredientList({ rows }: { rows: RecipeCardRow[] }) {
 }
 
 export function WorkbenchBadge({ recipe }: { recipe: RecipeCard }) {
-  if (!recipe.workbench) return <span className="text-base-content/50">—</span>;
+  if (!recipe.workbench) return <span className="text-muted-foreground">—</span>;
   return (
-    <span className="badge badge-outline whitespace-nowrap">
+    <span className="inline-flex items-center whitespace-nowrap border border-border-strong bg-card-elevated px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.04em] text-muted-foreground">
       {recipe.workbench}{recipe.tier !== null ? ` · T${recipe.tier}` : ""}
     </span>
   );

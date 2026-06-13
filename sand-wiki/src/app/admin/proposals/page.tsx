@@ -11,18 +11,31 @@ export default async function AdminProposalsPage() {
   });
 
   return (
-    <article className="py-6 space-y-4">
-      <h1 className="font-display text-2xl font-bold">Pending proposals ({pending.length})</h1>
+    <article className="mx-auto max-w-3xl space-y-4 py-6">
+      <div className="flex items-baseline justify-between gap-3">
+        <h1 className="font-display text-2xl font-bold uppercase tracking-[0.01em]">Proposals queue</h1>
+        <span className="inline-flex items-center gap-1.5 border border-warning/40 bg-card-elevated px-2 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-[0.04em] text-warning">
+          <span className="size-[7px] bg-warning" aria-hidden="true" />
+          {pending.length} pending
+        </span>
+      </div>
       {pending.length === 0 ? (
-        <p className="text-base-content/70">Nothing to review.</p>
+        <p className="text-muted-foreground">Nothing to review.</p>
       ) : (
-        <ul className="space-y-2">
+        <ul className="divide-y divide-border border border-border bg-card">
           {pending.map((p) => (
-            <li key={p.id} className="rounded-box border border-base-300 p-3">
-              <Link href={`/admin/proposals/${p.id}`} className="link">
-                {p.kind === "edit" ? `Edit · ${p.targetType} · ${p.targetSlug}` : `New page · ${p.proposedName}`}
+            <li key={p.id}>
+              <Link
+                href={`/admin/proposals/${p.id}`}
+                className="flex items-baseline justify-between gap-3 px-4 py-3 transition-colors hover:bg-card-elevated"
+              >
+                <span className="font-medium text-foreground">
+                  {p.kind === "edit" ? `Edit · ${p.targetType} · ${p.targetSlug}` : `New page · ${p.proposedName}`}
+                </span>
+                <span className="shrink-0 font-mono text-xs text-muted-foreground">
+                  by {p.proposer.personaName ?? p.proposerId}
+                </span>
               </Link>
-              <span className="ml-2 text-sm text-base-content/60">by {p.proposer.personaName ?? p.proposerId}</span>
             </li>
           ))}
         </ul>

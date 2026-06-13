@@ -6,7 +6,11 @@ import { rarityColor } from "@/lib/rarity";
  *  link color. The href is precomputed by the caller (routes per entity type). */
 export function WikiLink({ href, label, rarity }: { href: string; label: string; rarity: string | null }) {
   return (
-    <Link href={href} className="link" style={{ color: rarityColor(rarity) ?? undefined }}>
+    <Link
+      href={href}
+      className="text-primary underline decoration-1 underline-offset-2 transition-opacity hover:opacity-80"
+      style={{ color: rarityColor(rarity) ?? undefined }}
+    >
       {label}
     </Link>
   );

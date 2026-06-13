@@ -3,9 +3,25 @@
 import { Fragment, useEffect, useId, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { CategoryIcon } from "@/components/CategoryIcon";
+import { categoryLabel } from "@/lib/taxonomy";
 import { searchSuggestions, type SearchIndex, type Suggestions } from "@/lib/search";
 
 const EMPTY: SearchIndex = { items: [], places: [] };
+
+/** Bold the first case-insensitive occurrence of the query inside a label.
+ *  The full label text is preserved so the option's accessible name is unchanged. */
+function highlightMatch(label: string, query: string): React.ReactNode {
+  if (!query) return label;
+  const idx = label.toLowerCase().indexOf(query.toLowerCase());
+  if (idx < 0) return label;
+  return (
+    <>
+      {label.slice(0, idx)}
+      <b className="font-semibold text-primary">{label.slice(idx, idx + query.length)}</b>
+      {label.slice(idx + query.length)}
+    </>
+  );
+}
 
 // Shared across all instances — fetch the index at most once per page load.
 let indexPromise: Promise<SearchIndex> | null = null;
@@ -108,10 +124,9 @@ export function SearchBox({ variant }: { variant: "navbar" | "hero" }) {
     }
   }
 
-  const inputCls =
-    variant === "navbar"
-      ? "input input-sm input-bordered rounded-full w-44 sm:w-56"
-      : "input input-bordered join-item w-full";
+  const isHero = variant === "hero";
+  const trimmed = query.trim();
+  const showNoResults = open && trimmed.length > 0 && options.length === 0;
 
   // Build a flat list with stable global indices so aria-activedescendant IDs
   // can be computed without mutating a variable inside a render callback.
@@ -120,65 +135,93 @@ export function SearchBox({ variant }: { variant: "navbar" | "hero" }) {
     base: groups.slice(0, gi).reduce((acc, prev) => acc + prev.options.length, 0),
   }));
 
+  const inputCls = isHero
+    ? "peer w-full border border-border-strong bg-background py-3 pl-10 pr-3 text-[15px] text-foreground placeholder:text-dim transition-colors hover:border-primary focus:border-primary focus:bg-card focus:outline-none"
+    : "peer w-44 border border-border-strong bg-background py-1.5 pl-9 pr-3 text-sm text-foreground placeholder:text-dim transition-colors hover:border-primary focus:border-primary focus:bg-card focus:outline-none sm:w-56";
+
+  const panelCls = `absolute top-full z-30 mt-1.5 min-w-[18rem] border border-border-strong bg-card-elevated p-1.5 shadow-[0_16px_40px_-10px_rgba(0,0,0,0.7)] ${
+    isHero ? "left-0 w-full" : "right-0"
+  }`;
+
   return (
-    <div ref={boxRef} className={`relative ${variant === "hero" ? "w-full max-w-md mx-auto" : ""}`}>
-      <div className={variant === "hero" ? "join w-full" : ""}>
-        <input
-          type="search"
-          role="combobox"
-          aria-label="Search items"
-          aria-expanded={showList}
-          aria-controls={listId}
-          aria-autocomplete="list"
-          aria-activedescendant={active >= 0 ? `${listId}-opt-${active}` : undefined}
-          placeholder="Search items…"
-          value={query}
-          className={inputCls}
-          onFocus={() => { ensureIndex(); setOpen(true); }}
-          onChange={(e) => { setQuery(e.target.value); setActive(-1); setOpen(true); }}
-          onKeyDown={onKeyDown}
-        />
-        {variant === "hero" && (
-          <button type="button" className="btn btn-primary join-item" onClick={submitFreeText}>
-            Search
-          </button>
-        )}
-      </div>
+    <div ref={boxRef} className={`relative ${isHero ? "mx-auto w-full max-w-md" : ""}`}>
+      <input
+        type="search"
+        role="combobox"
+        aria-label="Search items"
+        aria-expanded={showList}
+        aria-controls={listId}
+        aria-autocomplete="list"
+        aria-activedescendant={active >= 0 ? `${listId}-opt-${active}` : undefined}
+        placeholder="Search items…"
+        value={query}
+        className={inputCls}
+        onFocus={() => { ensureIndex(); setOpen(true); }}
+        onChange={(e) => { setQuery(e.target.value); setActive(-1); setOpen(true); }}
+        onKeyDown={onKeyDown}
+      />
+      <span
+        aria-hidden="true"
+        className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-dim peer-focus:text-primary ${
+          isHero ? "left-3.5 text-lg" : "left-3 text-sm"
+        }`}
+      >
+        ⌕
+      </span>
 
       {showList && (
-        <ul
-          role="listbox"
-          id={listId}
-          className="absolute left-0 top-full z-30 mt-1 w-full min-w-[16rem] rounded-box border border-base-300 bg-base-200 p-1 shadow"
-        >
+        <ul role="listbox" id={listId} className={panelCls}>
           {groupsWithBase.map((g) => (
             <Fragment key={g.header}>
-              <li role="presentation" className="px-2 pt-1 pb-0.5 text-xs uppercase tracking-wide text-base-content/50">
+              <li
+                role="presentation"
+                className="px-3 pb-1 pt-2 font-display text-[10px] font-semibold uppercase tracking-[0.08em] text-muted-foreground"
+              >
                 {g.header}
               </li>
               {g.options.map((f, j) => {
                 const i = g.base + j;
+                // Right-column label: "Filter" for category suggestions, the item's
+                // category for items. Places are already grouped by their category, so
+                // repeating it would be redundant (and collide with the section header).
+                const rightLabel =
+                  f.kind === "category" ? "Filter" : f.kind === "item" ? categoryLabel(f.category) : "";
                 return (
                   <li
                     key={`${f.kind}-${f.slug}`}
                     id={`${listId}-opt-${i}`}
                     role="option"
                     aria-selected={active === i}
-                    className={`flex items-center gap-2 rounded px-2 py-1 text-sm cursor-pointer ${active === i ? "bg-base-300" : ""}`}
+                    className={`grid cursor-pointer grid-cols-[32px_1fr_auto] items-center gap-2.5 px-3 py-2 text-sm transition-colors ${
+                      active === i ? "bg-card" : "hover:bg-card"
+                    }`}
                     onMouseEnter={() => setActive(i)}
                     onMouseDown={(e) => { e.preventDefault(); navigate(f); }}
                   >
-                    <CategoryIcon slug={f.category} className="size-4 shrink-0" />
-                    {f.label}
-                    <span className="ml-auto text-xs text-base-content/50" aria-hidden="true">
-                      {f.kind === "category" ? "filter" : "page"}
+                    <span className="grid size-8 place-items-center border border-border bg-card text-muted-foreground">
+                      <CategoryIcon slug={f.category} className="size-4 shrink-0" />
                     </span>
+                    <span className="truncate text-foreground">{highlightMatch(f.label, trimmed)}</span>
+                    {rightLabel && (
+                      <span className="font-mono text-[11px] uppercase tracking-[0.03em] text-muted-foreground" aria-hidden="true">
+                        {rightLabel}
+                      </span>
+                    )}
                   </li>
                 );
               })}
             </Fragment>
           ))}
         </ul>
+      )}
+
+      {showNoResults && (
+        <div role="status" className={`${panelCls} px-5 py-5 text-center`}>
+          <div className="font-display text-sm uppercase tracking-[0.04em] text-foreground">No matches</div>
+          <div className="mt-1 text-xs text-muted-foreground">
+            Nothing matches “{trimmed}”. Check spelling or browse by category.
+          </div>
+        </div>
       )}
     </div>
   );

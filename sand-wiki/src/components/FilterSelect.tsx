@@ -30,9 +30,11 @@ export function FilterSelect({
 
   return (
     <label className="flex items-center gap-1.5 text-sm">
-      <span className="text-base-content/60">{label}</span>
+      <span className="font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+        {label}
+      </span>
       <select
-        className="select select-sm select-bordered"
+        className="border border-border-strong bg-background px-2.5 py-1.5 text-sm text-foreground transition-colors hover:border-primary focus:border-primary focus:outline-none"
         value={value ?? ""}
         onChange={handleChange}
       >

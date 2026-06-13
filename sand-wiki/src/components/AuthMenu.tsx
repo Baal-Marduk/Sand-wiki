@@ -2,7 +2,7 @@ import Link from "next/link";
 import { FaSteam } from "react-icons/fa";
 import { getUser, isAdmin } from "@/lib/auth";
 
-const linkCls = "nav-link text-base-content px-2 py-1 rounded";
+const linkCls = "nav-link rounded px-2 py-1 text-sm font-semibold text-foreground hover:text-primary";
 
 export async function AuthMenu() {
   const user = await getUser();
@@ -25,16 +25,21 @@ export async function AuthMenu() {
         </Link>
       )}
       {/* JS-free dropdown: <details> keeps this a server component. */}
-      <details className="dropdown dropdown-end">
-        <summary className={`${linkCls} inline-flex items-center gap-2 cursor-pointer list-none [&::-webkit-details-marker]:hidden`}>
+      <details className="relative">
+        <summary
+          className={`${linkCls} inline-flex cursor-pointer list-none items-center gap-2 [&::-webkit-details-marker]:hidden`}
+        >
           <FaSteam className="size-4" aria-hidden="true" />
           {user.personaName ?? "Signed in"}
           <span aria-hidden="true" className="text-xs opacity-60">▾</span>
         </summary>
-        <ul className="dropdown-content menu z-20 mt-2 w-40 rounded-box border border-base-300 bg-base-200 p-2 shadow">
+        <ul className="absolute right-0 z-30 mt-2 min-w-40 border border-border-strong bg-card-elevated p-1.5 shadow-[0_12px_32px_-8px_rgba(0,0,0,0.6)]">
           <li>
             <form action="/api/auth/steam/logout" method="post">
-              <button type="submit" className="w-full cursor-pointer text-left">
+              <button
+                type="submit"
+                className="flex w-full cursor-pointer items-center gap-2 px-3 py-2 text-left text-sm text-foreground transition-colors hover:bg-card hover:text-primary-hover"
+              >
                 Sign out
               </button>
             </form>

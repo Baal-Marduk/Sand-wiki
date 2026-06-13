@@ -14,7 +14,7 @@ export function CrateDropList({ drops }: { drops: CrateDrop[] }) {
   const rows: SortableTableRow[] = [...byCrate.entries()].map(([slug, c]) => ({
     keys: [c.name.toLowerCase(), c.tiers.join(", ")],
     cells: [
-      <Link key="c" href={`/environment/${slug}`} className="link">{c.name}</Link>,
+      <Link key="c" href={`/environment/${slug}`} className="text-primary transition-colors hover:text-primary-hover">{c.name}</Link>,
       <span key="t" className="whitespace-nowrap">{c.tiers.join(", ")}</span>,
     ],
   }));

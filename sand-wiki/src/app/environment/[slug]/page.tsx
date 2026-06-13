@@ -29,21 +29,14 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
     value1: l.value1,
     sortOrder: l.sortOrder,
   }));
+  // One tab per loot tier (Normal / Rare / …); environments with no tiered loot
+  // simply have no tabs.
   const tierGroups = groupLootByTier(lootRows);
-  const tabs: Tab[] = tierGroups.length > 0 ? [{
-    id: "loot",
-    label: "Loot",
-    content: (
-      <div className="space-y-4">
-        {tierGroups.map((g) => (
-          <section key={g.tier}>
-            <h3 className="text-sm font-semibold text-base-content/70 mb-2">{g.tier}</h3>
-            <LootTable entries={g.rows.map(lootEntryView).sort(byRarityThenName)} />
-          </section>
-        ))}
-      </div>
-    ),
-  }] : [];
+  const tabs: Tab[] = tierGroups.map((g) => ({
+    id: `loot-${g.tier || "all"}`,
+    label: g.tier || "Loot",
+    content: <LootTable entries={g.rows.map(lootEntryView).sort(byRarityThenName)} />,
+  }));
 
   return (
     <EntityDetail

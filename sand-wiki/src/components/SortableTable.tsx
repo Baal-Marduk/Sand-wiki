@@ -56,25 +56,31 @@ export function SortableTable({
     return sort.dir === "asc" ? ", sorted ascending" : ", sorted descending";
   };
 
+  const thBase =
+    "border-b border-border-strong bg-card-elevated px-3 py-2.5 font-display text-[11px] font-semibold uppercase tracking-[0.07em] text-muted-foreground";
   return (
-    <table className="table">
+    <table className="w-full border-collapse text-[13px]">
       {caption && <caption className="sr-only">{caption}</caption>}
       <thead>
         <tr>
           {columns.map((c, col) => {
             if (c.sortable === false) {
               return (
-                <th key={c.label} className={c.alignRight ? "text-right" : undefined}>
+                <th key={c.label} className={`${thBase} ${c.alignRight ? "text-right" : "text-left"}`}>
                   <span className="inline-flex items-center gap-1">{c.label}</span>
                 </th>
               );
             }
             return (
-              <th key={c.label} aria-sort={ariaSort(col)} className={c.alignRight ? "text-right" : undefined}>
+              <th
+                key={c.label}
+                aria-sort={ariaSort(col)}
+                className={`${thBase} ${c.alignRight ? "text-right" : "text-left"}`}
+              >
                 <button
                   type="button"
                   aria-label={`${c.label}${dirSuffix(col)}, activate to sort`}
-                  className="inline-flex items-center gap-1 cursor-pointer hover:text-base-content"
+                  className="inline-flex cursor-pointer items-center gap-1 transition-colors hover:text-foreground"
                   onClick={() => onHeaderClick(col)}
                 >
                   {c.label}
@@ -89,9 +95,12 @@ export function SortableTable({
       </thead>
       <tbody>
         {ordered.map((r, i) => (
-          <tr key={i}>
+          <tr key={i} className="border-b border-border transition-colors hover:bg-card-elevated">
             {r.cells.map((cell, col) => (
-              <td key={col} className={columns[col]?.alignRight ? "text-right" : undefined}>
+              <td
+                key={col}
+                className={`px-3 py-2.5 align-middle text-foreground ${columns[col]?.alignRight ? "text-right" : ""}`}
+              >
                 {cell}
               </td>
             ))}

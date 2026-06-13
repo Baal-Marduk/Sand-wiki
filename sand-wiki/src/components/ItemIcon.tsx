@@ -42,7 +42,7 @@ export function ItemIcon({
   return (
     <span
       style={style}
-      className={`${tile} ${gradient ? "text-base-100" : "text-base-content/40"}`}
+      className={`${tile} ${gradient ? "text-background" : "text-dim"}`}
       {...(decorative ? { "aria-hidden": true } : { role: "img", "aria-label": name, title: name })}
     >
       <span aria-hidden="true">▦</span>

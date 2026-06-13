@@ -1,31 +1,35 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Oswald } from "next/font/google";
-import { MainNav } from "@/components/MainNav";
+import { SiteHeader } from "@/components/SiteHeader";
 import "./globals.css";
 
-const oswald = Oswald({ subsets: ["latin"], weight: ["500", "700"], variable: "--font-oswald", display: "swap" });
+const oswald = Oswald({
+  subsets: ["latin"],
+  weight: ["300", "400", "500", "600", "700"],
+  variable: "--font-oswald",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Unofficial SAND Wiki",
   description: "A community, unofficial database for SAND: Raiders of Sophie.",
 };
 
-const themeInit = `(function(){try{var t=localStorage.getItem('sand-theme');if(t==='desertday'||t==='desertnight'){document.documentElement.dataset.theme=t;}}catch(e){}})();`;
-
 export default function RootLayout({ children }: { children: React.ReactNode }) {
+  // Dark-only: `.dark` drives the shadcn token layer; color-scheme is set in CSS.
   return (
-    <html lang="en" data-theme="desertnight" className={oswald.variable} suppressHydrationWarning>
-      <body className="min-h-screen bg-base-100 text-base-content flex flex-col">
-        <script dangerouslySetInnerHTML={{ __html: themeInit }} />
-        <header className="sticky top-0 z-40 border-b border-base-300 bg-base-100/90 backdrop-blur supports-[backdrop-filter]:bg-base-100/80">
-          <MainNav />
-        </header>
+    <html lang="en" className={`dark ${oswald.variable}`}>
+      <body className="min-h-screen bg-background text-foreground flex flex-col">
+        <SiteHeader />
         <main className="max-w-6xl mx-auto w-full p-4 flex-1">{children}</main>
-        <footer className="footer footer-center border-t border-base-300 text-sm text-base-content/70 p-4">
+        <footer className="border-t border-border text-sm text-muted-foreground p-4 text-center">
           <p>
             Unofficial fan site. Not affiliated with or endorsed by tinyBuild.{" "}
-            <Link href="/about" className="link">Learn more</Link>.
+            <Link href="/about" className="text-primary underline underline-offset-2">
+              Learn more
+            </Link>
+            .
           </p>
         </footer>
       </body>

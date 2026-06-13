@@ -17,11 +17,11 @@ export function ItemIconLink({
       ) : (
         <ItemIcon name={name} icon={icon} size="recipe" rarity={rarity} />
       )}
-      {amount != null && <span className="text-sm font-bold text-base-content">×{amount}</span>}
+      {amount != null && <span className="font-mono text-sm font-bold text-foreground">×{amount}</span>}
       <span
         role="tooltip"
         aria-hidden="true"
-        className="pointer-events-none invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition-opacity absolute bottom-full left-1/2 -translate-x-1/2 mb-2 z-30 whitespace-nowrap rounded-field border border-base-300 bg-base-100 px-2 py-1 text-xs text-base-content shadow-lg"
+        className="pointer-events-none invisible absolute bottom-full left-1/2 z-30 mb-2 -translate-x-1/2 whitespace-nowrap border border-border-strong bg-card-elevated px-2 py-1 text-xs text-foreground opacity-0 shadow-lg transition-opacity group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100"
       >
         {name}
       </span>

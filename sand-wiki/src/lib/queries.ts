@@ -94,6 +94,13 @@ export async function listItemClasses(filter: ItemFilter): Promise<string[]> {
   return itemClasses(rows.map((r) => ({ slug: r.slug, name: r.name, ammoName: r.itemStats?.ammoName ?? null })));
 }
 
+/** Count of items per category — for the home browse grid. Mirrors
+ *  envCategoryCounts / tramplerCategoryCounts; reads the stored `category` column. */
+export async function itemCategoryCounts(): Promise<Record<string, number>> {
+  const rows = await prisma.entity.groupBy({ by: ["category"], where: { kind: "item" }, _count: true });
+  return Object.fromEntries(rows.map((r) => [r.category, r._count]));
+}
+
 /** Environment entities (loot containers, etc.), optionally filtered by category. */
 export async function listEnvEntities(category?: string) {
   return prisma.entity.findMany({

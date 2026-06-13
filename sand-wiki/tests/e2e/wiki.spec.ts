@@ -15,27 +15,8 @@ for (const path of pages) {
   });
 }
 
-test("light theme (desertday) has no serious/critical a11y violations on key pages", async ({ page }) => {
-  // Persist the light theme so the anti-FOUC script applies it at load time — this
-  // avoids analyzing mid-transition colors that a runtime data-theme swap would catch.
-  await page.addInitScript(() => {
-    try { localStorage.setItem("sand-theme", "desertday"); } catch { /* ignore */ }
-  });
-  for (const path of ["/", "/items", "/tech"]) {
-    await page.goto(path);
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "desertday");
-    const results = await new AxeBuilder({ page }).analyze();
-    const serious = results.violations.filter((v) => ["serious", "critical"].includes(v.impact ?? ""));
-    expect(serious, `${path}: ${JSON.stringify(serious, null, 2)}`).toEqual([]);
-  }
-});
-
-test("theme toggle switches between desert night and day", async ({ page }) => {
-  await page.goto("/");
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "desertnight");
-  await page.getByRole("button", { name: /toggle light and dark theme/i }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "desertday");
-});
+// Light theme (desertday) and the theme toggle were removed in the shadcn
+// redesign — the app is dark-only. Their former axe/toggle tests are dropped.
 
 test("search navigates to filtered items list", async ({ page }) => {
   await page.goto("/");
@@ -182,20 +163,16 @@ test("item detail shows a real sprite image", async ({ page }) => {
 
 test("items list exposes a rarity filter that narrows results", async ({ page }) => {
   await page.goto("/items?category=weapons");
-  // The rarity filter is now a URL-driven <select> (was a nav of links). Target it via
-  // its label span — the wrapping <label>'s full text also includes the option text.
-  const rarity = page
-    .locator("label")
-    .filter({ has: page.locator("span", { hasText: /^Rarity$/ }) })
-    .locator("select");
-  await expect(rarity).toBeVisible();
-  await rarity.selectOption("Common");
+  // The rarity filter is now a row of URL-driven toggle chips (was a <select>).
+  const common = page.getByRole("button", { name: "Common", exact: true });
+  await expect(common).toBeVisible();
+  await common.click();
   await expect(page).toHaveURL(/rarity=Common/);
 });
 
 test("weapon detail shows a rarity badge, a stat box, and an Ammo tab", async ({ page }) => {
   await page.goto("/items/rifle-musket");
-  await expect(page.getByText("Common")).toBeVisible();
+  await expect(page.locator("article header").getByText("Common")).toBeVisible();
   await expect(page.getByText("Damage")).toBeVisible();
   // Ammo moved out of the stat box into its own tab: icon + name, linked to the ammo page.
   await page.getByRole("tab", { name: "Ammo" }).click();
@@ -320,8 +297,8 @@ test("clicking a table header sorts rows and toggles aria-sort", async ({ page }
 test("interactive surfaces show a consistent hover affordance", async ({ page }) => {
   await page.goto("/items");
 
-  // Clickable card: background lifts on hover.
-  const card = page.locator("a.card").first();
+  // Clickable EntityCard: background lifts on hover.
+  const card = page.locator('ul a[href^="/items/"]').first();
   await expect(card).toBeVisible();
   const cardBefore = await card.evaluate((el) => getComputedStyle(el).backgroundColor);
   await card.hover();
@@ -377,8 +354,8 @@ test("WIP destinations are disabled (not links) in the nav", async ({ page }) =>
 test("environment detail now shows a category badge and a decorative icon", async ({ page }) => {
   await page.goto("/environment/weapon-crate");
   // The category badge resolves the slug to its label ("loot-containers" -> "Loot Containers").
-  // Scope to the badge so we don't collide with the breadcrumb crumb or the nav dropdown link.
-  await expect(page.locator("article .badge").filter({ hasText: "Loot Containers" })).toBeVisible();
+  // Scope to the header so we don't collide with the breadcrumb crumb or the nav dropdown link.
+  await expect(page.locator("article header").getByText("Loot Containers", { exact: true })).toBeVisible();
   // The header now renders an icon tile (a real sprite when available, else a neutral placeholder).
   // Scope to <header> so we don't also match loot-item icons inside the tab panel.
   await expect(page.locator("article header .item-sprite")).toBeVisible();
@@ -405,8 +382,8 @@ test("trampler part page shows a prominent stat grid and Build Cost tab", async 
   await expect(firstPart).toBeVisible();
   await firstPart.click();
   await expect(page).toHaveURL(/\/tramplers\/[^/]+$/);
-  // Prominent stat grid is the only <dl> on the page (the Details sidebar uses a table).
+  // Prominent stat grid renders as the first <dl> on the page (the Details panel is the second).
   await expect(page.locator("article dl").first()).toBeVisible();
-  // Suggest-a-correction sits in the top row.
-  await expect(page.getByRole("link", { name: /Suggest a correction/i })).toBeVisible();
+  // Build Cost tab lists the part's crafting inputs.
+  await expect(page.getByRole("tab", { name: "Build Cost" })).toBeVisible();
 });

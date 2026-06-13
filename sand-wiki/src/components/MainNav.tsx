@@ -1,84 +1,88 @@
 import Link from "next/link";
 import { SECTIONS, isWipSection } from "@/lib/taxonomy";
-import { ThemeToggle } from "@/components/ThemeToggle";
-import { SearchBox } from "@/components/SearchBox";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { WipBadge } from "@/components/WipBadge";
-import { AuthMenu } from "@/components/AuthMenu";
+import {
+  NavigationMenu,
+  NavigationMenuList,
+  NavigationMenuItem,
+  NavigationMenuTrigger,
+  NavigationMenuContent,
+} from "@/components/ui/navigation-menu";
 
-// Explicit full-contrast text (not DaisyUI's dimmed .menu links) so the nav
-// meets WCAG AA contrast in both the dark and light themes.
-const linkCls = "nav-link text-base-content px-2 py-1 rounded";
-const dropdownItemBaseCls = "flex items-center gap-2 px-2 py-1 rounded";
-const dropdownItemCls = `${dropdownItemBaseCls} text-base-content hover:bg-base-300`;
-const disabledCls = "text-base-content/40 cursor-not-allowed";
+// Trigger restyled to the design's nav-item (muted→primary, no accent fill). The
+// override neutralises navigationMenuTriggerStyle's gold hover/open background;
+// the auto-appended chevron rotates on open.
+const triggerCls =
+  "nav-link inline-flex h-auto items-center gap-1 rounded-none bg-transparent px-2 py-1 text-sm font-semibold text-foreground hover:bg-transparent hover:text-primary focus:bg-transparent focus:text-primary data-[state=open]:bg-transparent data-[state=open]:text-primary data-[state=open]:hover:bg-transparent";
+const navItemCls = "nav-link rounded px-2 py-1 text-sm font-semibold text-foreground hover:text-primary";
+const disabledNavCls =
+  "inline-flex cursor-not-allowed items-center gap-1.5 px-2 py-1 text-sm font-semibold text-muted-foreground";
+// Dropdown rows (.menu-item): icon + label, hover wash + primary text.
+const itemCls =
+  "flex items-center gap-2.5 px-2.5 py-2 text-sm text-foreground transition-colors hover:bg-card-elevated hover:text-primary-hover";
+const itemDisabledCls =
+  "flex cursor-not-allowed items-center gap-2.5 px-2.5 py-2 text-sm text-muted-foreground";
 
 export function MainNav() {
   return (
-    <nav aria-label="Primary" className="navbar max-w-6xl mx-auto px-4">
-      <div className="flex-1 flex flex-wrap items-center gap-2">
-        <Link href="/" className="font-display text-xl font-bold text-primary tracking-wide">
-          SAND
-        </Link>
-        <ul className="flex flex-wrap items-center gap-1">
-          {SECTIONS.map((section) => {
-            if (section.kind === "data" && section.categories.length > 0) {
-              return (
-                <li key={section.slug} className="relative group">
-                  <button type="button" className={`${linkCls} cursor-pointer`} aria-haspopup="true">
-                    {section.label} ▾
-                  </button>
-                  <ul
-                    className="invisible opacity-0 group-hover:visible group-hover:opacity-100 group-focus-within:visible group-focus-within:opacity-100 transition-opacity absolute left-0 top-full z-20 pt-2 w-48 space-y-1"
-                  >
-                    <li className="rounded-box border border-base-300 bg-base-200 p-2 shadow space-y-1 list-none">
-                      <ul className="space-y-1">
-                        {section.categories.map((c) => (
-                          <li key={c.slug}>
-                            {c.wip ? (
-                              <span className={`${dropdownItemBaseCls} ${disabledCls}`} aria-disabled="true">
-                                <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
-                                {c.label}
-                                <span className="ml-auto"><WipBadge /></span>
-                              </span>
-                            ) : (
-                              <Link href={`/${section.slug}?category=${c.slug}`} className={dropdownItemCls}>
-                                <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
-                                {c.label}
-                              </Link>
-                            )}
-                          </li>
-                        ))}
-                      </ul>
-                    </li>
-                  </ul>
-                </li>
-              );
-            }
-            if (isWipSection(section)) {
-              return (
-                <li key={section.slug}>
-                  <span className={`${linkCls} ${disabledCls} inline-flex items-center gap-1`} aria-disabled="true">
-                    {section.label} <WipBadge />
-                  </span>
-                </li>
-              );
-            }
-            const href = section.href ?? `/${section.slug}`;
+    // viewport={false} keeps each dropdown's content positioned beneath its own
+    // item and inside this NavigationMenu's DOM subtree (no portaled viewport),
+    // so the Primary <nav> landmark in SiteHeader contains the category links
+    // that the e2e suite queries via nav.getByRole(...).
+    <NavigationMenu viewport={false} className="max-w-none justify-start">
+      <NavigationMenuList className="flex-wrap justify-start gap-1">
+        {SECTIONS.map((section) => {
+          if (section.kind === "data" && section.categories.length > 0) {
             return (
-              <li key={section.slug}>
-                <Link href={href} className={linkCls}>{section.label}</Link>
-              </li>
+              <NavigationMenuItem key={section.slug}>
+                <NavigationMenuTrigger className={triggerCls}>{section.label}</NavigationMenuTrigger>
+                <NavigationMenuContent>
+                  <ul className="grid w-52 gap-0.5">
+                    {section.categories.map((c) => (
+                      <li key={c.slug}>
+                        {c.wip ? (
+                          <span className={itemDisabledCls} aria-disabled="true">
+                            <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
+                            {c.label}
+                            <span className="ml-auto">
+                              <WipBadge />
+                            </span>
+                          </span>
+                        ) : (
+                          <Link href={`/${section.slug}?category=${c.slug}`} className={itemCls}>
+                            <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
+                            {c.label}
+                          </Link>
+                        )}
+                      </li>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
             );
-          })}
-        </ul>
-      </div>
-      <div className="flex-none flex items-center gap-2">
-        <SearchBox variant="navbar" />
-        <Link href="/about" className={linkCls}>About</Link>
-        <AuthMenu />
-        <ThemeToggle />
-      </div>
-    </nav>
+          }
+
+          if (isWipSection(section)) {
+            return (
+              <NavigationMenuItem key={section.slug}>
+                <span className={disabledNavCls} aria-disabled="true">
+                  {section.label} <WipBadge />
+                </span>
+              </NavigationMenuItem>
+            );
+          }
+
+          const href = section.href ?? `/${section.slug}`;
+          return (
+            <NavigationMenuItem key={section.slug}>
+              <Link href={href} className={navItemCls}>
+                {section.label}
+              </Link>
+            </NavigationMenuItem>
+          );
+        })}
+      </NavigationMenuList>
+    </NavigationMenu>
   );
 }
