@@ -110,64 +110,86 @@ describe("mergeItems", () => {
 });
 
 import {
-  techNodeSlug, unlockRows, prereqRows, researchCostRows, validateTechTree,
+  techNodeSlug, parsePrereqLabel, validateTechTreeV2,
   type RawTechNode,
 } from "./seed-transform";
 
-const node = (over: Partial<RawTechNode> = {}): RawTechNode => ({
-  slug: "tech-godlewski-t1-crew-room", name: "Crew Room",
-  faction: "godlewski", tier: 1, category: "Cabins", ...over,
+const makeNode = (over: Partial<RawTechNode> = {}): RawTechNode => ({
+  faction: "godlewski", tier: 1, letter: "a", name: "Crew Room",
+  kind: "part", unlocks: [], unlockCost: [], prereqs: [], ...over,
 });
 
 describe("techNodeSlug", () => {
-  it("builds tech-<faction>-t<tier>-<kebab>", () => {
-    expect(techNodeSlug("kaiser", 2, "Wooden Decks (multiple)")).toBe("tech-kaiser-t2-wooden-decks-multiple");
+  it("builds tech-<faction>-t<tier>-<kebab> without variant", () => {
+    expect(techNodeSlug({ faction: "godlewski", tier: 1, name: "Energy Rod" }))
+      .toBe("tech-godlewski-t1-energy-rod");
+  });
+
+  it("appends variant to the kebab when present", () => {
+    expect(techNodeSlug({ faction: "godlewski", tier: 3, name: "Great Chassis", variant: "79H-L" }))
+      .toBe("tech-godlewski-t3-great-chassis-79h-l");
+  });
+
+  it("lowercases and collapses non-alphanumeric runs to single dashes", () => {
+    expect(techNodeSlug({ faction: "kaiser", tier: 2, name: "Wooden Decks (multiple)" }))
+      .toBe("tech-kaiser-t2-wooden-decks-multiple");
   });
 });
 
-describe("tech link row mappers", () => {
-  it("unlockRows preserves order and uses slug as name", () => {
-    expect(unlockRows(node({ unlocks: ["medkit", "shovel"] }))).toEqual([
-      { targetSlug: "medkit", name: "medkit", amount: null, sortOrder: 0 },
-      { targetSlug: "shovel", name: "shovel", amount: null, sortOrder: 1 },
-    ]);
+describe("parsePrereqLabel", () => {
+  it("parses a valid label into tier, letter, name", () => {
+    expect(parsePrereqLabel("III(b) Great Chassis"))
+      .toEqual({ tier: 3, letter: "b", name: "Great Chassis" });
   });
-  it("prereqRows maps node slugs", () => {
-    expect(prereqRows(node({ prereqs: ["tech-godlewski-t1-stairs"] }))).toEqual([
-      { targetSlug: "tech-godlewski-t1-stairs", name: "tech-godlewski-t1-stairs", amount: null, sortOrder: 0 },
-    ]);
+
+  it("handles roman numeral I and IV", () => {
+    expect(parsePrereqLabel("I(a) Energy Rod")).toEqual({ tier: 1, letter: "a", name: "Energy Rod" });
+    expect(parsePrereqLabel("IV(c) Shotgun Cannon")).toEqual({ tier: 4, letter: "c", name: "Shotgun Cannon" });
   });
-  it("researchCostRows carries amounts and null slug for unresolved", () => {
-    expect(researchCostRows(node({ researchCostItems: [{ name: "Mechanical Parts", amount: 5 }] }))).toEqual([
-      { targetSlug: null, name: "Mechanical Parts", amount: 5, sortOrder: 0 },
-    ]);
-  });
-  it("empty arrays produce no rows", () => {
-    expect(unlockRows(node())).toEqual([]);
-    expect(prereqRows(node())).toEqual([]);
-    expect(researchCostRows(node())).toEqual([]);
+
+  it("returns null for an unparseable label", () => {
+    expect(parsePrereqLabel("Crew Room")).toBeNull();
+    expect(parsePrereqLabel("")).toBeNull();
+    expect(parsePrereqLabel("3(b) Name")).toBeNull(); // arabic numeral not allowed
   });
 });
 
-describe("validateTechTree", () => {
-  const known = new Set(["medkit"]);
+describe("validateTechTreeV2", () => {
+  const factionOk = (f: string) => ["godlewski", "kaiser", "landwehr"].includes(f);
+
   it("passes a clean tree", () => {
-    expect(validateTechTree([node({ unlocks: ["medkit"] })], known)).toEqual([]);
+    expect(validateTechTreeV2([makeNode()], { factionOk })).toEqual([]);
   });
-  it("errors on bad faction, tier, dup slug, and unknown prereq node", () => {
-    const issues = validateTechTree([
-      node({ faction: "bogus" }),
-      node({ tier: 9 }),
-      node({ prereqs: ["tech-missing"] }),
-    ], known);
-    const errs = issues.filter((i) => i.kind === "error").map((i) => i.message);
-    expect(errs.some((m) => m.includes("invalid faction"))).toBe(true);
-    expect(errs.some((m) => m.includes("tier out of range"))).toBe(true);
-    expect(errs.some((m) => m.includes("duplicate node slug"))).toBe(true);
-    expect(errs.some((m) => m.includes("is not a known node"))).toBe(true);
+
+  it("errors on invalid faction", () => {
+    const issues = validateTechTreeV2([makeNode({ faction: "bogus" })], { factionOk });
+    const errs = issues.filter((i) => i.kind === "error");
+    expect(errs.length).toBeGreaterThan(0);
+    expect(errs.some((e) => e.message.includes("invalid faction"))).toBe(true);
   });
-  it("warns (not errors) on an unlock with no matching entity", () => {
-    const issues = validateTechTree([node({ unlocks: ["ghost-item"] })], known);
-    expect(issues).toEqual([{ node: node().slug, kind: "warning", message: 'unlock "ghost-item" has no matching item/part entity' }]);
+
+  it("errors on tier out of range", () => {
+    const issues = validateTechTreeV2([makeNode({ tier: 9 })], { factionOk });
+    const errs = issues.filter((i) => i.kind === "error");
+    expect(errs.some((e) => e.message.includes("tier out of range"))).toBe(true);
+  });
+
+  it("errors on duplicate slug (two nodes with same slug)", () => {
+    const issues = validateTechTreeV2([makeNode(), makeNode()], { factionOk });
+    const errs = issues.filter((i) => i.kind === "error");
+    expect(errs.some((e) => e.message.includes("duplicate slug"))).toBe(true);
+  });
+
+  it("errors on unparseable prereq label", () => {
+    const issues = validateTechTreeV2([makeNode({ prereqs: ["Crew Room"] })], { factionOk });
+    const errs = issues.filter((i) => i.kind === "error");
+    expect(errs.some((e) => e.message.includes("unparseable prereq label"))).toBe(true);
+  });
+
+  it("passes when prereq labels are well-formed", () => {
+    const issues = validateTechTreeV2([
+      makeNode({ letter: "b", prereqs: ["I(a) Crew Room"] }),
+    ], { factionOk });
+    expect(issues).toEqual([]);
   });
 });

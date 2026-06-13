@@ -84,72 +84,66 @@ export function mergeItems<T extends { slug: string }>(scraped: T[], gear: T[]):
   return [...scraped, ...gear];
 }
 
-// --- Tech tree (prisma/tech-tree.json → tech-node entities + EntityLink rows) ---
+// --- Tech tree v2 (prisma/tech-tree-extracted.json → tech-node entities + EntityLink rows) ---
 
-export interface RawTechCostItem { slug?: string; name: string; amount: number }
+export interface RawTechCost { name: string; amount: number }
 
 export interface RawTechNode {
-  slug: string;
-  name: string;
-  faction: string; // "godlewski" | "kaiser" | "landwehr"
-  tier: number; // 1-4
-  category: string;
-  researchCost?: number;
-  sortOrder?: number;
-  unlocks?: string[]; // resolved item/part slugs the node grants
-  unlocksRaw?: string[]; // verbatim OCR names — review aid only, never seeded
-  prereqs?: string[]; // prerequisite tech-node slugs
-  researchCostItems?: RawTechCostItem[];
+  faction: string; tier: number; letter: string; name: string; variant?: string;
+  kind: "part" | "item" | "gate";
+  unlocks: string[]; unlockCost: RawTechCost[]; prereqs: string[]; note?: string;
 }
 
-export interface TechLinkRow { targetSlug: string | null; name: string; amount: number | null; sortOrder: number }
-
-/** Deterministic node slug: tech-<faction>-t<tier>-<kebab name>. */
-export function techNodeSlug(faction: string, tier: number, name: string): string {
-  const kebab = name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-  return `tech-${faction}-t${tier}-${kebab}`;
+/** Deterministic slug. Includes variant.
+ *  Format: tech-<faction>-t<tier>-<kebab(name[+ " " + variant])> */
+export function techNodeSlug(n: { faction: string; tier: number; name: string; variant?: string }): string {
+  const base = n.variant ? n.name + " " + n.variant : n.name;
+  const kebab = base.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
+  return `tech-${n.faction}-t${n.tier}-${kebab}`;
 }
 
-/** tech-unlocks rows (node → granted entity), ordered by array position. */
-export function unlockRows(node: RawTechNode): TechLinkRow[] {
-  return (node.unlocks ?? []).map((slug, i) => ({ targetSlug: slug, name: slug, amount: null, sortOrder: i }));
+/** Roman numeral to integer. Only handles I-IV (the only tiers in the tech tree). */
+function romanToInt(r: string): number | null {
+  const map: Record<string, number> = { I: 1, II: 2, III: 3, IV: 4 };
+  return map[r] ?? null;
 }
 
-/** tech-prereq rows (node → prerequisite node), ordered by array position. */
-export function prereqRows(node: RawTechNode): TechLinkRow[] {
-  return (node.prereqs ?? []).map((slug, i) => ({ targetSlug: slug, name: slug, amount: null, sortOrder: i }));
-}
-
-/** tech-research-cost rows (node → item required to research), ordered by array position. */
-export function researchCostRows(node: RawTechNode): TechLinkRow[] {
-  return (node.researchCostItems ?? []).map((c, i) => ({ targetSlug: c.slug ?? null, name: c.name, amount: c.amount, sortOrder: i }));
+/** Parse a prereq label like "III(b) Great Chassis" → { tier: 3, letter: "b", name: "Great Chassis" }.
+ *  Returns null if the label does not match the expected pattern. */
+export function parsePrereqLabel(label: string): { tier: number; letter: string; name: string } | null {
+  const m = label.match(/^([IVX]+)\(([a-z])\)\s+(.*)$/);
+  if (!m) return null;
+  const tier = romanToInt(m[1]);
+  if (tier === null) return null;
+  return { tier, letter: m[2], name: m[3] };
 }
 
 export interface TechTreeIssue { node: string; kind: "error" | "warning"; message: string }
 
-/** Structural validation against the set of known entity slugs (items + trampler-parts).
- *  Errors block ingest; warnings are surfaced for review. */
-export function validateTechTree(nodes: RawTechNode[], knownEntitySlugs: Set<string>): TechTreeIssue[] {
+/** Structural validation. Checks faction, tier range, duplicate slugs, and parseable prereq labels.
+ *  Resolution of prereq→actual node and name→slug happens in the seed, not here. */
+export function validateTechTreeV2(
+  nodes: RawTechNode[],
+  opts: { factionOk: (f: string) => boolean },
+): TechTreeIssue[] {
   const issues: TechTreeIssue[] = [];
-  const nodeSlugs = new Set(nodes.map((n) => n.slug));
   const seen = new Set<string>();
   for (const n of nodes) {
-    if (seen.has(n.slug)) issues.push({ node: n.slug, kind: "error", message: "duplicate node slug" });
-    seen.add(n.slug);
-    if (!["godlewski", "kaiser", "landwehr"].includes(n.faction)) {
-      issues.push({ node: n.slug, kind: "error", message: `invalid faction "${n.faction}"` });
+    const slug = techNodeSlug(n);
+    if (seen.has(slug)) {
+      issues.push({ node: slug, kind: "error", message: `duplicate slug "${slug}"` });
+    }
+    seen.add(slug);
+    if (!opts.factionOk(n.faction)) {
+      issues.push({ node: slug, kind: "error", message: `invalid faction "${n.faction}"` });
     }
     if (!Number.isInteger(n.tier) || n.tier < 1 || n.tier > 4) {
-      issues.push({ node: n.slug, kind: "error", message: `tier out of range: ${n.tier}` });
+      issues.push({ node: slug, kind: "error", message: `tier out of range: ${n.tier}` });
     }
-    for (const p of n.prereqs ?? []) {
-      if (!nodeSlugs.has(p)) issues.push({ node: n.slug, kind: "error", message: `prereq "${p}" is not a known node` });
-    }
-    for (const u of n.unlocks ?? []) {
-      if (!knownEntitySlugs.has(u)) issues.push({ node: n.slug, kind: "warning", message: `unlock "${u}" has no matching item/part entity` });
-    }
-    for (const c of n.researchCostItems ?? []) {
-      if (c.slug && !knownEntitySlugs.has(c.slug)) issues.push({ node: n.slug, kind: "warning", message: `research-cost item "${c.slug}" has no matching entity` });
+    for (const label of n.prereqs) {
+      if (parsePrereqLabel(label) === null) {
+        issues.push({ node: slug, kind: "error", message: `unparseable prereq label "${label}"` });
+      }
     }
   }
   return issues;
