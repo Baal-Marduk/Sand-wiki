@@ -13,7 +13,7 @@ datasource db {
 model Entity {
   id          String  @id @default(dbgenerated("(gen_random_uuid())::text"))
   slug        String  @unique
-  kind        String // "item" | "environment" | "trampler-part"
+  kind        String // "item" | "environment" | "trampler-part" | "tech-node"
   name        String
   description String?
   category    String
@@ -27,6 +27,7 @@ model Entity {
 
   itemStats     ItemStats?
   tramplerStats TramplerStats?
+  techNodeStats TechNodeStats?
 
   producedBy    RecipeOutput[]
   usedIn        RecipeInput[]
@@ -73,6 +74,18 @@ model TramplerStats {
   researchTier       Int?
 
   @@index([researchTier])
+}
+
+model TechNodeStats {
+  entityId     String @id
+  entity       Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  faction      String // "godlewski" | "kaiser" | "landwehr"
+  tier         Int // 1-4
+  researchCost Int? // research points to unlock this node
+  sortOrder    Int? // display order within a faction+tier group
+
+  @@index([faction])
+  @@index([tier])
 }
 
 model EntityLink {
