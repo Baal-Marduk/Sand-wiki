@@ -16,14 +16,14 @@ export default async function EditRecipePage({ searchParams }: { searchParams: S
   const recipe = await prisma.recipe.findUnique({
     where: { slug },
     include: {
-      inputs: { include: { item: { select: { slug: true, name: true } } } },
-      outputs: { include: { item: { select: { slug: true, name: true } } } },
+      inputs: { include: { entity: { select: { slug: true, name: true } } } },
+      outputs: { include: { entity: { select: { slug: true, name: true } } } },
     },
   });
   if (!recipe) notFound();
 
   const snapshot = recipeToSnapshot(recipe);
-  const items = await prisma.item.findMany({ select: { slug: true, name: true }, orderBy: { name: "asc" } });
+  const items = await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, name: true }, orderBy: { name: "asc" } });
   const workbenches = await getRecipeWorkbenches();
   const primaryOutput = snapshot.outputs[0];
   const title = primaryOutput?.name ?? slug;

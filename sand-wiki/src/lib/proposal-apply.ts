@@ -4,6 +4,33 @@ import { fieldDef } from "./proposal-schema";
 import { norm, type Diff } from "./proposal-diff";
 import { buildLineCreates, type RecipeProposalChange } from "./recipe-proposal";
 
+/** Proposal target type → Entity.kind (proposal types are the legacy model names). */
+const KIND_FOR_TYPE: Record<string, string> = {
+  item: "item",
+  envEntity: "environment",
+  tramplerPart: "trampler-part",
+};
+
+/** Whitelisted fields that live on the Entity row (everything else for item/
+ *  tramplerPart targets lives on the per-kind stat extension table). */
+const ENTITY_OWN_FIELDS = new Set(["name", "description", "category", "rarity", "sourceUrl"]);
+
+/** Split a whitelisted-field update into Entity columns vs stat-extension columns. */
+function partitionUpdate(
+  type: string,
+  update: Record<string, string | number | null>,
+): { entityData: Record<string, string | number | null>; statData: Record<string, string | number | null> } {
+  const entityData: Record<string, string | number | null> = {};
+  const statData: Record<string, string | number | null> = {};
+  // envEntity has no stat extension, so all its fields are Entity-owned.
+  const splitToStats = type === "item" || type === "tramplerPart";
+  for (const [field, value] of Object.entries(update)) {
+    if (!splitToStats || ENTITY_OWN_FIELDS.has(field)) entityData[field] = value;
+    else statData[field] = value;
+  }
+  return { entityData, statData };
+}
+
 /** Build a Prisma update object containing only whitelisted fields' new values. */
 export function applyableUpdate(type: string, diff: Diff): Record<string, string | number | null> {
   const update: Record<string, string | number | null> = {};
@@ -33,16 +60,21 @@ export async function applyProposal(proposalId: string, reviewerSteamId: string)
     }
     const update = applyableUpdate(p.targetType, p.changes as unknown as Diff);
     if (Object.keys(update).length === 0) throw new Error("Nothing to apply.");
+    if (!(p.targetType in KIND_FOR_TYPE)) throw new Error("Unknown target type.");
 
-    // `update` holds only whitelisted scalar columns (applyableUpdate filters via
-    // fieldDef), so it's a safe partial update for each model's input type.
-    if (p.targetType === "item")
-      await tx.item.update({ where: { slug: p.targetSlug }, data: update as unknown as Prisma.ItemUpdateInput });
-    else if (p.targetType === "envEntity")
-      await tx.envEntity.update({ where: { slug: p.targetSlug }, data: update as unknown as Prisma.EnvEntityUpdateInput });
-    else if (p.targetType === "tramplerPart")
-      await tx.tramplerPart.update({ where: { slug: p.targetSlug }, data: update as unknown as Prisma.TramplerPartUpdateInput });
-    else throw new Error("Unknown target type.");
+    // Whitelisted fields are split between the Entity row and its per-kind stat
+    // extension. Partition `update` accordingly, then write the Entity columns plus
+    // a nested upsert of the stat columns in one update.
+    const { entityData, statData } = partitionUpdate(p.targetType, update);
+    const statRelation = p.targetType === "item" ? "itemStats" : "tramplerStats";
+    const data: Record<string, unknown> = { ...entityData };
+    if (Object.keys(statData).length > 0) {
+      data[statRelation] = { upsert: { create: statData, update: statData } };
+    }
+    await tx.entity.update({
+      where: { slug: p.targetSlug },
+      data: data as unknown as Prisma.EntityUpdateInput,
+    });
 
     await tx.proposal.update({
       where: { id: proposalId },
@@ -66,7 +98,7 @@ export async function applyRecipeProposal(proposalId: string, reviewerSteamId: s
     if (!recipe) throw new Error("Recipe not found.");
 
     const slugs = [...new Set([...snap.inputs, ...snap.outputs].map((l) => l.slug))];
-    const items = await tx.item.findMany({ where: { slug: { in: slugs } }, select: { id: true, slug: true } });
+    const items = await tx.entity.findMany({ where: { kind: "item", slug: { in: slugs } }, select: { id: true, slug: true } });
     const idBySlug = new Map(items.map((i) => [i.slug, i.id]));
 
     // Resolve before any write so a missing item aborts the transaction cleanly.

@@ -74,13 +74,13 @@ export async function submitRecipeEdit(formData: FormData) {
   const recipe = await prisma.recipe.findUnique({
     where: { slug },
     include: {
-      inputs: { include: { item: { select: { slug: true, name: true } } } },
-      outputs: { include: { item: { select: { slug: true, name: true } } } },
+      inputs: { include: { entity: { select: { slug: true, name: true } } } },
+      outputs: { include: { entity: { select: { slug: true, name: true } } } },
     },
   });
   if (!recipe) throw new Error("Recipe not found.");
 
-  const items = await prisma.item.findMany({ select: { slug: true, name: true } });
+  const items = await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, name: true } });
   const nameBySlug = new Map(items.map((i) => [i.slug, i.name]));
 
   const workbench = resolveEnumSubmission(

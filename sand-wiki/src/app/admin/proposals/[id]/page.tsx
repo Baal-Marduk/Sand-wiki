@@ -32,8 +32,8 @@ export default async function ProposalDetail({ params }: { params: Params }) {
     const live = await prisma.recipe.findUnique({
       where: { slug: p.targetSlug },
       include: {
-        inputs: { include: { item: { select: { slug: true, name: true } } } },
-        outputs: { include: { item: { select: { slug: true, name: true } } } },
+        inputs: { include: { entity: { select: { slug: true, name: true } } } },
+        outputs: { include: { entity: { select: { slug: true, name: true } } } },
       },
     });
     recipeStale = !live || !snapshotsEqual(recipeChange.old, recipeToSnapshot(live));

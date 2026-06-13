@@ -18,18 +18,19 @@ export interface RecipeProposalChange {
   new: RecipeSnapshot;
 }
 
-/** A recipe row with its inputs/outputs and the related item's slug+name. */
+/** A recipe row with its inputs/outputs and the related entity's slug+name.
+ *  (The recipe line relation field is `entity` on the unified model.) */
 interface RawRecipe {
   workbench: string | null;
   tier: number | null;
   craftTimeSeconds: number | null;
-  inputs: { amount: number; item: { slug: string; name: string } }[];
-  outputs: { amount: number; item: { slug: string; name: string } }[];
+  inputs: { amount: number; entity: { slug: string; name: string } }[];
+  outputs: { amount: number; entity: { slug: string; name: string } }[];
 }
 
-const toLine = (x: { amount: number; item: { slug: string; name: string } }): RecipeLineDraft => ({
-  slug: x.item.slug,
-  name: x.item.name,
+const toLine = (x: { amount: number; entity: { slug: string; name: string } }): RecipeLineDraft => ({
+  slug: x.entity.slug,
+  name: x.entity.name,
   amount: x.amount,
 });
 

@@ -1,6 +1,14 @@
 import { prisma } from "./db";
 import { editableFields, isEditableTarget, enumOptionsFor, type SelectOption } from "./proposal-schema";
 
+/** Proposal target type → Entity.kind. Proposal types are the legacy model names
+ *  (item/envEntity/tramplerPart); the unified model stores them under `kind`. */
+const KIND_FOR_TYPE: Record<string, string> = {
+  item: "item",
+  envEntity: "environment",
+  tramplerPart: "trampler-part",
+};
+
 export interface EntityFields {
   name: string;
   values: Record<string, string | number | null>;
@@ -12,17 +20,17 @@ export async function getEntityFields(type: string, slug: string): Promise<Entit
   if (!isEditableTarget(type)) return null;
   const fields = editableFields(type).map((f) => f.field);
 
-  // Fetch the full row (single-row PK lookup) and pick whitelisted fields below;
-  // avoids a dynamically-built `select` that can't be typed against Prisma.
-  const row =
-    type === "item"
-      ? await prisma.item.findUnique({ where: { slug } })
-      : type === "envEntity"
-        ? await prisma.envEntity.findUnique({ where: { slug } })
-        : await prisma.tramplerPart.findUnique({ where: { slug } });
-
-  if (!row) return null;
-  const r = row as unknown as Record<string, string | number | null>;
+  // Fetch the Entity row plus its stat extension (whitelisted stat fields now live
+  // on ItemStats/TramplerStats), then flatten and pick whitelisted fields below.
+  // The proposal target type maps to the Entity `kind`.
+  const row = await prisma.entity.findUnique({
+    where: { slug },
+    include: { itemStats: true, tramplerStats: true },
+  });
+  if (!row || row.kind !== KIND_FOR_TYPE[type]) return null;
+  const { itemStats, tramplerStats, ...entity } = row;
+  const flat = { ...entity, ...(itemStats ?? {}), ...(tramplerStats ?? {}) };
+  const r = flat as unknown as Record<string, string | number | null>;
   const values: Record<string, string | number | null> = {};
   for (const f of fields) values[f] = r[f] ?? null;
   return { name: String(r.name ?? slug), values };
@@ -35,15 +43,15 @@ export async function getEntityFields(type: string, slug: string): Promise<Entit
 export async function getFieldOptions(type: string, field: string): Promise<string[]> {
   if (!isEditableTarget(type)) return [];
   if (!editableFields(type).some((f) => f.field === field)) return [];
-  const rows =
-    type === "item"
-      ? await prisma.item.findMany()
-      : type === "envEntity"
-        ? await prisma.envEntity.findMany()
-        : await prisma.tramplerPart.findMany();
+  const rows = await prisma.entity.findMany({
+    where: { kind: KIND_FOR_TYPE[type] },
+    include: { itemStats: true, tramplerStats: true },
+  });
 
   const set = new Set<string | number>();
-  for (const r of rows as unknown as Record<string, unknown>[]) {
+  for (const row of rows) {
+    const { itemStats, tramplerStats, ...entity } = row;
+    const r = { ...entity, ...(itemStats ?? {}), ...(tramplerStats ?? {}) } as unknown as Record<string, unknown>;
     const v = r[field];
     if (v !== null && v !== undefined && v !== "") set.add(v as string | number);
   }
