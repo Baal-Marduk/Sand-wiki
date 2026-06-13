@@ -8,15 +8,21 @@ import {
   NavigationMenuItem,
   NavigationMenuTrigger,
   NavigationMenuContent,
-  NavigationMenuLink,
 } from "@/components/ui/navigation-menu";
 
-// Full-contrast text (text-foreground, not a dim token) so nav links meet WCAG
-// AA contrast; WIP entries use text-dim and are non-interactive.
-const linkCls = "nav-link text-foreground px-2 py-1 text-sm font-semibold rounded";
-const dropdownItemBaseCls = "flex items-center gap-2 px-2 py-1 rounded text-sm";
-const dropdownItemCls = `${dropdownItemBaseCls} text-foreground hover:bg-card-elevated`;
-const disabledCls = "text-dim cursor-not-allowed";
+// Trigger restyled to the design's nav-item (muted→primary, no accent fill). The
+// override neutralises navigationMenuTriggerStyle's gold hover/open background;
+// the auto-appended chevron rotates on open.
+const triggerCls =
+  "nav-link inline-flex h-auto items-center gap-1 rounded-none bg-transparent px-2 py-1 text-sm font-semibold text-foreground hover:bg-transparent hover:text-primary focus:bg-transparent focus:text-primary data-[state=open]:bg-transparent data-[state=open]:text-primary data-[state=open]:hover:bg-transparent";
+const navItemCls = "nav-link rounded px-2 py-1 text-sm font-semibold text-foreground hover:text-primary";
+const disabledNavCls =
+  "inline-flex cursor-not-allowed items-center gap-1.5 px-2 py-1 text-sm font-semibold text-muted-foreground";
+// Dropdown rows (.menu-item): icon + label, hover wash + primary text.
+const itemCls =
+  "flex items-center gap-2.5 px-2.5 py-2 text-sm text-foreground transition-colors hover:bg-card-elevated hover:text-primary-hover";
+const itemDisabledCls =
+  "flex cursor-not-allowed items-center gap-2.5 px-2.5 py-2 text-sm text-muted-foreground";
 
 export function MainNav() {
   return (
@@ -30,18 +36,13 @@ export function MainNav() {
           if (section.kind === "data" && section.categories.length > 0) {
             return (
               <NavigationMenuItem key={section.slug}>
-                <NavigationMenuTrigger className="text-foreground bg-transparent px-2 h-auto py-1 text-sm font-semibold">
-                  {section.label}
-                </NavigationMenuTrigger>
+                <NavigationMenuTrigger className={triggerCls}>{section.label}</NavigationMenuTrigger>
                 <NavigationMenuContent>
-                  <ul className="w-52 space-y-1 rounded-md border border-border bg-card p-2 shadow">
+                  <ul className="grid w-52 gap-0.5">
                     {section.categories.map((c) => (
                       <li key={c.slug}>
                         {c.wip ? (
-                          <span
-                            className={`${dropdownItemBaseCls} ${disabledCls}`}
-                            aria-disabled="true"
-                          >
+                          <span className={itemDisabledCls} aria-disabled="true">
                             <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
                             {c.label}
                             <span className="ml-auto">
@@ -49,15 +50,10 @@ export function MainNav() {
                             </span>
                           </span>
                         ) : (
-                          <NavigationMenuLink asChild>
-                            <Link
-                              href={`/${section.slug}?category=${c.slug}`}
-                              className={dropdownItemCls}
-                            >
-                              <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
-                              {c.label}
-                            </Link>
-                          </NavigationMenuLink>
+                          <Link href={`/${section.slug}?category=${c.slug}`} className={itemCls}>
+                            <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
+                            {c.label}
+                          </Link>
                         )}
                       </li>
                     ))}
@@ -70,10 +66,7 @@ export function MainNav() {
           if (isWipSection(section)) {
             return (
               <NavigationMenuItem key={section.slug}>
-                <span
-                  className={`${linkCls} ${disabledCls} inline-flex items-center gap-1`}
-                  aria-disabled="true"
-                >
+                <span className={disabledNavCls} aria-disabled="true">
                   {section.label} <WipBadge />
                 </span>
               </NavigationMenuItem>
@@ -83,11 +76,9 @@ export function MainNav() {
           const href = section.href ?? `/${section.slug}`;
           return (
             <NavigationMenuItem key={section.slug}>
-              <NavigationMenuLink asChild>
-                <Link href={href} className={linkCls}>
-                  {section.label}
-                </Link>
-              </NavigationMenuLink>
+              <Link href={href} className={navItemCls}>
+                {section.label}
+              </Link>
             </NavigationMenuItem>
           );
         })}

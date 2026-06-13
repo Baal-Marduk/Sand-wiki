@@ -92,6 +92,16 @@
   --font-display: var(--font-oswald);
 }
 
+/* Tailwind v4's bare `border`/`divide`/`ring` default to currentColor; point them
+ * at the token border (standard shadcn base) so ui primitives render correctly. */
+@layer base {
+  *,
+  ::after,
+  ::before {
+    border-color: var(--border);
+  }
+}
+
 /* ── App-wide hover/focus affordances ────────────────────────────────────────
  * Consistent, motion-free treatment (color / background / brightness only) for
  * the interactive surfaces that rely on a shared rule rather than per-element

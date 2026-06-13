@@ -172,7 +172,7 @@ test("items list exposes a rarity filter that narrows results", async ({ page })
 
 test("weapon detail shows a rarity badge, a stat box, and an Ammo tab", async ({ page }) => {
   await page.goto("/items/rifle-musket");
-  await expect(page.getByText("Common")).toBeVisible();
+  await expect(page.locator("article header").getByText("Common")).toBeVisible();
   await expect(page.getByText("Damage")).toBeVisible();
   // Ammo moved out of the stat box into its own tab: icon + name, linked to the ammo page.
   await page.getByRole("tab", { name: "Ammo" }).click();
@@ -382,8 +382,8 @@ test("trampler part page shows a prominent stat grid and Build Cost tab", async 
   await expect(firstPart).toBeVisible();
   await firstPart.click();
   await expect(page).toHaveURL(/\/tramplers\/[^/]+$/);
-  // Prominent stat grid is the only <dl> on the page (the Details sidebar uses a table).
+  // Prominent stat grid renders as the first <dl> on the page (the Details panel is the second).
   await expect(page.locator("article dl").first()).toBeVisible();
-  // Suggest-a-correction sits in the top row.
-  await expect(page.getByRole("link", { name: /Suggest a correction/i })).toBeVisible();
+  // Build Cost tab lists the part's crafting inputs.
+  await expect(page.getByRole("tab", { name: "Build Cost" })).toBeVisible();
 });
