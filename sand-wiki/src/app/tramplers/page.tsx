@@ -56,7 +56,7 @@ export default async function TramplersPage({ searchParams }: { searchParams: Se
               {parts.map((p) => (
                 <TramplerCard
                   key={p.id}
-                  part={{ slug: p.slug, name: p.name, icon: p.icon, dimensions: p.dimensions, researchTier: p.researchTier }}
+                  part={{ slug: p.slug, name: p.name, icon: p.icon, dimensions: p.tramplerStats?.dimensions ?? null, researchTier: p.tramplerStats?.researchTier ?? null }}
                 />
               ))}
             </ul>

@@ -16,7 +16,12 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
   if (!part) notFound();
 
   const canSuggest = !!(await getSession());
-  const cost = part.costEntries;
+  const cost = part.outgoingLinks;
+  const stats = part.tramplerStats ?? {
+    dimensions: null, health: null, weight: null, weightCapacity: null, weightCompensation: null,
+    energyConsumption: null, energyCapacity: null, ratedPower: null, crewSlots: null, itemSlots: null,
+    researchNode: null, researchName: null, researchTier: null,
+  };
 
   const tabs: Tab[] = [];
   if (cost.length > 0) {
@@ -27,12 +32,12 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
         <div className="flex flex-wrap gap-4">
           {cost.map((c) => (
             <ItemIconLink
-              key={c.name}
-              slug={c.item?.slug ?? undefined}
+              key={c.id}
+              slug={c.target?.slug ?? undefined}
               name={c.name}
-              icon={c.item?.icon ?? null}
-              amount={c.amount}
-              rarity={c.item?.rarity ?? null}
+              icon={c.target?.icon ?? null}
+              amount={c.amount ?? undefined}
+              rarity={c.target?.rarity ?? null}
             />
           ))}
         </div>
@@ -53,8 +58,8 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
       title={part.name}
       badges={<CategoryTag slug={part.category} />}
       description={part.description}
-      stats={tramplerStatCells(part)}
-      detailRows={tramplerDetailRows(part)}
+      stats={tramplerStatCells(stats)}
+      detailRows={tramplerDetailRows(stats)}
       tabs={tabs}
       sourceUrl={part.sourceUrl}
     />
