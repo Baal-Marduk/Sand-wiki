@@ -77,12 +77,11 @@ model TramplerStats {
 }
 
 model TechNodeStats {
-  entityId     String @id
-  entity       Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
-  faction      String // "godlewski" | "kaiser" | "landwehr"
-  tier         Int // 1-4
-  researchCost Int? // research points to unlock this node
-  sortOrder    Int? // display order within a faction+tier group
+  entityId  String @id
+  entity    Entity @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  faction   String // "godlewski" | "kaiser" | "landwehr"
+  tier      Int // 1-4
+  sortOrder Int? // display order within a faction+tier group
 
   @@index([faction])
   @@index([tier])
