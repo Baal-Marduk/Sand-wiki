@@ -2,38 +2,14 @@ version: 1
 directus: 11.17.4
 vendor: postgres
 collections:
-  - collection: EnvEntity
+  - collection: Entity
     meta:
       accountability: all
       archive_app_filter: true
       archive_field: null
       archive_value: null
       collapse: open
-      collection: EnvEntity
-      color: null
-      display_template: null
-      group: null
-      hidden: false
-      icon: null
-      item_duplication_fields: null
-      note: null
-      preview_url: null
-      singleton: false
-      sort: null
-      sort_field: null
-      translations: null
-      unarchive_value: null
-      versioning: false
-    schema:
-      name: EnvEntity
-  - collection: Item
-    meta:
-      accountability: all
-      archive_app_filter: true
-      archive_field: null
-      archive_value: null
-      collapse: open
-      collection: Item
+      collection: Entity
       color: null
       display_template: '{{name}}'
       group: null
@@ -49,15 +25,39 @@ collections:
       unarchive_value: null
       versioning: false
     schema:
-      name: Item
-  - collection: LootEntry
+      name: Entity
+  - collection: EntityLink
     meta:
       accountability: all
       archive_app_filter: true
       archive_field: null
       archive_value: null
       collapse: open
-      collection: LootEntry
+      collection: EntityLink
+      color: null
+      display_template: '{{role}}: {{name}}'
+      group: null
+      hidden: false
+      icon: null
+      item_duplication_fields: null
+      note: null
+      preview_url: null
+      singleton: false
+      sort: null
+      sort_field: null
+      translations: null
+      unarchive_value: null
+      versioning: false
+    schema:
+      name: EntityLink
+  - collection: ItemStats
+    meta:
+      accountability: all
+      archive_app_filter: true
+      archive_field: null
+      archive_value: null
+      collapse: open
+      collection: ItemStats
       color: null
       display_template: null
       group: null
@@ -73,31 +73,7 @@ collections:
       unarchive_value: null
       versioning: false
     schema:
-      name: LootEntry
-  - collection: LootTier
-    meta:
-      accountability: all
-      archive_app_filter: true
-      archive_field: null
-      archive_value: null
-      collapse: open
-      collection: LootTier
-      color: null
-      display_template: null
-      group: null
-      hidden: false
-      icon: null
-      item_duplication_fields: null
-      note: null
-      preview_url: null
-      singleton: false
-      sort: null
-      sort_field: null
-      translations: null
-      unarchive_value: null
-      versioning: false
-    schema:
-      name: LootTier
+      name: ItemStats
   - collection: Recipe
     meta:
       accountability: all
@@ -170,14 +146,14 @@ collections:
       versioning: false
     schema:
       name: RecipeOutput
-  - collection: TramplerPart
+  - collection: TramplerStats
     meta:
       accountability: all
       archive_app_filter: true
       archive_field: null
       archive_value: null
       collapse: open
-      collection: TramplerPart
+      collection: TramplerStats
       color: null
       display_template: null
       group: null
@@ -193,171 +169,14 @@ collections:
       unarchive_value: null
       versioning: false
     schema:
-      name: TramplerPart
-  - collection: TramplerPartCost
-    meta:
-      accountability: all
-      archive_app_filter: true
-      archive_field: null
-      archive_value: null
-      collapse: open
-      collection: TramplerPartCost
-      color: null
-      display_template: null
-      group: null
-      hidden: false
-      icon: null
-      item_duplication_fields: null
-      note: null
-      preview_url: null
-      singleton: false
-      sort: null
-      sort_field: null
-      translations: null
-      unarchive_value: null
-      versioning: false
-    schema:
-      name: TramplerPartCost
+      name: TramplerStats
 fields:
-  - collection: EnvEntity
-    field: category
-    type: text
-    meta:
-      collection: EnvEntity
-      conditions: null
-      display: null
-      display_options: null
-      field: category
-      group: null
-      hidden: false
-      interface: select-dropdown
-      note: null
-      options:
-        choices:
-          - text: Loot Containers
-            value: loot-containers
-          - text: Landmarks
-            value: landmarks
-          - text: Game Modes
-            value: game-modes
-          - text: NPCs
-            value: npcs
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: category
-      table: EnvEntity
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: false
-      is_unique: false
-      is_indexed: true
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: EnvEntity
-    field: icon
-    type: text
-    meta:
-      collection: EnvEntity
-      conditions: null
-      display: image-path
-      display_options:
-        baseUrl: http://localhost:3000
-        size: 28
-      field: icon
-      group: null
-      hidden: false
-      interface: null
-      note: null
-      options: null
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: icon
-      table: EnvEntity
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: EnvEntity
-    field: iconFile
-    type: uuid
-    meta:
-      collection: EnvEntity
-      conditions: null
-      display: image
-      display_options: null
-      field: iconFile
-      group: null
-      hidden: false
-      interface: file-image
-      note: >-
-        Backoffice card image (mirror of icon) - populated by
-        prisma/sync-directus-icons.mjs
-      options: null
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special:
-        - file
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: iconFile
-      table: EnvEntity
-      data_type: uuid
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: EnvEntity
+  # ---- Entity ----------------------------------------------------------------
+  - collection: Entity
     field: id
     type: text
     meta:
-      collection: EnvEntity
+      collection: Entity
       conditions: null
       display: null
       display_options: null
@@ -378,7 +197,7 @@ fields:
       width: full
     schema:
       name: id
-      table: EnvEntity
+      table: Entity
       data_type: text
       default_value: (gen_random_uuid())
       max_length: null
@@ -393,11 +212,252 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
-  - collection: Item
+  - collection: Entity
+    field: slug
+    type: text
+    meta:
+      collection: Entity
+      conditions: null
+      display: null
+      display_options: null
+      field: slug
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: slug
+      table: Entity
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Entity
+    field: kind
+    type: text
+    meta:
+      collection: Entity
+      conditions: null
+      display: null
+      display_options: null
+      field: kind
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        choices:
+          - text: Item
+            value: item
+          - text: Environment
+            value: environment
+          - text: Trampler Part
+            value: trampler-part
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: kind
+      table: Entity
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Entity
+    field: name
+    type: text
+    meta:
+      collection: Entity
+      conditions: null
+      display: null
+      display_options: null
+      field: name
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: name
+      table: Entity
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Entity
+    field: description
+    type: text
+    meta:
+      collection: Entity
+      conditions: null
+      display: null
+      display_options: null
+      field: description
+      group: null
+      hidden: false
+      interface: input-multiline
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: description
+      table: Entity
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Entity
+    field: category
+    type: text
+    meta:
+      collection: Entity
+      conditions: null
+      display: null
+      display_options: null
+      field: category
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: Weapons
+            value: weapons
+          - text: Artillery
+            value: artillery
+          - text: Resources
+            value: resources
+          - text: Attire
+            value: attire
+          - text: Tools
+            value: tools
+          - text: Medical
+            value: medical
+          - text: Ammo
+            value: ammo
+          - text: Misc
+            value: misc
+          - text: Loot Containers
+            value: loot-containers
+          - text: Landmarks
+            value: landmarks
+          - text: Game Modes
+            value: game-modes
+          - text: Chassis
+            value: chassis
+          - text: Crew Compartments
+            value: crew
+          - text: Driving Compartments
+            value: driving
+          - text: Engine
+            value: engine
+          - text: Weapon
+            value: weapon
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: category
+      table: Entity
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Entity
     field: rarity
     type: text
     meta:
-      collection: Item
+      collection: Entity
       conditions: null
       display: null
       display_options: null
@@ -431,7 +491,7 @@ fields:
       width: full
     schema:
       name: rarity
-      table: Item
+      table: Entity
       data_type: text
       default_value: null
       max_length: null
@@ -446,37 +506,22 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
-  - collection: Item
-    field: category
+  - collection: Entity
+    field: icon
     type: text
     meta:
-      collection: Item
+      collection: Entity
       conditions: null
-      display: null
-      display_options: null
-      field: category
+      display: image-path
+      display_options:
+        baseUrl: http://localhost:3000
+        size: 28
+      field: icon
       group: null
       hidden: false
-      interface: select-dropdown
+      interface: null
       note: null
-      options:
-        choices:
-          - text: Weapons
-            value: weapons
-          - text: Artillery
-            value: artillery
-          - text: Resources
-            value: resources
-          - text: Attire
-            value: attire
-          - text: Tools
-            value: tools
-          - text: Medical
-            value: medical
-          - text: Ammo
-            value: ammo
-          - text: Misc
-            value: misc
+      options: null
       readonly: false
       required: false
       searchable: true
@@ -487,14 +532,425 @@ fields:
       validation_message: null
       width: full
     schema:
-      name: category
-      table: Item
+      name: icon
+      table: Entity
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Entity
+    field: iconFile
+    type: uuid
+    meta:
+      collection: Entity
+      conditions: null
+      display: image
+      display_options: null
+      field: iconFile
+      group: null
+      hidden: false
+      interface: file-image
+      note: >-
+        Backoffice card image (mirror of icon) - populated by
+        prisma/sync-directus-icons.mjs
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special:
+        - file
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: iconFile
+      table: Entity
+      data_type: uuid
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Entity
+    field: imageAlt
+    type: text
+    meta:
+      collection: Entity
+      conditions: null
+      display: null
+      display_options: null
+      field: imageAlt
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: imageAlt
+      table: Entity
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Entity
+    field: derivedName
+    type: text
+    meta:
+      collection: Entity
+      conditions: null
+      display: null
+      display_options: null
+      field: derivedName
+      group: null
+      hidden: false
+      interface: input
+      note: Original scraper name; item search matches against it.
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: derivedName
+      table: Entity
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Entity
+    field: sourceUrl
+    type: text
+    meta:
+      collection: Entity
+      conditions: null
+      display: null
+      display_options: null
+      field: sourceUrl
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: sourceUrl
+      table: Entity
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Entity
+    field: lootCurated
+    type: boolean
+    meta:
+      collection: Entity
+      conditions: null
+      display: null
+      display_options: null
+      field: lootCurated
+      group: null
+      hidden: false
+      interface: boolean
+      note: >-
+        On = the importer won't overwrite this entity's loot table (set for
+        hand-authored landmark loot).
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special:
+        - cast-boolean
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: lootCurated
+      table: Entity
+      data_type: boolean
+      default_value: false
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: Entity
+    field: itemStats
+    type: alias
+    meta:
+      collection: Entity
+      conditions: null
+      display: null
+      display_options: null
+      field: itemStats
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: Per-item stat extension (single row).
+      options:
+        enableSelect: false
+      readonly: false
+      required: false
+      searchable: true
+      sort: 1
+      special:
+        - o2m
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: Entity
+    field: tramplerStats
+    type: alias
+    meta:
+      collection: Entity
+      conditions: null
+      display: null
+      display_options: null
+      field: tramplerStats
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: Per-trampler-part stat extension (single row).
+      options:
+        enableSelect: false
+      readonly: false
+      required: false
+      searchable: true
+      sort: 2
+      special:
+        - o2m
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  - collection: Entity
+    field: outgoingLinks
+    type: alias
+    meta:
+      collection: Entity
+      conditions: null
+      display: null
+      display_options: null
+      field: outgoingLinks
+      group: null
+      hidden: false
+      interface: list-o2m
+      note: Loot / build-cost links shown on this entity.
+      options:
+        enableSelect: true
+        template: '{{role}}: {{name}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: 3
+      special:
+        - o2m
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+  # ---- ItemStats -------------------------------------------------------------
+  - collection: ItemStats
+    field: entityId
+    type: text
+    meta:
+      collection: ItemStats
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{name}}'
+      field: entityId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{name}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: entityId
+      table: ItemStats
       data_type: text
       default_value: null
       max_length: null
       numeric_precision: null
       numeric_scale: null
       is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: Entity
+      foreign_key_column: id
+  - collection: ItemStats
+    field: storageStack
+    type: integer
+    meta:
+      collection: ItemStats
+      conditions: null
+      display: null
+      display_options: null
+      field: storageStack
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: storageStack
+      table: ItemStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: ItemStats
+    field: workbenchTier
+    type: integer
+    meta:
+      collection: ItemStats
+      conditions: null
+      display: null
+      display_options: null
+      field: workbenchTier
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: '1'
+            value: 1
+          - text: '2'
+            value: 2
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: workbenchTier
+      table: ItemStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
       is_unique: false
       is_indexed: true
       is_primary_key: false
@@ -503,11 +959,11 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
-  - collection: Item
+  - collection: ItemStats
     field: statType
     type: text
     meta:
-      collection: Item
+      collection: ItemStats
       conditions: null
       display: null
       display_options: null
@@ -560,7 +1016,7 @@ fields:
       width: full
     schema:
       name: statType
-      table: Item
+      table: ItemStats
       data_type: text
       default_value: null
       max_length: null
@@ -575,11 +1031,251 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
-  - collection: Item
+  - collection: ItemStats
+    field: statValue
+    type: integer
+    meta:
+      collection: ItemStats
+      conditions: null
+      display: null
+      display_options: null
+      field: statValue
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: statValue
+      table: ItemStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: ItemStats
+    field: damage
+    type: integer
+    meta:
+      collection: ItemStats
+      conditions: null
+      display: null
+      display_options: null
+      field: damage
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: damage
+      table: ItemStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: ItemStats
+    field: playerDamage
+    type: integer
+    meta:
+      collection: ItemStats
+      conditions: null
+      display: null
+      display_options: null
+      field: playerDamage
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: playerDamage
+      table: ItemStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: ItemStats
+    field: tramplerDamage
+    type: integer
+    meta:
+      collection: ItemStats
+      conditions: null
+      display: null
+      display_options: null
+      field: tramplerDamage
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: tramplerDamage
+      table: ItemStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: ItemStats
+    field: splashDamage
+    type: integer
+    meta:
+      collection: ItemStats
+      conditions: null
+      display: null
+      display_options: null
+      field: splashDamage
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: splashDamage
+      table: ItemStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: ItemStats
+    field: magazine
+    type: integer
+    meta:
+      collection: ItemStats
+      conditions: null
+      display: null
+      display_options: null
+      field: magazine
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: magazine
+      table: ItemStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: ItemStats
     field: ammoName
     type: text
     meta:
-      collection: Item
+      collection: ItemStats
       conditions: null
       display: null
       display_options: null
@@ -610,7 +1306,7 @@ fields:
       width: full
     schema:
       name: ammoName
-      table: Item
+      table: ItemStats
       data_type: text
       default_value: null
       max_length: null
@@ -625,15 +1321,596 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
-  - collection: Item
-    field: workbenchTier
-    type: integer
+  # ---- TramplerStats ---------------------------------------------------------
+  - collection: TramplerStats
+    field: entityId
+    type: text
     meta:
-      collection: Item
+      collection: TramplerStats
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{name}}'
+      field: entityId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{name}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: entityId
+      table: TramplerStats
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: true
+      is_indexed: false
+      is_primary_key: true
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: Entity
+      foreign_key_column: id
+  - collection: TramplerStats
+    field: dimensions
+    type: text
+    meta:
+      collection: TramplerStats
       conditions: null
       display: null
       display_options: null
-      field: workbenchTier
+      field: dimensions
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: 1x1
+            value: 1x1
+          - text: 1x1+
+            value: 1x1+
+          - text: 1x2
+            value: 1x2
+          - text: 1x3
+            value: 1x3
+          - text: 2x1
+            value: 2x1
+          - text: 2x2
+            value: 2x2
+          - text: 2x4
+            value: 2x4
+          - text: 3x1
+            value: 3x1
+          - text: 3x3
+            value: 3x3
+          - text: 3x4
+            value: 3x4
+          - text: 3x5
+            value: 3x5
+          - text: 4x3
+            value: 4x3
+          - text: 4x4
+            value: 4x4
+          - text: 4x6
+            value: 4x6
+          - text: 5x3
+            value: 5x3
+          - text: 5x5
+            value: 5x5
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: dimensions
+      table: TramplerStats
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerStats
+    field: health
+    type: integer
+    meta:
+      collection: TramplerStats
+      conditions: null
+      display: null
+      display_options: null
+      field: health
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: health
+      table: TramplerStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerStats
+    field: weight
+    type: integer
+    meta:
+      collection: TramplerStats
+      conditions: null
+      display: null
+      display_options: null
+      field: weight
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: weight
+      table: TramplerStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerStats
+    field: weightCapacity
+    type: integer
+    meta:
+      collection: TramplerStats
+      conditions: null
+      display: null
+      display_options: null
+      field: weightCapacity
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: weightCapacity
+      table: TramplerStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerStats
+    field: weightCompensation
+    type: integer
+    meta:
+      collection: TramplerStats
+      conditions: null
+      display: null
+      display_options: null
+      field: weightCompensation
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: weightCompensation
+      table: TramplerStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerStats
+    field: energyConsumption
+    type: integer
+    meta:
+      collection: TramplerStats
+      conditions: null
+      display: null
+      display_options: null
+      field: energyConsumption
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: energyConsumption
+      table: TramplerStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerStats
+    field: energyCapacity
+    type: integer
+    meta:
+      collection: TramplerStats
+      conditions: null
+      display: null
+      display_options: null
+      field: energyCapacity
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: energyCapacity
+      table: TramplerStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerStats
+    field: ratedPower
+    type: integer
+    meta:
+      collection: TramplerStats
+      conditions: null
+      display: null
+      display_options: null
+      field: ratedPower
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: ratedPower
+      table: TramplerStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerStats
+    field: crewSlots
+    type: integer
+    meta:
+      collection: TramplerStats
+      conditions: null
+      display: null
+      display_options: null
+      field: crewSlots
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: crewSlots
+      table: TramplerStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerStats
+    field: itemSlots
+    type: integer
+    meta:
+      collection: TramplerStats
+      conditions: null
+      display: null
+      display_options: null
+      field: itemSlots
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: itemSlots
+      table: TramplerStats
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerStats
+    field: researchNode
+    type: text
+    meta:
+      collection: TramplerStats
+      conditions: null
+      display: null
+      display_options: null
+      field: researchNode
+      group: null
+      hidden: false
+      interface: select-dropdown
+      note: null
+      options:
+        allowOther: true
+        choices:
+          - text: I(a)
+            value: I(a)
+          - text: I(b)
+            value: I(b)
+          - text: I(c)
+            value: I(c)
+          - text: II(a)
+            value: II(a)
+          - text: II(b)
+            value: II(b)
+          - text: II(c)
+            value: II(c)
+          - text: III(a)
+            value: III(a)
+          - text: III(b)
+            value: III(b)
+          - text: III(c)
+            value: III(c)
+          - text: IV(a)
+            value: IV(a)
+          - text: IV(b)
+            value: IV(b)
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: researchNode
+      table: TramplerStats
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerStats
+    field: researchName
+    type: text
+    meta:
+      collection: TramplerStats
+      conditions: null
+      display: null
+      display_options: null
+      field: researchName
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: researchName
+      table: TramplerStats
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: TramplerStats
+    field: researchTier
+    type: integer
+    meta:
+      collection: TramplerStats
+      conditions: null
+      display: null
+      display_options: null
+      field: researchTier
       group: null
       hidden: false
       interface: select-dropdown
@@ -645,6 +1922,10 @@ fields:
             value: 1
           - text: '2'
             value: 2
+          - text: '3'
+            value: 3
+          - text: '4'
+            value: 4
       readonly: false
       required: false
       searchable: true
@@ -655,8 +1936,8 @@ fields:
       validation_message: null
       width: full
     schema:
-      name: workbenchTier
-      table: Item
+      name: researchTier
+      table: TramplerStats
       data_type: integer
       default_value: null
       max_length: null
@@ -671,96 +1952,12 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
-  - collection: Item
-    field: icon
-    type: text
-    meta:
-      collection: Item
-      conditions: null
-      display: image-path
-      display_options:
-        baseUrl: http://localhost:3000
-        size: 28
-      field: icon
-      group: null
-      hidden: false
-      interface: null
-      note: null
-      options: null
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: icon
-      table: Item
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: Item
-    field: iconFile
-    type: uuid
-    meta:
-      collection: Item
-      conditions: null
-      display: image
-      display_options: null
-      field: iconFile
-      group: null
-      hidden: false
-      interface: file-image
-      note: >-
-        Backoffice card image (mirror of icon) - populated by
-        prisma/sync-directus-icons.mjs
-      options: null
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special:
-        - file
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: iconFile
-      table: Item
-      data_type: uuid
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: Item
+  # ---- EntityLink ------------------------------------------------------------
+  - collection: EntityLink
     field: id
     type: text
     meta:
-      collection: Item
+      collection: EntityLink
       conditions: null
       display: null
       display_options: null
@@ -781,7 +1978,7 @@ fields:
       width: full
     schema:
       name: id
-      table: Item
+      table: EntityLink
       data_type: text
       default_value: (gen_random_uuid())
       max_length: null
@@ -796,16 +1993,16 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
-  - collection: LootEntry
-    field: itemId
+  - collection: EntityLink
+    field: sourceId
     type: text
     meta:
-      collection: LootEntry
+      collection: EntityLink
       conditions: null
       display: related-values
       display_options:
         template: '{{name}}'
-      field: itemId
+      field: sourceId
       group: null
       hidden: false
       interface: select-dropdown-m2o
@@ -822,8 +2019,50 @@ fields:
       validation_message: null
       width: full
     schema:
-      name: itemId
-      table: LootEntry
+      name: sourceId
+      table: EntityLink
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: false
+      is_unique: false
+      is_indexed: true
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: Entity
+      foreign_key_column: id
+  - collection: EntityLink
+    field: targetId
+    type: text
+    meta:
+      collection: EntityLink
+      conditions: null
+      display: related-values
+      display_options:
+        template: '{{name}}'
+      field: targetId
+      group: null
+      hidden: false
+      interface: select-dropdown-m2o
+      note: null
+      options:
+        template: '{{name}}'
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: targetId
+      table: EntityLink
       data_type: text
       default_value: null
       max_length: null
@@ -836,24 +2075,27 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: Item
+      foreign_key_table: Entity
       foreign_key_column: id
-  - collection: LootEntry
-    field: lootTierId
+  - collection: EntityLink
+    field: role
     type: text
     meta:
-      collection: LootEntry
+      collection: EntityLink
       conditions: null
-      display: related-values
-      display_options:
-        template: '{{tier}}'
-      field: lootTierId
+      display: null
+      display_options: null
+      field: role
       group: null
       hidden: false
-      interface: select-dropdown-m2o
+      interface: select-dropdown
       note: null
       options:
-        template: '{{tier}}'
+        choices:
+          - text: Loot
+            value: loot
+          - text: Cost
+            value: cost
       readonly: false
       required: false
       searchable: true
@@ -864,8 +2106,8 @@ fields:
       validation_message: null
       width: full
     schema:
-      name: lootTierId
-      table: LootEntry
+      name: role
+      table: EntityLink
       data_type: text
       default_value: null
       max_length: null
@@ -873,69 +2115,27 @@ fields:
       numeric_scale: null
       is_nullable: false
       is_unique: false
-      is_indexed: false
+      is_indexed: true
       is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: LootTier
-      foreign_key_column: id
-  - collection: LootEntry
-    field: id
-    type: text
-    meta:
-      collection: LootEntry
-      conditions: null
-      display: null
-      display_options: null
-      field: id
-      group: null
-      hidden: false
-      interface: null
-      note: Generated automatically. Read-only — do not edit.
-      options: null
-      readonly: true
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: id
-      table: LootEntry
-      data_type: text
-      default_value: (gen_random_uuid())
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: false
-      is_unique: true
-      is_indexed: false
-      is_primary_key: true
       is_generated: false
       generation_expression: null
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
-  - collection: LootTier
-    field: envEntityId
+  - collection: EntityLink
+    field: name
     type: text
     meta:
-      collection: LootTier
+      collection: EntityLink
       conditions: null
-      display: related-values
-      display_options:
-        template: '{{name}}'
-      field: envEntityId
+      display: null
+      display_options: null
+      field: name
       group: null
       hidden: false
-      interface: select-dropdown-m2o
-      note: null
-      options:
-        template: '{{name}}'
+      interface: input
+      note: Display fallback when no target entity is set.
+      options: null
       readonly: false
       required: false
       searchable: true
@@ -946,8 +2146,8 @@ fields:
       validation_message: null
       width: full
     schema:
-      name: envEntityId
-      table: LootTier
+      name: name
+      table: EntityLink
       data_type: text
       default_value: null
       max_length: null
@@ -960,13 +2160,53 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: EnvEntity
-      foreign_key_column: id
-  - collection: LootTier
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: EntityLink
+    field: amount
+    type: integer
+    meta:
+      collection: EntityLink
+      conditions: null
+      display: null
+      display_options: null
+      field: amount
+      group: null
+      hidden: false
+      interface: input
+      note: Cost quantity.
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: amount
+      table: EntityLink
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: EntityLink
     field: tier
     type: text
     meta:
-      collection: LootTier
+      collection: EntityLink
       conditions: null
       display: null
       display_options: null
@@ -974,7 +2214,7 @@ fields:
       group: null
       hidden: false
       interface: select-dropdown
-      note: null
+      note: Loot drop tier.
       options:
         allowOther: true
         choices:
@@ -995,119 +2235,7 @@ fields:
       width: full
     schema:
       name: tier
-      table: LootTier
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: false
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: LootTier
-    field: col1Label
-    type: text
-    meta:
-      collection: LootTier
-      conditions: null
-      display: null
-      display_options: null
-      field: col1Label
-      group: null
-      hidden: false
-      interface: select-dropdown
-      note: null
-      options:
-        allowOther: true
-        choices:
-          - text: Lesser
-            value: Lesser
-          - text: Normal
-            value: Normal
-          - text: Greater
-            value: Greater
-          - text: Shipwreck Amount
-            value: Shipwreck Amount
-          - text: Landmark Amount
-            value: Landmark Amount
-          - text: Count
-            value: Count
-          - text: Chance
-            value: Chance
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: col1Label
-      table: LootTier
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: false
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: LootTier
-    field: col2Label
-    type: text
-    meta:
-      collection: LootTier
-      conditions: null
-      display: null
-      display_options: null
-      field: col2Label
-      group: null
-      hidden: false
-      interface: select-dropdown
-      note: null
-      options:
-        allowOther: true
-        choices:
-          - text: Lesser
-            value: Lesser
-          - text: Normal
-            value: Normal
-          - text: Greater
-            value: Greater
-          - text: Shipwreck Amount
-            value: Shipwreck Amount
-          - text: Landmark Amount
-            value: Landmark Amount
-          - text: Count
-            value: Count
-          - text: Chance
-            value: Chance
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: col2Label
-      table: LootTier
+      table: EntityLink
       data_type: text
       default_value: null
       max_length: null
@@ -1122,77 +2250,21 @@ fields:
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
-  - collection: LootTier
-    field: col3Label
+  - collection: EntityLink
+    field: value1
     type: text
     meta:
-      collection: LootTier
+      collection: EntityLink
       conditions: null
       display: null
       display_options: null
-      field: col3Label
+      field: value1
       group: null
       hidden: false
-      interface: select-dropdown
+      interface: input
       note: null
-      options:
-        allowOther: true
-        choices:
-          - text: Lesser
-            value: Lesser
-          - text: Normal
-            value: Normal
-          - text: Greater
-            value: Greater
-          - text: Shipwreck Amount
-            value: Shipwreck Amount
-          - text: Landmark Amount
-            value: Landmark Amount
-          - text: Count
-            value: Count
-          - text: Chance
-            value: Chance
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: col3Label
-      table: LootTier
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: LootTier
-    field: id
-    type: text
-    meta:
-      collection: LootTier
-      conditions: null
-      display: null
-      display_options: null
-      field: id
-      group: null
-      hidden: false
-      interface: null
-      note: Generated automatically. Read-only — do not edit.
       options: null
-      readonly: true
+      readonly: false
       required: false
       searchable: true
       sort: null
@@ -1202,22 +2274,143 @@ fields:
       validation_message: null
       width: full
     schema:
-      name: id
-      table: LootTier
+      name: value1
+      table: EntityLink
       data_type: text
-      default_value: (gen_random_uuid())
+      default_value: null
       max_length: null
       numeric_precision: null
       numeric_scale: null
-      is_nullable: false
-      is_unique: true
+      is_nullable: true
+      is_unique: false
       is_indexed: false
-      is_primary_key: true
+      is_primary_key: false
       is_generated: false
       generation_expression: null
       has_auto_increment: false
       foreign_key_table: null
       foreign_key_column: null
+  - collection: EntityLink
+    field: value2
+    type: text
+    meta:
+      collection: EntityLink
+      conditions: null
+      display: null
+      display_options: null
+      field: value2
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: value2
+      table: EntityLink
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: EntityLink
+    field: value3
+    type: text
+    meta:
+      collection: EntityLink
+      conditions: null
+      display: null
+      display_options: null
+      field: value3
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: value3
+      table: EntityLink
+      data_type: text
+      default_value: null
+      max_length: null
+      numeric_precision: null
+      numeric_scale: null
+      is_nullable: true
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  - collection: EntityLink
+    field: sortOrder
+    type: integer
+    meta:
+      collection: EntityLink
+      conditions: null
+      display: null
+      display_options: null
+      field: sortOrder
+      group: null
+      hidden: false
+      interface: input
+      note: null
+      options: null
+      readonly: false
+      required: false
+      searchable: true
+      sort: null
+      special: null
+      translations: null
+      validation: null
+      validation_message: null
+      width: full
+    schema:
+      name: sortOrder
+      table: EntityLink
+      data_type: integer
+      default_value: null
+      max_length: null
+      numeric_precision: 32
+      numeric_scale: 0
+      is_nullable: false
+      is_unique: false
+      is_indexed: false
+      is_primary_key: false
+      is_generated: false
+      generation_expression: null
+      has_auto_increment: false
+      foreign_key_table: null
+      foreign_key_column: null
+  # ---- Recipe ----------------------------------------------------------------
   - collection: Recipe
     field: workbench
     type: text
@@ -1396,7 +2589,7 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: Item
+      foreign_key_table: Entity
       foreign_key_column: id
   - collection: RecipeInput
     field: recipeId
@@ -1520,7 +2713,7 @@ fields:
       is_generated: false
       generation_expression: null
       has_auto_increment: false
-      foreign_key_table: Item
+      foreign_key_table: Entity
       foreign_key_column: id
   - collection: RecipeOutput
     field: recipeId
@@ -1590,502 +2783,6 @@ fields:
     schema:
       name: id
       table: RecipeOutput
-      data_type: text
-      default_value: (gen_random_uuid())
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: false
-      is_unique: true
-      is_indexed: false
-      is_primary_key: true
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: TramplerPart
-    field: category
-    type: text
-    meta:
-      collection: TramplerPart
-      conditions: null
-      display: null
-      display_options: null
-      field: category
-      group: null
-      hidden: false
-      interface: select-dropdown
-      note: null
-      options:
-        choices:
-          - text: Chassis
-            value: chassis
-          - text: Reactors
-            value: reactors
-          - text: Engines
-            value: engines
-          - text: Crew Compartments
-            value: crew
-          - text: Driving Compartments
-            value: driving
-          - text: Cargo
-            value: cargo
-          - text: Turret Decks & Defenses
-            value: turrets
-          - text: Crafting Stations
-            value: stations
-          - text: Structure & Decks
-            value: structure
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: category
-      table: TramplerPart
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: false
-      is_unique: false
-      is_indexed: true
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: TramplerPart
-    field: dimensions
-    type: text
-    meta:
-      collection: TramplerPart
-      conditions: null
-      display: null
-      display_options: null
-      field: dimensions
-      group: null
-      hidden: false
-      interface: select-dropdown
-      note: null
-      options:
-        allowOther: true
-        choices:
-          - text: 1x1
-            value: 1x1
-          - text: 1x1+
-            value: 1x1+
-          - text: 1x2
-            value: 1x2
-          - text: 1x3
-            value: 1x3
-          - text: 2x1
-            value: 2x1
-          - text: 2x2
-            value: 2x2
-          - text: 2x4
-            value: 2x4
-          - text: 3x1
-            value: 3x1
-          - text: 3x3
-            value: 3x3
-          - text: 3x4
-            value: 3x4
-          - text: 3x5
-            value: 3x5
-          - text: 4x3
-            value: 4x3
-          - text: 4x4
-            value: 4x4
-          - text: 4x6
-            value: 4x6
-          - text: 5x3
-            value: 5x3
-          - text: 5x5
-            value: 5x5
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: dimensions
-      table: TramplerPart
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: TramplerPart
-    field: researchNode
-    type: text
-    meta:
-      collection: TramplerPart
-      conditions: null
-      display: null
-      display_options: null
-      field: researchNode
-      group: null
-      hidden: false
-      interface: select-dropdown
-      note: null
-      options:
-        allowOther: true
-        choices:
-          - text: I(a)
-            value: I(a)
-          - text: I(b)
-            value: I(b)
-          - text: I(c)
-            value: I(c)
-          - text: II(a)
-            value: II(a)
-          - text: II(b)
-            value: II(b)
-          - text: II(c)
-            value: II(c)
-          - text: III(a)
-            value: III(a)
-          - text: III(b)
-            value: III(b)
-          - text: III(c)
-            value: III(c)
-          - text: IV(a)
-            value: IV(a)
-          - text: IV(b)
-            value: IV(b)
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: researchNode
-      table: TramplerPart
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: TramplerPart
-    field: researchTier
-    type: integer
-    meta:
-      collection: TramplerPart
-      conditions: null
-      display: null
-      display_options: null
-      field: researchTier
-      group: null
-      hidden: false
-      interface: select-dropdown
-      note: null
-      options:
-        allowOther: true
-        choices:
-          - text: '1'
-            value: 1
-          - text: '2'
-            value: 2
-          - text: '3'
-            value: 3
-          - text: '4'
-            value: 4
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: researchTier
-      table: TramplerPart
-      data_type: integer
-      default_value: null
-      max_length: null
-      numeric_precision: 32
-      numeric_scale: 0
-      is_nullable: true
-      is_unique: false
-      is_indexed: true
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: TramplerPart
-    field: icon
-    type: text
-    meta:
-      collection: TramplerPart
-      conditions: null
-      display: image-path
-      display_options:
-        baseUrl: http://localhost:3000
-        size: 28
-      field: icon
-      group: null
-      hidden: false
-      interface: null
-      note: null
-      options: null
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: icon
-      table: TramplerPart
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: TramplerPart
-    field: iconFile
-    type: uuid
-    meta:
-      collection: TramplerPart
-      conditions: null
-      display: image
-      display_options: null
-      field: iconFile
-      group: null
-      hidden: false
-      interface: file-image
-      note: >-
-        Backoffice card image (mirror of icon) - populated by
-        prisma/sync-directus-icons.mjs
-      options: null
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special:
-        - file
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: iconFile
-      table: TramplerPart
-      data_type: uuid
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: TramplerPart
-    field: id
-    type: text
-    meta:
-      collection: TramplerPart
-      conditions: null
-      display: null
-      display_options: null
-      field: id
-      group: null
-      hidden: false
-      interface: null
-      note: Generated automatically. Read-only — do not edit.
-      options: null
-      readonly: true
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: id
-      table: TramplerPart
-      data_type: text
-      default_value: (gen_random_uuid())
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: false
-      is_unique: true
-      is_indexed: false
-      is_primary_key: true
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: null
-      foreign_key_column: null
-  - collection: TramplerPartCost
-    field: itemId
-    type: text
-    meta:
-      collection: TramplerPartCost
-      conditions: null
-      display: related-values
-      display_options:
-        template: '{{name}}'
-      field: itemId
-      group: null
-      hidden: false
-      interface: select-dropdown-m2o
-      note: null
-      options:
-        template: '{{name}}'
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: itemId
-      table: TramplerPartCost
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: true
-      is_unique: false
-      is_indexed: true
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: Item
-      foreign_key_column: id
-  - collection: TramplerPartCost
-    field: partId
-    type: text
-    meta:
-      collection: TramplerPartCost
-      conditions: null
-      display: related-values
-      display_options:
-        template: '{{name}}'
-      field: partId
-      group: null
-      hidden: false
-      interface: select-dropdown-m2o
-      note: null
-      options:
-        template: '{{name}}'
-      readonly: false
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: partId
-      table: TramplerPartCost
-      data_type: text
-      default_value: null
-      max_length: null
-      numeric_precision: null
-      numeric_scale: null
-      is_nullable: false
-      is_unique: false
-      is_indexed: false
-      is_primary_key: false
-      is_generated: false
-      generation_expression: null
-      has_auto_increment: false
-      foreign_key_table: TramplerPart
-      foreign_key_column: id
-  - collection: TramplerPartCost
-    field: id
-    type: text
-    meta:
-      collection: TramplerPartCost
-      conditions: null
-      display: null
-      display_options: null
-      field: id
-      group: null
-      hidden: false
-      interface: null
-      note: Generated automatically. Read-only — do not edit.
-      options: null
-      readonly: true
-      required: false
-      searchable: true
-      sort: null
-      special: null
-      translations: null
-      validation: null
-      validation_message: null
-      width: full
-    schema:
-      name: id
-      table: TramplerPartCost
       data_type: text
       default_value: (gen_random_uuid())
       max_length: null
@@ -2114,12 +2811,12 @@ systemFields:
     schema:
       is_indexed: true
 relations:
-  - collection: EnvEntity
+  - collection: Entity
     field: iconFile
     related_collection: directus_files
     meta:
       junction_field: null
-      many_collection: EnvEntity
+      many_collection: Entity
       many_field: iconFile
       one_allowed_collections: null
       one_collection: directus_files
@@ -2127,19 +2824,111 @@ relations:
       one_deselect_action: nullify
       one_field: null
       sort_field: null
-  - collection: Item
-    field: iconFile
-    related_collection: directus_files
+  - collection: ItemStats
+    field: entityId
+    related_collection: Entity
     meta:
       junction_field: null
-      many_collection: Item
-      many_field: iconFile
+      many_collection: ItemStats
+      many_field: entityId
       one_allowed_collections: null
-      one_collection: directus_files
+      one_collection: Entity
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: itemStats
+      sort_field: null
+    schema:
+      table: ItemStats
+      column: entityId
+      foreign_key_table: Entity
+      foreign_key_column: id
+      constraint_name: ItemStats_entityId_fkey
+      on_update: CASCADE
+      on_delete: CASCADE
+  - collection: TramplerStats
+    field: entityId
+    related_collection: Entity
+    meta:
+      junction_field: null
+      many_collection: TramplerStats
+      many_field: entityId
+      one_allowed_collections: null
+      one_collection: Entity
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: tramplerStats
+      sort_field: null
+    schema:
+      table: TramplerStats
+      column: entityId
+      foreign_key_table: Entity
+      foreign_key_column: id
+      constraint_name: TramplerStats_entityId_fkey
+      on_update: CASCADE
+      on_delete: CASCADE
+  - collection: EntityLink
+    field: sourceId
+    related_collection: Entity
+    meta:
+      junction_field: null
+      many_collection: EntityLink
+      many_field: sourceId
+      one_allowed_collections: null
+      one_collection: Entity
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: outgoingLinks
+      sort_field: sortOrder
+    schema:
+      table: EntityLink
+      column: sourceId
+      foreign_key_table: Entity
+      foreign_key_column: id
+      constraint_name: EntityLink_sourceId_fkey
+      on_update: CASCADE
+      on_delete: CASCADE
+  - collection: EntityLink
+    field: targetId
+    related_collection: Entity
+    meta:
+      junction_field: null
+      many_collection: EntityLink
+      many_field: targetId
+      one_allowed_collections: null
+      one_collection: Entity
       one_collection_field: null
       one_deselect_action: nullify
       one_field: null
       sort_field: null
+    schema:
+      table: EntityLink
+      column: targetId
+      foreign_key_table: Entity
+      foreign_key_column: id
+      constraint_name: EntityLink_targetId_fkey
+      on_update: CASCADE
+      on_delete: SET NULL
+  - collection: RecipeInput
+    field: itemId
+    related_collection: Entity
+    meta:
+      junction_field: null
+      many_collection: RecipeInput
+      many_field: itemId
+      one_allowed_collections: null
+      one_collection: Entity
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: RecipeInput
+      column: itemId
+      foreign_key_table: Entity
+      foreign_key_column: id
+      constraint_name: RecipeInput_itemId_fkey
+      on_update: CASCADE
+      on_delete: CASCADE
   - collection: RecipeInput
     field: recipeId
     related_collection: Recipe
@@ -2159,6 +2948,27 @@ relations:
       foreign_key_table: Recipe
       foreign_key_column: id
       constraint_name: RecipeInput_recipeId_fkey
+      on_update: CASCADE
+      on_delete: CASCADE
+  - collection: RecipeOutput
+    field: itemId
+    related_collection: Entity
+    meta:
+      junction_field: null
+      many_collection: RecipeOutput
+      many_field: itemId
+      one_allowed_collections: null
+      one_collection: Entity
+      one_collection_field: null
+      one_deselect_action: nullify
+      one_field: null
+      sort_field: null
+    schema:
+      table: RecipeOutput
+      column: itemId
+      foreign_key_table: Entity
+      foreign_key_column: id
+      constraint_name: RecipeOutput_itemId_fkey
       on_update: CASCADE
       on_delete: CASCADE
   - collection: RecipeOutput
@@ -2182,16 +2992,3 @@ relations:
       constraint_name: RecipeOutput_recipeId_fkey
       on_update: CASCADE
       on_delete: CASCADE
-  - collection: TramplerPart
-    field: iconFile
-    related_collection: directus_files
-    meta:
-      junction_field: null
-      many_collection: TramplerPart
-      many_field: iconFile
-      one_allowed_collections: null
-      one_collection: directus_files
-      one_collection_field: null
-      one_deselect_action: nullify
-      one_field: null
-      sort_field: null
