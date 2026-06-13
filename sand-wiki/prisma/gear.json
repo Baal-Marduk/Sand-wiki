@@ -53,5 +53,17 @@
     "storageStack": null,
     "workbenchTier": null,
     "fromCatalog": false
+  },
+  {
+    "slug": "resource-alloy-steel",
+    "id": "item_resourceAlloySteel",
+    "name": "Resource Alloy Steel",
+    "displayName": "Alloy Steel",
+    "description": "A strong steel alloy used as a crafting and research material.",
+    "type": "RESOURCE_T3",
+    "isResource": true,
+    "storageStack": 100000,
+    "workbenchTier": null,
+    "fromCatalog": false
   }
 ]
