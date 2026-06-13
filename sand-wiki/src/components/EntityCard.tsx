@@ -1,5 +1,8 @@
 import Link from "next/link";
-import { rarityColor } from "@/lib/rarity";
+import { rarityColor, rarityGradient } from "@/lib/rarity";
+
+/** Neutral inventory slot for icons with no rarity — matches ItemIcon. */
+const NEUTRAL_SLOT = "linear-gradient(135deg, #2A2E37 0%, #181B22 45%, #11131A 100%)";
 
 export interface EntityStat {
   k: string;
@@ -20,12 +23,12 @@ export interface EntityCardData {
 }
 
 /** The workhorse browse card (items / tramplers / environments): rarity rail +
- *  neutral squared sprite tile + name/type + optional right-aligned stats. The
- *  rail carries the rarity color; the sprite tile stays neutral so names keep AA
- *  contrast and the grid reads calm (per the design deviation note). */
+ *  rarity-gradient sprite tile + name/type + optional right-aligned stats. The
+ *  sprite tile carries the same colored gradient as the detail/recipe icons. */
 export function EntityCard({ entity }: { entity: EntityCardData }) {
   const color = rarityColor(entity.rarity);
   const railColor = color ?? "var(--border-strong)";
+  const gradient = rarityGradient(entity.rarity);
   const typeBits = [entity.typeLabel, entity.rarity].filter(Boolean).join(" · ");
 
   return (
@@ -35,7 +38,10 @@ export function EntityCard({ entity }: { entity: EntityCardData }) {
         className="group grid grid-cols-[4px_64px_1fr_auto] overflow-hidden border border-border bg-card transition-colors hover:border-border-strong hover:bg-card-elevated"
       >
         <span aria-hidden className="block" style={{ background: railColor }} />
-        <span className="grid size-16 place-items-center border-r border-border bg-card-elevated">
+        <span
+          className="item-sprite grid size-16 place-items-center border-r border-border"
+          style={{ background: gradient ?? NEUTRAL_SLOT }}
+        >
           {entity.icon ? (
             // eslint-disable-next-line @next/next/no-img-element
             <img
@@ -45,7 +51,7 @@ export function EntityCard({ entity }: { entity: EntityCardData }) {
               className="size-[80%] object-contain [filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.45))]"
             />
           ) : (
-            <span aria-hidden className="text-2xl text-dim">
+            <span aria-hidden className={`text-2xl ${gradient ? "text-background" : "text-dim"}`}>
               ▦
             </span>
           )}
