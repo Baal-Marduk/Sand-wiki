@@ -10,25 +10,39 @@ datasource db {
   directUrl = env("DIRECT_DATABASE_URL")
 }
 
-model Item {
-  // DB-side default (not cuid()) so rows created outside Prisma — e.g. in the
-  // Directus Studio — get a generated id. Prisma now relies on it too. See
-  // migration 20260611150000_id_db_default.
-  id            String  @id @default(dbgenerated("(gen_random_uuid())::text"))
-  slug          String  @unique
-  name          String
-  description   String?
-  category      String
-  storageStack  Int?
-  workbenchTier Int?
-  imageAlt      String?
-  icon          String?
-  derivedName   String?
-  rarity        String?
-  // Directus-files mirror of `icon` — backoffice card image only; app reads `icon`.
-  // Populated by prisma/sync-directus-icons.mjs (re-run after asset imports).
-  iconFile      String? @db.Uuid
+model Entity {
+  id          String  @id @default(dbgenerated("(gen_random_uuid())::text"))
+  slug        String  @unique
+  kind        String // "item" | "environment" | "trampler-part"
+  name        String
+  description String?
+  category    String
+  rarity      String?
+  icon        String?
+  iconFile    String? @db.Uuid
+  imageAlt    String?
+  derivedName String?
+  sourceUrl   String?
+  lootCurated Boolean @default(false)
 
+  itemStats     ItemStats?
+  tramplerStats TramplerStats?
+
+  producedBy    RecipeOutput[]
+  usedIn        RecipeInput[]
+  outgoingLinks EntityLink[]   @relation("LinkSource")
+  incomingLinks EntityLink[]   @relation("LinkTarget")
+
+  @@index([kind])
+  @@index([category])
+  @@index([rarity])
+}
+
+model ItemStats {
+  entityId       String  @id
+  entity         Entity  @relation(fields: [entityId], references: [id], onDelete: Cascade)
+  storageStack   Int?
+  workbenchTier  Int?
   statType       String?
   statValue      Int?
   damage         Int?
@@ -38,44 +52,12 @@ model Item {
   magazine       Int?
   ammoName       String?
 
-  producedBy    RecipeOutput[]
-  usedIn        RecipeInput[]
-  lootEntries   LootEntry[]
-  tramplerCosts TramplerPartCost[]
-
-  @@index([category])
   @@index([workbenchTier])
-  @@index([rarity])
 }
 
-model EnvEntity {
-  id          String  @id @default(dbgenerated("(gen_random_uuid())::text"))
-  slug        String  @unique
-  category    String
-  name        String
-  description String?
-  sourceUrl   String?
-  icon        String?
-  iconFile    String? @db.Uuid
-
-  lootCurated Boolean @default(false) // when true, the seed won't overwrite this entity's loot table
-
-  lootTiers     LootTier[]
-  droppedInLoot LootEntry[] @relation("LootEntryContainer") // loot entries that reference this entity as a container
-
-  @@index([category])
-}
-
-model TramplerPart {
-  id          String  @id @default(dbgenerated("(gen_random_uuid())::text"))
-  slug        String  @unique
-  name        String
-  category    String
-  description String?
-  icon        String?
-  iconFile    String? @db.Uuid
-  sourceUrl   String?
-
+model TramplerStats {
+  entityId           String  @id
+  entity             Entity  @relation(fields: [entityId], references: [id], onDelete: Cascade)
   dimensions         String?
   health             Int?
   weight             Int?
@@ -86,15 +68,30 @@ model TramplerPart {
   ratedPower         Int?
   crewSlots          Int?
   itemSlots          Int?
+  researchNode       String?
+  researchName       String?
+  researchTier       Int?
 
-  researchNode String?
-  researchName String?
-  researchTier Int?
-
-  costEntries TramplerPartCost[]
-
-  @@index([category])
   @@index([researchTier])
+}
+
+model EntityLink {
+  id        String  @id @default(dbgenerated("(gen_random_uuid())::text"))
+  sourceId  String
+  source    Entity  @relation("LinkSource", fields: [sourceId], references: [id], onDelete: Cascade)
+  targetId  String?
+  target    Entity? @relation("LinkTarget", fields: [targetId], references: [id], onDelete: SetNull)
+  role      String
+  name      String
+  amount    Int?
+  tier      String?
+  value1    String?
+  value2    String?
+  value3    String?
+  sortOrder Int
+
+  @@index([sourceId, role])
+  @@index([targetId])
 }
 
 model Recipe {
@@ -104,8 +101,8 @@ model Recipe {
   tier             Int?
   craftTimeSeconds Float?
 
-  inputs           RecipeInput[]
-  outputs          RecipeOutput[]
+  inputs  RecipeInput[]
+  outputs RecipeOutput[]
 }
 
 model RecipeInput {
@@ -113,7 +110,7 @@ model RecipeInput {
   recipeId String
   recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   itemId   String
-  item     Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  entity   Entity @relation(fields: [itemId], references: [id], onDelete: Cascade)
   amount   Int
 
   @@index([itemId])
@@ -125,66 +122,19 @@ model RecipeOutput {
   recipeId String
   recipe   Recipe @relation(fields: [recipeId], references: [id], onDelete: Cascade)
   itemId   String
-  item     Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  entity   Entity @relation(fields: [itemId], references: [id], onDelete: Cascade)
   amount   Int
 
   @@index([itemId])
   @@index([recipeId])
 }
 
-model LootTier {
-  id          String    @id @default(dbgenerated("(gen_random_uuid())::text"))
-  envEntityId String
-  envEntity   EnvEntity @relation(fields: [envEntityId], references: [id], onDelete: Cascade)
-  tier        String // "Normal" | "Rare" | "Very Rare"
-  col1Label   String
-  col2Label   String?
-  col3Label   String?
-  sortOrder   Int
-  entries     LootEntry[]
-
-  @@unique([envEntityId, tier])
-}
-
-model LootEntry {
-  id          String   @id @default(dbgenerated("(gen_random_uuid())::text"))
-  lootTierId  String
-  lootTier    LootTier @relation(fields: [lootTierId], references: [id], onDelete: Cascade)
-  itemId      String?
-  item        Item?    @relation(fields: [itemId], references: [id], onDelete: SetNull)
-  containerId String?
-  container   EnvEntity? @relation("LootEntryContainer", fields: [containerId], references: [id], onDelete: SetNull)
-  name        String // display fallback; also the label for an item/container entry
-  value1      String? // wiki amounts are strings ("10-20"); rows can have fewer values than columns
-  value2      String?
-  value3      String?
-  sortOrder   Int
-
-  @@unique([lootTierId, sortOrder])
-  @@index([itemId])
-  @@index([containerId])
-}
-
-model TramplerPartCost {
-  id        String       @id @default(dbgenerated("(gen_random_uuid())::text"))
-  partId    String
-  part      TramplerPart @relation(fields: [partId], references: [id], onDelete: Cascade)
-  itemId    String?
-  item      Item?        @relation(fields: [itemId], references: [id], onDelete: SetNull)
-  name      String // display label; itemId is null only for an unresolved cost line
-  amount    Int
-  sortOrder Int
-
-  @@unique([partId, sortOrder])
-  @@index([itemId])
-}
-
 model SteamUser {
-  steamId     String   @id
+  steamId     String     @id
   personaName String?
   avatar      String?
-  createdAt   DateTime @default(now())
-  lastSeenAt  DateTime @default(now())
+  createdAt   DateTime   @default(now())
+  lastSeenAt  DateTime   @default(now())
   proposals   Proposal[]
 }
 
