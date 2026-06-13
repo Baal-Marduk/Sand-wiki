@@ -1,6 +1,12 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 @plugin "daisyui";
 
+/* DaisyUI themes are retained during the incremental shadcn migration so any
+ * not-yet-migrated page keeps rendering. The shell is locked to dark
+ * (layout sets `data-theme="desertnight"` + `.dark`); the theme toggle and
+ * localStorage switching are gone. Both blocks are removed in the final
+ * decommission phase once every page is on the shadcn token layer below. */
 @plugin "daisyui/theme" {
   name: "desertnight";
   default: true;
@@ -57,10 +63,6 @@
   --radius-field: 0.1875rem;
 }
 
-@theme {
-  --font-display: var(--font-oswald);
-}
-
 /* Theme toggle icon: show moon in dark theme, sun in light theme (CSS-only). */
 .theme-icon-day {
   display: none;
@@ -95,3 +97,93 @@ a.card:hover, a.card:focus-visible { background-color: var(--color-base-300); }
 /* Only brighten sprites inside an actual link/card — not the link-less ItemIconLink
  * variant (its .group also drives the tooltip, but a hover cue there leads nowhere). */
 a:hover .item-sprite, a:focus-visible .item-sprite { filter: brightness(1.1); }
+
+/* ── shadcn/ui design tokens (dark-only, SAND desert) ─────────────────────────
+ * Binding values from the redesign spec / `.superpowers/design/` reference.
+ * Rarity scale mirrors src/lib/rarity.ts (the single source of truth). */
+:root {
+  --radius: 0px;
+
+  --background: #0d0a06;
+  --foreground: #ece0cb;
+  --card: #15100a;
+  --card-foreground: #ece0cb;
+  --card-elevated: #1d160d;
+  --popover: #15100a;
+  --popover-foreground: #ece0cb;
+
+  --primary: #e8893b;
+  --primary-foreground: #1a0f04;
+  --primary-hover: #f29b52;
+  --primary-press: #cf7530;
+  --secondary: #b5532a;
+  --secondary-foreground: #fbe9d8;
+  --accent: #c9a24b;
+  --accent-foreground: #1a120a;
+
+  --muted: #1d160d;
+  --muted-foreground: #9a8f7c;
+  --dim: #74695a;
+
+  --border: #2a2012;
+  --border-strong: #3a2c18;
+  --input: #3a2c18;
+  --ring: #e8893b;
+
+  --info: #6aa9c9;
+  --success: #7fb069;
+  --warning: #e0a341;
+  --destructive: #d4654f;
+  --destructive-foreground: #1a0805;
+
+  /* rarity scale — mirrors src/lib/rarity.ts */
+  --rarity-1: #AEAEB2;
+  --rarity-2: #7CB079;
+  --rarity-3: #7AA8D2;
+  --rarity-4: #A37FC9;
+  --rarity-5: #E59A52;
+  --rarity-6: #D85F64;
+}
+
+@theme inline {
+  --radius-sm: var(--radius);
+  --radius-md: var(--radius);
+  --radius-lg: var(--radius);
+  --radius-xl: var(--radius);
+
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-card-elevated: var(--card-elevated);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-primary-press: var(--primary-press);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-dim: var(--dim);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-info: var(--info);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-rarity-1: var(--rarity-1);
+  --color-rarity-2: var(--rarity-2);
+  --color-rarity-3: var(--rarity-3);
+  --color-rarity-4: var(--rarity-4);
+  --color-rarity-5: var(--rarity-5);
+  --color-rarity-6: var(--rarity-6);
+
+  --font-display: var(--font-oswald);
+}

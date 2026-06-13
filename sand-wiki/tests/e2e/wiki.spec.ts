@@ -15,27 +15,8 @@ for (const path of pages) {
   });
 }
 
-test("light theme (desertday) has no serious/critical a11y violations on key pages", async ({ page }) => {
-  // Persist the light theme so the anti-FOUC script applies it at load time — this
-  // avoids analyzing mid-transition colors that a runtime data-theme swap would catch.
-  await page.addInitScript(() => {
-    try { localStorage.setItem("sand-theme", "desertday"); } catch { /* ignore */ }
-  });
-  for (const path of ["/", "/items", "/tech"]) {
-    await page.goto(path);
-    await expect(page.locator("html")).toHaveAttribute("data-theme", "desertday");
-    const results = await new AxeBuilder({ page }).analyze();
-    const serious = results.violations.filter((v) => ["serious", "critical"].includes(v.impact ?? ""));
-    expect(serious, `${path}: ${JSON.stringify(serious, null, 2)}`).toEqual([]);
-  }
-});
-
-test("theme toggle switches between desert night and day", async ({ page }) => {
-  await page.goto("/");
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "desertnight");
-  await page.getByRole("button", { name: /toggle light and dark theme/i }).click();
-  await expect(page.locator("html")).toHaveAttribute("data-theme", "desertday");
-});
+// Light theme (desertday) and the theme toggle were removed in the shadcn
+// redesign — the app is dark-only. Their former axe/toggle tests are dropped.
 
 test("search navigates to filtered items list", async ({ page }) => {
   await page.goto("/");
