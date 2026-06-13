@@ -2,6 +2,7 @@ import Link from "next/link";
 import { submitEdit } from "@/app/contribute/actions";
 import { entityHref, type EditableField, type SelectOption } from "@/lib/proposal-schema";
 import { EnumField } from "@/components/EnumField";
+import { labelCls, inputCls, textareaCls, hintCls, btnPrimary, btnGhost } from "@/components/form-styles";
 
 export function EditProposalForm({
   type,
@@ -21,34 +22,34 @@ export function EditProposalForm({
       <input type="hidden" name="type" value={type} />
       <input type="hidden" name="slug" value={slug} />
       {fields.map((f) => (
-        <label key={f.field} className="block space-y-1">
-          <span className="text-sm font-medium">{f.label}</span>
+        <label key={f.field} className="flex flex-col gap-1.5">
+          <span className={labelCls}>{f.label}</span>
           {f.type === "enum" ? (
             <EnumField field={f.field} value={String(values[f.field] ?? "")} options={options[f.field] ?? []} />
           ) : f.type === "text" ? (
-            <textarea name={f.field} defaultValue={values[f.field] ?? ""} className="textarea textarea-bordered w-full" rows={3} />
+            <textarea name={f.field} defaultValue={values[f.field] ?? ""} className={textareaCls} rows={3} />
           ) : (
             <input
               name={f.field}
               type={f.type === "int" ? "number" : "text"}
               defaultValue={values[f.field] ?? ""}
-              className="input input-bordered w-full"
+              className={inputCls}
             />
           )}
           {f.field === "description" && (
-            <span className="text-xs text-base-content/50">
+            <span className={hintCls}>
               Link to any wiki page with <code>[[slug]]</code>.
             </span>
           )}
         </label>
       ))}
-      <label className="block space-y-1">
-        <span className="text-sm font-medium">Note / source (optional)</span>
-        <textarea name="note" className="textarea textarea-bordered w-full" rows={2} placeholder="Where did you confirm this?" />
+      <label className="flex flex-col gap-1.5">
+        <span className={labelCls}>Note / source (optional)</span>
+        <textarea name="note" className={textareaCls} rows={2} placeholder="Where did you confirm this?" />
       </label>
-      <div className="flex gap-2">
-        <button type="submit" className="btn btn-primary">Submit correction</button>
-        <Link href={entityHref(type, slug)} className="btn btn-ghost">Cancel</Link>
+      <div className="flex justify-end gap-2 border-t border-border pt-4">
+        <Link href={entityHref(type, slug)} className={btnGhost}>Cancel</Link>
+        <button type="submit" className={btnPrimary}>Submit correction</button>
       </div>
     </form>
   );

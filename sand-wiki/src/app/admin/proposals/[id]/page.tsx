@@ -6,8 +6,16 @@ import { detectStale } from "@/lib/proposal-apply";
 import type { Diff } from "@/lib/proposal-diff";
 import { recipeToSnapshot, snapshotsEqual, diffRecipeLines, type RecipeProposalChange } from "@/lib/recipe-proposal";
 import { approveProposal, rejectProposal } from "../actions";
+import { inputCls, btnSuccess, btnDestructive } from "@/components/form-styles";
 
 type Params = Promise<{ id: string }>;
+
+const tableCls = "w-full border-collapse border border-border text-[13px]";
+const thCls =
+  "border-b border-border-strong bg-card-elevated px-3 py-2 text-left font-display text-[11px] font-semibold uppercase tracking-[0.07em] text-muted-foreground";
+const tdCls = "border-b border-border px-3 py-2 text-foreground";
+const tagWarn =
+  "ml-2 inline-flex items-center border border-warning/40 px-1.5 py-0.5 font-mono text-[10px] font-semibold uppercase tracking-[0.04em] text-warning";
 
 export default async function ProposalDetail({ params }: { params: Params }) {
   await requireAdmin();
@@ -40,55 +48,63 @@ export default async function ProposalDetail({ params }: { params: Params }) {
   }
 
   return (
-    <article className="py-6 space-y-6 max-w-3xl">
-      <h1 className="font-display text-2xl font-bold">
-        {p.kind === "edit"
-          ? `Edit · ${p.targetType} · ${p.targetSlug}`
-          : p.kind === "recipe_edit"
-            ? `Recipe edit · ${p.targetSlug}`
-            : `New page · ${p.proposedName}`}
-      </h1>
-      <p className="text-sm text-base-content/60">by {p.proposer.personaName ?? p.proposerId} · {p.status}</p>
+    <article className="mx-auto max-w-3xl space-y-6 py-6">
+      <div>
+        <h1 className="font-display text-2xl font-bold uppercase tracking-[0.01em]">
+          {p.kind === "edit"
+            ? `Edit · ${p.targetType} · ${p.targetSlug}`
+            : p.kind === "recipe_edit"
+              ? `Recipe edit · ${p.targetSlug}`
+              : `New page · ${p.proposedName}`}
+        </h1>
+        <p className="mt-1 font-mono text-xs uppercase tracking-[0.04em] text-muted-foreground">
+          by {p.proposer.personaName ?? p.proposerId} · {p.status}
+        </p>
+      </div>
 
       {p.kind === "edit" && diff ? (
-        <table className="table">
-          <thead><tr><th>Field</th><th>Current</th><th>Proposed</th></tr></thead>
+        <table className={tableCls}>
+          <thead><tr><th className={thCls}>Field</th><th className={thCls}>Current</th><th className={thCls}>Proposed</th></tr></thead>
           <tbody>
             {Object.entries(diff).map(([field, c]) => (
-              <tr key={field} className={stale.includes(field) ? "bg-warning/20" : ""}>
-                <td>{field}{stale.includes(field) && <span className="badge badge-warning badge-sm ml-2">base changed</span>}</td>
-                <td>{String(current[field] ?? "—")}</td>
-                <td className="font-medium">{String(c.new ?? "—")}</td>
+              <tr key={field} className={stale.includes(field) ? "bg-warning/10" : ""}>
+                <td className={tdCls}>{field}{stale.includes(field) && <span className={tagWarn}>base changed</span>}</td>
+                <td className={`${tdCls} text-muted-foreground`}>{String(current[field] ?? "—")}</td>
+                <td className={`${tdCls} font-medium`}>{String(c.new ?? "—")}</td>
               </tr>
             ))}
           </tbody>
         </table>
       ) : p.kind === "recipe_edit" && recipeChange ? (
         <div className="space-y-4">
-          {recipeStale && <div className="alert alert-warning">The recipe changed since this was proposed (base changed).</div>}
-          <table className="table">
-            <thead><tr><th>Meta</th><th>Current</th><th>Proposed</th></tr></thead>
+          {recipeStale && (
+            <div className="border border-warning/40 bg-warning/10 px-3 py-2 text-sm text-warning">
+              The recipe changed since this was proposed (base changed).
+            </div>
+          )}
+          <table className={tableCls}>
+            <thead><tr><th className={thCls}>Meta</th><th className={thCls}>Current</th><th className={thCls}>Proposed</th></tr></thead>
             <tbody>
               {(["workbench", "tier", "craftTimeSeconds"] as const).map((k) => (
-                <tr key={k} className={recipeChange!.old[k] !== recipeChange!.new[k] ? "bg-warning/20" : ""}>
-                  <td>{k}</td>
-                  <td>{String(recipeChange!.old[k] ?? "—")}</td>
-                  <td className="font-medium">{String(recipeChange!.new[k] ?? "—")}</td>
+                <tr key={k} className={recipeChange!.old[k] !== recipeChange!.new[k] ? "bg-warning/10" : ""}>
+                  <td className={tdCls}>{k}</td>
+                  <td className={`${tdCls} text-muted-foreground`}>{String(recipeChange!.old[k] ?? "—")}</td>
+                  <td className={`${tdCls} font-medium`}>{String(recipeChange!.new[k] ?? "—")}</td>
                 </tr>
               ))}
             </tbody>
           </table>
           {(["inputs", "outputs"] as const).map((side) => (
             <div key={side}>
-              <h2 className="font-display text-lg font-semibold capitalize">{side}</h2>
-              <table className="table">
-                <thead><tr><th>Item</th><th>Current</th><th>Proposed</th></tr></thead>
+              <h2 className="mb-2 font-display text-sm font-semibold uppercase tracking-[0.06em] text-muted-foreground">{side}</h2>
+              <table className={tableCls}>
+                <thead><tr><th className={thCls}>Item</th><th className={thCls}>Current</th><th className={thCls}>Proposed</th></tr></thead>
                 <tbody>
                   {diffRecipeLines(recipeChange!.old[side], recipeChange!.new[side]).map((row) => (
-                    <tr key={row.slug} className={row.status === "same" ? "" : "bg-warning/20"}>
-                      <td>{row.name}{row.status !== "same" && <span className="badge badge-sm ml-2">{row.status}</span>}</td>
-                      <td>{row.oldAmount ?? "—"}</td>
-                      <td className="font-medium">{row.newAmount ?? "—"}</td>
+                    <tr key={row.slug} className={row.status === "same" ? "" : "bg-warning/10"}>
+                      <td className={tdCls}>{row.name}{row.status !== "same" && <span className={tagWarn}>{row.status}</span>}</td>
+                      <td className={`${tdCls} text-muted-foreground`}>{row.oldAmount ?? "—"}</td>
+                      <td className={`${tdCls} font-medium`}>{row.newAmount ?? "—"}</td>
                     </tr>
                   ))}
                 </tbody>
@@ -97,23 +113,25 @@ export default async function ProposalDetail({ params }: { params: Params }) {
           ))}
         </div>
       ) : (
-        <div className="whitespace-pre-wrap rounded-box border border-base-300 p-3">{p.note}</div>
+        <div className="whitespace-pre-wrap border border-border bg-card p-3 text-sm text-foreground">{p.note}</div>
       )}
 
-      {p.note && (p.kind === "edit" || p.kind === "recipe_edit") && <p className="text-base-content/80"><strong>Note:</strong> {p.note}</p>}
+      {p.note && (p.kind === "edit" || p.kind === "recipe_edit") && (
+        <p className="text-muted-foreground"><strong className="text-foreground">Note:</strong> {p.note}</p>
+      )}
 
       {p.status === "pending" && (
-        <div className="flex flex-wrap gap-4 items-start">
+        <div className="flex flex-wrap items-end gap-4 border-t border-border pt-4">
           <form action={approveProposal}>
             <input type="hidden" name="id" value={p.id} />
-            <button type="submit" className="btn btn-success">
+            <button type="submit" className={btnSuccess}>
               {p.kind === "new_page" ? "Mark created" : "Approve & apply"}
             </button>
           </form>
-          <form action={rejectProposal} className="flex gap-2 items-end">
+          <form action={rejectProposal} className="flex items-end gap-2">
             <input type="hidden" name="id" value={p.id} />
-            <input name="reviewNote" placeholder="Reason (optional)" className="input input-bordered input-sm" />
-            <button type="submit" className="btn btn-error">Reject</button>
+            <input name="reviewNote" placeholder="Reason (optional)" className={`${inputCls} w-auto`} />
+            <button type="submit" className={btnDestructive}>Reject</button>
           </form>
         </div>
       )}

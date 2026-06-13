@@ -30,9 +30,15 @@ export default async function EditRecipePage({ searchParams }: { searchParams: S
   const backHref = primaryOutput ? entityHref("item", primaryOutput.slug) : "/items";
 
   return (
-    <article className="py-6 space-y-6">
-      <h1 className="font-display text-2xl font-bold">Suggest a recipe correction — {title}</h1>
-      <p className="text-base-content/70">Edit the workbench, timing, ingredients, or outputs. An admin reviews every change before it goes live.</p>
+    <article className="mx-auto max-w-2xl space-y-6 py-6">
+      <div>
+        <h1 className="font-display text-2xl font-bold uppercase tracking-[0.01em]">
+          Suggest a recipe correction — {title}
+        </h1>
+        <p className="mt-1 text-sm text-muted-foreground">
+          Edit the workbench, timing, ingredients, or outputs. An admin reviews every change before it goes live.
+        </p>
+      </div>
       <RecipeEditForm slug={slug} snapshot={snapshot} items={items} workbenches={workbenches} backHref={backHref} />
     </article>
   );
