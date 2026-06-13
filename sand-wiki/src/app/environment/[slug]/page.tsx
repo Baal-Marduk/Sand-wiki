@@ -37,7 +37,7 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
       <div className="space-y-4">
         {tierGroups.map((g) => (
           <section key={g.tier}>
-            <h3 className="text-sm font-semibold text-base-content/70 mb-2">{g.tier}</h3>
+            <h3 className="mb-2 font-display text-[11px] font-semibold uppercase tracking-[0.07em] text-muted-foreground">{g.tier}</h3>
             <LootTable entries={g.rows.map(lootEntryView).sort(byRarityThenName)} />
           </section>
         ))}

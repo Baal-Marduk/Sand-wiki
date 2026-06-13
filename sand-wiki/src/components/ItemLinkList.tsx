@@ -13,7 +13,7 @@ export function ItemLinkList({ items }: { items: LinkListItem[] }) {
         <li key={it.slug}>
           <Link
             href={`/items/${it.slug}`}
-            className="row-link flex items-center gap-3 rounded-box p-1"
+            className="row-link flex items-center gap-3 border border-transparent p-1.5 transition-colors hover:border-border-strong"
           >
             <ItemIcon name={it.name} icon={it.icon} size="recipe" decorative rarity={it.rarity} />
             <span className="font-medium">{it.name}</span>

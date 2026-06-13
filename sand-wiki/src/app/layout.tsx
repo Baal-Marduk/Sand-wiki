@@ -17,10 +17,9 @@ export const metadata: Metadata = {
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
-  // Dark-only: data-theme keeps the retained DaisyUI components on the dark
-  // palette during the incremental migration; `.dark` drives the shadcn tokens.
+  // Dark-only: `.dark` drives the shadcn token layer; color-scheme is set in CSS.
   return (
-    <html lang="en" data-theme="desertnight" className={`dark ${oswald.variable}`}>
+    <html lang="en" className={`dark ${oswald.variable}`}>
       <body className="min-h-screen bg-background text-foreground flex flex-col">
         <SiteHeader />
         <main className="max-w-6xl mx-auto w-full p-4 flex-1">{children}</main>

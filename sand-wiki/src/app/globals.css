@@ -1,107 +1,11 @@
 @import "tailwindcss";
 @import "tw-animate-css";
-@plugin "daisyui";
-
-/* DaisyUI themes are retained during the incremental shadcn migration so any
- * not-yet-migrated page keeps rendering. The shell is locked to dark
- * (layout sets `data-theme="desertnight"` + `.dark`); the theme toggle and
- * localStorage switching are gone. Both blocks are removed in the final
- * decommission phase once every page is on the shadcn token layer below. */
-@plugin "daisyui/theme" {
-  name: "desertnight";
-  default: true;
-  prefersdark: true;
-  color-scheme: dark;
-  --color-base-100: #100b06;
-  --color-base-200: #181009;
-  --color-base-300: #241910;
-  --color-base-content: #ece0cb;
-  --color-primary: #e8893b;
-  --color-primary-content: #1a120a;
-  --color-secondary: #b5532a;
-  --color-secondary-content: #fbe9d8;
-  --color-accent: #c9a24b;
-  --color-accent-content: #1a120a;
-  --color-neutral: #2c2014;
-  --color-neutral-content: #ece0cb;
-  --color-info: #6aa9c9;
-  --color-info-content: #08131a;
-  --color-success: #7fb069;
-  --color-success-content: #0c1607;
-  --color-warning: #e0a341;
-  --color-warning-content: #1a1304;
-  --color-error: #d4654f;
-  --color-error-content: #1a0805;
-  --radius-box: 0.25rem;
-  --radius-field: 0.1875rem;
-}
-
-@plugin "daisyui/theme" {
-  name: "desertday";
-  color-scheme: light;
-  --color-base-100: #efe6d6;
-  --color-base-200: #e6dac6;
-  --color-base-300: #d9c9ad;
-  --color-base-content: #140d05;
-  --color-primary: #c2671f;
-  --color-primary-content: #fff7ec;
-  --color-secondary: #9a4420;
-  --color-secondary-content: #fff7ec;
-  --color-accent: #8a6d2f;
-  --color-accent-content: #fff7ec;
-  --color-neutral: #2a1d10;
-  --color-neutral-content: #efe6d6;
-  --color-info: #2f6f8f;
-  --color-info-content: #fff;
-  --color-success: #4f7a3a;
-  --color-success-content: #fff;
-  --color-warning: #9a6a16;
-  --color-warning-content: #fff;
-  --color-error: #a83c28;
-  --color-error-content: #fff;
-  --radius-box: 0.25rem;
-  --radius-field: 0.1875rem;
-}
-
-/* Theme toggle icon: show moon in dark theme, sun in light theme (CSS-only). */
-.theme-icon-day {
-  display: none;
-}
-[data-theme="desertday"] .theme-icon-night {
-  display: none;
-}
-[data-theme="desertday"] .theme-icon-day {
-  display: inline;
-}
-
-/* ── App-wide hover/focus affordances (TODO #8) ──────────────────────────────
- * Centralized so every interactive surface gets a consistent treatment and new
- * components inherit it. Rules are intentionally UNLAYERED: Tailwind utilities live
- * in `@layer utilities`, which wins over any @layer — these must override utility
- * text/bg colors on hover (e.g. a non-active tab's `text-base-content/75`).
- * Subtle vocabulary: color / background / underline / brightness only — no motion,
- * so prefers-reduced-motion needs no special handling. Every :hover is paired with
- * :focus-visible for keyboard parity. Colors come from the active theme's tokens. */
-a, .tab, .btn, .select, .nav-link, .row-link, .card, .item-sprite {
-  transition: color 0.15s, background-color 0.15s, border-color 0.15s, filter 0.15s, opacity 0.15s;
-}
-.link:hover, .link:focus-visible,
-.nav-link:hover, .nav-link:focus-visible { color: var(--color-primary); }
-.tab:not(.tab-active):hover, .tab:not(.tab-active):focus-visible {
-  color: var(--color-base-content);
-  background-color: color-mix(in oklab, var(--color-base-200) 50%, transparent);
-}
-a.card:hover, a.card:focus-visible { background-color: var(--color-base-300); }
-.row-link:hover, .row-link:focus-visible { background-color: var(--color-base-200); }
-.select:hover, .select:focus-visible { border-color: var(--color-primary); }
-/* Only brighten sprites inside an actual link/card — not the link-less ItemIconLink
- * variant (its .group also drives the tooltip, but a hover cue there leads nowhere). */
-a:hover .item-sprite, a:focus-visible .item-sprite { filter: brightness(1.1); }
 
 /* ── shadcn/ui design tokens (dark-only, SAND desert) ─────────────────────────
  * Binding values from the redesign spec / `.superpowers/design/` reference.
  * Rarity scale mirrors src/lib/rarity.ts (the single source of truth). */
 :root {
+  color-scheme: dark;
   --radius: 0px;
 
   --background: #0d0a06;
@@ -187,3 +91,16 @@ a:hover .item-sprite, a:focus-visible .item-sprite { filter: brightness(1.1); }
 
   --font-display: var(--font-oswald);
 }
+
+/* ── App-wide hover/focus affordances ────────────────────────────────────────
+ * Consistent, motion-free treatment (color / background / brightness only) for
+ * the interactive surfaces that rely on a shared rule rather than per-element
+ * Tailwind hover classes. Every :hover pairs with :focus-visible for keyboard
+ * parity. Colors come from the shadcn token layer above. */
+a, .nav-link, .row-link, .item-sprite {
+  transition: color 0.12s, background-color 0.12s, border-color 0.12s, filter 0.12s, opacity 0.12s;
+}
+.nav-link:hover, .nav-link:focus-visible { color: var(--primary); }
+.row-link:hover, .row-link:focus-visible { background-color: var(--card-elevated); }
+/* Brighten sprites only inside an actual link/card. */
+a:hover .item-sprite, a:focus-visible .item-sprite { filter: brightness(1.1); }
