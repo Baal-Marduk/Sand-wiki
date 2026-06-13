@@ -6,6 +6,7 @@ import {
   isTramplerCategory, tramplerCategoryForName, TRAMPLER_CATEGORY_SLUGS,
   isWeaponClassCategory, WEAPON_CLASS_CATEGORIES,
   isWipSection,
+  FACTIONS, isFaction,
 } from "./taxonomy";
 
 describe("taxonomy", () => {
@@ -215,5 +216,17 @@ describe("WIP markers", () => {
     expect(bySlug["loot-containers"].wip).toBeFalsy();
     expect(bySlug["landmarks"].wip).toBeFalsy();
     expect(bySlug["game-modes"].wip).toBeFalsy();
+  });
+});
+
+describe("factions", () => {
+  it("maps the three research factions to display names", () => {
+    expect(FACTIONS.godlewski.name).toBe("Godlewski's Expedition");
+    expect(FACTIONS.kaiser.name).toBe("Kaiser's Friends");
+    expect(FACTIONS.landwehr.name).toBe("K.K. Landwehr");
+  });
+  it("isFaction guards unknown keys", () => {
+    expect(isFaction("godlewski")).toBe(true);
+    expect(isFaction("nope")).toBe(false);
   });
 });

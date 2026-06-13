@@ -211,3 +211,17 @@ export const CATEGORY_COLORS: Record<string, string> = {
 export function categoryColor(slug: string): string {
   return CATEGORY_COLORS[slug] ?? CATEGORY_COLORS.misc;
 }
+
+/** The three Trampler research factions. `rep` is the per-faction number shown in the
+ *  in-game tree (likely reputation level) — verified against the screenshots. */
+export const FACTIONS = {
+  godlewski: { name: "Godlewski's Expedition", rep: 5 },
+  kaiser: { name: "Kaiser's Friends", rep: 13 },
+  landwehr: { name: "K.K. Landwehr", rep: 4 },
+} as const;
+
+export type FactionKey = keyof typeof FACTIONS;
+
+export function isFaction(s: string): s is FactionKey {
+  return Object.prototype.hasOwnProperty.call(FACTIONS, s);
+}
