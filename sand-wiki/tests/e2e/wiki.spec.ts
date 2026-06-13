@@ -163,14 +163,10 @@ test("item detail shows a real sprite image", async ({ page }) => {
 
 test("items list exposes a rarity filter that narrows results", async ({ page }) => {
   await page.goto("/items?category=weapons");
-  // The rarity filter is now a URL-driven <select> (was a nav of links). Target it via
-  // its label span — the wrapping <label>'s full text also includes the option text.
-  const rarity = page
-    .locator("label")
-    .filter({ has: page.locator("span", { hasText: /^Rarity$/ }) })
-    .locator("select");
-  await expect(rarity).toBeVisible();
-  await rarity.selectOption("Common");
+  // The rarity filter is now a row of URL-driven toggle chips (was a <select>).
+  const common = page.getByRole("button", { name: "Common", exact: true });
+  await expect(common).toBeVisible();
+  await common.click();
   await expect(page).toHaveURL(/rarity=Common/);
 });
 
@@ -301,8 +297,8 @@ test("clicking a table header sorts rows and toggles aria-sort", async ({ page }
 test("interactive surfaces show a consistent hover affordance", async ({ page }) => {
   await page.goto("/items");
 
-  // Clickable card: background lifts on hover.
-  const card = page.locator("a.card").first();
+  // Clickable EntityCard: background lifts on hover.
+  const card = page.locator('ul a[href^="/items/"]').first();
   await expect(card).toBeVisible();
   const cardBefore = await card.evaluate((el) => getComputedStyle(el).backgroundColor);
   await card.hover();

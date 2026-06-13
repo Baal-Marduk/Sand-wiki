@@ -1,9 +1,12 @@
-import { listItems, listRarities, listWorkbenchTiers, listItemClasses } from "@/lib/queries";
-import { ItemCard } from "@/components/ItemCard";
+import Link from "next/link";
+import { listItems, listRarities, listWorkbenchTiers, listItemClasses, itemCategoryCounts } from "@/lib/queries";
+import { EntityCard } from "@/components/EntityCard";
 import { CategoryQuickNav } from "@/components/CategoryQuickNav";
 import { FilterSelect } from "@/components/FilterSelect";
-import { ITEM_CATEGORIES, isItemCategory, isWeaponClassCategory } from "@/lib/taxonomy";
+import { RarityChips } from "@/components/RarityChips";
+import { ITEM_CATEGORIES, isItemCategory, isWeaponClassCategory, categoryLabel } from "@/lib/taxonomy";
 import { isRarity, rarityTier } from "@/lib/rarity";
+import { itemClass } from "@/lib/ammo";
 import type { ItemFilter } from "@/lib/item-filter";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
@@ -26,10 +29,11 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
   // rarity/class/tier constraints (so they show every value available in this context).
   const scope = { query: q || undefined, category: category || undefined };
   const weaponClassMode = isWeaponClassCategory(category);
-  const [rarities, classes, tiers] = await Promise.all([
+  const [rarities, classes, tiers, catCounts] = await Promise.all([
     listRarities(scope),
     weaponClassMode ? listItemClasses(scope) : Promise.resolve<string[]>([]),
     weaponClassMode ? Promise.resolve<number[]>([]) : listWorkbenchTiers(scope),
+    itemCategoryCounts(),
   ]);
 
   const raritiesSorted = [...rarities].sort((a, b) => rarityTier(a) - rarityTier(b));
@@ -50,68 +54,100 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
   };
 
   const items = await listItems(filter);
+  const title = category ? categoryLabel(category) : "Items";
+  const clearHref = category ? `/items?category=${category}` : "/items";
 
   return (
-    <section className="py-6">
-      <h1 className="font-display text-2xl font-bold mb-4">Items</h1>
-      <div className="grid gap-6 lg:grid-cols-[1fr_220px] items-start">
-        <div className="min-w-0 order-2 lg:order-1">
-          <p className="text-sm text-base-content/70 mb-3" aria-live="polite">
-            <span className="badge badge-ghost">{items.length} result(s)</span>
-          </p>
-          <div className="flex flex-wrap items-center gap-3 mb-4">
-            <FilterSelect
-              name="sort"
-              label="Sort"
-              allLabel="Rarity"
-              value={sortParam}
-              options={[{ value: "name", label: "Name (A–Z)" }]}
-            />
-            {rarities.length > 0 && (
-              <FilterSelect
-                name="rarity"
-                label="Rarity"
-                allLabel="All rarities"
-                value={rarity}
-                options={raritiesSorted.map((r) => ({ value: r, label: r }))}
-              />
-            )}
-            {weaponClassMode && classes.length > 0 && (
-              <FilterSelect
-                name="class"
-                label="Class"
-                allLabel="All classes"
-                value={weaponClass}
-                options={classes.map((c) => ({ value: c, label: c }))}
-              />
-            )}
-            {!weaponClassMode && tiers.length > 0 && (
-              <FilterSelect
-                name="tier"
-                label="Tier"
-                allLabel="All tiers"
-                value={tier !== undefined ? String(tier) : undefined}
-                options={tiers.map((t) => ({ value: String(t), label: `Tier ${t}` }))}
-              />
-            )}
+    <section className="py-2">
+      <div className="grid items-start gap-6 lg:grid-cols-[212px_1fr]">
+        <aside className="order-1">
+          <CategoryQuickNav
+            categories={ITEM_CATEGORIES}
+            current={category}
+            query={q}
+            sort={sortParam}
+            label="Item categories"
+            counts={catCounts}
+          />
+        </aside>
+
+        <div className="order-2 min-w-0">
+          <div className="mb-4 flex items-baseline justify-between gap-3">
+            <h1 className="font-display text-2xl font-bold uppercase tracking-[0.01em]">{title}</h1>
+            <span className="shrink-0 font-mono text-xs text-muted-foreground" aria-live="polite">
+              {items.length} result{items.length === 1 ? "" : "s"}
+            </span>
           </div>
+
+          {rarities.length > 0 && (
+            <div className="mb-3">
+              <RarityChips rarities={raritiesSorted} current={rarity} />
+            </div>
+          )}
+
+          <div className="mb-5 flex flex-wrap items-center gap-3">
+            <FilterSelect
+                name="sort"
+                label="Sort"
+                allLabel="Rarity"
+                value={sortParam}
+                options={[{ value: "name", label: "Name (A–Z)" }]}
+              />
+              {weaponClassMode && classes.length > 0 && (
+                <FilterSelect
+                  name="class"
+                  label="Class"
+                  allLabel="All classes"
+                  value={weaponClass}
+                  options={classes.map((c) => ({ value: c, label: c }))}
+                />
+              )}
+              {!weaponClassMode && tiers.length > 0 && (
+                <FilterSelect
+                  name="tier"
+                  label="Tier"
+                  allLabel="All tiers"
+                  value={tier !== undefined ? String(tier) : undefined}
+                  options={tiers.map((t) => ({ value: String(t), label: `Tier ${t}` }))}
+                />
+              )}
+          </div>
+
           {items.length === 0 ? (
-            <p>No items match your filters.</p>
+            <div className="flex flex-col items-center justify-center gap-3 border border-border bg-card py-14 text-center text-muted-foreground">
+              <span className="grid size-14 place-items-center border border-border bg-card-elevated text-2xl text-border-strong">
+                ▦
+              </span>
+              <span className="font-display text-base uppercase tracking-[0.04em] text-foreground">
+                No items match
+              </span>
+              <span className="max-w-xs text-sm">
+                No items match the selected filters. Try removing a rarity or clearing the filters.
+              </span>
+              <Link
+                href={clearHref}
+                className="border border-border-strong px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-[0.05em] text-foreground transition-colors hover:border-primary hover:text-primary-hover"
+              >
+                Clear all filters
+              </Link>
+            </div>
           ) : (
-            <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            <ul className="grid gap-3 sm:grid-cols-2">
               {items.map((i) => (
-                <ItemCard
+                <EntityCard
                   key={i.id}
-                  item={{
-                    slug: i.slug, name: i.name, icon: i.icon, rarity: i.rarity,
+                  entity={{
+                    slug: i.slug,
+                    name: i.name,
+                    href: `/items/${i.slug}`,
+                    icon: i.icon,
+                    rarity: i.rarity,
+                    typeLabel: itemClass(i.slug, i.name, i.ammoName),
                   }}
                 />
               ))}
             </ul>
           )}
-        </div>
-        <div className="order-1 lg:order-2 lg:self-stretch">
-          <CategoryQuickNav categories={ITEM_CATEGORIES} current={category} query={q} sort={sortParam} label="Item categories" />
         </div>
       </div>
     </section>
