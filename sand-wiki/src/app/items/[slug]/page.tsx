@@ -28,7 +28,8 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   // Caliber family drives both directions: a weapon/turret lists every ammo of its
   // caliber; an ammo lists every weapon/turret of its caliber.
   const isAmmo = item.category === "ammo";
-  const caliber = isAmmo ? ammoCaliber(item.name) : weaponCaliber(item.slug, item.ammoName);
+  const stats = item.itemStats;
+  const caliber = isAmmo ? ammoCaliber(item.name) : weaponCaliber(item.slug, stats?.ammoName ?? null);
   const ammo = !isAmmo && caliber ? await getAmmoByCaliber(caliber) : [];
   const ammoUsers = isAmmo && caliber ? await getWeaponsByCaliber(caliber) : [];
 
@@ -55,9 +56,9 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const detailRows = itemDetailRows(
     {
       category: item.category,
-      storageStack: item.storageStack,
-      workbenchTier: item.workbenchTier,
-      value: item.statValue,
+      storageStack: stats?.storageStack ?? null,
+      workbenchTier: stats?.workbenchTier ?? null,
+      value: stats?.statValue ?? null,
     },
     trades,
   );
@@ -89,7 +90,10 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
         </>
       }
       description={item.description}
-      stats={itemStatCells(item, isAmmo ? caliberLabel(caliber) ?? undefined : undefined)}
+      stats={itemStatCells(
+        stats ?? { statType: null, damage: null, playerDamage: null, tramplerDamage: null, splashDamage: null, magazine: null },
+        isAmmo ? caliberLabel(caliber) ?? undefined : undefined,
+      )}
       detailRows={detailRows}
       tabs={tabs}
       tabsEmptyFallback={
