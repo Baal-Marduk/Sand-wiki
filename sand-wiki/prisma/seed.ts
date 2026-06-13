@@ -80,15 +80,19 @@ async function main() {
       else console.warn(`Unknown rarity "${e.rarity}" for ${i.slug} — defaulting to ${DEFAULT_RARITY}`);
     }
     const flat = flattenStats(e?.stats);
-    const scraped = {
+    // Entity identity fields (live on the Entity row).
+    const identity = {
       name: i.displayName ?? i.name,
       derivedName: i.name,
       description: opt(i.description),
       category,
-      storageStack: opt(i.storageStack),
-      workbenchTier: opt(i.workbenchTier),
       icon: iconFor(i.id),
       rarity,
+    };
+    // Stat-extension fields (live on ItemStats, written via nested upsert).
+    const stats = {
+      storageStack: opt(i.storageStack),
+      workbenchTier: opt(i.workbenchTier),
       statType: opt(flat.statType),
       statValue: opt(flat.statValue),
       damage: opt(flat.damage),
@@ -98,13 +102,18 @@ async function main() {
       magazine: opt(flat.magazine),
       ammoName: opt(flat.ammoName),
     };
-    await prisma.item.upsert({ where: { slug: i.slug }, create: { slug: i.slug, ...scraped }, update: scraped });
+    await prisma.entity.upsert({
+      where: { slug: i.slug },
+      create: { slug: i.slug, kind: "item", ...identity, itemStats: { create: stats } },
+      update: { ...identity, itemStats: { upsert: { create: stats, update: stats } } },
+    });
   }
-  const prunedItems = await prisma.item.deleteMany({ where: { slug: { notIn: items.map((i) => i.slug) } } });
+  const prunedItems = await prisma.entity.deleteMany({ where: { kind: "item", slug: { notIn: items.map((i) => i.slug) } } });
   if (prunedItems.count > 0) console.log(`Pruned ${prunedItems.count} item(s) no longer in the scrape`);
 
+  // slug → Entity id, scoped to items (loot/cost/recipe targets are items).
   const idBySlug = new Map(
-    (await prisma.item.findMany({ select: { slug: true, id: true } })).map((it) => [it.slug, it.id]),
+    (await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, id: true } })).map((it) => [it.slug, it.id]),
   );
   const need = (slug: string) => {
     const id = idBySlug.get(slug);
@@ -140,34 +149,40 @@ async function main() {
     if (!isEnvCategory(e.category)) throw new Error(`Unknown env category "${e.category}" for ${slug}`);
     envSlugs.push(slug);
     const scraped = { category: e.category, name: e.name, description: opt(e.description), sourceUrl: opt(e.sourceUrl) };
-    const entity = await prisma.envEntity.upsert({ where: { slug }, create: { slug, ...scraped }, update: scraped });
+    const entity = await prisma.entity.upsert({
+      where: { slug },
+      create: { slug, kind: "environment", ...scraped },
+      update: scraped,
+    });
     if (entity.lootCurated) {
       console.log(`Skipping loot recreate for ${slug} (lootCurated = true)`);
     } else {
-      await prisma.lootTier.deleteMany({ where: { envEntityId: entity.id } });
+      // Loot rows are scraper-owned → delete + recreate as EntityLink role 'loot'.
+      // Global sortOrder = tier rank * 1000 + entry order, so tiers stay grouped & ordered.
+      await prisma.entityLink.deleteMany({ where: { sourceId: entity.id, role: "loot" } });
       for (const t of lootToTiers(e.loot)) {
-        await prisma.lootTier.create({
-          data: {
-            envEntityId: entity.id,
-            tier: t.tier,
-            col1Label: t.col1Label,
-            col2Label: t.col2Label,
-            col3Label: t.col3Label,
-            sortOrder: t.sortOrder,
-            entries: {
-              create: t.entries.map((en) => {
-                const itemId = en.itemSlug ? idBySlug.get(en.itemSlug) ?? null : null;
-                if (en.itemSlug && !itemId) console.warn(`Loot slug "${en.itemSlug}" in ${slug}/${t.tier} does not resolve to an item`);
-                return { itemId, name: en.name, value1: en.value1, value2: en.value2, value3: en.value3, sortOrder: en.sortOrder };
-              }),
+        for (const en of t.entries) {
+          const targetId = en.itemSlug ? idBySlug.get(en.itemSlug) ?? null : null;
+          if (en.itemSlug && !targetId) console.warn(`Loot slug "${en.itemSlug}" in ${slug}/${t.tier} does not resolve to an item`);
+          await prisma.entityLink.create({
+            data: {
+              sourceId: entity.id,
+              role: "loot",
+              targetId,
+              name: en.name,
+              tier: t.tier,
+              value1: en.value1,
+              value2: en.value2,
+              value3: en.value3,
+              sortOrder: t.sortOrder * 1000 + en.sortOrder,
             },
-          },
-        });
+          });
+        }
       }
     }
     envCount++;
   }
-  const prunedEnv = await prisma.envEntity.deleteMany({ where: { slug: { notIn: envSlugs } } });
+  const prunedEnv = await prisma.entity.deleteMany({ where: { kind: "environment", slug: { notIn: envSlugs } } });
   if (prunedEnv.count > 0) console.log(`Pruned ${prunedEnv.count} env entit(ies) no longer in the scrape`);
 
   // --- Trampler parts + cost rows (cost rows are scraper-owned → recreate) ---
@@ -179,9 +194,11 @@ async function main() {
   for (const [slug, t] of Object.entries(tramplers)) {
     if (!isTramplerCategory(t.category)) throw new Error(`Unknown trampler category "${t.category}" for ${slug}`);
     tramplerSlugs.push(slug);
-    const scraped = {
+    const identity = {
       name: t.name, category: t.category,
       description: opt(t.description), icon: tramplerIconFor(slug) ?? opt(t.icon), sourceUrl: opt(t.sourceUrl),
+    };
+    const stats = {
       dimensions: opt(t.dimensions),
       health: opt(t.health), weight: opt(t.weight),
       weightCapacity: opt(t.weightCapacity), weightCompensation: opt(t.weightCompensation),
@@ -189,24 +206,29 @@ async function main() {
       ratedPower: opt(t.ratedPower), crewSlots: opt(t.crewSlots), itemSlots: opt(t.itemSlots),
       researchNode: opt(t.researchNode), researchName: opt(t.researchName), researchTier: opt(t.researchTier),
     };
-    const part = await prisma.tramplerPart.upsert({ where: { slug }, create: { slug, ...scraped }, update: scraped });
-    await prisma.tramplerPartCost.deleteMany({ where: { partId: part.id } });
+    const part = await prisma.entity.upsert({
+      where: { slug },
+      create: { slug, kind: "trampler-part", ...identity, tramplerStats: { create: stats } },
+      update: { ...identity, tramplerStats: { upsert: { create: stats, update: stats } } },
+    });
+    // Cost rows are scraper-owned → delete + recreate as EntityLink role 'cost'.
+    await prisma.entityLink.deleteMany({ where: { sourceId: part.id, role: "cost" } });
     const rows = costToRows(t.cost);
     if (rows.length > 0) {
-      await prisma.tramplerPartCost.createMany({
+      await prisma.entityLink.createMany({
         data: rows.map((c) => {
-          const itemId = c.itemSlug ? idBySlug.get(c.itemSlug) ?? null : null;
-          if (c.itemSlug && !itemId) console.warn(`Cost slug "${c.itemSlug}" on ${slug} does not resolve to an item`);
-          return { partId: part.id, itemId, name: c.name, amount: c.amount, sortOrder: c.sortOrder };
+          const targetId = c.itemSlug ? idBySlug.get(c.itemSlug) ?? null : null;
+          if (c.itemSlug && !targetId) console.warn(`Cost slug "${c.itemSlug}" on ${slug} does not resolve to an item`);
+          return { sourceId: part.id, role: "cost", targetId, name: c.name, amount: c.amount, sortOrder: c.sortOrder };
         }),
       });
     }
     tramplerCount++;
   }
-  const prunedTramplers = await prisma.tramplerPart.deleteMany({ where: { slug: { notIn: tramplerSlugs } } });
+  const prunedTramplers = await prisma.entity.deleteMany({ where: { kind: "trampler-part", slug: { notIn: tramplerSlugs } } });
   if (prunedTramplers.count > 0) console.log(`Pruned ${prunedTramplers.count} trampler part(s) no longer in the scrape`);
 
-  const [itemCount, recipeCount] = await Promise.all([prisma.item.count(), prisma.recipe.count()]);
+  const [itemCount, recipeCount] = await Promise.all([prisma.entity.count({ where: { kind: "item" } }), prisma.recipe.count()]);
   if (itemCount !== items.length) throw new Error(`Item count mismatch after seed: DB has ${itemCount}, snapshot has ${items.length} (duplicate slugs?)`);
   if (recipeCount !== data.recipes.length) throw new Error(`Recipe count mismatch after seed: DB has ${recipeCount}, snapshot has ${data.recipes.length} (duplicate slugs?)`);
   console.log(`Seeded ${items.length} items, ${data.recipes.length} recipes, ${envCount} environment entities, ${tramplerCount} trampler parts.`);
