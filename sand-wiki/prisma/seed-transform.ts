@@ -94,12 +94,14 @@ export interface RawTechNode {
   unlocks: string[]; unlockCost: RawTechCost[]; prereqs: string[]; note?: string;
 }
 
-/** Deterministic slug. Includes variant.
- *  Format: tech-<faction>-t<tier>-<kebab(name[+ " " + variant])> */
-export function techNodeSlug(n: { faction: string; tier: number; name: string; variant?: string }): string {
+/** Deterministic slug. Includes the letter (for within-tier uniqueness) and variant when present.
+ *  Format: tech-<faction>-t<tier><letter>-<kebab(name[+ " " + variant])>
+ *  e.g. {godlewski,1,"a","Energy Rod"} → "tech-godlewski-t1a-energy-rod"
+ *       {godlewski,3,"b","Great Chassis","79H-L"} → "tech-godlewski-t3b-great-chassis-79h-l" */
+export function techNodeSlug(n: { faction: string; tier: number; letter: string; name: string; variant?: string }): string {
   const base = n.variant ? n.name + " " + n.variant : n.name;
   const kebab = base.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-+|-+$/g, "");
-  return `tech-${n.faction}-t${n.tier}-${kebab}`;
+  return `tech-${n.faction}-t${n.tier}${n.letter}-${kebab}`;
 }
 
 /** Roman numeral to integer. Only handles I-IV (the only tiers in the tech tree). */

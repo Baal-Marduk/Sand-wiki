@@ -120,19 +120,19 @@ const makeNode = (over: Partial<RawTechNode> = {}): RawTechNode => ({
 });
 
 describe("techNodeSlug", () => {
-  it("builds tech-<faction>-t<tier>-<kebab> without variant", () => {
-    expect(techNodeSlug({ faction: "godlewski", tier: 1, name: "Energy Rod" }))
-      .toBe("tech-godlewski-t1-energy-rod");
+  it("builds tech-<faction>-t<tier><letter>-<kebab> without variant", () => {
+    expect(techNodeSlug({ faction: "godlewski", tier: 1, letter: "a", name: "Energy Rod" }))
+      .toBe("tech-godlewski-t1a-energy-rod");
   });
 
   it("appends variant to the kebab when present", () => {
-    expect(techNodeSlug({ faction: "godlewski", tier: 3, name: "Great Chassis", variant: "79H-L" }))
-      .toBe("tech-godlewski-t3-great-chassis-79h-l");
+    expect(techNodeSlug({ faction: "godlewski", tier: 3, letter: "b", name: "Great Chassis", variant: "79H-L" }))
+      .toBe("tech-godlewski-t3b-great-chassis-79h-l");
   });
 
   it("lowercases and collapses non-alphanumeric runs to single dashes", () => {
-    expect(techNodeSlug({ faction: "kaiser", tier: 2, name: "Wooden Decks (multiple)" }))
-      .toBe("tech-kaiser-t2-wooden-decks-multiple");
+    expect(techNodeSlug({ faction: "kaiser", tier: 2, letter: "a", name: "Wooden Decks (multiple)" }))
+      .toBe("tech-kaiser-t2a-wooden-decks-multiple");
   });
 });
 
