@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import { getEnvEntityBySlug } from "@/lib/queries";
 import { lootEntryView } from "@/lib/loot";
+import { groupLootByTier, type LinkRow } from "@/lib/entity-links";
 import { categoryLabel } from "@/lib/taxonomy";
 import { byRarityThenName } from "@/lib/rarity";
 import { EntityDetail } from "@/components/EntityDetail";
@@ -17,13 +18,32 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
   if (!entity) notFound();
 
   const canSuggest = !!(await getSession());
-  const tabs: Tab[] = entity.lootTiers.map((t) => ({
-    id: t.tier.toLowerCase().replace(/\s+/g, "-"),
-    label: t.tier,
-    content: (
-      <LootTable entries={t.entries.map(lootEntryView).sort(byRarityThenName)} />
-    ),
+  const lootRows: LinkRow[] = entity.outgoingLinks.map((l) => ({
+    targetSlug: l.target?.slug ?? null,
+    targetKind: l.target?.kind ?? null,
+    name: l.name,
+    icon: l.target?.icon ?? null,
+    rarity: l.target?.rarity ?? null,
+    amount: l.amount,
+    tier: l.tier,
+    value1: l.value1,
+    sortOrder: l.sortOrder,
   }));
+  const tierGroups = groupLootByTier(lootRows);
+  const tabs: Tab[] = tierGroups.length > 0 ? [{
+    id: "loot",
+    label: "Loot",
+    content: (
+      <div className="space-y-4">
+        {tierGroups.map((g) => (
+          <section key={g.tier}>
+            <h3 className="text-sm font-semibold text-base-content/70 mb-2">{g.tier}</h3>
+            <LootTable entries={g.rows.map(lootEntryView).sort(byRarityThenName)} />
+          </section>
+        ))}
+      </div>
+    ),
+  }] : [];
 
   return (
     <EntityDetail
