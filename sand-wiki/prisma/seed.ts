@@ -39,6 +39,25 @@ const INTENDED_MISC = new Set(["KEY", "MONEY", "LARGE_VALUABLE", "SMALL_VALUABLE
 const opt = <T>(v: T | null | undefined): T | undefined => v ?? undefined;
 
 async function main() {
+  // Safety guard: db:seed OVERWRITES rows from the JSON sources and delete+recreates
+  // cost/loot/recipe/tech links — it erases manual Directus edits to any field the
+  // source populates. Refuse on a populated DB unless explicitly forced. A fresh DB
+  // (0 entities, e.g. right after db:reset) seeds without the flag.
+  const FORCED = process.argv.includes("--force") || process.env.ALLOW_DESTRUCTIVE_SEED === "1";
+  const existingEntities = await prisma.entity.count();
+  if (existingEntities > 0 && !FORCED) {
+    console.error(
+      `\n✋ Refusing to seed: the database already has ${existingEntities} entities.\n` +
+      `   This seed OVERWRITES scraped fields and rebuilds cost/loot/recipe/tech links,\n` +
+      `   wiping manual edits made via Directus/the wiki.\n\n` +
+      `   To rebuild from source anyway:  npm run db:seed:force\n` +
+      `   (equivalently: tsx prisma/seed.ts --force  or  ALLOW_DESTRUCTIVE_SEED=1)\n` +
+      `   A fresh/empty DB (e.g. after db:reset) seeds without the flag.\n`,
+    );
+    await prisma.$disconnect();
+    process.exit(1);
+  }
+
   const file = process.env.SEED_FILE ?? join(__dirname, "data.json");
   const data: ScrapData = JSON.parse(readFileSync(file, "utf-8"));
   const gear: ScrapItem[] = JSON.parse(
