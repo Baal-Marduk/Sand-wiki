@@ -38,9 +38,16 @@ async function main() {
   }
   const needItem = (s: string) => itemIdBySlug.get(s)!;
 
+  // Fail loudly on duplicate generated slugs: slugFor uses outputs[0] only, so two
+  // recipes sharing a location + primary output would silently clobber each other.
+  const allSlugs = data.recipes.map(slugFor);
+  const dup = allSlugs.find((s, i) => allSlugs.indexOf(s) !== i);
+  if (dup) throw new Error(`Duplicate generated recipe slug: ${dup} (two recipes share a location + primary output)`);
+
   // Upsert each recipe (curated + location-bound). Lines are recreated each run.
   for (const r of data.recipes) {
     const slug = slugFor(r);
+    if (!locIdBySlug.has(r.location)) throw new Error(`Recipe location "${r.location}" is not listed in "locations"`);
     const locationId = locIdBySlug.get(r.location)!;
     const inputs = { create: r.inputs.map((l) => ({ itemId: needItem(l.item), amount: l.amount })) };
     const outputs = { create: r.outputs.map((l) => ({ itemId: needItem(l.item), amount: l.amount })) };
