@@ -24,15 +24,17 @@ model Entity {
   derivedName String?
   sourceUrl   String?
   lootCurated Boolean @default(false)
+  curated     Boolean @default(false)
 
   itemStats     ItemStats?
   tramplerStats TramplerStats?
   techNodeStats TechNodeStats?
 
-  producedBy    RecipeOutput[]
-  usedIn        RecipeInput[]
-  outgoingLinks EntityLink[]   @relation("LinkSource")
-  incomingLinks EntityLink[]   @relation("LinkTarget")
+  producedBy       RecipeOutput[]
+  usedIn           RecipeInput[]
+  craftedAtRecipes Recipe[]       @relation("RecipeLocation")
+  outgoingLinks    EntityLink[]   @relation("LinkSource")
+  incomingLinks    EntityLink[]   @relation("LinkTarget")
 
   @@index([kind])
   @@index([category])
@@ -113,9 +115,13 @@ model Recipe {
   tier             Int?
   craftTimeSeconds Float?
   curated          Boolean @default(false)
+  locationId       String?
+  location         Entity? @relation("RecipeLocation", fields: [locationId], references: [id], onDelete: SetNull)
 
   inputs  RecipeInput[]
   outputs RecipeOutput[]
+
+  @@index([locationId])
 }
 
 model RecipeInput {
