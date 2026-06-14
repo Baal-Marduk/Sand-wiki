@@ -106,7 +106,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
 
         <div id="tt-canvas" style={{ position: "relative", width: layout.canvasW, height: layout.canvasH }}>
           <svg id="tt-svg" width={layout.canvasW} height={layout.canvasH} viewBox={`0 0 ${layout.canvasW} ${layout.canvasH}`} xmlns="http://www.w3.org/2000/svg">
-            {layout.edges.map((e, i) => {
+            {layout.edges.map((e) => {
               const to = posById[e.to]; if (!to) return null;
               let x1: number, y1: number;
               if (e.from === null) {
@@ -121,7 +121,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
               const active = hasSel && ps.has(e.to) && (e.from === null || ps.has(e.from));
               const done = unlocked.has(e.to) && (e.from === null || unlocked.has(e.from));
               const cls = "tt-edge" + (done ? " done" : active ? " active" : "");
-              return <path key={i} className={cls} d={`M ${x1} ${y1} H ${midX} V ${y2} H ${x2}`} />;
+              return <path key={`${e.from ?? "root"}->${e.to}`} className={cls} d={`M ${x1} ${y1} H ${midX} V ${y2} H ${x2}`} />;
             })}
           </svg>
 
@@ -149,11 +149,14 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
             return (
               <div key={n.slug} className={cls}
                    style={{ ["--fac" as string]: accentOf[n.faction], left: p.x, top: p.y, width: LAYOUT.CARD_W, height: LAYOUT.CARD_H }}
+                   role="button"
+                   tabIndex={0}
                    onClick={() => toggleSelected(n.slug)}
+                   onKeyDown={(ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggleSelected(n.slug); } }}
                    onMouseEnter={(ev) => setHover({ slug: n.slug, rect: (ev.currentTarget as HTMLElement).getBoundingClientRect() })}
                    onMouseLeave={() => setHover((h) => (h?.slug === n.slug ? null : h))}>
                 <span className="tnode-rail" />
-                <button className="tnode-status" aria-label="Toggle unlocked"
+                <button className="tnode-status" aria-label={`Mark ${n.name} ${unlocked.has(n.slug) ? "locked" : "unlocked"}`} aria-pressed={unlocked.has(n.slug)}
                         onClick={(ev) => { ev.stopPropagation(); toggleUnlocked(n.slug); }} />
                 <div className="tnode-main">
                   <div className="tnode-head"><span className="tnode-name" title={n.name}>{n.name}</span></div>
