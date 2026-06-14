@@ -65,9 +65,7 @@ export function EntityDetail({
 
   const editorCredit = lastEditedBy ? (
     <div className={hasDetails ? "mt-5" : undefined}>
-      <h2 className="mb-2.5 font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-        Last edited by
-      </h2>
+      <SectionTitle>Last edited by</SectionTitle>
       <a
         href={steamProfileUrl(lastEditedBy.steamId)}
         target="_blank"
