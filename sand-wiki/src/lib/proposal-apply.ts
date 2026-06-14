@@ -3,6 +3,7 @@ import { prisma } from "./db";
 import { fieldDef } from "./proposal-schema";
 import { norm, type Diff } from "./proposal-diff";
 import { buildLineCreates, type RecipeProposalChange } from "./recipe-proposal";
+import type { LinkProposalChange } from "./link-proposal";
 
 /** Proposal target type → Entity.kind (proposal types are the legacy model names). */
 const KIND_FOR_TYPE: Record<string, string> = {
@@ -115,6 +116,53 @@ export async function applyRecipeProposal(proposalId: string, reviewerSteamId: s
     await tx.recipeOutput.deleteMany({ where: { recipeId: recipe.id } });
     if (inputCreates.length) await tx.recipeInput.createMany({ data: inputCreates });
     if (outputCreates.length) await tx.recipeOutput.createMany({ data: outputCreates });
+
+    await tx.proposal.update({
+      where: { id: proposalId },
+      data: { status: "applied", reviewedById: reviewerSteamId, reviewedAt: new Date() },
+    });
+  });
+}
+
+/** Apply an approved links_edit proposal: full-replace the entity's outgoing
+ *  EntityLink rows for the proposal's role. Resolves target slugs to ids;
+ *  unlinked rows keep targetId null + their name. Marks the source entity
+ *  lootCurated so a reseed won't clobber community loot/cost edits. */
+export async function applyLinksProposal(proposalId: string, reviewerSteamId: string): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    const p = await tx.proposal.findUnique({ where: { id: proposalId } });
+    if (!p || p.status !== "pending" || p.kind !== "links_edit" || !p.targetSlug || !p.changes) {
+      throw new Error("Proposal is not an applyable pending links edit.");
+    }
+    const change = p.changes as unknown as LinkProposalChange;
+    const role = change.role;
+
+    const source = await tx.entity.findUnique({ where: { slug: p.targetSlug }, select: { id: true } });
+    if (!source) throw new Error("Entity not found.");
+
+    const slugs = [...new Set(change.new.map((r) => r.targetSlug).filter((s): s is string => !!s))];
+    const targets = await tx.entity.findMany({ where: { slug: { in: slugs } }, select: { id: true, slug: true } });
+    const idBySlug = new Map(targets.map((t) => [t.slug, t.id]));
+
+    // Resolve before any write so a missing target aborts cleanly.
+    const creates = change.new.map((r, i) => {
+      const targetId = r.targetSlug ? idBySlug.get(r.targetSlug) : null;
+      if (r.targetSlug && !targetId) throw new Error(`Cannot resolve target ${r.targetSlug}`);
+      return {
+        sourceId: source.id,
+        targetId: targetId ?? null,
+        role,
+        name: r.name,
+        amount: r.amount,
+        tier: r.tier,
+        value1: r.value1,
+        sortOrder: i,
+      };
+    });
+
+    await tx.entityLink.deleteMany({ where: { sourceId: source.id, role } });
+    if (creates.length) await tx.entityLink.createMany({ data: creates });
+    await tx.entity.update({ where: { id: source.id }, data: { lootCurated: true } });
 
     await tx.proposal.update({
       where: { id: proposalId },

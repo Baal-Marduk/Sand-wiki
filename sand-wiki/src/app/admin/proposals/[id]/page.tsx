@@ -5,6 +5,7 @@ import { getEntityFields } from "@/lib/proposal-entity";
 import { detectStale } from "@/lib/proposal-apply";
 import type { Diff } from "@/lib/proposal-diff";
 import { recipeToSnapshot, snapshotsEqual, diffRecipeLines, type RecipeProposalChange } from "@/lib/recipe-proposal";
+import { diffLinkRows, type LinkProposalChange } from "@/lib/link-proposal";
 import { approveProposal, rejectProposal } from "../actions";
 import { inputCls, btnSuccess, btnDestructive } from "@/components/form-styles";
 
@@ -47,6 +48,11 @@ export default async function ProposalDetail({ params }: { params: Params }) {
     recipeStale = !live || !snapshotsEqual(recipeChange.old, recipeToSnapshot(live));
   }
 
+  let linkChange: LinkProposalChange | null = null;
+  if (p.kind === "links_edit" && p.changes) {
+    linkChange = p.changes as unknown as LinkProposalChange;
+  }
+
   return (
     <article className="mx-auto max-w-3xl space-y-6 py-6">
       <div>
@@ -55,7 +61,9 @@ export default async function ProposalDetail({ params }: { params: Params }) {
             ? `Edit · ${p.targetType} · ${p.targetSlug}`
             : p.kind === "recipe_edit"
               ? `Recipe edit · ${p.targetSlug}`
-              : `New page · ${p.proposedName}`}
+              : p.kind === "links_edit"
+                ? `Tab edit · ${p.targetType} · ${p.targetSlug}`
+                : `New page · ${p.proposedName}`}
         </h1>
         <p className="mt-1 font-mono text-xs uppercase tracking-[0.04em] text-muted-foreground">
           by {p.proposer.personaName ?? p.proposerId} · {p.status}
@@ -112,11 +120,31 @@ export default async function ProposalDetail({ params }: { params: Params }) {
             </div>
           ))}
         </div>
+      ) : p.kind === "links_edit" && linkChange ? (
+        <div className="space-y-2">
+          <h2 className="mb-2 font-display text-sm font-semibold uppercase tracking-[0.06em] text-muted-foreground">{linkChange.role} rows</h2>
+          <table className={tableCls}>
+            <thead><tr><th className={thCls}>Target</th><th className={thCls}>Current</th><th className={thCls}>Proposed</th></tr></thead>
+            <tbody>
+              {diffLinkRows(linkChange.old, linkChange.new).map((row) => {
+                const fmt = (r: typeof row.old) =>
+                  r ? [r.tier, r.amount != null ? `×${r.amount}` : null, r.value1].filter(Boolean).join(" ") || "—" : "—";
+                return (
+                  <tr key={row.key} className={row.status === "same" ? "" : "bg-warning/10"}>
+                    <td className={tdCls}>{row.name}{row.status !== "same" && <span className={tagWarn}>{row.status}</span>}</td>
+                    <td className={`${tdCls} text-muted-foreground`}>{fmt(row.old)}</td>
+                    <td className={`${tdCls} font-medium`}>{fmt(row.new)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
       ) : (
         <div className="whitespace-pre-wrap border border-border bg-card p-3 text-sm text-foreground">{p.note}</div>
       )}
 
-      {p.note && (p.kind === "edit" || p.kind === "recipe_edit") && (
+      {p.note && (p.kind === "edit" || p.kind === "recipe_edit" || p.kind === "links_edit") && (
         <p className="text-muted-foreground"><strong className="text-foreground">Note:</strong> {p.note}</p>
       )}
 
