@@ -3,7 +3,7 @@ import { prisma } from "./db";
 import { fieldDef } from "./proposal-schema";
 import { norm, type Diff } from "./proposal-diff";
 import { buildLineCreates, uniqueRecipeSlug, type RecipeProposalChange, type RecipeSnapshot } from "./recipe-proposal";
-import type { LinkProposalChange } from "./link-proposal";
+import { diffLootSources, type LinkProposalChange, type ExistingLootLink } from "./link-proposal";
 type RecipeNewChange = { new: RecipeSnapshot };
 
 /** Proposal target type → Entity.kind (proposal types are the legacy model names). */
@@ -221,6 +221,83 @@ export async function applyLinksProposal(proposalId: string, reviewerSteamId: st
     await tx.entityLink.deleteMany({ where: { sourceId: source.id, role } });
     if (creates.length) await tx.entityLink.createMany({ data: creates });
     await tx.entity.update({ where: { id: source.id }, data: { lootCurated: true } });
+
+    await tx.proposal.update({
+      where: { id: proposalId },
+      data: { status: "applied", reviewedById: reviewerSteamId, reviewedAt: new Date() },
+    });
+  });
+}
+
+/** Apply an approved loot_sources_edit proposal: reconcile an ITEM's incoming loot
+ *  links across many sources. Rows use the inversion convention (targetSlug = source
+ *  slug). Deletes removed (source,tier) pairs, updates value1 on kept pairs, appends
+ *  created pairs after each source's existing loot rows. Marks every touched source
+ *  lootCurated so a reseed won't clobber the edit. */
+export async function applyItemLootProposal(proposalId: string, reviewerSteamId: string): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    const p = await tx.proposal.findUnique({ where: { id: proposalId } });
+    if (!p || p.status !== "pending" || p.kind !== "loot_sources_edit" || !p.targetSlug || !p.changes) {
+      throw new Error("Proposal is not an applyable pending loot-sources edit.");
+    }
+    const change = p.changes as unknown as LinkProposalChange;
+
+    const item = await tx.entity.findUnique({
+      where: { slug: p.targetSlug },
+      select: { id: true, name: true, kind: true },
+    });
+    if (!item || item.kind !== "item") throw new Error("Item not found.");
+
+    const existingLinks = await tx.entityLink.findMany({
+      where: { role: "loot", targetId: item.id },
+      select: { id: true, tier: true, value1: true, sortOrder: true, source: { select: { slug: true } } },
+    });
+    const existing: ExistingLootLink[] = existingLinks.map((l) => ({
+      id: l.id,
+      sourceSlug: l.source.slug,
+      tier: l.tier,
+      value1: l.value1,
+      sortOrder: l.sortOrder,
+    }));
+
+    // targetSlug holds the SOURCE slug for this proposal kind. Resolve all before writing.
+    const newSourceSlugs = [...new Set(change.new.map((r) => r.targetSlug).filter((s): s is string => !!s))];
+    const sources = await tx.entity.findMany({ where: { slug: { in: newSourceSlugs } }, select: { id: true, slug: true } });
+    const idBySlug = new Map(sources.map((s) => [s.slug, s.id]));
+    for (const slug of newSourceSlugs) {
+      if (!idBySlug.has(slug)) throw new Error(`Cannot resolve loot source ${slug}`);
+    }
+
+    const { creates, updates, deletes } = diffLootSources(existing, change.new);
+
+    if (deletes.length) await tx.entityLink.deleteMany({ where: { id: { in: deletes } } });
+    for (const u of updates) {
+      await tx.entityLink.update({ where: { id: u.id }, data: { value1: u.value1 } });
+    }
+    for (const r of creates) {
+      const sourceId = idBySlug.get(r.targetSlug!)!;
+      const max = await tx.entityLink.aggregate({ where: { sourceId, role: "loot" }, _max: { sortOrder: true } });
+      await tx.entityLink.create({
+        data: {
+          sourceId,
+          targetId: item.id,
+          role: "loot",
+          name: item.name,
+          amount: null,
+          tier: r.tier,
+          value1: r.value1,
+          sortOrder: (max._max.sortOrder ?? -1) + 1,
+        },
+      });
+    }
+
+    const touchedSlugs = new Set<string>([
+      ...change.old.map((r) => r.targetSlug).filter((s): s is string => !!s),
+      ...change.new.map((r) => r.targetSlug).filter((s): s is string => !!s),
+    ]);
+    if (touchedSlugs.size) {
+      await tx.entity.updateMany({ where: { slug: { in: [...touchedSlugs] } }, data: { lootCurated: true } });
+    }
 
     await tx.proposal.update({
       where: { id: proposalId },
