@@ -109,7 +109,7 @@
   "item_smallCannonAmmo_longRange": "icons/icon_ammo_smallCannon_longRange.png",
   "item_smallValuables": "icons/icon_item_smallValuables.png",
   "item_smokeGrenade": "icons/icon_grenadeSmoke.png",
-  "item_smokelessEnergyBar": "icons/icon_energy_rod_green.png",
+  "item_smokelessEnergyBar": "icons/icon_energy_rod_white.png",
   "item_sniperRifle": "icons/icon_item_sniperRifle.png",
   "item_sniperRifleAmmo": "icons/icon_ammo_sniperRifle.png",
   "item_sniperRifleAmmo_highPenetration": "icons/icon_ammo_sniperRifle_highPenetration.png",
