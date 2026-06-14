@@ -123,7 +123,7 @@ export async function getEnvEntityBySlug(slug: string) {
       outgoingLinks: {
         where: { role: { in: ["loot", "requires-key", "rewards-key"] } },
         orderBy: { sortOrder: "asc" },
-        include: { target: { select: { slug: true, kind: true, icon: true, rarity: true } } },
+        include: { target: { select: { slug: true, kind: true, icon: true, rarity: true, category: true } } },
       },
       craftedAtRecipes: {
         orderBy: { slug: "asc" },
@@ -237,7 +237,7 @@ export async function getCratesContaining(itemSlug: string): Promise<CrateDrop[]
   return rows.map((r) => ({ crateSlug: r.source.slug, crateName: r.source.name, tier: r.tier ?? "" }));
 }
 
-export interface KeyUsageLocation { slug: string; name: string; icon: string | null; rarity: string | null }
+export interface KeyUsageLocation { slug: string; name: string; icon: string | null; rarity: string | null; category: string }
 export interface KeyUsage { opens: KeyUsageLocation[]; rewardedBy: KeyUsageLocation[] }
 
 /** Reverse view for a key item: locations this key opens (incoming `requires-key`) and
@@ -249,11 +249,11 @@ export async function getKeyUsage(itemSlug: string): Promise<KeyUsage> {
       target: { slug: itemSlug },
       source: { kind: "environment" },
     },
-    include: { source: { select: { slug: true, name: true, icon: true, rarity: true } } },
+    include: { source: { select: { slug: true, name: true, icon: true, rarity: true, category: true } } },
     orderBy: [{ source: { name: "asc" } }, { sortOrder: "asc" }],
   });
   const toLoc = (r: (typeof rows)[number]): KeyUsageLocation => ({
-    slug: r.source.slug, name: r.source.name, icon: r.source.icon, rarity: r.source.rarity,
+    slug: r.source.slug, name: r.source.name, icon: r.source.icon, rarity: r.source.rarity, category: r.source.category,
   });
   return {
     opens: rows.filter((r) => r.role === "requires-key").map(toLoc),

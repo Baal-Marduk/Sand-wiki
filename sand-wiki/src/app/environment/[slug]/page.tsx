@@ -39,6 +39,7 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
     name: l.name,
     icon: l.target?.icon ?? null,
     rarity: l.target?.rarity ?? null,
+    categorySlug: l.target?.category ?? null,
   });
   const requiresKeys = entity.keyLinks.filter((l) => l.role === "requires-key").map(keyView);
   const rewardsKeys = entity.keyLinks.filter((l) => l.role === "rewards-key").map(keyView);

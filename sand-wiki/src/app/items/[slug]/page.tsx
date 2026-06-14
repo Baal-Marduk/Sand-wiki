@@ -60,7 +60,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   }
   if (keyUsage.opens.length > 0 || keyUsage.rewardedBy.length > 0) {
     const toLoc = (l: typeof keyUsage.opens[number]) => ({
-      href: entityHref("environment", l.slug), name: l.name, icon: l.icon, rarity: l.rarity,
+      href: entityHref("environment", l.slug), name: l.name, icon: l.icon, rarity: l.rarity, categorySlug: l.category,
     });
     tabs.push({
       id: "keys",

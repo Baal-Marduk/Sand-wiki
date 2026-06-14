@@ -5,6 +5,9 @@ export interface KeyLinkView {
   name: string;
   icon: string | null;
   rarity: string | null;
+  /** Falls back to this category's glyph (castle / chest) when `icon` is missing —
+   *  landmarks and loot containers have no sprite, so this is what actually renders. */
+  categorySlug: string | null;
 }
 
 export interface KeyLinkSection {
@@ -31,6 +34,7 @@ export function KeyLinksTable({ sections }: { sections: KeyLinkSection[] }) {
                 name={r.name}
                 icon={r.icon}
                 rarity={r.rarity}
+                categorySlug={r.categorySlug}
               />
             ))}
           </div>

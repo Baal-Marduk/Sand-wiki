@@ -5,17 +5,17 @@ import { ItemIcon } from "@/components/ItemIcon";
  *  page when a slug is known (or to an explicit `href`). Optional ×amount below it (recipes).
  *  Shared by recipes + loot. */
 export function ItemIconLink({
-  slug, href, name, icon, amount, rarity,
-}: { slug?: string; href?: string; name: string; icon?: string | null; amount?: number; rarity?: string | null }) {
+  slug, href, name, icon, amount, rarity, categorySlug,
+}: { slug?: string; href?: string; name: string; icon?: string | null; amount?: number; rarity?: string | null; categorySlug?: string | null }) {
   const target = href ?? (slug ? `/items/${slug}` : undefined);
   return (
     <div className="group relative flex flex-col items-center gap-0.5">
       {target ? (
         <Link href={target} aria-label={name} className="block">
-          <ItemIcon name={name} icon={icon} size="recipe" rarity={rarity} />
+          <ItemIcon name={name} icon={icon} size="recipe" rarity={rarity} categorySlug={categorySlug} />
         </Link>
       ) : (
-        <ItemIcon name={name} icon={icon} size="recipe" rarity={rarity} />
+        <ItemIcon name={name} icon={icon} size="recipe" rarity={rarity} categorySlug={categorySlug} />
       )}
       {amount != null && <span className="font-mono text-sm font-bold text-foreground">×{amount}</span>}
       <span
