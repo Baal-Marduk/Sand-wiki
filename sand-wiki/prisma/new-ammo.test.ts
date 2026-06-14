@@ -29,4 +29,9 @@ describe("ammoRowIdentity", () => {
     const bad = { ...SAMPLE, caliber: "70 mm" };
     expect(() => ammoRowIdentity(bad)).toThrow(/caliber/i);
   });
+
+  it("throws when the displayName contains no caliber token", () => {
+    const bad = { ...SAMPLE, displayName: "Low-Recoil Shell" };
+    expect(() => ammoRowIdentity(bad)).toThrow(/caliber/i);
+  });
 });

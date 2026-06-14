@@ -18,10 +18,23 @@ export interface NewAmmo {
   caliber: string;
 }
 
-/** Build the curated Entity identity for one ammo entry, asserting the caliber invariant
- *  that the whole family-grouping relies on (ammoCaliber(name) must equal the declared caliber). */
-export function ammoRowIdentity(e: NewAmmo) {
+/** Curated Entity identity fields written when creating a new ammo row. */
+export interface AmmoEntityIdentity {
+  name: string;
+  derivedName: string;
+  description: string;
+  category: string;
+  rarity: string;
+  icon: string;
+  curated: true;
+  lootCurated: true;
+}
+
+export function ammoRowIdentity(e: NewAmmo): AmmoEntityIdentity {
   const derived = ammoCaliber(e.displayName);
+  if (derived === null) {
+    throw new Error(`${e.slug}: displayName "${e.displayName}" contains no recognizable caliber token`);
+  }
   if (derived !== e.caliber) {
     throw new Error(
       `${e.slug}: name "${e.displayName}" yields caliber "${derived}", expected "${e.caliber}"`,
