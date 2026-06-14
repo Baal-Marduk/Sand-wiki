@@ -275,7 +275,8 @@ export async function applyItemLootProposal(proposalId: string, reviewerSteamId:
       await tx.entityLink.update({ where: { id: u.id }, data: { value1: u.value1 } });
     }
     for (const r of creates) {
-      const sourceId = idBySlug.get(r.targetSlug!)!;
+      const sourceId = r.targetSlug ? idBySlug.get(r.targetSlug) : undefined;
+      if (!sourceId) throw new Error(`Cannot create loot row: unresolved source ${r.targetSlug ?? "(null)"}`);
       const max = await tx.entityLink.aggregate({ where: { sourceId, role: "loot" }, _max: { sortOrder: true } });
       await tx.entityLink.create({
         data: {
