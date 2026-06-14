@@ -84,6 +84,7 @@ export function RecipeEditForm({
   backHref,
   action = submitRecipeEdit,
   submitLabel = "Submit correction",
+  hiddenFields,
 }: {
   slug?: string;
   snapshot: RecipeSnapshot;
@@ -92,6 +93,7 @@ export function RecipeEditForm({
   backHref: string;
   action?: RecipeAction;
   submitLabel?: string;
+  hiddenFields?: Record<string, string>;
 }) {
   const [inputs, setInputs] = useState<Row[]>(snapshot.inputs.length ? snapshot.inputs.map(toRow) : [blankLine()]);
   const [outputs, setOutputs] = useState<Row[]>(snapshot.outputs.length ? snapshot.outputs.map(toRow) : [blankLine()]);
@@ -99,6 +101,9 @@ export function RecipeEditForm({
   return (
     <form action={action} className="space-y-5 max-w-2xl">
       {slug && <input type="hidden" name="slug" value={slug} />}
+      {Object.entries(hiddenFields ?? {}).map(([k, v]) => (
+        <input key={k} type="hidden" name={k} value={v} />
+      ))}
 
       <label className="flex flex-col gap-1.5">
         <span className={labelCls}>Workbench</span>
