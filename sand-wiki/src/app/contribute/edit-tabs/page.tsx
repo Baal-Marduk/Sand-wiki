@@ -12,9 +12,9 @@ import { btnGhost, btnSecondary, btnDestructive, btnSm } from "@/components/form
 
 type SP = Promise<{ type?: string; slug?: string }>;
 
-/** Kinds whose pages render recipe (Crafted-by / Used-in) tabs. Landmark crafting
- *  later adds "environment" here; no other hub change is needed. */
-const RECIPE_TAB_KINDS = new Set(["item", "environment"]);
+/** Kinds whose pages render item recipe (Crafted-by / Used-in) tabs. Environment
+ *  (landmark) crafting is edited via the dedicated `envCraft` section below, not here. */
+const RECIPE_TAB_KINDS = new Set(["item"]);
 
 /** Which link role (if any) this proposal target type edits via the inline editor. */
 const ROLE_FOR_TYPE: Record<string, "loot" | "cost" | undefined> = {
