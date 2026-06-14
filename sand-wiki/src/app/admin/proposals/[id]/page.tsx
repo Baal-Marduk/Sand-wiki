@@ -53,6 +53,17 @@ export default async function ProposalDetail({ params }: { params: Params }) {
     linkChange = p.changes as unknown as LinkProposalChange;
   }
 
+  // recipe_new shows everything as added (old = empty); recipe_delete shows everything as removed (new = empty).
+  let recipeNewOrDelete: { old: RecipeProposalChange["old"]; new: RecipeProposalChange["new"] } | null = null;
+  if (p.kind === "recipe_new" && p.changes) {
+    const snap = (p.changes as unknown as { new: RecipeProposalChange["new"] }).new;
+    recipeNewOrDelete = { old: { workbench: null, tier: null, craftTimeSeconds: null, inputs: [], outputs: [] }, new: snap };
+  }
+  if (p.kind === "recipe_delete" && p.changes) {
+    const snap = (p.changes as unknown as { old: RecipeProposalChange["old"] }).old;
+    recipeNewOrDelete = { old: snap, new: { workbench: null, tier: null, craftTimeSeconds: null, inputs: [], outputs: [] } };
+  }
+
   return (
     <article className="mx-auto max-w-3xl space-y-6 py-6">
       <div>
@@ -63,7 +74,11 @@ export default async function ProposalDetail({ params }: { params: Params }) {
               ? `Recipe edit · ${p.targetSlug}`
               : p.kind === "links_edit"
                 ? `Tab edit · ${p.targetType} · ${p.targetSlug}`
-                : `New page · ${p.proposedName}`}
+                : p.kind === "recipe_new"
+                  ? `New recipe`
+                  : p.kind === "recipe_delete"
+                    ? `Delete recipe · ${p.targetSlug}`
+                    : `New page · ${p.proposedName}`}
         </h1>
         <p className="mt-1 font-mono text-xs uppercase tracking-[0.04em] text-muted-foreground">
           by {p.proposer.personaName ?? p.proposerId} · {p.status}
@@ -140,11 +155,43 @@ export default async function ProposalDetail({ params }: { params: Params }) {
             </tbody>
           </table>
         </div>
+      ) : (p.kind === "recipe_new" || p.kind === "recipe_delete") && recipeNewOrDelete ? (
+        <div className="space-y-4">
+          <table className={tableCls}>
+            <thead><tr><th className={thCls}>Meta</th><th className={thCls}>Current</th><th className={thCls}>Proposed</th></tr></thead>
+            <tbody>
+              {(["workbench", "tier", "craftTimeSeconds"] as const).map((k) => (
+                <tr key={k}>
+                  <td className={tdCls}>{k}</td>
+                  <td className={`${tdCls} text-muted-foreground`}>{String(recipeNewOrDelete!.old[k] ?? "—")}</td>
+                  <td className={`${tdCls} font-medium`}>{String(recipeNewOrDelete!.new[k] ?? "—")}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {(["inputs", "outputs"] as const).map((sideKey) => (
+            <div key={sideKey}>
+              <h2 className="mb-2 font-display text-sm font-semibold uppercase tracking-[0.06em] text-muted-foreground">{sideKey}</h2>
+              <table className={tableCls}>
+                <thead><tr><th className={thCls}>Item</th><th className={thCls}>Current</th><th className={thCls}>Proposed</th></tr></thead>
+                <tbody>
+                  {diffRecipeLines(recipeNewOrDelete!.old[sideKey], recipeNewOrDelete!.new[sideKey]).map((row) => (
+                    <tr key={row.slug} className={row.status === "same" ? "" : "bg-warning/10"}>
+                      <td className={tdCls}>{row.name}{row.status !== "same" && <span className={tagWarn}>{row.status}</span>}</td>
+                      <td className={`${tdCls} text-muted-foreground`}>{row.oldAmount ?? "—"}</td>
+                      <td className={`${tdCls} font-medium`}>{row.newAmount ?? "—"}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          ))}
+        </div>
       ) : (
         <div className="whitespace-pre-wrap border border-border bg-card p-3 text-sm text-foreground">{p.note}</div>
       )}
 
-      {p.note && (p.kind === "edit" || p.kind === "recipe_edit" || p.kind === "links_edit") && (
+      {p.note && p.kind !== "new_page" && (
         <p className="text-muted-foreground"><strong className="text-foreground">Note:</strong> {p.note}</p>
       )}
 

@@ -2,8 +2,9 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "./db";
 import { fieldDef } from "./proposal-schema";
 import { norm, type Diff } from "./proposal-diff";
-import { buildLineCreates, type RecipeProposalChange } from "./recipe-proposal";
+import { buildLineCreates, uniqueRecipeSlug, type RecipeProposalChange, type RecipeSnapshot } from "./recipe-proposal";
 import type { LinkProposalChange } from "./link-proposal";
+type RecipeNewChange = { new: RecipeSnapshot };
 
 /** Proposal target type → Entity.kind (proposal types are the legacy model names). */
 const KIND_FOR_TYPE: Record<string, string> = {
@@ -110,12 +111,69 @@ export async function applyRecipeProposal(proposalId: string, reviewerSteamId: s
 
     await tx.recipe.update({
       where: { id: recipe.id },
-      data: { workbench: snap.workbench, tier: snap.tier, craftTimeSeconds: snap.craftTimeSeconds },
+      data: { workbench: snap.workbench, tier: snap.tier, craftTimeSeconds: snap.craftTimeSeconds, curated: true },
     });
     await tx.recipeInput.deleteMany({ where: { recipeId: recipe.id } });
     await tx.recipeOutput.deleteMany({ where: { recipeId: recipe.id } });
     if (inputCreates.length) await tx.recipeInput.createMany({ data: inputCreates });
     if (outputCreates.length) await tx.recipeOutput.createMany({ data: outputCreates });
+
+    await tx.proposal.update({
+      where: { id: proposalId },
+      data: { status: "applied", reviewedById: reviewerSteamId, reviewedAt: new Date() },
+    });
+  });
+}
+
+/** Apply an approved recipe_new proposal: create a curated Recipe (so reseed won't
+ *  clobber it) with a unique slug derived from its primary output. */
+export async function applyRecipeNew(proposalId: string, reviewerSteamId: string): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    const p = await tx.proposal.findUnique({ where: { id: proposalId } });
+    if (!p || p.status !== "pending" || p.kind !== "recipe_new" || !p.changes) {
+      throw new Error("Proposal is not an applyable pending new recipe.");
+    }
+    const snap = (p.changes as unknown as RecipeNewChange).new;
+    if (snap.outputs.length === 0) throw new Error("New recipe has no outputs.");
+
+    const slugs = [...new Set([...snap.inputs, ...snap.outputs].map((l) => l.slug))];
+    const items = await tx.entity.findMany({ where: { kind: "item", slug: { in: slugs } }, select: { id: true, slug: true } });
+    const idBySlug = new Map(items.map((i) => [i.slug, i.id]));
+
+    const inputCreates = buildLineCreates(snap.inputs, idBySlug);
+    const outputCreates = buildLineCreates(snap.outputs, idBySlug);
+
+    const existing = await tx.recipe.findMany({ select: { slug: true } });
+    const slug = uniqueRecipeSlug(snap.outputs[0].slug, new Set(existing.map((r) => r.slug)));
+
+    await tx.recipe.create({
+      data: {
+        slug,
+        curated: true,
+        workbench: snap.workbench,
+        tier: snap.tier,
+        craftTimeSeconds: snap.craftTimeSeconds,
+        inputs: { create: inputCreates },
+        outputs: { create: outputCreates },
+      },
+    });
+
+    await tx.proposal.update({
+      where: { id: proposalId },
+      data: { status: "applied", reviewedById: reviewerSteamId, reviewedAt: new Date() },
+    });
+  });
+}
+
+/** Apply an approved recipe_delete proposal: delete the Recipe (cascades lines). */
+export async function applyRecipeDelete(proposalId: string, reviewerSteamId: string): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    const p = await tx.proposal.findUnique({ where: { id: proposalId } });
+    if (!p || p.status !== "pending" || p.kind !== "recipe_delete" || !p.targetSlug || !p.changes) {
+      throw new Error("Proposal is not an applyable pending recipe deletion.");
+    }
+    const recipe = await tx.recipe.findUnique({ where: { slug: p.targetSlug }, select: { id: true } });
+    if (recipe) await tx.recipe.delete({ where: { id: recipe.id } });
 
     await tx.proposal.update({
       where: { id: proposalId },
