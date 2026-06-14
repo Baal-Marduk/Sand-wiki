@@ -146,3 +146,16 @@
 
   .tnode-glyph img, .tt-faction-glyph img { width: 100%; height: 100%; object-fit: contain; display: block; }
   .tnode-glyph { display: grid; place-items: center; }
+
+.tt-tip-cost { padding: 4px 0; }
+.tt-tip-costrow { display: flex; align-items: center; gap: 8px; padding: 5px 11px; font-size: 12px; border-bottom: 1px solid var(--border); }
+.tt-tip-costrow .tt-tip-ic { width: 18px; height: 18px; display: grid; place-items: center; flex: none; }
+.tt-tip-costrow .tt-tip-ic img { width: 100%; height: 100%; object-fit: contain; }
+.tt-tip-costrow b { color: var(--primary); font-family: var(--font-mono); }
+.tt-tip-costrow span:last-child { color: var(--muted-foreground); }
+.tt-sum-mats { margin-bottom: 14px; }
+.tt-mat-grid { display: flex; flex-wrap: wrap; gap: 6px 12px; }
+.tt-mat { display: inline-flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 11px; color: var(--muted-foreground); }
+.tt-mat-ic { width: 16px; height: 16px; display: grid; place-items: center; }
+.tt-mat-ic img { width: 100%; height: 100%; object-fit: contain; }
+.tt-mat b { color: var(--foreground); }
