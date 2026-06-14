@@ -141,6 +141,7 @@ export async function submitNewRecipe(formData: FormData) {
   const note = readNote(formData);
   const backType = String(formData.get("backType") ?? "item");
   const backSlug = String(formData.get("backSlug") ?? "");
+  const locationSlug = String(formData.get("locationSlug") ?? "").trim() || null;
 
   const session = await requireUser("/contribute/new");
   await assertUnderQuota(session.steamId);
@@ -170,7 +171,7 @@ export async function submitNewRecipe(formData: FormData) {
     data: {
       kind: "recipe_new",
       targetType: "recipe",
-      changes: { new: newSnap } as object,
+      changes: { new: newSnap, locationSlug } as object,
       note,
       proposerId: session.steamId,
     },

@@ -2,9 +2,9 @@ import { Prisma } from "@prisma/client";
 import { prisma } from "./db";
 import { fieldDef } from "./proposal-schema";
 import { norm, type Diff } from "./proposal-diff";
-import { buildLineCreates, uniqueRecipeSlug, type RecipeProposalChange, type RecipeSnapshot } from "./recipe-proposal";
+import { buildLineCreates, uniqueRecipeSlug, locationRecipeSlugBase, type RecipeProposalChange, type RecipeSnapshot } from "./recipe-proposal";
 import { diffLootSources, type LinkProposalChange, type ExistingLootLink } from "./link-proposal";
-type RecipeNewChange = { new: RecipeSnapshot };
+type RecipeNewChange = { new: RecipeSnapshot; locationSlug?: string | null };
 
 /** Proposal target type → Entity.kind (proposal types are the legacy model names). */
 const KIND_FOR_TYPE: Record<string, string> = {
@@ -134,6 +134,7 @@ export async function applyRecipeNew(proposalId: string, reviewerSteamId: string
       throw new Error("Proposal is not an applyable pending new recipe.");
     }
     const snap = (p.changes as unknown as RecipeNewChange).new;
+    const locationSlug = (p.changes as unknown as RecipeNewChange).locationSlug ?? null;
     if (snap.outputs.length === 0) throw new Error("New recipe has no outputs.");
 
     const slugs = [...new Set([...snap.inputs, ...snap.outputs].map((l) => l.slug))];
@@ -143,13 +144,22 @@ export async function applyRecipeNew(proposalId: string, reviewerSteamId: string
     const inputCreates = buildLineCreates(snap.inputs, idBySlug);
     const outputCreates = buildLineCreates(snap.outputs, idBySlug);
 
+    let locationId: string | null = null;
+    if (locationSlug) {
+      const loc = await tx.entity.findUnique({ where: { slug: locationSlug }, select: { id: true } });
+      if (!loc) throw new Error(`Location not found: ${locationSlug}`);
+      locationId = loc.id;
+    }
+
     const existing = await tx.recipe.findMany({ select: { slug: true } });
-    const slug = uniqueRecipeSlug(snap.outputs[0].slug, new Set(existing.map((r) => r.slug)));
+    const base = locationSlug ? locationRecipeSlugBase(locationSlug, snap.outputs[0].slug) : snap.outputs[0].slug;
+    const slug = uniqueRecipeSlug(base, new Set(existing.map((r) => r.slug)));
 
     await tx.recipe.create({
       data: {
         slug,
         curated: true,
+        locationId,
         workbench: snap.workbench,
         tier: snap.tier,
         craftTimeSeconds: snap.craftTimeSeconds,
