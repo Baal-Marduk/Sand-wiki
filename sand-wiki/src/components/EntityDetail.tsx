@@ -14,6 +14,8 @@ export interface EntityIcon {
   icon: string | null;
   rarity?: string | null;
   decorative?: boolean;
+  /** When `icon` is null, falls back to this category's glyph instead of the generic ▦. */
+  categorySlug?: string | null;
 }
 
 export interface EntityDetailProps {
@@ -120,6 +122,7 @@ export function EntityDetail({
             size="lg"
             rarity={icon.rarity ?? undefined}
             decorative={icon.decorative ?? false}
+            categorySlug={icon.categorySlug}
           />
         )}
         <div className="min-w-[16rem] flex-1 space-y-3">

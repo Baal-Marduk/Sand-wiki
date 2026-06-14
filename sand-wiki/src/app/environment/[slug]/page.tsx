@@ -49,7 +49,7 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
       ]}
       suggest={{ type: "envEntity", slug }}
       canSuggest={canSuggest}
-      icon={{ name: entity.name, icon: entity.icon, decorative: true }}
+      icon={{ name: entity.name, icon: entity.icon, decorative: true, categorySlug: entity.category }}
       title={entity.name}
       badges={<CategoryTag slug={entity.category} />}
       description={entity.description}

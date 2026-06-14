@@ -78,7 +78,7 @@ export default async function EnvironmentPage({ searchParams }: { searchParams: 
               {entities.map((e) => (
                 <EntityCard
                   key={e.id}
-                  entity={{ slug: e.slug, name: e.name, href: `/environment/${e.slug}`, icon: e.icon }}
+                  entity={{ slug: e.slug, name: e.name, href: `/environment/${e.slug}`, icon: e.icon, categorySlug: category }}
                 />
               ))}
             </ul>

@@ -1,5 +1,7 @@
 import Link from "next/link";
 import { rarityColor, rarityGradient } from "@/lib/rarity";
+import { categoryColor } from "@/lib/taxonomy";
+import { CategoryIcon } from "@/components/CategoryIcon";
 
 /** Neutral inventory slot for icons with no rarity — matches ItemIcon. */
 const NEUTRAL_SLOT = "linear-gradient(135deg, #2A2E37 0%, #181B22 45%, #11131A 100%)";
@@ -14,6 +16,9 @@ export interface EntityCardData {
   name: string;
   href: string;
   icon?: string | null;
+  /** When `icon` is missing, falls back to this category's glyph (e.g. a chest for
+   *  loot containers) instead of the generic ▦. */
+  categorySlug?: string | null;
   /** Rarity name → rail color + type-line dot + rarity label. */
   rarity?: string | null;
   /** Optional secondary label shown before the rarity in the type line (e.g. weapon class). */
@@ -50,6 +55,14 @@ export function EntityCard({ entity }: { entity: EntityCardData }) {
               decoding="async"
               className="size-[80%] object-contain [filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.45))]"
             />
+          ) : entity.categorySlug ? (
+            <span
+              aria-hidden
+              className={gradient ? "text-background" : "text-dim"}
+              style={gradient ? undefined : { color: categoryColor(entity.categorySlug) }}
+            >
+              <CategoryIcon slug={entity.categorySlug} className="size-7" />
+            </span>
           ) : (
             <span aria-hidden className={`text-2xl ${gradient ? "text-background" : "text-dim"}`}>
               ▦
