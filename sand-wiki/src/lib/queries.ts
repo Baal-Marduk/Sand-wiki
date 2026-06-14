@@ -324,3 +324,19 @@ export async function getTechTree(): Promise<TechTree> {
   });
   return toTechTree(rows);
 }
+
+/** The most recent contributor whose proposal was applied to this entity, or null
+ *  if it has never been edited. Scoped by targetType+targetSlug so recipe-targeted
+ *  proposals (and any slug collision with them) are excluded. Covers edit,
+ *  links_edit, and loot_sources_edit kinds — all of which carry the entity's slug. */
+export async function getLastEditor(
+  targetType: "item" | "envEntity" | "tramplerPart",
+  slug: string,
+): Promise<{ steamId: string; personaName: string | null } | null> {
+  const p = await prisma.proposal.findFirst({
+    where: { targetType, targetSlug: slug, status: "applied" },
+    orderBy: [{ reviewedAt: "desc" }, { createdAt: "desc" }],
+    select: { proposer: { select: { steamId: true, personaName: true } } },
+  });
+  return p?.proposer ?? null;
+}
