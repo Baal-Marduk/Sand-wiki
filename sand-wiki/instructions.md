@@ -85,6 +85,23 @@ brand wordmark: Black Ops One. Accessibility is a hard gate — axe must pass (`
 > location). Source of record: `prisma/location-recipes.json`, loaded idempotently via
 > `npm run db:load-location-recipes`.
 
+> **🚨 DO NOT re-seed the live DB — `curated` does NOT protect field values.** The `curated`
+> flags only stop row **pruning** and link **recreation**; they do **NOT** stop the seed's item
+> upsert from overwriting source-populated **fields**. In particular `rarity` is rewritten to
+> `enrichment.rarity` or `DEFAULT_RARITY` ("Common") on **every** item, so `npm run db:seed`
+> (even `:force`) **silently reverts every manual rarity edit to Common** (descriptions too,
+> where the source has one). This bit us hard on 2026-06-14 (~42 contributor edits across 27
+> entities reverted). Rules:
+> - To add/change rows, use a **surgical targeted script** (upsert just those rows, like
+>   `load-location-recipes.ts`) — never the full seed.
+> - Contributor edits are the authoritative record in the **`Proposal` table** (`status:"applied"`),
+>   which survives seeds. Recover by replaying each applied edit's `changes.<field>.new` onto its
+>   entity (latest-wins per slug+field; split Entity vs ItemStats fields).
+> - Neon PITR retention here is only ~6h — not a reliable backstop.
+> - **TODO (durable fix):** harden the seed so applied-proposal field values (esp. `rarity`)
+>   survive a re-seed (e.g. skip overwriting fields that have an applied `edit` proposal, or
+>   honor a per-field curated marker).
+
 Community-wiki content is uneven/stubby (many landmark pages are empty; some loot tables sparse).
 Imports copy what exists and link back via `sourceUrl`.
 
