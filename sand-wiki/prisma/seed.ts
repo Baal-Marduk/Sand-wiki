@@ -328,13 +328,10 @@ async function main() {
     if (n.unlockCost.length > 0) {
       await prisma.entityLink.createMany({
         data: n.unlockCost.map((c, i) => {
-          const isCrowns = normalize(c.name) === "crowns";
-          const targetId = isCrowns ? null : (() => {
-            const tSlug = nameIndex.get(normalize(c.name)) ?? null;
-            const tid = tSlug ? slugToId.get(tSlug) ?? null : null;
-            if (!tid) console.warn(`[tech-tree] WARN ${slug}: unlock cost "${c.name}" unresolved`);
-            return tid;
-          })();
+          // Resolve every cost line by name, incl. "Crowns" → coin-crown (slugged, matching build costs).
+          const tSlug = nameIndex.get(normalize(c.name)) ?? null;
+          const targetId = tSlug ? slugToId.get(tSlug) ?? null : null;
+          if (!targetId) console.warn(`[tech-tree] WARN ${slug}: unlock cost "${c.name}" unresolved`);
           return { sourceId, role: "tech-unlock-cost", targetId, name: c.name, amount: c.amount, sortOrder: i };
         }),
       });
