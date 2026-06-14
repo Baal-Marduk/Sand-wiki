@@ -61,4 +61,9 @@ function Button({
   )
 }
 
-export { Button, buttonVariants }
+// Shared "bordered action" style — high-contrast, readable on hover in any surface.
+// Used by Suggest-a-correction, Show-in-tech-tree, and the tech-tree toolbar buttons.
+const actionButtonClass =
+  "inline-flex shrink-0 items-center justify-center whitespace-nowrap border border-border-strong px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-[0.05em] text-foreground transition-colors hover:border-primary hover:bg-card-elevated hover:text-primary-hover disabled:pointer-events-none disabled:opacity-50"
+
+export { Button, buttonVariants, actionButtonClass }
