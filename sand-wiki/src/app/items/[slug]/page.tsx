@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCaliber, getUnlockingNode, getLastEditor } from "@/lib/queries";
+import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCaliber, getUnlockingNode, getLastEditor, getKeyUsage } from "@/lib/queries";
+import { entityHref } from "@/lib/entity-links";
 import { editorDisplayName } from "@/lib/steam";
 import { ammoCaliber, weaponCaliber, caliberLabel } from "@/lib/ammo";
 import { classifyTrades } from "@/lib/trades";
@@ -16,6 +17,7 @@ import { CraftTable } from "@/components/CraftTable";
 import { UsedInTable } from "@/components/UsedInTable";
 import { CrateDropList } from "@/components/CrateDropList";
 import { ItemLinkList } from "@/components/ItemLinkList";
+import { KeyLinksTable } from "@/components/KeyLinksTable";
 import { getSession } from "@/lib/auth";
 
 type Params = Promise<{ slug: string }>;
@@ -30,6 +32,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const trades = classifyTrades(item.slug, item.craftedBy, item.usedIn);
   const { crafts, usedInCrafts } = trades;
   const drops = await getCratesContaining(item.slug);
+  const keyUsage = await getKeyUsage(item.slug);
   // Caliber family drives both directions: a weapon/turret lists every ammo of its
   // caliber; an ammo lists every weapon/turret of its caliber.
   const isAmmo = item.category === "ammo";
@@ -54,6 +57,19 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   }
   if (ammoUsers.length > 0) {
     tabs.push({ id: "used-by", label: "Used by", content: <ItemLinkList items={ammoUsers} /> });
+  }
+  if (keyUsage.opens.length > 0 || keyUsage.rewardedBy.length > 0) {
+    const toLoc = (l: typeof keyUsage.opens[number]) => ({
+      href: entityHref("environment", l.slug), name: l.name, icon: l.icon, rarity: l.rarity,
+    });
+    tabs.push({
+      id: "keys",
+      label: "Keys",
+      content: <KeyLinksTable sections={[
+        { label: "Opens", rows: keyUsage.opens.map(toLoc) },
+        { label: "Rewarded by", rows: keyUsage.rewardedBy.map(toLoc) },
+      ]} />,
+    });
   }
   if (drops.length > 0) {
     tabs.push({ id: "loot", label: "Loot", content: <CrateDropList drops={drops} /> });

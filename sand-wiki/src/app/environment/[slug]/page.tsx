@@ -2,7 +2,7 @@ import { notFound } from "next/navigation";
 import { getEnvEntityBySlug, getLastEditor } from "@/lib/queries";
 import { editorDisplayName } from "@/lib/steam";
 import { lootEntryView } from "@/lib/loot";
-import { groupLootByTier, type LinkRow } from "@/lib/entity-links";
+import { groupLootByTier, entityHref, type LinkRow } from "@/lib/entity-links";
 import { categoryLabel } from "@/lib/taxonomy";
 import { byRarityThenName } from "@/lib/rarity";
 import { EntityDetail } from "@/components/EntityDetail";
@@ -35,7 +35,7 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
   }));
   // Key-progression links (which key opens this location, which key it rewards).
   const keyView = (l: (typeof entity.keyLinks)[number]): KeyLinkView => ({
-    slug: l.target?.slug ?? null,
+    href: l.target ? entityHref(l.target.kind, l.target.slug) : null,
     name: l.name,
     icon: l.target?.icon ?? null,
     rarity: l.target?.rarity ?? null,
@@ -57,7 +57,10 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
     ? [{
         id: "keys",
         label: "Keys",
-        content: <KeyLinksTable requires={requiresKeys} rewards={rewardsKeys} />,
+        content: <KeyLinksTable sections={[
+          { label: "Required to open", rows: requiresKeys },
+          { label: "Rewards", rows: rewardsKeys },
+        ]} />,
       }]
     : [];
   const tabs: Tab[] = [

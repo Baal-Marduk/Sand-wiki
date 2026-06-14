@@ -237,6 +237,30 @@ export async function getCratesContaining(itemSlug: string): Promise<CrateDrop[]
   return rows.map((r) => ({ crateSlug: r.source.slug, crateName: r.source.name, tier: r.tier ?? "" }));
 }
 
+export interface KeyUsageLocation { slug: string; name: string; icon: string | null; rarity: string | null }
+export interface KeyUsage { opens: KeyUsageLocation[]; rewardedBy: KeyUsageLocation[] }
+
+/** Reverse view for a key item: locations this key opens (incoming `requires-key`) and
+ *  locations that reward it (incoming `rewards-key`). Empty arrays for non-key items. */
+export async function getKeyUsage(itemSlug: string): Promise<KeyUsage> {
+  const rows = await prisma.entityLink.findMany({
+    where: {
+      role: { in: ["requires-key", "rewards-key"] },
+      target: { slug: itemSlug },
+      source: { kind: "environment" },
+    },
+    include: { source: { select: { slug: true, name: true, icon: true, rarity: true } } },
+    orderBy: [{ source: { name: "asc" } }, { sortOrder: "asc" }],
+  });
+  const toLoc = (r: (typeof rows)[number]): KeyUsageLocation => ({
+    slug: r.source.slug, name: r.source.name, icon: r.source.icon, rarity: r.source.rarity,
+  });
+  return {
+    opens: rows.filter((r) => r.role === "requires-key").map(toLoc),
+    rewardedBy: rows.filter((r) => r.role === "rewards-key").map(toLoc),
+  };
+}
+
 export async function getItemBySlug(slug: string) {
   const item = await prisma.entity.findUnique({
     where: { slug },
