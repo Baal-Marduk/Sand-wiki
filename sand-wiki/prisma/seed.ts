@@ -244,20 +244,24 @@ async function main() {
       create: { slug, kind: "trampler-part", ...identity, tramplerStats: { create: stats } },
       update: { ...identity, tramplerStats: { upsert: { create: stats, update: stats } } },
     });
-    // Cost rows are scraper-owned → delete + recreate as EntityLink role 'cost'.
-    await prisma.entityLink.deleteMany({ where: { sourceId: part.id, role: "cost" } });
-    const rows = costToRows(t.cost);
-    if (rows.length > 0) {
-      await prisma.entityLink.createMany({
-        data: rows.map((c) => {
-          // Resolve by slug; fall back to name (currency lines like "Crowns" carry no slug).
-          const targetId = c.itemSlug
-            ? idBySlug.get(c.itemSlug) ?? null
-            : idByName.get(c.name.toLowerCase()) ?? null;
-          if (c.itemSlug && !targetId) console.warn(`Cost slug "${c.itemSlug}" on ${slug} does not resolve to an item`);
-          return { sourceId: part.id, role: "cost", targetId, name: c.name, amount: c.amount, sortOrder: c.sortOrder };
-        }),
-      });
+    if (part.lootCurated) {
+      console.log(`Skipping cost recreate for ${slug} (lootCurated = true)`);
+    } else {
+      // Cost rows are scraper-owned → delete + recreate as EntityLink role 'cost'.
+      await prisma.entityLink.deleteMany({ where: { sourceId: part.id, role: "cost" } });
+      const rows = costToRows(t.cost);
+      if (rows.length > 0) {
+        await prisma.entityLink.createMany({
+          data: rows.map((c) => {
+            // Resolve by slug; fall back to name (currency lines like "Crowns" carry no slug).
+            const targetId = c.itemSlug
+              ? idBySlug.get(c.itemSlug) ?? null
+              : idByName.get(c.name.toLowerCase()) ?? null;
+            if (c.itemSlug && !targetId) console.warn(`Cost slug "${c.itemSlug}" on ${slug} does not resolve to an item`);
+            return { sourceId: part.id, role: "cost", targetId, name: c.name, amount: c.amount, sortOrder: c.sortOrder };
+          }),
+        });
+      }
     }
     tramplerCount++;
   }

@@ -20,7 +20,7 @@ const RECIPE_TAB_KINDS = new Set(["item"]);
 const ROLE_FOR_TYPE: Record<string, "loot" | "cost" | undefined> = {
   envEntity: "loot",
   tramplerPart: "cost",
-  item: undefined, // recipes only (added in a later task)
+  item: undefined, // recipes only (rendered via the recipe sections below)
 };
 
 export default async function EditTabsPage({ searchParams }: { searchParams: SP }) {
