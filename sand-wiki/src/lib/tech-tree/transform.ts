@@ -64,7 +64,9 @@ export function toTechTree(
       };
     });
 
-  const defaultUnlocked = nodes.filter((n) => n.prereqs.length === 0).map((n) => n.slug);
+  // Players start with nothing researched: only each faction's free root part
+  // (shown in the left rail, never a toggleable node) is "owned" at the start.
+  const defaultUnlocked: string[] = [];
   const present = new Set(nodes.map((n) => n.faction));
   const factions = FACTIONS.filter((f) => present.has(f.id)).map((f) => {
     const slug = FACTION_ROOT_PART[f.id];

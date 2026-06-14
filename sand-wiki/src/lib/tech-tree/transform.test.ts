@@ -47,7 +47,7 @@ describe("toTechTree", () => {
     expect(n.glyphIcon).toBe("/icons/rod.png");
     expect(n.unlocks[0]).toEqual({ name: "NZ Mk2 Energy Rod", slug: "nz-mk2-energy-rod", icon: "/icons/rod.png", href: null });
     expect(n.prereqs).toEqual([]);
-    expect(tree.defaultUnlocked).toContain("tech-godlewski-t1a-energy-rod");
+    expect(tree.defaultUnlocked).toEqual([]); // fresh start: nothing researched
   });
 
   it("keeps same-faction prereqs and drops cross-faction ones", () => {

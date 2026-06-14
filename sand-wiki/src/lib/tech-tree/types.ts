@@ -43,7 +43,7 @@ export interface TechFaction {
 export interface TechTree {
   nodes: TechNode[];
   factions: TechFaction[];
-  defaultUnlocked: string[]; // slugs of prereq-less (free) nodes
+  defaultUnlocked: string[]; // slugs unlocked on a fresh start (none — faction roots are free parts, not nodes)
 }
 
 // Shape returned by the Prisma query, consumed by toTechTree().
