@@ -5,6 +5,7 @@ export interface RecipeWithItems {
   workbench: string | null;
   tier: number | null;
   craftTimeSeconds: number | null;
+  location: { slug: string; name: string } | null;
   inputs: RecipeLine[];
   outputs: RecipeLine[];
 }
@@ -15,6 +16,7 @@ export interface RecipeCard {
   workbench: string | null;
   tier: number | null;
   craftTimeSeconds: number | null;
+  location: { slug: string; name: string } | null;
   inputs: RecipeCardRow[];
   outputs: RecipeCardRow[];
 }
@@ -25,6 +27,7 @@ const row = (l: RecipeLine): RecipeCardRow => ({ slug: l.item.slug, name: l.item
 export function toRecipeCard(r: RecipeWithItems): RecipeCard {
   return {
     slug: r.slug, workbench: r.workbench, tier: r.tier, craftTimeSeconds: r.craftTimeSeconds,
+    location: r.location,
     inputs: r.inputs.map(row),
     outputs: r.outputs.map(row),
   };
