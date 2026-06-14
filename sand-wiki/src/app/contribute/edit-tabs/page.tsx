@@ -3,7 +3,7 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isEditableTarget, entityHref } from "@/lib/proposal-schema";
-import { getOutgoingLinks, getItemBySlug, getIncomingLootLinks, listLootSources } from "@/lib/queries";
+import { getOutgoingLinks, getItemBySlug, getIncomingLootLinks, listLootSources, getEnvEntityBySlug } from "@/lib/queries";
 import { linksToSnapshot, incomingLootToDrafts } from "@/lib/link-proposal";
 import { linkFields, LINK_ROLES } from "@/lib/entity-links";
 import { LinkEditForm } from "@/components/LinkEditForm";
@@ -14,7 +14,7 @@ type SP = Promise<{ type?: string; slug?: string }>;
 
 /** Kinds whose pages render recipe (Crafted-by / Used-in) tabs. Landmark crafting
  *  later adds "environment" here; no other hub change is needed. */
-const RECIPE_TAB_KINDS = new Set(["item"]);
+const RECIPE_TAB_KINDS = new Set(["item", "environment"]);
 
 /** Which link role (if any) this proposal target type edits via the inline editor. */
 const ROLE_FOR_TYPE: Record<string, "loot" | "cost" | undefined> = {
@@ -44,6 +44,7 @@ export default async function EditTabsPage({ searchParams }: { searchParams: SP 
 
   const showRecipes = RECIPE_TAB_KINDS.has(entity.kind);
   const item = showRecipes ? await getItemBySlug(slug) : null;
+  const envCraft = entity.kind === "environment" ? await getEnvEntityBySlug(slug) : null;
 
   const isItem = entity.kind === "item";
   const lootSources = isItem ? await listLootSources() : [];
@@ -123,6 +124,30 @@ export default async function EditTabsPage({ searchParams }: { searchParams: SP 
             Ammo / Used-by tabs are derived from this item&apos;s ammo &amp; category fields — edit those via &ldquo;Suggest a correction&rdquo;.
           </p>
         </>
+      )}
+
+      {envCraft && (
+        <section className="space-y-3 border border-border bg-card p-4">
+          <h2 className="font-display text-sm font-semibold uppercase tracking-[0.06em] text-muted-foreground">Crafted here</h2>
+          {envCraft.craftedBy.length === 0 && <p className="text-sm text-muted-foreground">No recipes yet.</p>}
+          <ul className="space-y-2">
+            {envCraft.craftedBy.map((r) => (
+              <li key={r.slug} className="flex flex-wrap items-center gap-2">
+                <span className="flex-1 text-sm">{r.outputs.map((o) => o.name).join(", ") || "Recipe"}</span>
+                <Link href={`/contribute/edit-recipe?slug=${r.slug}`} className={`${btnGhost} ${btnSm}`}>Edit</Link>
+                <form action={submitDeleteRecipe} className="inline">
+                  <input type="hidden" name="slug" value={r.slug} />
+                  <input type="hidden" name="backType" value={type} />
+                  <input type="hidden" name="backSlug" value={slug} />
+                  <button type="submit" className={`${btnDestructive} ${btnSm}`}>Delete</button>
+                </form>
+              </li>
+            ))}
+          </ul>
+          <Link href={`/contribute/new-recipe?type=${type}&slug=${slug}&location=${slug}`} className={`${btnSecondary} ${btnSm}`}>
+            + Propose a new recipe made here
+          </Link>
+        </section>
       )}
 
       <Link href={back} className={btnGhost}>Back to page</Link>
