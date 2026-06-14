@@ -148,10 +148,16 @@ async function main() {
     return id;
   };
 
-  // --- Recipes: line rows are scraper-owned → recreate; recipe rows keep stable ids ---
-  await prisma.recipeInput.deleteMany();
-  await prisma.recipeOutput.deleteMany();
+  // --- Recipes: line rows are scraper-owned → recreate; recipe rows keep stable ids.
+  // Contributor-curated recipes (curated=true) are skipped so a reseed never clobbers
+  // community-applied recipe edits / additions. ---
+  const curatedSlugs = new Set(
+    (await prisma.recipe.findMany({ where: { curated: true }, select: { slug: true } })).map((r) => r.slug),
+  );
+  await prisma.recipeInput.deleteMany({ where: { recipe: { curated: false } } });
+  await prisma.recipeOutput.deleteMany({ where: { recipe: { curated: false } } });
   for (const r of data.recipes) {
+    if (curatedSlugs.has(r.slug)) continue;
     const scraped = { workbench: opt(r.workbench), tier: opt(r.tier), craftTimeSeconds: opt(r.craftTimeSeconds) };
     const lines = {
       inputs: { create: r.inputs.map((l) => ({ itemId: need(l.item), amount: l.amount })) },
@@ -163,7 +169,7 @@ async function main() {
       update: { ...scraped, ...lines },
     });
   }
-  const prunedRecipes = await prisma.recipe.deleteMany({ where: { slug: { notIn: data.recipes.map((r) => r.slug) } } });
+  const prunedRecipes = await prisma.recipe.deleteMany({ where: { curated: false, slug: { notIn: data.recipes.map((r) => r.slug) } } });
   if (prunedRecipes.count > 0) console.log(`Pruned ${prunedRecipes.count} recipe(s) no longer in the scrape`);
 
   // --- Environment entities + loot tiers/entries (tiers/entries are scraper-owned → recreate) ---
@@ -374,10 +380,10 @@ async function main() {
   if (techNodeCount !== nodeList.length) throw new Error(`Tech-node count mismatch: DB has ${techNodeCount}, source has ${nodeList.length}`);
   console.log(`Seeded ${techNodeCount} tech nodes.`);
 
-  const [itemCount, recipeCount] = await Promise.all([prisma.entity.count({ where: { kind: "item" } }), prisma.recipe.count()]);
+  const [itemCount, scrapedRecipeCount] = await Promise.all([prisma.entity.count({ where: { kind: "item" } }), prisma.recipe.count({ where: { curated: false } })]);
   if (itemCount !== items.length) throw new Error(`Item count mismatch after seed: DB has ${itemCount}, snapshot has ${items.length} (duplicate slugs?)`);
-  if (recipeCount !== data.recipes.length) throw new Error(`Recipe count mismatch after seed: DB has ${recipeCount}, snapshot has ${data.recipes.length} (duplicate slugs?)`);
-  console.log(`Seeded ${items.length} items, ${data.recipes.length} recipes, ${envCount} environment entities, ${tramplerCount} trampler parts.`);
+  if (scrapedRecipeCount !== data.recipes.length) throw new Error(`Recipe count mismatch after seed: DB has ${scrapedRecipeCount} non-curated, snapshot has ${data.recipes.length} (duplicate slugs?)`);
+  console.log(`Seeded ${items.length} items, ${data.recipes.length} recipes (${curatedSlugs.size} curated preserved), ${envCount} environment entities, ${tramplerCount} trampler parts.`);
 }
 
 main().catch((e) => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());

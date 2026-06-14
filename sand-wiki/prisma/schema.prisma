@@ -112,6 +112,7 @@ model Recipe {
   workbench        String?
   tier             Int?
   craftTimeSeconds Float?
+  curated          Boolean @default(false)
 
   inputs  RecipeInput[]
   outputs RecipeOutput[]
