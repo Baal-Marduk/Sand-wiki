@@ -131,6 +131,11 @@ export function diffRecipeLines(oldLines: RecipeLineDraft[], newLines: RecipeLin
   });
 }
 
+/** Slug base for a location-bound recipe: `loc-<location>-<primary output>`. */
+export function locationRecipeSlugBase(locationSlug: string, outputSlug: string): string {
+  return `loc-${locationSlug}-${outputSlug}`;
+}
+
 /** A recipe slug not already in `taken`: `base`, else `base-2`, `base-3`, … */
 export function uniqueRecipeSlug(base: string, taken: Set<string>): string {
   if (!taken.has(base)) return base;

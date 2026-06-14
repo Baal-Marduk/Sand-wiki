@@ -6,6 +6,7 @@ import {
   buildLineCreates,
   diffRecipeLines,
   uniqueRecipeSlug,
+  locationRecipeSlugBase,
   type RecipeSnapshot,
 } from "./recipe-proposal";
 
@@ -132,5 +133,11 @@ describe("uniqueRecipeSlug", () => {
   it("appends -2, -3 … on collision", () => {
     expect(uniqueRecipeSlug("bolt", new Set(["bolt"]))).toBe("bolt-2");
     expect(uniqueRecipeSlug("bolt", new Set(["bolt", "bolt-2"]))).toBe("bolt-3");
+  });
+});
+
+describe("locationRecipeSlugBase", () => {
+  it("builds loc-<location>-<output> for a location recipe", () => {
+    expect(locationRecipeSlugBase("sprengstofffabrik", "grenade-contact")).toBe("loc-sprengstofffabrik-grenade-contact");
   });
 });
