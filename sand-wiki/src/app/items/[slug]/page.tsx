@@ -1,10 +1,12 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCaliber } from "@/lib/queries";
+import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCaliber, getUnlockingNode } from "@/lib/queries";
 import { ammoCaliber, weaponCaliber, caliberLabel } from "@/lib/ammo";
 import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
 import { categoryLabel } from "@/lib/taxonomy";
 import { EntityDetail } from "@/components/EntityDetail";
+import { buttonVariants } from "@/components/ui/button";
 import { CategoryTag } from "@/components/CategoryTag";
 import { RarityBadge } from "@/components/RarityBadge";
 import { itemStatCells } from "@/components/StatBox";
@@ -21,6 +23,8 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const { slug } = await params;
   const item = await getItemBySlug(slug);
   if (!item) notFound();
+
+  const techNode = await getUnlockingNode(slug);
 
   const trades = classifyTrades(item.slug, item.craftedBy, item.usedIn);
   const { crafts, usedInCrafts } = trades;
@@ -78,6 +82,11 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
         <>
           {item.rarity && <RarityBadge rarity={item.rarity} />}
           <CategoryTag slug={item.category} />
+          {techNode && (
+            <Link href={`/tech?select=${techNode.slug}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+              Show in tech tree
+            </Link>
+          )}
         </>
       }
       description={item.description}

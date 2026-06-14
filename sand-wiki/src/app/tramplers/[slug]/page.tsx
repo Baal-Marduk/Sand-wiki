@@ -1,8 +1,10 @@
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTramplerPartBySlug } from "@/lib/queries";
+import { getTramplerPartBySlug, getUnlockingNode } from "@/lib/queries";
 import { categoryLabel } from "@/lib/taxonomy";
 import { tramplerStatCells, tramplerDetailRows } from "@/lib/trampler-view";
 import { EntityDetail } from "@/components/EntityDetail";
+import { buttonVariants } from "@/components/ui/button";
 import { CategoryTag } from "@/components/CategoryTag";
 import { ItemIconLink } from "@/components/ItemIconLink";
 import { type Tab } from "@/components/ItemTabs";
@@ -14,6 +16,8 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
   const { slug } = await params;
   const part = await getTramplerPartBySlug(slug);
   if (!part) notFound();
+
+  const techNode = await getUnlockingNode(slug);
 
   const canSuggest = !!(await getSession());
   const cost = part.outgoingLinks;
@@ -56,7 +60,16 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
       canSuggest={canSuggest}
       icon={{ name: part.name, icon: part.icon, decorative: true }}
       title={part.name}
-      badges={<CategoryTag slug={part.category} />}
+      badges={
+        <>
+          <CategoryTag slug={part.category} />
+          {techNode && (
+            <Link href={`/tech?select=${techNode.slug}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+              Show in tech tree
+            </Link>
+          )}
+        </>
+      }
       description={part.description}
       stats={tramplerStatCells(stats)}
       detailRows={tramplerDetailRows(stats)}
