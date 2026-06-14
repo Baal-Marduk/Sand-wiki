@@ -201,13 +201,13 @@ describe("isWeaponClassCategory", () => {
 
 describe("WIP markers", () => {
   it("flags placeholder sections as WIP", () => {
-    expect(isWipSection(getSection("tech")!)).toBe(true);
     expect(isWipSection(getSection("tools")!)).toBe(true);
   });
-  it("does not flag data sections as WIP", () => {
+  it("does not flag data or link sections as WIP", () => {
     expect(isWipSection(getSection("items")!)).toBe(false);
     expect(isWipSection(getSection("environment")!)).toBe(false);
     expect(isWipSection(getSection("tramplers")!)).toBe(false);
+    expect(isWipSection(getSection("tech")!)).toBe(false);
   });
   it("marks the NPCs env category wip and leaves the others live", () => {
     const env = getSection("environment")!;

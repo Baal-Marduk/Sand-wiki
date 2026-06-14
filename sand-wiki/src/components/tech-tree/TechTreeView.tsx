@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import Link from "next/link";
 import "./tech-tree.css";
 import type { TechTree, TechNode } from "@/lib/tech-tree/types";
 import { LAYOUT, computeLayout, ancestors, pathCost } from "@/lib/tech-tree/layout";
@@ -71,7 +72,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   return (
     <div className="tt-app">
       <header className="tt-appbar">
-        <div className="tt-brand"><span className="tt-brand-mark">S</span><span className="tt-brand-name">SAND<span className="sub">·</span>WIKI</span></div>
+        <Link href="/" className="tt-brand"><span className="tt-brand-mark">S</span><span className="tt-brand-name">SAND<span className="sub">·</span>WIKI</span></Link>
         <span className="tt-page-title">Tech Tree</span>
         <div className="tt-toolbar">
           <span className="tt-progress">{unlocked.size} / {tree.nodes.length} unlocked</span>

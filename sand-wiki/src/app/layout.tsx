@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Oswald } from "next/font/google";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ConditionalChrome } from "@/components/ConditionalChrome";
 import "./globals.css";
 
 const oswald = Oswald({
@@ -21,17 +22,22 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`dark ${oswald.variable}`}>
       <body className="min-h-screen bg-background text-foreground flex flex-col">
-        <SiteHeader />
-        <main className="max-w-6xl mx-auto w-full p-4 flex-1">{children}</main>
-        <footer className="border-t border-border text-sm text-muted-foreground p-4 text-center">
-          <p>
-            Unofficial fan site. Not affiliated with or endorsed by tinyBuild.{" "}
-            <Link href="/about" className="text-primary underline underline-offset-2">
-              Learn more
-            </Link>
-            .
-          </p>
-        </footer>
+        <ConditionalChrome
+          header={<SiteHeader />}
+          footer={
+            <footer className="border-t border-border text-sm text-muted-foreground p-4 text-center">
+              <p>
+                Unofficial fan site. Not affiliated with or endorsed by tinyBuild.{" "}
+                <Link href="/about" className="text-primary underline underline-offset-2">
+                  Learn more
+                </Link>
+                .
+              </p>
+            </footer>
+          }
+        >
+          {children}
+        </ConditionalChrome>
       </body>
     </html>
   );
