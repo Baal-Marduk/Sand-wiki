@@ -4,8 +4,9 @@ import { useState } from "react";
 import Link from "next/link";
 import { submitRecipeEdit } from "@/app/contribute/actions";
 import { EnumField } from "@/components/EnumField";
+import { DirtyForm, DirtySubmit } from "@/components/DirtyForm";
 import {
-  labelCls, inputCls, selectCls, textareaCls, btnPrimary, btnGhost, btnSecondary, btnSm,
+  labelCls, inputCls, selectCls, textareaCls, btnGhost, btnSecondary, btnSm,
 } from "@/components/form-styles";
 import type { RecipeLineDraft, RecipeSnapshot } from "@/lib/recipe-proposal";
 
@@ -99,7 +100,7 @@ export function RecipeEditForm({
   const [outputs, setOutputs] = useState<Row[]>(snapshot.outputs.length ? snapshot.outputs.map(toRow) : [blankLine()]);
 
   return (
-    <form action={action} className="space-y-5 max-w-2xl">
+    <DirtyForm action={action} className="space-y-5 max-w-2xl">
       {slug && <input type="hidden" name="slug" value={slug} />}
       {Object.entries(hiddenFields ?? {}).map(([k, v]) => (
         <input key={k} type="hidden" name={k} value={v} />
@@ -130,8 +131,8 @@ export function RecipeEditForm({
 
       <div className="flex justify-end gap-2 border-t border-border pt-4">
         <Link href={backHref} className={btnGhost}>Cancel</Link>
-        <button type="submit" className={btnPrimary}>{submitLabel}</button>
+        <DirtySubmit>{submitLabel}</DirtySubmit>
       </div>
-    </form>
+    </DirtyForm>
   );
 }

@@ -2,7 +2,8 @@ import Link from "next/link";
 import { submitEdit } from "@/app/contribute/actions";
 import { entityHref, type EditableField, type SelectOption } from "@/lib/proposal-schema";
 import { EnumField } from "@/components/EnumField";
-import { labelCls, inputCls, textareaCls, hintCls, btnPrimary, btnGhost } from "@/components/form-styles";
+import { DirtyForm, DirtySubmit } from "@/components/DirtyForm";
+import { labelCls, inputCls, textareaCls, hintCls, btnGhost } from "@/components/form-styles";
 
 export function EditProposalForm({
   type,
@@ -18,7 +19,7 @@ export function EditProposalForm({
   options: Record<string, SelectOption[]>;
 }) {
   return (
-    <form action={submitEdit} className="space-y-4 max-w-2xl">
+    <DirtyForm action={submitEdit} className="space-y-4 max-w-2xl">
       <input type="hidden" name="type" value={type} />
       <input type="hidden" name="slug" value={slug} />
       {fields.map((f) => (
@@ -49,8 +50,8 @@ export function EditProposalForm({
       </label>
       <div className="flex justify-end gap-2 border-t border-border pt-4">
         <Link href={entityHref(type, slug)} className={btnGhost}>Cancel</Link>
-        <button type="submit" className={btnPrimary}>Submit correction</button>
+        <DirtySubmit>Submit correction</DirtySubmit>
       </div>
-    </form>
+    </DirtyForm>
   );
 }

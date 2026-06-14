@@ -19,7 +19,7 @@ export const hintCls = "text-xs text-muted-foreground";
 export const errorCls = "text-xs text-destructive";
 
 const btnBase =
-  "inline-flex items-center justify-center gap-2 border font-display text-[13px] font-semibold uppercase tracking-[0.05em] transition-colors disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 border font-display text-[13px] font-semibold uppercase tracking-[0.05em] transition-colors disabled:opacity-50 disabled:pointer-events-none";
 
 export const btnPrimary = `${btnBase} border-transparent bg-primary px-4 py-2 text-primary-foreground hover:bg-primary-hover active:bg-primary-press`;
 export const btnGhost = `${btnBase} border-border-strong px-4 py-2 text-foreground hover:border-primary hover:bg-card-elevated hover:text-primary-hover`;

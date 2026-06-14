@@ -4,8 +4,9 @@ import { useState } from "react";
 import { submitLinksEdit } from "@/app/contribute/actions";
 import { CUSTOM_TARGET, type LinkRowDraft } from "@/lib/link-proposal";
 import type { LinkField } from "@/lib/entity-links";
+import { DirtyForm, DirtySubmit } from "@/components/DirtyForm";
 import {
-  labelCls, inputCls, selectCls, textareaCls, btnPrimary, btnGhost, btnSecondary, btnSm,
+  labelCls, inputCls, selectCls, textareaCls, btnGhost, btnSecondary, btnSm,
 } from "@/components/form-styles";
 
 type ItemOption = { slug: string; name: string };
@@ -49,7 +50,7 @@ export function LinkEditForm({
   const selectValue = (r: Row) => (r.targetSlug === null ? CUSTOM_TARGET : r.targetSlug ?? "");
 
   return (
-    <form action={action} className="space-y-4 max-w-2xl">
+    <DirtyForm action={action} className="space-y-4 max-w-2xl">
       <input type="hidden" name="type" value={type} />
       <input type="hidden" name="slug" value={slug} />
       <input type="hidden" name="role" value={role} />
@@ -139,8 +140,8 @@ export function LinkEditForm({
       </label>
 
       <div className="flex justify-end gap-2 border-t border-border pt-4">
-        <button type="submit" className={btnPrimary}>Submit {label} change</button>
+        <DirtySubmit>Submit {label} change</DirtySubmit>
       </div>
-    </form>
+    </DirtyForm>
   );
 }
