@@ -1,5 +1,8 @@
 import type { RawTechRow, TechTree, TechNode, TechFaction } from "./types";
 
+// Cost resource shown on the card and excluded from the materials list.
+export const CROWNS_NAME = "Crowns";
+
 const FACTIONS: TechFaction[] = [
   { id: "godlewski", name: "Godlewski's Expedition", accent: "#4493f8" },
   { id: "kaiser", name: "Kaiser's Friends", accent: "#e3a008" },
@@ -28,7 +31,7 @@ export function toTechTree(rows: RawTechRow[]): TechTree {
         .map((l) => l.target!.slug);
 
       const costs = costLinks.map((l) => ({ name: l.name, amount: l.amount ?? 0, icon: l.target?.icon ?? null }));
-      const crowns = costs.find((c) => c.name === "Crowns")?.amount ?? 0;
+      const crowns = costs.find((c) => c.name === CROWNS_NAME)?.amount ?? 0;
       const unlocks = unlockLinks.map((l) => ({ name: l.name, slug: l.target?.slug ?? null, icon: l.target?.icon ?? null }));
 
       return {
