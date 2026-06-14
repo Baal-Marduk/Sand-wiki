@@ -9,6 +9,8 @@ import {
 } from "@/components/form-styles";
 import type { RecipeLineDraft, RecipeSnapshot } from "@/lib/recipe-proposal";
 
+type RecipeAction = (formData: FormData) => void | Promise<void>;
+
 type ItemOption = { slug: string; name: string };
 type Side = "input" | "output";
 
@@ -80,19 +82,23 @@ export function RecipeEditForm({
   items,
   workbenches,
   backHref,
+  action = submitRecipeEdit,
+  submitLabel = "Submit correction",
 }: {
-  slug: string;
+  slug?: string;
   snapshot: RecipeSnapshot;
   items: ItemOption[];
   workbenches: string[];
   backHref: string;
+  action?: RecipeAction;
+  submitLabel?: string;
 }) {
   const [inputs, setInputs] = useState<Row[]>(snapshot.inputs.length ? snapshot.inputs.map(toRow) : [blankLine()]);
   const [outputs, setOutputs] = useState<Row[]>(snapshot.outputs.length ? snapshot.outputs.map(toRow) : [blankLine()]);
 
   return (
-    <form action={submitRecipeEdit} className="space-y-5 max-w-2xl">
-      <input type="hidden" name="slug" value={slug} />
+    <form action={action} className="space-y-5 max-w-2xl">
+      {slug && <input type="hidden" name="slug" value={slug} />}
 
       <label className="flex flex-col gap-1.5">
         <span className={labelCls}>Workbench</span>
@@ -119,7 +125,7 @@ export function RecipeEditForm({
 
       <div className="flex justify-end gap-2 border-t border-border pt-4">
         <Link href={backHref} className={btnGhost}>Cancel</Link>
-        <button type="submit" className={btnPrimary}>Submit correction</button>
+        <button type="submit" className={btnPrimary}>{submitLabel}</button>
       </div>
     </form>
   );
