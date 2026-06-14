@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { ItemIconLink } from "@/components/ItemIconLink";
 import type { RecipeCard, RecipeCardRow } from "@/lib/recipes";
 
@@ -18,5 +19,16 @@ export function WorkbenchBadge({ recipe }: { recipe: RecipeCard }) {
     <span className="inline-flex items-center whitespace-nowrap border border-border-strong bg-card-elevated px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.04em] text-muted-foreground">
       {recipe.workbench}{recipe.tier !== null ? ` · T${recipe.tier}` : ""}
     </span>
+  );
+}
+
+export function LocationLink({ location }: { location: { slug: string; name: string } }) {
+  return (
+    <Link
+      href={`/environment/${location.slug}`}
+      className="inline-flex items-center whitespace-nowrap border border-border-strong bg-card-elevated px-2 py-0.5 font-mono text-[11px] uppercase tracking-[0.04em] text-muted-foreground hover:text-foreground"
+    >
+      {location.name}
+    </Link>
   );
 }
