@@ -1,10 +1,9 @@
-import { SectionPlaceholder } from "@/components/SectionPlaceholder";
+import { getTechTree } from "@/lib/queries";
+import { TechTreeView } from "@/components/tech-tree/TechTreeView";
 
-export default function TechPage() {
-  return (
-    <SectionPlaceholder
-      sectionSlug="tech"
-      note="The in-game tech tree isn't available in the current game data — its costs and prerequisites aren't shipped in the game files. This section is a placeholder until that data can be extracted."
-    />
-  );
+export const metadata = { title: "Tech Tree — SAND Wiki" };
+
+export default async function TechPage() {
+  const tree = await getTechTree();
+  return <TechTreeView tree={tree} />;
 }
