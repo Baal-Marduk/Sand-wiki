@@ -149,3 +149,67 @@ export function diffLinkRows(oldRows: LinkRowDraft[], newRows: LinkRowDraft[]): 
     return { key, name, old: o, new: n, status };
   });
 }
+
+/** A loaded incoming loot link with its SOURCE resolved to slug + name. The inverse
+ *  of RawLink: identifies the source (container/landmark) rather than the target. */
+interface RawIncomingLoot {
+  source: { slug: string; name: string };
+  tier: string | null;
+  value1: string | null;
+  sortOrder: number;
+}
+
+/** Flatten an item's incoming loot links into LinkRowDraft[] for the item-side editor.
+ *  Per the inversion convention, `targetSlug` holds the SOURCE slug and `name` the
+ *  source name; loot has no amount. Sorted by sortOrder. */
+export function incomingLootToDrafts(rows: RawIncomingLoot[]): LinkRowDraft[] {
+  return [...rows]
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((r) => ({
+      targetSlug: r.source.slug,
+      name: r.source.name,
+      amount: null,
+      tier: r.tier,
+      value1: r.value1,
+    }));
+}
+
+/** An existing incoming loot link, as the apply path loads it (source resolved to slug). */
+export interface ExistingLootLink {
+  id: string;
+  sourceSlug: string;
+  tier: string | null;
+  value1: string | null;
+  sortOrder: number;
+}
+
+/** DB-write plan to reconcile an item's incoming loot links from `existing` to `newRows`. */
+export interface LootSourceWrites {
+  creates: LinkRowDraft[];
+  updates: { id: string; value1: string | null }[];
+  deletes: string[];
+}
+
+/** Key an incoming-loot row by source slug + tier, so the same source listing this item
+ *  at two tiers stays two distinct rows. */
+const lootKey = (sourceSlug: string | null, tier: string | null): string =>
+  `${sourceSlug ?? ""}|${tier ?? ""}`;
+
+/** Plan the writes to reconcile incoming loot links. Keyed by source+tier; only value1
+ *  can change in place (tier being part of the key, a tier change is delete + create). */
+export function diffLootSources(existing: ExistingLootLink[], newRows: LinkRowDraft[]): LootSourceWrites {
+  const existingByKey = new Map(existing.map((e) => [lootKey(e.sourceSlug, e.tier), e]));
+  const newKeys = new Set(newRows.map((r) => lootKey(r.targetSlug, r.tier)));
+
+  const creates: LinkRowDraft[] = [];
+  const updates: { id: string; value1: string | null }[] = [];
+  for (const r of newRows) {
+    const ex = existingByKey.get(lootKey(r.targetSlug, r.tier));
+    if (!ex) creates.push(r);
+    else if (ex.value1 !== r.value1) updates.push({ id: ex.id, value1: r.value1 });
+  }
+  const deletes = existing
+    .filter((e) => !newKeys.has(lootKey(e.sourceSlug, e.tier)))
+    .map((e) => e.id);
+  return { creates, updates, deletes };
+}

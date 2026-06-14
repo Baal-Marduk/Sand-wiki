@@ -4,8 +4,11 @@ import {
   parseLinkRows,
   snapshotsEqual,
   diffLinkRows,
+  incomingLootToDrafts,
+  diffLootSources,
   CUSTOM_TARGET,
   type LinkSnapshot,
+  type ExistingLootLink,
 } from "./link-proposal";
 
 const names = new Map([["iron", "Iron"], ["bolt", "Bolt"]]);
@@ -108,5 +111,61 @@ describe("diffLinkRows", () => {
     const diff = diffLinkRows(oldRows, newRows);
     const byName = Object.fromEntries(diff.map((d) => [d.name, d.status]));
     expect(byName).toEqual({ Iron: "changed", Bolt: "removed", Gold: "added" });
+  });
+});
+
+describe("incomingLootToDrafts", () => {
+  it("maps source slug→targetSlug and source name→name, sorted by sortOrder", () => {
+    const rows = [
+      { source: { slug: "ammo-crate", name: "Ammo Crate" }, tier: "Rare", value1: "1-2", sortOrder: 1 },
+      { source: { slug: "supply-cache", name: "Supply Cache" }, tier: null, value1: null, sortOrder: 0 },
+    ];
+    expect(incomingLootToDrafts(rows)).toEqual([
+      { targetSlug: "supply-cache", name: "Supply Cache", amount: null, tier: null, value1: null },
+      { targetSlug: "ammo-crate", name: "Ammo Crate", amount: null, tier: "Rare", value1: "1-2" },
+    ]);
+  });
+});
+
+describe("diffLootSources", () => {
+  const existing: ExistingLootLink[] = [
+    { id: "l1", sourceSlug: "ammo-crate", tier: "Rare", value1: "1-2", sortOrder: 0 },
+    { id: "l2", sourceSlug: "supply-cache", tier: null, value1: null, sortOrder: 1 },
+  ];
+
+  it("creates new (source,tier) pairs, deletes missing ones", () => {
+    const newRows = [
+      { targetSlug: "ammo-crate", name: "Ammo Crate", amount: null, tier: "Rare", value1: "1-2" },
+      { targetSlug: "field-box", name: "Field Box", amount: null, tier: "Normal", value1: "1" },
+    ];
+    const w = diffLootSources(existing, newRows);
+    expect(w.creates).toEqual([
+      { targetSlug: "field-box", name: "Field Box", amount: null, tier: "Normal", value1: "1" },
+    ]);
+    expect(w.updates).toEqual([]);
+    expect(w.deletes).toEqual(["l2"]);
+  });
+
+  it("treats a value1-only change as an in-place update", () => {
+    const newRows = [
+      { targetSlug: "ammo-crate", name: "Ammo Crate", amount: null, tier: "Rare", value1: "3-4" },
+      { targetSlug: "supply-cache", name: "Supply Cache", amount: null, tier: null, value1: null },
+    ];
+    const w = diffLootSources(existing, newRows);
+    expect(w.creates).toEqual([]);
+    expect(w.updates).toEqual([{ id: "l1", value1: "3-4" }]);
+    expect(w.deletes).toEqual([]);
+  });
+
+  it("treats a tier change as delete-old + create-new (tier is part of the key)", () => {
+    const newRows = [
+      { targetSlug: "ammo-crate", name: "Ammo Crate", amount: null, tier: "Very Rare", value1: "1-2" },
+      { targetSlug: "supply-cache", name: "Supply Cache", amount: null, tier: null, value1: null },
+    ];
+    const w = diffLootSources(existing, newRows);
+    expect(w.creates).toEqual([
+      { targetSlug: "ammo-crate", name: "Ammo Crate", amount: null, tier: "Very Rare", value1: "1-2" },
+    ]);
+    expect(w.deletes).toEqual(["l1"]);
   });
 });
