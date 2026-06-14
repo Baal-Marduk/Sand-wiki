@@ -13,6 +13,7 @@
     "test:e2e": "playwright test",
     "db:seed": "tsx prisma/seed.ts",
     "db:seed:force": "tsx prisma/seed.ts --force",
+    "db:load-location-recipes": "tsx prisma/load-location-recipes.ts",
     "db:reset": "prisma migrate reset --force",
     "directus:up": "docker compose up -d directus",
     "directus:down": "docker compose down",
