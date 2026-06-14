@@ -7,6 +7,7 @@ import { ItemDetailsPanel } from "@/components/ItemDetailsPanel";
 import { DescriptionText } from "@/components/DescriptionText";
 import { ItemIcon } from "@/components/ItemIcon";
 import type { StatCell, DetailRow } from "@/lib/item-view";
+import { steamProfileUrl } from "@/lib/steam";
 
 export interface EntityIcon {
   name: string;
@@ -29,6 +30,8 @@ export interface EntityDetailProps {
   /** Shown in the main column when there are no tabs (e.g. the item "no data" message). */
   tabsEmptyFallback?: React.ReactNode;
   sourceUrl?: string | null;
+  /** Most recent contributor credit, shown at the bottom of the sidebar. */
+  lastEditedBy?: { steamId: string; name: string } | null;
 }
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
@@ -55,8 +58,24 @@ export function EntityDetail({
   tabs,
   tabsEmptyFallback,
   sourceUrl,
+  lastEditedBy,
 }: EntityDetailProps) {
-  const hasSidebar = !!detailRows && detailRows.length > 0;
+  const hasDetails = !!detailRows && detailRows.length > 0;
+  const hasSidebar = hasDetails || !!lastEditedBy;
+
+  const editorCredit = lastEditedBy ? (
+    <div className={hasDetails ? "mt-5" : undefined}>
+      <SectionTitle>Last edited by</SectionTitle>
+      <a
+        href={steamProfileUrl(lastEditedBy.steamId)}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-[13px] font-medium text-primary underline underline-offset-2 hover:text-primary-hover"
+      >
+        {lastEditedBy.name}
+      </a>
+    </div>
+  ) : null;
   const main = tabs && tabs.length > 0 ? <ItemTabs tabs={tabs} /> : tabsEmptyFallback ?? null;
   const hasStats = !!stats && stats.length > 0;
 
@@ -118,7 +137,10 @@ export function EntityDetail({
             {statsBlock}
             {main}
           </div>
-          <ItemDetailsPanel rows={detailRows!} />
+          <aside>
+            {hasDetails && <ItemDetailsPanel rows={detailRows!} />}
+            {editorCredit}
+          </aside>
         </div>
       ) : (
         <div className="space-y-6">

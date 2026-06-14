@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCaliber, getUnlockingNode } from "@/lib/queries";
+import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCaliber, getUnlockingNode, getLastEditor } from "@/lib/queries";
+import { editorDisplayName } from "@/lib/steam";
 import { ammoCaliber, weaponCaliber, caliberLabel } from "@/lib/ammo";
 import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
@@ -38,6 +39,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const ammoUsers = isAmmo && caliber ? await getWeaponsByCaliber(caliber) : [];
 
   const canSuggest = !!(await getSession());
+  const editor = await getLastEditor("item", item.slug);
   const tabContent: Partial<Record<TabId, React.ReactNode>> = {
     "crafted-by": <CraftTable recipes={crafts} />,
     "used-in": <UsedInTable recipes={usedInCrafts} />,
@@ -95,6 +97,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
         isAmmo ? caliberLabel(caliber) ?? undefined : undefined,
       )}
       detailRows={detailRows}
+      lastEditedBy={editor ? { steamId: editor.steamId, name: editorDisplayName(editor.personaName) } : null}
       tabs={tabs}
       tabsEmptyFallback={
         <p className="text-muted-foreground">No crafting, usage, or trade data for this item.</p>

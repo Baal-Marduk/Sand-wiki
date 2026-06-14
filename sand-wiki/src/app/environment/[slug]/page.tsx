@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { getEnvEntityBySlug } from "@/lib/queries";
+import { getEnvEntityBySlug, getLastEditor } from "@/lib/queries";
+import { editorDisplayName } from "@/lib/steam";
 import { lootEntryView } from "@/lib/loot";
 import { groupLootByTier, type LinkRow } from "@/lib/entity-links";
 import { categoryLabel } from "@/lib/taxonomy";
@@ -18,6 +19,7 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
   if (!entity) notFound();
 
   const canSuggest = !!(await getSession());
+  const editor = await getLastEditor("envEntity", slug);
   const lootRows: LinkRow[] = entity.outgoingLinks.map((l) => ({
     targetSlug: l.target?.slug ?? null,
     targetKind: l.target?.kind ?? null,
@@ -51,6 +53,7 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
       title={entity.name}
       badges={<CategoryTag slug={entity.category} />}
       description={entity.description}
+      lastEditedBy={editor ? { steamId: editor.steamId, name: editorDisplayName(editor.personaName) } : null}
       tabs={tabs}
       sourceUrl={entity.sourceUrl}
     />

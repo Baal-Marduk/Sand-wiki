@@ -6,7 +6,7 @@ import { CoinIcon } from "@/components/CoinIcon";
  *  their unit. */
 export function ItemDetailsPanel({ rows }: { rows: DetailRow[] }) {
   return (
-    <aside>
+    <div>
       <h2 className="mb-2.5 font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
         Details
       </h2>
@@ -30,6 +30,6 @@ export function ItemDetailsPanel({ rows }: { rows: DetailRow[] }) {
           </div>
         ))}
       </dl>
-    </aside>
+    </div>
   );
 }
