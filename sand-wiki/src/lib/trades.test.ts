@@ -3,13 +3,13 @@ import { classifyTrades, formatCrowns } from "./trades";
 import type { RecipeCard } from "./recipes";
 
 const buyC4: RecipeCard = {
-  slug: "c4-dynamite", workbench: null, tier: null, craftTimeSeconds: 30,
+  slug: "c4-dynamite", workbench: null, tier: null, craftTimeSeconds: 30, location: null,
   inputs: [{ slug: "coin-crown", name: "Coin Crown", icon: null, rarity: null, amount: 10 }],
   outputs: [{ slug: "c4-dynamite", name: "C4 Dynamite", icon: null, rarity: null, amount: 1 }],
 };
 
 const craftC4: RecipeCard = {
-  slug: "c4-dynamite-2", workbench: "Armament", tier: 2, craftTimeSeconds: 3,
+  slug: "c4-dynamite-2", workbench: "Armament", tier: 2, craftTimeSeconds: 3, location: null,
   inputs: [
     { slug: "resource-fabric", name: "Fabric", icon: null, rarity: null, amount: 2 },
     { slug: "resource-gunpowder", name: "Gunpowder", icon: null, rarity: null, amount: 2 },
@@ -19,7 +19,7 @@ const craftC4: RecipeCard = {
 
 // pistol-ammo sells: 1->5, 5->25, 100->1000 (unit 5, 5, 10)
 const sell = (qty: number, crowns: number, slug: string): RecipeCard => ({
-  slug, workbench: null, tier: null, craftTimeSeconds: null,
+  slug, workbench: null, tier: null, craftTimeSeconds: null, location: null,
   inputs: [{ slug: "pistol-ammo", name: "Pistol Ammo", icon: null, rarity: null, amount: qty }],
   outputs: [{ slug: "coin-crown", name: "Coin Crown", icon: null, rarity: null, amount: crowns }],
 });

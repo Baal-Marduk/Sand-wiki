@@ -44,7 +44,7 @@ describe("availableTabs", () => {
 
   it("returns tabs in fixed order, only those with data", () => {
     const trades: ItemTrades = {
-      crafts: [{ slug: "c", workbench: null, tier: null, craftTimeSeconds: null, inputs: [], outputs: [] }],
+      crafts: [{ slug: "c", workbench: null, tier: null, craftTimeSeconds: null, location: null, inputs: [], outputs: [] }],
       usedInCrafts: [],
       buy: [buyOpt],
       sell: [sellOpt],
