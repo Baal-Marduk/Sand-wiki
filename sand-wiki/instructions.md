@@ -72,6 +72,19 @@ brand wordmark: Black Ops One. Accessibility is a hard gate — axe must pass (`
    **Re-seed = `npm run db:seed`** (against the Neon dev DB).
 4. **Refresh data** = run the relevant importer (`node prisma/import-*.mjs`) then re-seed.
 
+> **Re-seed safety (curated rows are never erased).** The seed never prunes a row marked
+> `curated: true`. Any hand-added or admin-applied **entity** (e.g. the `sprengstofffabrik`
+> landmark) must have `Entity.curated = true`, and any hand-authored **recipe** (including
+> location production recipes) must have `Recipe.curated = true`, or a re-seed will delete it.
+> Apply-time code (`proposal-apply.ts`) and `prisma/load-location-recipes.ts` set these flags;
+> the prune queries in `seed.ts` all filter `curated: false`. Child rows (recipe input/output
+> lines, loot/cost/craft links) are always deleted and recreated for **non-curated** parents —
+> never hand-edit those directly; edit them through the proposal flow instead.
+>
+> **Location production recipes** live as `Recipe` rows with `locationId` set (one recipe per
+> location). Source of record: `prisma/location-recipes.json`, loaded idempotently via
+> `npm run db:load-location-recipes`.
+
 Community-wiki content is uneven/stubby (many landmark pages are empty; some loot tables sparse).
 Imports copy what exists and link back via `sourceUrl`.
 
