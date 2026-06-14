@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { groupLootByTier, type LinkRow } from "./entity-links";
+import { groupLootByTier, isLinkRole, linkFields, LINK_ROLES, type LinkRow } from "./entity-links";
 
 const row = (over: Partial<LinkRow>): LinkRow => ({
   targetSlug: null, targetKind: null, name: "x", icon: null, rarity: null,
@@ -23,5 +23,29 @@ describe("groupLootByTier", () => {
       row({ name: "A", tier: "Normal", sortOrder: 1 }),
     ]);
     expect(groups.map((g) => g.tier)).toEqual(["Normal", "Other"]);
+  });
+});
+
+describe("key-progression roles", () => {
+  it("registers requires-key and rewards-key with no extra editable columns", () => {
+    expect(LINK_ROLES["requires-key"]).toBeDefined();
+    expect(LINK_ROLES["rewards-key"]).toBeDefined();
+    expect(linkFields("requires-key")).toEqual([]);
+    expect(linkFields("rewards-key")).toEqual([]);
+  });
+});
+
+describe("isLinkRole", () => {
+  it("recognizes every registered role, including fieldless key roles", () => {
+    expect(isLinkRole("loot")).toBe(true);
+    expect(isLinkRole("cost")).toBe(true);
+    expect(isLinkRole("requires-key")).toBe(true);
+    expect(isLinkRole("rewards-key")).toBe(true);
+  });
+
+  it("rejects unknown roles", () => {
+    expect(isLinkRole("tech-prereq")).toBe(false);
+    expect(isLinkRole("")).toBe(false);
+    expect(isLinkRole("nonsense")).toBe(false);
   });
 });

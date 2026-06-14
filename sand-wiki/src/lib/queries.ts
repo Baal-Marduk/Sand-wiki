@@ -118,8 +118,10 @@ export async function getEnvEntityBySlug(slug: string) {
   const entity = await prisma.entity.findUnique({
     where: { slug },
     include: {
+      // Loot tabs + the key-progression panel share this one relation include; the
+      // page partitions by role. (Prisma allows including a relation only once.)
       outgoingLinks: {
-        where: { role: "loot" },
+        where: { role: { in: ["loot", "requires-key", "rewards-key"] } },
         orderBy: { sortOrder: "asc" },
         include: { target: { select: { slug: true, kind: true, icon: true, rarity: true } } },
       },
@@ -133,11 +135,17 @@ export async function getEnvEntityBySlug(slug: string) {
     },
   });
   if (entity === null || entity.kind !== "environment") return null;
+  // `outgoingLinks` stays loot-only for back-compat with the loot tabs; key-progression
+  // links are surfaced separately so the Keys tab can render them.
+  const lootLinks = entity.outgoingLinks.filter((l) => l.role === "loot");
+  const keyLinks = entity.outgoingLinks.filter(
+    (l) => l.role === "requires-key" || l.role === "rewards-key",
+  );
   // We're already on the location page, so each card's location backlink is null.
   const craftedBy = entity.craftedAtRecipes.map((r) =>
     toRecipeCard(toRecipeWithItems({ ...r, location: null })),
   );
-  return { ...entity, craftedBy };
+  return { ...entity, outgoingLinks: lootLinks, keyLinks, craftedBy };
 }
 
 /** Count of env entities per category — for the Environment landing. */

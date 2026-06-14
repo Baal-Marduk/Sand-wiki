@@ -17,6 +17,24 @@ brand wordmark: Black Ops One. Accessibility is a hard gate — axe must pass (`
 
 ## Data model (Prisma)
 
+> **⚠️ The bullets below predate the unified-entity migration and are stale.** The live schema
+> (`prisma/schema.prisma`) is a single **`Entity`** table (`kind` = `item` | `environment` |
+> `trampler-part` | `tech-node`) with per-kind stat tables (`ItemStats` / `TramplerStats` /
+> `TechNodeStats`) and one **`EntityLink`** join (`role`, optional `target`, `amount` / `tier` /
+> `value1–3`, `sortOrder`) carrying every relation. Recipes remain their own `Recipe` /
+> `RecipeInput` / `RecipeOutput` tables (now with a nullable `locationId`). `Entity.curated`
+> guards a row from prune; `Entity.lootCurated` stops the seed recreating its loot/cost links.
+> Treat the per-kind-table bullets below as historical until this section is rewritten.
+>
+> **EntityLink roles:** `loot` (container/landmark → item, with `tier` / `value1`), `cost`
+> (trampler part → item, `amount`), `tech-unlocks` / `tech-unlock-cost` / `tech-prereq`, and the
+> **key-progression pair** `requires-key` / `rewards-key` (location → key item, no extra columns).
+> Roles are registered in `src/lib/entity-links.ts` (`LINK_ROLES`) and edited through the
+> Edit-tabs hub like loot/cost. The key roles are **seed-safe by construction**: `seed.ts` only
+> delete+recreates the roles it knows (loot / cost / tech-*), so it never touches key links. Load
+> the initial chain with the surgical `npm run db:load-key-progression` (idempotent;
+> `prisma/key-progression.json`) — **never** the full seed.
+
 - **`Item`** — `slug`, `name`, `derivedName` (search-only), `description`, `category`,
   `storageStack`, `workbenchTier`, `icon`, **`rarity`** (string, indexed),
   flat wiki-stat columns **`statType`/`statValue`/`damage`/`playerDamage`/`tramplerDamage`/

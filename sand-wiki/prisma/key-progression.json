@@ -1,0 +1,20 @@
+{
+  "_comment": "Island key-progression chain (extracted from the in-game key/loot screenshot, reconciled to existing slugs). Loaded by load-key-progression.ts as EntityLink rows with the seed-safe roles requires-key / rewards-key. A location requires the previous key to open and rewards the next key. Dreadnaught requires the Black Key; its loot is filled separately in-app.",
+  "links": [
+    { "source": "valuables-safe", "role": "rewards-key",  "target": "game-key-island-door-green" },
+
+    { "source": "kaiserplatz",   "role": "requires-key", "target": "game-key-island-door-green" },
+    { "source": "kaiserplatz",   "role": "rewards-key",  "target": "game-key-island-door-blue" },
+
+    { "source": "meeresauge",    "role": "requires-key", "target": "game-key-island-door-blue" },
+    { "source": "meeresauge",    "role": "rewards-key",  "target": "game-key-island-door-red" },
+
+    { "source": "segen",         "role": "requires-key", "target": "game-key-island-door-red" },
+    { "source": "segen",         "role": "rewards-key",  "target": "game-key-island-door-white" },
+
+    { "source": "fort-istria",   "role": "requires-key", "target": "game-key-island-door-white" },
+    { "source": "fort-istria",   "role": "rewards-key",  "target": "game-key-island-door-black" },
+
+    { "source": "dreadnaught",   "role": "requires-key", "target": "game-key-island-door-black" }
+  ]
+}

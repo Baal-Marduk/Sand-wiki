@@ -9,7 +9,7 @@ import { computeDiff } from "@/lib/proposal-diff";
 import { getEntityFields } from "@/lib/proposal-entity";
 import { getOutgoingLinks, getIncomingLootLinks, listLootSources } from "@/lib/queries";
 import { parseLinkRows, linksToSnapshot, incomingLootToDrafts, snapshotsEqual as linkSnapshotsEqual } from "@/lib/link-proposal";
-import { linkFields } from "@/lib/entity-links";
+import { isLinkRole } from "@/lib/entity-links";
 
 const MAX_PENDING_PER_USER = 10;
 const MAX_NOTE_LENGTH = 2000;
@@ -218,7 +218,7 @@ export async function submitLinksEdit(formData: FormData) {
   const note = readNote(formData);
 
   if (!isEditableTarget(type)) throw new Error("Unknown target type.");
-  if (linkFields(role).length === 0) throw new Error("Unknown tab.");
+  if (!isLinkRole(role)) throw new Error("Unknown tab.");
 
   const session = await requireUser(`/contribute/edit-tabs?type=${type}&slug=${slug}`);
   await assertUnderQuota(session.steamId);

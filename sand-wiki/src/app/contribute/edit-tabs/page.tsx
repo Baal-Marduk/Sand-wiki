@@ -5,7 +5,7 @@ import { prisma } from "@/lib/db";
 import { isEditableTarget, entityHref } from "@/lib/proposal-schema";
 import { getOutgoingLinks, getItemBySlug, getIncomingLootLinks, listLootSources, getEnvEntityBySlug } from "@/lib/queries";
 import { linksToSnapshot, incomingLootToDrafts } from "@/lib/link-proposal";
-import { linkFields, LINK_ROLES } from "@/lib/entity-links";
+import { linkFields, LINK_ROLES, type LinkRole } from "@/lib/entity-links";
 import { LinkEditForm } from "@/components/LinkEditForm";
 import { submitDeleteRecipe, submitItemLootEdit } from "@/app/contribute/actions";
 import { btnGhost, btnSecondary, btnDestructive, btnSm } from "@/components/form-styles";
@@ -16,11 +16,13 @@ type SP = Promise<{ type?: string; slug?: string }>;
  *  (landmark) crafting is edited via the dedicated `envCraft` section below, not here. */
 const RECIPE_TAB_KINDS = new Set(["item"]);
 
-/** Which link role (if any) this proposal target type edits via the inline editor. */
-const ROLE_FOR_TYPE: Record<string, "loot" | "cost" | undefined> = {
-  envEntity: "loot",
-  tramplerPart: "cost",
-  item: undefined, // recipes only (rendered via the recipe sections below)
+/** Which link roles (if any) this proposal target type edits via the inline editor.
+ *  Environment entities edit loot plus the key-progression pair; trampler parts edit
+ *  build cost; items use the recipe + "Found in" sections below (no outgoing roles here). */
+const ROLES_FOR_TYPE: Record<string, readonly LinkRole[]> = {
+  envEntity: ["loot", "requires-key", "rewards-key"],
+  tramplerPart: ["cost"],
+  item: [],
 };
 
 export default async function EditTabsPage({ searchParams }: { searchParams: SP }) {
@@ -28,13 +30,20 @@ export default async function EditTabsPage({ searchParams }: { searchParams: SP 
   if (!isEditableTarget(type) || !slug) notFound();
   await requireUser(`/contribute/edit-tabs?type=${type}&slug=${slug}`);
 
-  const role = ROLE_FOR_TYPE[type];
+  const roles = ROLES_FOR_TYPE[type] ?? [];
   const back = entityHref(type, slug);
 
-  const entity = await getOutgoingLinks(slug, role ?? "loot");
+  // One fetch per editable role (each returns the entity + that role's outgoing links).
+  // The first call doubles as the entity lookup; item targets edit no outgoing roles here.
+  const baseRole = roles[0] ?? "loot";
+  const entity = await getOutgoingLinks(slug, baseRole);
   if (!entity) notFound();
+  const rest = await Promise.all(roles.slice(1).map((r) => getOutgoingLinks(slug, r)));
+  const linksByRole = new Map<string, typeof entity.outgoingLinks>();
+  if (roles.length) linksByRole.set(baseRole, entity.outgoingLinks);
+  roles.slice(1).forEach((r, i) => linksByRole.set(r, rest[i]?.outgoingLinks ?? []));
 
-  const items = role
+  const items = roles.length
     ? await prisma.entity.findMany({
         where: { kind: "item" },
         select: { slug: true, name: true },
@@ -56,20 +65,25 @@ export default async function EditTabsPage({ searchParams }: { searchParams: SP 
       <h1 className="font-display text-2xl font-bold uppercase tracking-[0.01em]">Edit tabs — {entity.name}</h1>
       <p className="text-muted-foreground">An admin reviews every change before it goes live.</p>
 
-      {role && (
-        <section className="space-y-3 border border-border bg-card p-4">
-          <h2 className="font-display text-sm font-semibold uppercase tracking-[0.06em] text-muted-foreground">{LINK_ROLES[role].label}</h2>
-          <LinkEditForm
-            type={type}
-            slug={slug}
-            role={role}
-            label={LINK_ROLES[role].label}
-            fields={linkFields(role)}
-            rows={linksToSnapshot(role, entity.outgoingLinks).rows}
-            items={items}
-          />
-        </section>
-      )}
+      {roles.map((r) => {
+        const isKeyRole = r === "requires-key" || r === "rewards-key";
+        return (
+          <section key={r} className="space-y-3 border border-border bg-card p-4">
+            <h2 className="font-display text-sm font-semibold uppercase tracking-[0.06em] text-muted-foreground">{LINK_ROLES[r].label}</h2>
+            <LinkEditForm
+              type={type}
+              slug={slug}
+              role={r}
+              label={LINK_ROLES[r].label}
+              fields={linkFields(r)}
+              rows={linksToSnapshot(r, linksByRole.get(r) ?? []).rows}
+              items={items}
+              optionNoun={isKeyRole ? "key" : "item"}
+              allowCustom={!isKeyRole}
+            />
+          </section>
+        );
+      })}
 
       {isItem && (
         <section className="space-y-3 border border-border bg-card p-4">

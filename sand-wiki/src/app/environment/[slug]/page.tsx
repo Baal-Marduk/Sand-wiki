@@ -8,6 +8,7 @@ import { byRarityThenName } from "@/lib/rarity";
 import { EntityDetail } from "@/components/EntityDetail";
 import { CategoryTag } from "@/components/CategoryTag";
 import { LootTable } from "@/components/LootTable";
+import { KeyLinksTable, type KeyLinkView } from "@/components/KeyLinksTable";
 import { UsedInTable } from "@/components/UsedInTable";
 import { type Tab } from "@/components/ItemTabs";
 import { getSession } from "@/lib/auth";
@@ -32,8 +33,18 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
     value1: l.value1,
     sortOrder: l.sortOrder,
   }));
-  // One tab per loot tier (Normal / Rare / …); a "Craft" tab first when the location
-  // produces recipes. Locations with neither simply have no tabs.
+  // Key-progression links (which key opens this location, which key it rewards).
+  const keyView = (l: (typeof entity.keyLinks)[number]): KeyLinkView => ({
+    slug: l.target?.slug ?? null,
+    name: l.name,
+    icon: l.target?.icon ?? null,
+    rarity: l.target?.rarity ?? null,
+  });
+  const requiresKeys = entity.keyLinks.filter((l) => l.role === "requires-key").map(keyView);
+  const rewardsKeys = entity.keyLinks.filter((l) => l.role === "rewards-key").map(keyView);
+
+  // Tab order: Craft, Keys, then one tab per loot tier (Normal / Rare / …). A location
+  // with none of these simply has no tabs.
   const tierGroups = groupLootByTier(lootRows);
   const craftTabs: Tab[] = entity.craftedBy.length > 0
     ? [{
@@ -42,8 +53,16 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
         content: <UsedInTable recipes={entity.craftedBy} caption={`Items crafted at ${entity.name}`} />,
       }]
     : [];
+  const keyTabs: Tab[] = requiresKeys.length > 0 || rewardsKeys.length > 0
+    ? [{
+        id: "keys",
+        label: "Keys",
+        content: <KeyLinksTable requires={requiresKeys} rewards={rewardsKeys} />,
+      }]
+    : [];
   const tabs: Tab[] = [
     ...craftTabs,
+    ...keyTabs,
     ...tierGroups.map((g) => ({
       id: `loot-${g.tier || "all"}`,
       label: g.tier || "Loot",

@@ -16,13 +16,27 @@ export interface LinkRow {
 export const LINK_ROLES = {
   loot: { label: "Loot", fields: ["tier", "value1"] },
   cost: { label: "Build Cost", fields: ["amount"] },
+  // Key-progression roles: a location requires a key to open (`requires-key`) and
+  // rewards a key when opened (`rewards-key`). Target is the key item; no extra columns.
+  // Deliberately NOT folded into `loot` — fresh roles stay outside the seed's
+  // role-scoped delete+recreate (seed.ts only touches loot/cost/tech-*), so a re-seed
+  // can never wipe a hand-edited key chain.
+  "requires-key": { label: "Requires Key", fields: [] },
+  "rewards-key": { label: "Key Reward", fields: [] },
 } as const;
 export type LinkRole = keyof typeof LINK_ROLES;
 export type LinkField = "amount" | "tier" | "value1";
 
-/** Editable columns for a role (empty for an unknown role). */
+/** Editable columns for a role (empty for an unknown role, or one with no extra columns). */
 export function linkFields(role: string): readonly LinkField[] {
   return (LINK_ROLES as Record<string, { fields: readonly LinkField[] }>)[role]?.fields ?? [];
+}
+
+/** True iff `role` is a registered editable link role. Use this — not
+ *  `linkFields(role).length === 0` — to validate a role, since the key-progression
+ *  roles legitimately have zero extra columns. */
+export function isLinkRole(role: string): role is LinkRole {
+  return Object.prototype.hasOwnProperty.call(LINK_ROLES, role);
 }
 
 const TIER_ORDER = ["Normal", "Rare", "Very Rare"];
