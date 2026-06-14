@@ -25,6 +25,9 @@ export function LinkEditForm({
   fields,
   rows: initialRows,
   items,
+  action = submitLinksEdit,
+  optionNoun = "item",
+  allowCustom = true,
 }: {
   type: string;
   slug: string;
@@ -33,6 +36,9 @@ export function LinkEditForm({
   fields: readonly LinkField[];
   rows: LinkRowDraft[];
   items: ItemOption[];
+  action?: (formData: FormData) => void | Promise<void>;
+  optionNoun?: string;
+  allowCustom?: boolean;
 }) {
   const [rows, setRows] = useState<Row[]>(initialRows.length ? initialRows.map(toRow) : [blankRow()]);
   const update = (i: number, patch: Partial<Row>) =>
@@ -43,7 +49,7 @@ export function LinkEditForm({
   const selectValue = (r: Row) => (r.targetSlug === null ? CUSTOM_TARGET : r.targetSlug ?? "");
 
   return (
-    <form action={submitLinksEdit} className="space-y-4 max-w-2xl">
+    <form action={action} className="space-y-4 max-w-2xl">
       <input type="hidden" name="type" value={type} />
       <input type="hidden" name="slug" value={slug} />
       <input type="hidden" name="role" value={role} />
@@ -62,8 +68,10 @@ export function LinkEditForm({
                 }
                 className={`${selectCls} min-w-[12rem] flex-1`}
               >
-                <option value="">— select item —</option>
-                <option value={CUSTOM_TARGET}>— custom / unlinked —</option>
+                <option value="">— select {optionNoun} —</option>
+                {allowCustom && (
+                  <option value={CUSTOM_TARGET}>— custom / unlinked —</option>
+                )}
                 {items.map((it) => (
                   <option key={it.slug} value={it.slug}>{it.name}</option>
                 ))}
