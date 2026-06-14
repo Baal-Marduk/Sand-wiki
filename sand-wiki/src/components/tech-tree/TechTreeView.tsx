@@ -92,6 +92,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   }, []);
 
   const pan = useRef<{ x: number; y: number; left: number; top: number; active: boolean } | null>(null);
+  const panned = useRef(false);
   const onPanDown = useCallback((e: React.PointerEvent) => {
     if ((e.target as HTMLElement).closest(".tnode-status")) return; // let the ring handle its own clicks
     const vp = viewportRef.current; if (!vp) return;
@@ -107,6 +108,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   }, []);
   const endPan = useCallback((e: React.PointerEvent) => {
     const vp = viewportRef.current;
+    if (pan.current?.active) panned.current = true;
     if (vp) { vp.classList.remove("is-panning"); if (vp.hasPointerCapture?.(e.pointerId)) vp.releasePointerCapture(e.pointerId); }
     pan.current = null;
   }, []);
@@ -138,7 +140,9 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
       </div>
 
       <div className="tt-viewport" ref={viewportRef}
-           onPointerDown={onPanDown} onPointerMove={onPanMove} onPointerUp={endPan} onPointerLeave={endPan}>
+           onPointerDown={onPanDown} onPointerMove={onPanMove} onPointerUp={endPan}
+           onPointerLeave={endPan} onPointerCancel={endPan}
+           onClickCapture={(e) => { if (panned.current) { panned.current = false; e.stopPropagation(); } }}>
         <div id="tt-tierbar" style={{ width: layout.canvasW }}>
           {layout.tiers.map((t) => {
             const first = t.cols[0], last = t.cols[t.cols.length - 1];
