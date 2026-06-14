@@ -6,7 +6,7 @@ const names = (rows: { name: string }[]) => rows.map((r) => r.name).join(", ").t
 const workbenchKey = (r: RecipeCard) =>
   r.workbench ? `${r.workbench}·T${r.tier ?? 0}` : null;
 
-export function UsedInTable({ recipes }: { recipes: RecipeCard[] }) {
+export function UsedInTable({ recipes, caption = "Recipes that use this item" }: { recipes: RecipeCard[]; caption?: string }) {
   const columns: SortColumn[] = [
     { label: "Produces" }, { label: "Ingredients" }, { label: "Workbench" },
   ];
@@ -19,6 +19,6 @@ export function UsedInTable({ recipes }: { recipes: RecipeCard[] }) {
     ],
   }));
   return (
-    <SortableTable caption="Recipes that use this item" columns={columns} rows={rows} />
+    <SortableTable caption={caption} columns={columns} rows={rows} />
   );
 }

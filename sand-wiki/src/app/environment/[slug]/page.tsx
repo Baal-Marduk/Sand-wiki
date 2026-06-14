@@ -8,6 +8,7 @@ import { byRarityThenName } from "@/lib/rarity";
 import { EntityDetail } from "@/components/EntityDetail";
 import { CategoryTag } from "@/components/CategoryTag";
 import { LootTable } from "@/components/LootTable";
+import { UsedInTable } from "@/components/UsedInTable";
 import { type Tab } from "@/components/ItemTabs";
 import { getSession } from "@/lib/auth";
 
@@ -31,14 +32,24 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
     value1: l.value1,
     sortOrder: l.sortOrder,
   }));
-  // One tab per loot tier (Normal / Rare / …); environments with no tiered loot
-  // simply have no tabs.
+  // One tab per loot tier (Normal / Rare / …); a "Craft" tab first when the location
+  // produces recipes. Locations with neither simply have no tabs.
   const tierGroups = groupLootByTier(lootRows);
-  const tabs: Tab[] = tierGroups.map((g) => ({
-    id: `loot-${g.tier || "all"}`,
-    label: g.tier || "Loot",
-    content: <LootTable entries={g.rows.map(lootEntryView).sort(byRarityThenName)} />,
-  }));
+  const craftTabs: Tab[] = entity.craftedBy.length > 0
+    ? [{
+        id: "craft",
+        label: "Craft",
+        content: <UsedInTable recipes={entity.craftedBy} caption={`Items crafted at ${entity.name}`} />,
+      }]
+    : [];
+  const tabs: Tab[] = [
+    ...craftTabs,
+    ...tierGroups.map((g) => ({
+      id: `loot-${g.tier || "all"}`,
+      label: g.tier || "Loot",
+      content: <LootTable entries={g.rows.map(lootEntryView).sort(byRarityThenName)} />,
+    })),
+  ];
 
   return (
     <EntityDetail
