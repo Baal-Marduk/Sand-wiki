@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { ammoRowIdentity, type NewAmmo } from "./new-ammo";
+import entries from "./new-ammo.json";
 
 const SAMPLE: NewAmmo = {
   slug: "small-cannon-ammo-low-recoil",
@@ -33,5 +34,31 @@ describe("ammoRowIdentity", () => {
   it("throws when the displayName contains no caliber token", () => {
     const bad = { ...SAMPLE, displayName: "Low-Recoil Shell" };
     expect(() => ammoRowIdentity(bad)).toThrow(/caliber/i);
+  });
+});
+
+describe("new-ammo.json", () => {
+  const list = entries as NewAmmo[];
+
+  it("has exactly three entries with unique slugs and ids", () => {
+    expect(list).toHaveLength(3);
+    expect(new Set(list.map((e) => e.slug)).size).toBe(3);
+    expect(new Set(list.map((e) => e.id)).size).toBe(3);
+  });
+
+  it("every entry passes the caliber invariant", () => {
+    for (const e of list) expect(() => ammoRowIdentity(e)).not.toThrow();
+  });
+
+  it("covers the two known slugs plus one more 70 mm shotgun-turret variant", () => {
+    const slugs = list.map((e) => e.slug);
+    expect(slugs).toContain("shotgun-turret-ammo-smoke");
+    expect(slugs).toContain("small-cannon-ammo-low-recoil");
+    // The penetrating round's exact suffix is finalized later from the real icon filename;
+    // assert only that a third entry exists and is a shotgun-turret (70 mm) variant.
+    const extra = slugs.filter(
+      (s) => s.startsWith("shotgun-turret-ammo-") && s !== "shotgun-turret-ammo-smoke",
+    );
+    expect(extra).toHaveLength(1);
   });
 });
