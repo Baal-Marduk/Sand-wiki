@@ -25,6 +25,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   const [unlocked, setUnlocked] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [hover, setHover] = useState<{ slug: string; rect: DOMRect } | null>(null);
+  const viewportRef = useRef<HTMLDivElement>(null);
   const [resetOpen, setResetOpen] = useState(false);
 
   useEffect(() => {
@@ -37,6 +38,22 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     setUnlocked(new Set(tree.defaultUnlocked));
     /* eslint-enable react-hooks/set-state-in-effect */
   }, [byId, tree.defaultUnlocked]);
+
+  useEffect(() => {
+    /* eslint-disable react-hooks/set-state-in-effect */
+    const slug = new URLSearchParams(window.location.search).get("select");
+    if (!slug || !byId[slug]) return;
+    setSelected(new Set([slug]));
+    const vp = viewportRef.current, pos = posById[slug];
+    if (vp && pos) {
+      vp.scrollTo({
+        left: Math.max(0, pos.x + LAYOUT.CARD_W / 2 - vp.clientWidth / 2),
+        top: Math.max(0, pos.y + LAYOUT.CARD_H / 2 - vp.clientHeight / 2),
+        behavior: "smooth",
+      });
+    }
+    /* eslint-enable react-hooks/set-state-in-effect */
+  }, [byId, posById]);
 
   const persist = useCallback((s: Set<string>) => {
     try { localStorage.setItem(STORE_KEY, JSON.stringify([...s])); } catch { /* ignore */ }
@@ -74,6 +91,26 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     setSelected((prev) => { const n = new Set(prev); if (n.has(slug)) n.delete(slug); else n.add(slug); return n; });
   }, []);
 
+  const pan = useRef<{ x: number; y: number; left: number; top: number; active: boolean } | null>(null);
+  const onPanDown = useCallback((e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest(".tnode-status")) return; // let the ring handle its own clicks
+    const vp = viewportRef.current; if (!vp) return;
+    pan.current = { x: e.clientX, y: e.clientY, left: vp.scrollLeft, top: vp.scrollTop, active: false };
+  }, []);
+  const onPanMove = useCallback((e: React.PointerEvent) => {
+    const p = pan.current, vp = viewportRef.current; if (!p || !vp) return;
+    const dx = e.clientX - p.x, dy = e.clientY - p.y;
+    if (!p.active && Math.hypot(dx, dy) < 4) return; // movement threshold → still a click
+    if (!p.active) { p.active = true; vp.setPointerCapture(e.pointerId); vp.classList.add("is-panning"); }
+    vp.scrollLeft = p.left - dx;
+    vp.scrollTop = p.top - dy;
+  }, []);
+  const endPan = useCallback((e: React.PointerEvent) => {
+    const vp = viewportRef.current;
+    if (vp) { vp.classList.remove("is-panning"); if (vp.hasPointerCapture?.(e.pointerId)) vp.releasePointerCapture(e.pointerId); }
+    pan.current = null;
+  }, []);
+
   const cost = useMemo(() => pathCost(tree.nodes, [...selected], unlocked), [tree.nodes, selected, unlocked]);
 
   return (
@@ -100,7 +137,8 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
         <span className="hint">Click a tech to plan its path · click the ring to mark it already unlocked · select several to combine</span>
       </div>
 
-      <div className="tt-viewport">
+      <div className="tt-viewport" ref={viewportRef}
+           onPointerDown={onPanDown} onPointerMove={onPanMove} onPointerUp={endPan} onPointerLeave={endPan}>
         <div id="tt-tierbar" style={{ width: layout.canvasW }}>
           {layout.tiers.map((t) => {
             const first = t.cols[0], last = t.cols[t.cols.length - 1];

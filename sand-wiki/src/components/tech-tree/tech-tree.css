@@ -163,3 +163,7 @@
 .tt-tip-unlock-link { font-size: 12px; color: var(--primary); text-decoration: none; }
 .tt-tip-unlock-link:hover { text-decoration: underline; }
 .tt-tip-unlock-link.is-plain { color: var(--muted-foreground); }
+
+.tt-viewport { cursor: grab; }
+.tt-viewport.is-panning { cursor: grabbing; user-select: none; }
+.tt-viewport .tnode, .tt-viewport .tt-faction-root, .tt-viewport a { cursor: pointer; }
