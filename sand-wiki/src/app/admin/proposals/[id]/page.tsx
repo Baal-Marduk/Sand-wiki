@@ -49,7 +49,7 @@ export default async function ProposalDetail({ params }: { params: Params }) {
   }
 
   let linkChange: LinkProposalChange | null = null;
-  if (p.kind === "links_edit" && p.changes) {
+  if ((p.kind === "links_edit" || p.kind === "loot_sources_edit") && p.changes) {
     linkChange = p.changes as unknown as LinkProposalChange;
   }
 
@@ -74,11 +74,13 @@ export default async function ProposalDetail({ params }: { params: Params }) {
               ? `Recipe edit · ${p.targetSlug}`
               : p.kind === "links_edit"
                 ? `Tab edit · ${p.targetType} · ${p.targetSlug}`
-                : p.kind === "recipe_new"
-                  ? `New recipe`
-                  : p.kind === "recipe_delete"
-                    ? `Delete recipe · ${p.targetSlug}`
-                    : `New page · ${p.proposedName}`}
+                : p.kind === "loot_sources_edit"
+                  ? `Loot sources · ${p.targetType} · ${p.targetSlug}`
+                  : p.kind === "recipe_new"
+                    ? `New recipe`
+                    : p.kind === "recipe_delete"
+                      ? `Delete recipe · ${p.targetSlug}`
+                      : `New page · ${p.proposedName}`}
         </h1>
         <p className="mt-1 font-mono text-xs uppercase tracking-[0.04em] text-muted-foreground">
           by {p.proposer.personaName ?? p.proposerId} · {p.status}
@@ -135,11 +137,11 @@ export default async function ProposalDetail({ params }: { params: Params }) {
             </div>
           ))}
         </div>
-      ) : p.kind === "links_edit" && linkChange ? (
+      ) : (p.kind === "links_edit" || p.kind === "loot_sources_edit") && linkChange ? (
         <div className="space-y-2">
           <h2 className="mb-2 font-display text-sm font-semibold uppercase tracking-[0.06em] text-muted-foreground">{linkChange.role} rows</h2>
           <table className={tableCls}>
-            <thead><tr><th className={thCls}>Target</th><th className={thCls}>Current</th><th className={thCls}>Proposed</th></tr></thead>
+            <thead><tr><th className={thCls}>Entity</th><th className={thCls}>Current</th><th className={thCls}>Proposed</th></tr></thead>
             <tbody>
               {diffLinkRows(linkChange.old, linkChange.new).map((row) => {
                 const fmt = (r: typeof row.old) =>

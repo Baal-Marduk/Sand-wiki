@@ -36,11 +36,13 @@ export default async function AdminProposalsPage() {
                       ? `Recipe edit · ${p.targetSlug}`
                       : p.kind === "links_edit"
                         ? `Tab edit · ${p.targetType} · ${p.targetSlug}`
-                        : p.kind === "recipe_new"
-                          ? `New recipe`
-                          : p.kind === "recipe_delete"
-                            ? `Delete recipe · ${p.targetSlug}`
-                            : `New page · ${p.proposedName}`}
+                        : p.kind === "loot_sources_edit"
+                          ? `Loot sources · ${p.targetType} · ${p.targetSlug}`
+                          : p.kind === "recipe_new"
+                            ? `New recipe`
+                            : p.kind === "recipe_delete"
+                              ? `Delete recipe · ${p.targetSlug}`
+                              : `New page · ${p.proposedName}`}
                 </span>
                 <span className="shrink-0 font-mono text-xs text-muted-foreground">
                   by {p.proposer.personaName ?? p.proposerId}
