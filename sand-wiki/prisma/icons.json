@@ -131,6 +131,6 @@
   "item_wineBox": "icons/icon_item_game_wineBox.png",
   "item_wokBomb": "icons/icon_wokBomb.png",
   "item_shotgunTurretAmmo_smoke": "icons/icon_ammo_shotgunTurret_smoke.png",
-  "item_shotgunTurretAmmo_penetration": "icons/icon_ammo_shotgunTurret_penetration.png",
+  "item_shotgunTurretAmmo_interiorExplosion": "icons/icon_ammo_shotgunTurret_interiorExplosion.png",
   "item_smallCannonAmmo_lowRecoil": "icons/icon_ammo_smallCannon_lowRecoil.png"
 }

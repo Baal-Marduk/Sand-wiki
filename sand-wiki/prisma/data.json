@@ -1510,11 +1510,11 @@
       "fromCatalog": false
     },
     {
-      "slug": "shotgun-turret-ammo-penetration",
-      "id": "item_shotgunTurretAmmo_penetration",
-      "name": "Shotgun Turret Ammo Penetration",
-      "displayName": "Penetrating 70 mm Shell",
-      "description": "Armor-piercing shell for 70 mm shotgun cannons.",
+      "slug": "shotgun-turret-ammo-interior-explosion",
+      "id": "item_shotgunTurretAmmo_interiorExplosion",
+      "name": "Shotgun Turret Ammo Interior Explosion",
+      "displayName": "Interior Explosion 70 mm Shell",
+      "description": "Explosive shell for 70 mm shotgun cannons that detonates inside the target.",
       "type": "AMMO",
       "isResource": false,
       "storageStack": 100000,

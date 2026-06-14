@@ -9,12 +9,12 @@
     "caliber": "70 mm"
   },
   {
-    "slug": "shotgun-turret-ammo-penetration",
-    "id": "item_shotgunTurretAmmo_penetration",
-    "name": "Shotgun Turret Ammo Penetration",
-    "displayName": "Penetrating 70 mm Shell",
-    "description": "Armor-piercing shell for 70 mm shotgun cannons.",
-    "iconFile": "icon_ammo_shotgunTurret_penetration.png",
+    "slug": "shotgun-turret-ammo-interior-explosion",
+    "id": "item_shotgunTurretAmmo_interiorExplosion",
+    "name": "Shotgun Turret Ammo Interior Explosion",
+    "displayName": "Interior Explosion 70 mm Shell",
+    "description": "Explosive shell for 70 mm shotgun cannons that detonates inside the target.",
+    "iconFile": "icon_ammo_shotgunTurret_interiorExplosion.png",
     "caliber": "70 mm"
   },
   {
