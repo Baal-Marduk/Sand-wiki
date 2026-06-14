@@ -164,13 +164,49 @@ export async function tramplerCategoryCounts(): Promise<Record<string, number>> 
   return Object.fromEntries(rows.map((r) => [r.category, r._count]));
 }
 
+/** An item's incoming loot links, resolved to their source slug + name (ordered by
+ *  sortOrder). Prefills the item-side ("Found in") loot editor. Null if not an item. */
+export async function getIncomingLootLinks(itemSlug: string) {
+  const item = await prisma.entity.findUnique({
+    where: { slug: itemSlug },
+    select: {
+      kind: true,
+      incomingLinks: {
+        where: { role: "loot" },
+        orderBy: { sortOrder: "asc" },
+        select: {
+          tier: true,
+          value1: true,
+          sortOrder: true,
+          source: { select: { slug: true, name: true } },
+        },
+      },
+    },
+  });
+  if (!item || item.kind !== "item") return null;
+  return item.incomingLinks;
+}
+
+/** Env entities usable as loot sources (containers + landmarks), for the source dropdown
+ *  in the item-side loot editor. */
+export async function listLootSources(): Promise<{ slug: string; name: string }[]> {
+  return prisma.entity.findMany({
+    where: { kind: "environment", category: { in: ["loot-containers", "landmarks"] } },
+    select: { slug: true, name: true },
+    orderBy: { name: "asc" },
+  });
+}
+
 export interface CrateDrop { crateSlug: string; crateName: string; tier: string }
 
-/** Crates (with tier) whose loot tables contain the given item slug. Restricted to
- *  loot-container sources, matching the prior behavior. */
+/** Crates and landmarks (with tier) whose loot tables contain the given item slug. */
 export async function getCratesContaining(itemSlug: string): Promise<CrateDrop[]> {
   const rows = await prisma.entityLink.findMany({
-    where: { role: "loot", target: { slug: itemSlug }, source: { category: "loot-containers" } },
+    where: {
+      role: "loot",
+      target: { slug: itemSlug },
+      source: { kind: "environment", category: { in: ["loot-containers", "landmarks"] } },
+    },
     include: { source: { select: { slug: true, name: true } } },
     orderBy: [{ source: { name: "asc" } }, { sortOrder: "asc" }],
   });
