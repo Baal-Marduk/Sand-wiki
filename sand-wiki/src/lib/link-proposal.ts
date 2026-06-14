@@ -128,7 +128,9 @@ export interface LinkDiffRow {
 }
 
 /** Key a row by target (or name fallback) plus tier, so the same item across two
- *  loot tiers stays two distinct rows. */
+ *  loot tiers stays two distinct rows. NOTE: two *unlinked* rows sharing the same
+ *  name+tier collide on this key (last-write-wins in the diff Maps); custom names
+ *  are assumed unique per entity+role. */
 const rowKey = (r: LinkRowDraft): string => `${r.targetSlug ?? `name:${r.name}`}|${r.tier ?? ""}`;
 
 const sameRow = (a: LinkRowDraft, b: LinkRowDraft): boolean =>

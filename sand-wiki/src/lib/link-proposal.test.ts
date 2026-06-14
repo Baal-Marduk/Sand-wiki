@@ -54,6 +54,12 @@ describe("parseLinkRows (cost)", () => {
     const r = parseLinkRows("cost", { slugs: ["ghost"], customNames: [""], amounts: ["1"], tiers: [], value1s: [] }, names);
     expect(r.error).toMatch(/unknown item/i);
   });
+
+  it("rejects a kept cost row with a blank amount", () => {
+    const r = parseLinkRows("cost", { slugs: ["iron"], customNames: [""], amounts: [""], tiers: [], value1s: [] }, names);
+    expect(r.rows).toEqual([]);
+    expect(r.error).toMatch(/positive whole number/i);
+  });
 });
 
 describe("parseLinkRows (loot)", () => {
