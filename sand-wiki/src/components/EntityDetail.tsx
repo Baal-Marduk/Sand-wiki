@@ -1,5 +1,6 @@
 import { Breadcrumb, type Crumb } from "@/components/Breadcrumb";
 import { SuggestCorrectionLink } from "@/components/SuggestCorrectionLink";
+import { EditTabsLink } from "@/components/EditTabsLink";
 import { StatGrid } from "@/components/StatGrid";
 import { ItemTabs, type Tab } from "@/components/ItemTabs";
 import { ItemDetailsPanel } from "@/components/ItemDetailsPanel";
@@ -84,7 +85,12 @@ export function EntityDetail({
     <article className={`mx-auto space-y-6 py-6 ${hasSidebar ? "max-w-5xl" : "max-w-3xl"}`}>
       <div className="flex items-center justify-between gap-3">
         <Breadcrumb items={breadcrumb} />
-        {canSuggest && <SuggestCorrectionLink type={suggest.type} slug={suggest.slug} />}
+        {canSuggest && (
+          <div className="flex gap-2">
+            <SuggestCorrectionLink type={suggest.type} slug={suggest.slug} />
+            <EditTabsLink type={suggest.type} slug={suggest.slug} />
+          </div>
+        )}
       </div>
 
       <header className="flex flex-wrap items-start gap-5">

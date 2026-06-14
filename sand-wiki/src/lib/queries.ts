@@ -237,3 +237,29 @@ export async function getLinkTargetsBySlugs(
   }
   return result;
 }
+
+/** Outgoing EntityLink rows for one role on one entity (by slug), target resolved
+ *  to slug/name, sorted. Used by the tab editor and its submit/apply paths. */
+export async function getOutgoingLinks(slug: string, role: string) {
+  const entity = await prisma.entity.findUnique({
+    where: { slug },
+    select: {
+      id: true,
+      name: true,
+      kind: true,
+      outgoingLinks: {
+        where: { role },
+        orderBy: { sortOrder: "asc" },
+        select: {
+          name: true,
+          amount: true,
+          tier: true,
+          value1: true,
+          sortOrder: true,
+          target: { select: { slug: true } },
+        },
+      },
+    },
+  });
+  return entity;
+}

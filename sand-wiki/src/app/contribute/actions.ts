@@ -7,6 +7,9 @@ import { editableFields, isEditableTarget, coerceValue, fieldDef, entityHref, ba
 import { recipeToSnapshot, parseRecipeLines, snapshotsEqual, type RecipeSnapshot } from "@/lib/recipe-proposal";
 import { computeDiff } from "@/lib/proposal-diff";
 import { getEntityFields } from "@/lib/proposal-entity";
+import { getOutgoingLinks } from "@/lib/queries";
+import { parseLinkRows, linksToSnapshot, snapshotsEqual as linkSnapshotsEqual } from "@/lib/link-proposal";
+import { linkFields } from "@/lib/entity-links";
 
 const MAX_PENDING_PER_USER = 10;
 
@@ -116,4 +119,121 @@ export async function submitRecipeEdit(formData: FormData) {
 
   const out = newSnap.outputs[0]?.slug ?? oldSnap.outputs[0]?.slug;
   redirect(out ? `${entityHref("item", out)}?proposed=1` : "/items?proposed=1");
+}
+
+export async function submitNewRecipe(formData: FormData) {
+  const note = (String(formData.get("note") ?? "").trim() || null) as string | null;
+  const backType = String(formData.get("backType") ?? "item");
+  const backSlug = String(formData.get("backSlug") ?? "");
+
+  const session = await requireUser("/contribute/new");
+  await assertUnderQuota(session.steamId);
+
+  const items = await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, name: true } });
+  const nameBySlug = new Map(items.map((i) => [i.slug, i.name]));
+
+  const workbench = resolveEnumSubmission(
+    String(formData.get("workbench") ?? ""),
+    String(formData.get("workbench__custom") ?? ""),
+  );
+  const ip = parseRecipeLines(formData.getAll("inputSlug").map(String), formData.getAll("inputAmount").map(String), nameBySlug);
+  if (ip.error) throw new Error(ip.error);
+  const op = parseRecipeLines(formData.getAll("outputSlug").map(String), formData.getAll("outputAmount").map(String), nameBySlug);
+  if (op.error) throw new Error(op.error);
+  if (op.lines.length === 0) throw new Error("A recipe needs at least one output.");
+
+  const newSnap: RecipeSnapshot = {
+    workbench: coerceValue("string", workbench) as string | null,
+    tier: coerceValue("int", String(formData.get("tier") ?? "")) as number | null,
+    craftTimeSeconds: coerceFloat(String(formData.get("craftTimeSeconds") ?? "")),
+    inputs: ip.lines,
+    outputs: op.lines,
+  };
+
+  await prisma.proposal.create({
+    data: {
+      kind: "recipe_new",
+      targetType: "recipe",
+      changes: { new: newSnap } as object,
+      note,
+      proposerId: session.steamId,
+    },
+  });
+  redirect(backSlug ? `${entityHref(backType, backSlug)}?proposed=1` : "/items?proposed=1");
+}
+
+export async function submitDeleteRecipe(formData: FormData) {
+  const slug = String(formData.get("slug") ?? "");
+  const backType = String(formData.get("backType") ?? "item");
+  const backSlug = String(formData.get("backSlug") ?? "");
+  const note = (String(formData.get("note") ?? "").trim() || null) as string | null;
+  if (!slug) throw new Error("Missing recipe.");
+
+  const session = await requireUser(`/contribute/edit-tabs?type=${backType}&slug=${backSlug}`);
+  await assertUnderQuota(session.steamId);
+
+  const recipe = await prisma.recipe.findUnique({
+    where: { slug },
+    include: {
+      inputs: { include: { entity: { select: { slug: true, name: true } } } },
+      outputs: { include: { entity: { select: { slug: true, name: true } } } },
+    },
+  });
+  if (!recipe) throw new Error("Recipe not found.");
+
+  await prisma.proposal.create({
+    data: {
+      kind: "recipe_delete",
+      targetType: "recipe",
+      targetSlug: slug,
+      changes: { old: recipeToSnapshot(recipe) } as object,
+      note,
+      proposerId: session.steamId,
+    },
+  });
+  redirect(backSlug ? `${entityHref(backType, backSlug)}?proposed=1` : "/items?proposed=1");
+}
+
+export async function submitLinksEdit(formData: FormData) {
+  const type = String(formData.get("type") ?? "");
+  const slug = String(formData.get("slug") ?? "");
+  const role = String(formData.get("role") ?? "");
+  const note = (String(formData.get("note") ?? "").trim() || null) as string | null;
+
+  if (!isEditableTarget(type)) throw new Error("Unknown target type.");
+  if (linkFields(role).length === 0) throw new Error("Unknown tab.");
+
+  const session = await requireUser(`/contribute/edit-tabs?type=${type}&slug=${slug}`);
+  await assertUnderQuota(session.steamId);
+
+  const entity = await getOutgoingLinks(slug, role);
+  if (!entity) throw new Error("Page not found.");
+
+  const items = await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, name: true } });
+  const nameBySlug = new Map(items.map((i) => [i.slug, i.name]));
+
+  const parsed = parseLinkRows(role, {
+    slugs: formData.getAll("linkSlug").map(String),
+    customNames: formData.getAll("linkName").map(String),
+    amounts: formData.getAll("linkAmount").map(String),
+    tiers: formData.getAll("linkTier").map(String),
+    value1s: formData.getAll("linkValue1").map(String),
+  }, nameBySlug);
+  if (parsed.error) throw new Error(parsed.error);
+
+  const oldSnap = linksToSnapshot(role, entity.outgoingLinks);
+  const newSnap = { role, rows: parsed.rows };
+  if (linkSnapshotsEqual(oldSnap, newSnap)) throw new Error("No changes to submit.");
+
+  await prisma.proposal.create({
+    data: {
+      kind: "links_edit",
+      targetType: type,
+      targetSlug: slug,
+      changes: { role, old: oldSnap.rows, new: newSnap.rows } as object,
+      note,
+      proposerId: session.steamId,
+    },
+  });
+  redirect(`${entityHref(type, slug)}?proposed=1`);
 }

@@ -11,12 +11,19 @@ export interface LinkRow {
   sortOrder: number;
 }
 
-/** Fixed catalog of tab roles. Adding a tab TYPE = add an entry here + a renderer in the page. */
+/** Fixed catalog of tab roles. Adding a tab TYPE = add an entry here + a renderer in the page.
+ *  `fields` lists the editable columns the contributor row-editor shows for the role. */
 export const LINK_ROLES = {
-  loot: { label: "Loot" },
-  cost: { label: "Build Cost" },
+  loot: { label: "Loot", fields: ["tier", "value1"] },
+  cost: { label: "Build Cost", fields: ["amount"] },
 } as const;
 export type LinkRole = keyof typeof LINK_ROLES;
+export type LinkField = "amount" | "tier" | "value1";
+
+/** Editable columns for a role (empty for an unknown role). */
+export function linkFields(role: string): readonly LinkField[] {
+  return (LINK_ROLES as Record<string, { fields: readonly LinkField[] }>)[role]?.fields ?? [];
+}
 
 const TIER_ORDER = ["Normal", "Rare", "Very Rare"];
 

@@ -30,7 +30,17 @@ export default async function AdminProposalsPage() {
                 className="flex items-baseline justify-between gap-3 px-4 py-3 transition-colors hover:bg-card-elevated"
               >
                 <span className="font-medium text-foreground">
-                  {p.kind === "edit" ? `Edit · ${p.targetType} · ${p.targetSlug}` : `New page · ${p.proposedName}`}
+                  {p.kind === "edit"
+                    ? `Edit · ${p.targetType} · ${p.targetSlug}`
+                    : p.kind === "recipe_edit"
+                      ? `Recipe edit · ${p.targetSlug}`
+                      : p.kind === "links_edit"
+                        ? `Tab edit · ${p.targetType} · ${p.targetSlug}`
+                        : p.kind === "recipe_new"
+                          ? `New recipe`
+                          : p.kind === "recipe_delete"
+                            ? `Delete recipe · ${p.targetSlug}`
+                            : `New page · ${p.proposedName}`}
                 </span>
                 <span className="shrink-0 font-mono text-xs text-muted-foreground">
                   by {p.proposer.personaName ?? p.proposerId}

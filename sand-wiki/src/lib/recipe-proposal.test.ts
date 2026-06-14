@@ -5,6 +5,7 @@ import {
   snapshotsEqual,
   buildLineCreates,
   diffRecipeLines,
+  uniqueRecipeSlug,
   type RecipeSnapshot,
 } from "./recipe-proposal";
 
@@ -121,5 +122,15 @@ describe("diffRecipeLines", () => {
       { slug: "bolt", name: "Bolt", oldAmount: 1, newAmount: null, status: "removed" },
       { slug: "screw", name: "Screw", oldAmount: null, newAmount: 4, status: "added" },
     ]);
+  });
+});
+
+describe("uniqueRecipeSlug", () => {
+  it("returns the base slug when it is free", () => {
+    expect(uniqueRecipeSlug("bolt", new Set())).toBe("bolt");
+  });
+  it("appends -2, -3 … on collision", () => {
+    expect(uniqueRecipeSlug("bolt", new Set(["bolt"]))).toBe("bolt-2");
+    expect(uniqueRecipeSlug("bolt", new Set(["bolt", "bolt-2"]))).toBe("bolt-3");
   });
 });

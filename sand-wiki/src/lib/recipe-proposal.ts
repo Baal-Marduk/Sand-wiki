@@ -130,3 +130,12 @@ export function diffRecipeLines(oldLines: RecipeLineDraft[], newLines: RecipeLin
     return { slug, name, oldAmount: o?.amount ?? null, newAmount: n?.amount ?? null, status };
   });
 }
+
+/** A recipe slug not already in `taken`: `base`, else `base-2`, `base-3`, … */
+export function uniqueRecipeSlug(base: string, taken: Set<string>): string {
+  if (!taken.has(base)) return base;
+  for (let n = 2; ; n++) {
+    const candidate = `${base}-${n}`;
+    if (!taken.has(candidate)) return candidate;
+  }
+}
