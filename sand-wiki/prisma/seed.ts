@@ -127,7 +127,7 @@ async function main() {
       update: { ...identity, itemStats: { upsert: { create: stats, update: stats } } },
     });
   }
-  const prunedItems = await prisma.entity.deleteMany({ where: { kind: "item", slug: { notIn: items.map((i) => i.slug) } } });
+  const prunedItems = await prisma.entity.deleteMany({ where: { kind: "item", curated: false, slug: { notIn: items.map((i) => i.slug) } } });
   if (prunedItems.count > 0) console.log(`Pruned ${prunedItems.count} item(s) no longer in the scrape`);
 
   // slug → Entity id, scoped to items (loot/cost/recipe targets are items).
@@ -215,7 +215,7 @@ async function main() {
     }
     envCount++;
   }
-  const prunedEnv = await prisma.entity.deleteMany({ where: { kind: "environment", slug: { notIn: envSlugs } } });
+  const prunedEnv = await prisma.entity.deleteMany({ where: { kind: "environment", curated: false, slug: { notIn: envSlugs } } });
   if (prunedEnv.count > 0) console.log(`Pruned ${prunedEnv.count} env entit(ies) no longer in the scrape`);
 
   // --- Trampler parts + cost rows (cost rows are scraper-owned → recreate) ---
@@ -265,7 +265,7 @@ async function main() {
     }
     tramplerCount++;
   }
-  const prunedTramplers = await prisma.entity.deleteMany({ where: { kind: "trampler-part", slug: { notIn: tramplerSlugs } } });
+  const prunedTramplers = await prisma.entity.deleteMany({ where: { kind: "trampler-part", curated: false, slug: { notIn: tramplerSlugs } } });
   if (prunedTramplers.count > 0) console.log(`Pruned ${prunedTramplers.count} trampler part(s) no longer in the scrape`);
 
   // --- Tech nodes + link rows (unlocks, unlock costs, prereqs) ---
@@ -310,7 +310,7 @@ async function main() {
   }
 
   // Prune tech-node entities no longer in the generated set.
-  const prunedTech = await prisma.entity.deleteMany({ where: { kind: "tech-node", slug: { notIn: techSlugs } } });
+  const prunedTech = await prisma.entity.deleteMany({ where: { kind: "tech-node", curated: false, slug: { notIn: techSlugs } } });
   if (prunedTech.count > 0) console.log(`Pruned ${prunedTech.count} tech-node(s) no longer in the source`);
 
   // Build a combined slug→id index for all link targets (items + trampler-parts + tech-nodes).
@@ -380,11 +380,11 @@ async function main() {
     if (prereqRows.length > 0) await prisma.entityLink.createMany({ data: prereqRows });
   }
 
-  const techNodeCount = await prisma.entity.count({ where: { kind: "tech-node" } });
+  const techNodeCount = await prisma.entity.count({ where: { kind: "tech-node", curated: false } });
   if (techNodeCount !== nodeList.length) throw new Error(`Tech-node count mismatch: DB has ${techNodeCount}, source has ${nodeList.length}`);
   console.log(`Seeded ${techNodeCount} tech nodes.`);
 
-  const [itemCount, scrapedRecipeCount] = await Promise.all([prisma.entity.count({ where: { kind: "item" } }), prisma.recipe.count({ where: { curated: false } })]);
+  const [itemCount, scrapedRecipeCount] = await Promise.all([prisma.entity.count({ where: { kind: "item", curated: false } }), prisma.recipe.count({ where: { curated: false } })]);
   if (itemCount !== items.length) throw new Error(`Item count mismatch after seed: DB has ${itemCount}, snapshot has ${items.length} (duplicate slugs?)`);
   if (scrapedRecipeCount !== data.recipes.length) throw new Error(`Recipe count mismatch after seed: DB has ${scrapedRecipeCount} non-curated, snapshot has ${data.recipes.length} (duplicate slugs?)`);
   console.log(`Seeded ${items.length} items, ${data.recipes.length} recipes (${curatedSlugs.size} curated preserved), ${envCount} environment entities, ${tramplerCount} trampler parts.`);
