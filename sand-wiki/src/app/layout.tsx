@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { Oswald } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ConditionalChrome } from "@/components/ConditionalChrome";
 import "./globals.css";
@@ -75,6 +76,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         >
           {children}
         </ConditionalChrome>
+        <Analytics />
       </body>
     </html>
   );

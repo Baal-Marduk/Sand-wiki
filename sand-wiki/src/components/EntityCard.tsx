@@ -27,7 +27,6 @@ export interface EntityCardData {
  *  sprite tile carries the same colored gradient as the detail/recipe icons. */
 export function EntityCard({ entity }: { entity: EntityCardData }) {
   const color = rarityColor(entity.rarity);
-  const railColor = color ?? "var(--border-strong)";
   const gradient = rarityGradient(entity.rarity);
   const typeBits = [entity.typeLabel, entity.rarity].filter(Boolean).join(" · ");
 
@@ -35,9 +34,8 @@ export function EntityCard({ entity }: { entity: EntityCardData }) {
     <li className="list-none">
       <Link
         href={entity.href}
-        className="group grid grid-cols-[4px_64px_1fr_auto] overflow-hidden border border-border bg-card transition-colors hover:border-border-strong hover:bg-card-elevated"
+        className="group grid grid-cols-[64px_1fr_auto] overflow-hidden border border-border bg-card transition-colors hover:border-border-strong hover:bg-card-elevated"
       >
-        <span aria-hidden className="block" style={{ background: railColor }} />
         <span
           className="item-sprite grid size-16 place-items-center border-r border-border"
           style={{ background: gradient ?? NEUTRAL_SLOT }}
@@ -48,6 +46,8 @@ export function EntityCard({ entity }: { entity: EntityCardData }) {
               src={entity.icon}
               alt=""
               aria-hidden
+              loading="lazy"
+              decoding="async"
               className="size-[80%] object-contain [filter:drop-shadow(0_2px_3px_rgba(0,0,0,0.45))]"
             />
           ) : (

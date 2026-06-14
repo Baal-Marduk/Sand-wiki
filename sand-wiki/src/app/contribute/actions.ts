@@ -12,6 +12,9 @@ import { parseLinkRows, linksToSnapshot, incomingLootToDrafts, snapshotsEqual as
 import { linkFields } from "@/lib/entity-links";
 
 const MAX_PENDING_PER_USER = 10;
+const MAX_NOTE_LENGTH = 2000;
+const MAX_NAME_LENGTH = 200;
+const MAX_TARGET_TYPE_LENGTH = 50;
 
 async function assertUnderQuota(proposerId: string) {
   const pending = await prisma.proposal.count({ where: { proposerId, status: "pending" } });
@@ -20,10 +23,21 @@ async function assertUnderQuota(proposerId: string) {
   }
 }
 
+function assertMaxLength(value: string, max: number, label: string) {
+  if (value.length > max) throw new Error(`${label} is too long (max ${max} characters).`);
+}
+
+/** Read + trim the free-text note, enforcing a length cap. Empty → null. */
+function readNote(formData: FormData): string | null {
+  const note = String(formData.get("note") ?? "").trim();
+  assertMaxLength(note, MAX_NOTE_LENGTH, "Note");
+  return note || null;
+}
+
 export async function submitEdit(formData: FormData) {
   const type = String(formData.get("type") ?? "");
   const slug = String(formData.get("slug") ?? "");
-  const note = (String(formData.get("note") ?? "").trim() || null) as string | null;
+  const note = readNote(formData);
 
   if (!isEditableTarget(type)) throw new Error("Unknown target type.");
   const session = await requireUser(`/contribute/edit?type=${type}&slug=${slug}`);
@@ -54,9 +68,11 @@ export async function submitEdit(formData: FormData) {
 export async function submitNewPage(formData: FormData) {
   const proposedName = String(formData.get("proposedName") ?? "").trim();
   const targetType = String(formData.get("targetType") ?? "").trim();
-  const note = String(formData.get("note") ?? "").trim();
+  const note = readNote(formData);
 
   if (!proposedName || !note) throw new Error("Name and details are required.");
+  assertMaxLength(proposedName, MAX_NAME_LENGTH, "Name");
+  assertMaxLength(targetType, MAX_TARGET_TYPE_LENGTH, "Type");
   const session = await requireUser("/contribute/new");
   await assertUnderQuota(session.steamId);
 
@@ -68,7 +84,7 @@ export async function submitNewPage(formData: FormData) {
 
 export async function submitRecipeEdit(formData: FormData) {
   const slug = String(formData.get("slug") ?? "");
-  const note = (String(formData.get("note") ?? "").trim() || null) as string | null;
+  const note = readNote(formData);
   if (!slug) throw new Error("Missing recipe.");
 
   const session = await requireUser(`/contribute/edit-recipe?slug=${slug}`);
@@ -122,7 +138,7 @@ export async function submitRecipeEdit(formData: FormData) {
 }
 
 export async function submitNewRecipe(formData: FormData) {
-  const note = (String(formData.get("note") ?? "").trim() || null) as string | null;
+  const note = readNote(formData);
   const backType = String(formData.get("backType") ?? "item");
   const backSlug = String(formData.get("backSlug") ?? "");
 
@@ -166,7 +182,7 @@ export async function submitDeleteRecipe(formData: FormData) {
   const slug = String(formData.get("slug") ?? "");
   const backType = String(formData.get("backType") ?? "item");
   const backSlug = String(formData.get("backSlug") ?? "");
-  const note = (String(formData.get("note") ?? "").trim() || null) as string | null;
+  const note = readNote(formData);
   if (!slug) throw new Error("Missing recipe.");
 
   const session = await requireUser(`/contribute/edit-tabs?type=${backType}&slug=${backSlug}`);
@@ -198,7 +214,7 @@ export async function submitLinksEdit(formData: FormData) {
   const type = String(formData.get("type") ?? "");
   const slug = String(formData.get("slug") ?? "");
   const role = String(formData.get("role") ?? "");
-  const note = (String(formData.get("note") ?? "").trim() || null) as string | null;
+  const note = readNote(formData);
 
   if (!isEditableTarget(type)) throw new Error("Unknown target type.");
   if (linkFields(role).length === 0) throw new Error("Unknown tab.");
@@ -244,7 +260,7 @@ export async function submitLinksEdit(formData: FormData) {
 export async function submitItemLootEdit(formData: FormData) {
   const slug = String(formData.get("slug") ?? "");
   const role = "loot";
-  const note = (String(formData.get("note") ?? "").trim() || null) as string | null;
+  const note = readNote(formData);
 
   const session = await requireUser(`/contribute/edit-tabs?type=item&slug=${slug}`);
   await assertUnderQuota(session.steamId);

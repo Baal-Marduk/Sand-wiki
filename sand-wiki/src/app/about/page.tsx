@@ -66,7 +66,7 @@ export default async function AboutPage() {
             </h2>
             <p className="text-sm leading-relaxed text-muted-foreground">
               Spot a wrong stat or a missing item? Propose an edit — every change is reviewed by a
-              moderator before it goes live, and new editors are credited on their first approval.
+              moderator before it goes live.
             </p>
             <Link
               href="/contribute/new"
@@ -80,11 +80,10 @@ export default async function AboutPage() {
               Data &amp; license
             </h2>
             <p className="text-sm leading-relaxed text-muted-foreground">
-              No protected game assets (extracted images, sounds, or 3D models) are used. Items and
-              recipes are extracted from a playtest build; display names are derived from internal
-              identifiers, so they may differ from the in-game wording. The tech tree, delivery
-              contracts, and loot tables aren&apos;t present in the current game data. Data is refreshed
-              by re-running the extractor after each game patch.
+              Some in-game assets, such as item icons, are used for identification only — we claim no
+              ownership of them, and all rights remain with tinyBuild and the game&apos;s developers.
+              Items and recipes are extracted from a playtest build; display names are derived from
+              internal identifiers, so they may differ from the in-game wording.
             </p>
           </div>
         </div>

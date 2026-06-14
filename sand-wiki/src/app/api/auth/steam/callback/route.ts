@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAssertion } from "@/lib/steam-openid";
 import { signSession } from "@/lib/session";
-import { SESSION_COOKIE, SESSION_TTL_MS } from "@/lib/auth";
+import { SESSION_COOKIE, SESSION_TTL_MS, getSessionSecret } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 
 export async function GET(req: NextRequest) {
@@ -44,8 +44,7 @@ export async function GET(req: NextRequest) {
     update: { personaName, avatar, lastSeenAt: new Date() },
   });
 
-  const secret = process.env.SESSION_SECRET!;
-  const token = signSession({ steamId, exp: Date.now() + SESSION_TTL_MS }, secret);
+  const token = signSession({ steamId, exp: Date.now() + SESSION_TTL_MS }, getSessionSecret());
 
   const requested = params.get("returnTo") ?? "/";
   const dest = requested.startsWith("/") && !requested.startsWith("//") ? requested : "/";

@@ -9,15 +9,14 @@ const buyOpt = { recipeSlug: "x", quantity: 1, totalCrowns: 10, unitPrice: 10, i
 const sellOpt = { recipeSlug: "y", quantity: 100, totalCrowns: 1000, unitPrice: 10, isBest: true };
 
 describe("itemDetailRows", () => {
-  it("includes category, stack and tier", () => {
+  it("includes category and tier", () => {
     expect(itemDetailRows(facts, noTrades)).toEqual([
       { label: "Category", value: "Weapons" },
-      { label: "Stack size", value: "×5" },
       { label: "Workbench tier", value: "2" },
     ]);
   });
 
-  it("omits stack and tier when null", () => {
+  it("omits tier when null", () => {
     const r = itemDetailRows({ category: "resources", storageStack: null, workbenchTier: null }, noTrades);
     expect(r).toEqual([{ label: "Category", value: "Resources" }]);
   });

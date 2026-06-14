@@ -22,6 +22,7 @@ export const EDITABLE_FIELDS: Record<string, EditableField[]> = {
     { field: "description", label: "Description", type: "text" },
     { field: "category", label: "Category", type: "enum", enumValueType: "string" },
     { field: "rarity", label: "Rarity", type: "enum", enumValueType: "string" },
+    { field: "statType", label: "Type", type: "string" },
     { field: "storageStack", label: "Storage stack", type: "int" },
     { field: "workbenchTier", label: "Workbench tier", type: "enum", enumValueType: "int" },
     { field: "statValue", label: "Value", type: "int" },
@@ -68,13 +69,24 @@ export function fieldDef(type: string, field: string): EditableField | undefined
   return editableFields(type).find((f) => f.field === field);
 }
 
-/** Coerce a raw form string to the stored value type. Empty/blank → null. */
+/** Upper bounds on stored free-text, enforced server-side so a proposal can't
+ *  persist arbitrarily large blobs. `text` (descriptions) gets more room than a
+ *  one-line `string` field. */
+export const MAX_STRING_LENGTH = 500;
+export const MAX_TEXT_LENGTH = 10_000;
+
+/** Coerce a raw form string to the stored value type. Empty/blank → null.
+ *  Throws if a string/text value exceeds its length cap. */
 export function coerceValue(type: FieldType, raw: string): string | number | null {
   const trimmed = raw.trim();
   if (trimmed === "") return null;
   if (type === "int") {
     const n = Number(trimmed);
     return Number.isInteger(n) ? n : null;
+  }
+  const max = type === "text" ? MAX_TEXT_LENGTH : MAX_STRING_LENGTH;
+  if (trimmed.length > max) {
+    throw new Error(`Value is too long (max ${max.toLocaleString("en-US")} characters).`);
   }
   return trimmed;
 }

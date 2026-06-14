@@ -9,6 +9,8 @@ export function CoinIcon({ className }: { className?: string }) {
       alt=""
       aria-hidden="true"
       title="Crowns"
+      loading="lazy"
+      decoding="async"
       className={className ?? "inline-block size-4 align-text-bottom"}
     />
   );

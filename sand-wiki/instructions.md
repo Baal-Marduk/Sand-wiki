@@ -10,9 +10,10 @@ bottom is yours to keep specifying.
 
 ## Overview
 
-Next.js 16 (App Router) + React 19 + Prisma 6 + Neon Postgres + Tailwind v4 / DaisyUI 5.
-Two custom themes: `desertnight` (default dark) and `desertday` (light). Display font: Oswald.
-Accessibility is a hard gate — axe must pass in both themes (`npm run test:e2e`).
+Next.js 16 (App Router) + React 19 + Prisma 6 + Neon Postgres + Tailwind v4 + **shadcn/ui**.
+**Dark-only** — one `:root` token set, `color-scheme: dark`, no theme toggle (the old DaisyUI
+`desertnight`/`desertday` themes were removed in the 2026-06 redesign). Display font: Oswald;
+brand wordmark: Black Ops One. Accessibility is a hard gate — axe must pass (`npm run test:e2e`).
 
 ## Data model (Prisma)
 
@@ -145,48 +146,84 @@ Imports copy what exists and link back via `sourceUrl`.
   preserve across queries (symptom: intermittent 500s / `42P01 relation does not exist` on
   login). Only the Next.js app stays on the pooled `DATABASE_URL`.
 
+## Design system (locked — follow for all new UI)
+
+The single source is `src/app/globals.css` (the shadcn token layer) + `src/lib/rarity.ts` (rarity
+scale). The framework-free mockups in `.superpowers/design/` are the **approved visual reference**
+the React UI mirrors — but where they disagree with these files, **globals.css / rarity.ts win**
+(the README's stale Epic/Legendary/Relic names + slightly-off hexes are superseded).
+
+- **Tokens** — never hard-code a hex; use a token. Surfaces `--background #0d0a06` /
+  `--card #15100a` / `--card-elevated #1d160d`; borders `--border #2a2012` (dividers) /
+  `--border-strong`/`--input #3a2c18` (input + stronger contrast). Text `--foreground #ece0cb`
+  (body), `--muted-foreground #9a8f7c` (small/secondary text — **this is the floor for small text**),
+  `--dim #74695a` (decorative only). Brand `--primary #e8893b` (+`-hover`/`-press`), `--secondary`,
+  `--accent`. State `--info`/`--success`/`--warning`/`--destructive`. Consume via Tailwind color
+  utilities (`bg-card`, `text-muted-foreground`, `border-border`, …) wired through `@theme inline`.
+- **Rarity scale** (`rarity.ts`, tiers 1–6): Common `#AEAEB2` · Uncommon `#7CB079` · Rare `#7AA8D2`
+  · Noteworthy `#A37FC9` · Remarkable `#E59A52` · Experimental `#D85F64`, exposed as
+  `--rarity-1…6` / `text-rarity-N`. Used for **rails, dots, badge border/text** (all pass AA on dark
+  surfaces) — **never as a card fill behind body text**.
+- **Type** — Display **Oswald** (`font-display`, 300–700) for headings, brand, labels, stat labels,
+  tabs, chips, buttons. Body = system sans (14px / 1.55). Data/stats = system mono, `tabular-nums`.
+  Brand wordmark `SAND·HELP` = Black Ops One via `.brand-wordmark` (grunge SVG filter).
+- **Radius = 0 everywhere** (`--radius: 0px`). No rounded cards/buttons/badges/inputs/chips. The
+  only rounded element on the whole site is the dev-review phone bezel.
+- **Spacing** — 4px base (`4·8·12·16·20·24·32·40·48`). Card padding 14–24; grid gap 12;
+  section padding 18–24.
+- **Motion** — color / background-color / border-color / brightness / opacity transitions ONLY,
+  100–120ms. **No transforms, no entrance animations.** Every `:hover` pairs with `:focus-visible`.
+  The one exception is the skeleton shimmer, gated behind `prefers-reduced-motion`. Shared
+  affordance rules live in globals.css (`.nav-link`, `.row-link`, `.item-sprite`) — prefer them over
+  ad-hoc per-element hover classes.
+- **Accessibility (hard gate)** — every text/background pair targets **WCAG AA @14px**; axe must
+  pass in `npm run test:e2e`. `--primary` is **never text on `--card`** — it always appears as a
+  fill behind dark text (`--primary-foreground #1a0f04`). Active filter chips = `--primary` bg +
+  dark fg. Small text never uses `--dim` (only 3.67:1 on `--background`) — use `--muted-foreground`.
+
 ## UI conventions
 
-- Reduced corner radius (squared look): `--radius-box: .25rem`, `--radius-field: .1875rem`.
-- **Cards**: big icon left, name (+ category) stacked; rarity tints the icon background.
-- **Item detail**: header (rarity-tinted icon, rarity badge, category) + `StatBox` (Damage/Magazine/
-  Type/Ammo/Value, player/trampler/splash for ammo) + tabs (Crafted by / Used in / Buy / Sell /
-  **Loot**) + right details panel.
-- **Items list — layout**: server component reading `searchParams`. Content grid is
-  `sm:grid-cols-2 xl:grid-cols-3 gap-3` inside an `lg:grid-cols-[1fr_220px]` shell (cards + sticky
-  nav) — this is the **canonical list grid**; new list pages (environment, future tramplers) should
-  match it. Ordered alphabetically by `name` (`item-filter.ts`, `orderBy:{name:"asc"}`) — this is the
-  default; rarity/type-based ordering is a *desired change*, tracked in `TODO.md`, not yet shipped.
-  `ItemCard` = `card card-side`, rarity-tinted icon, truncated name, Buyable/Sellable badges.
-  `CategoryQuickNav` is a sticky vertical sidebar on `lg+` and a horizontal-scroll chip row below;
-  active item uses `aria-current="page"`. Result count lives in an `aria-live="polite"` badge.
-- **Items list — filters**: all filtering is URL-driven and server-side — `?q=` (case-insensitive
-  substring on `name`/`derivedName`), `?category=`, `?rarity=` — and they always **AND-combine** in
-  the Prisma `where` (`item-filter.ts`); switching category preserves `q`/`rarity` and vice versa.
-  Treat this precedence as fixed. `RarityFilter` is a server component of `Link`s that preserves the
-  other params, renders **only** rarities present in the current (category+query) result set, ordered
-  by game tier, with an "All" reset chip. When filters match nothing, the list renders an explicit
-  `No items match your filters.` message (not a bare blank grid) and the count badge reads
-  `0 result(s)`. (Active-chip styling rule is the AA bullet below.)
-- **Search-as-you-type** (`SearchBox`, client): fetches `/api/search-index` once per page load
-  (singleton promise; route sends `Cache-Control: public, max-age=3600`, payload
-  `{slug,name,category,derivedName}`). Matching is instant (no debounce) — case-insensitive substring
-  over item `name`, `derivedName`, and category labels, capped at 8 results. Results mix
-  category-filter rows ("filter" badge → `/items?category=`) and item rows ("page" badge → detail).
-  Full combobox a11y: `role="combobox"` with `aria-expanded`/`-controls`/`-autocomplete="list"`/
-  `-activedescendant`, listbox/option roles, and ArrowUp/Down + Enter + Escape nav. The dropdown
-  renders only when there are matches, so the no-matches path leaves it closed (`aria-expanded`
-  flips to `false`) rather than showing an empty listbox — but there is currently **no live region
-  announcing the result count** to screen readers (known a11y gap). Two variants: `navbar` (hidden on
-  the homepage) and `hero`. Indexes items + categories only — landmarks/loot containers are not yet
-  searchable.
+- **EntityCard** (`EntityCard.tsx`) — the one shared browse card across items / tramplers /
+  environment: **4px rarity left-rail + neutral squared card**, squared sprite tile, name, a
+  `Class·Rarity` meta line, optional stats. (Replaced the old per-kind `ItemCard`/`TramplerCard`/
+  `EnvCard` and the full rarity-tinted card background.)
+- **EntityDetail** (`EntityDetail` shell, shared by item/trampler/env detail) — neutral sprite tile
+  with rarity left-rail + rarity/category badges + display headline; bordered mono **`StatGrid`**
+  ("Statistics"); `[main | 300px facts]` split with a centered fallback when there are no relations.
+  Relationships (Crafted by / Used in / Loot) are **one tabbed `.dtable`**, not separate panels.
+  `ItemTabs` (client, ARIA tablist; squared underline) is reused for relationship tabs AND one tab
+  **per loot tier** (Normal/Rare). Badges = token `RarityBadge`/`CategoryTag`/`WorkbenchBadge`.
+- **List pages** — server component reading `searchParams`; canonical shell is
+  `[sidebar | grid]` (`CategoryQuickNav`/`.side-cat` rail with counts on `lg+`, horizontal chip row
+  below; active = `aria-current="page"`) + EntityCard grid. New list pages should match it. Ordered
+  alphabetically by `name` (`item-filter.ts`); rarity/type ordering is a *desired change* in
+  `TODO.md`. Empty state = explicit squared "No items match…" panel + `aria-live="polite"`
+  `0 result(s)` badge, never a bare blank grid.
+- **List filters** — all URL-driven + server-side: `?q=` (case-insensitive substring on
+  `name`/`derivedName`), `?category=`, `?rarity=`, always **AND-combined** in the Prisma `where`
+  (`item-filter.ts`); switching one preserves the others — treat this precedence as fixed.
+  `RarityChips` (single-select `Link`s) renders **only** rarities present in the current result set,
+  ordered by game tier, with an "All" reset chip.
+- **Search-as-you-type** (`SearchBox`, client) — squared input + leading magnifier (primary on
+  focus); fetches `/api/search-index` once per page load (singleton promise; `Cache-Control:
+  public, max-age=3600`; payload `{slug,name,category,derivedName}`). Instant (no debounce)
+  substring match over `name`/`derivedName`/category labels, capped at 8; results mix
+  category-filter rows ("filter" badge → `/items?category=`) and item rows ("page" badge → detail),
+  rendered in the `.ac` panel (grouped sections, `[mini-icon|name|category]` rows, first match
+  bolded). Full combobox a11y: `role="combobox"` + `aria-expanded`/`-controls`/
+  `-autocomplete="list"`/`-activedescendant`, listbox/option roles, ArrowUp/Down + Enter + Escape.
+  Dropdown renders only on matches (closed = `aria-expanded=false`). Known gaps: **no live region
+  announcing result count**; indexes items + categories only (no landmarks/loot containers).
+  Variants: `navbar` (inline desktop, moved into the mobile drawer) and `hero`.
+- **Forms** (contribute / edit / admin) — one system in `src/components/form-styles.ts`
+  (`labelCls`/`inputCls`/`selectCls`/`textareaCls`/`hint`/`error`/`btn*`). Use **native** form
+  elements (keep `name`/`value` for server actions) styled with these classes — don't reach for
+  unstyled ad-hoc inputs. Closed taxonomy sets are selects; wiki-sourced sets allow "other".
 - **Icon + tooltip**: `ItemIconLink` (shared by recipe ingredients and loot grids) — icon, hover/
-  focus name tooltip, links to the item; recipes add `×amount`, loot shows no amount.
-- **Environment**: `/environment` landing (category cards with counts / "coming soon"),
-  `?category=` grids, `/environment/<slug>` detail (description + tier tabs of loot icons + source).
-- **Tabs**: `ItemTabs` (client, ARIA tablist) — reused for item relationships and crate loot tiers.
-- **Active filter chips** must NOT rely on `text-primary`-on-`base-300` or `primary`/`primary-content`
-  (both fail AA in the light theme) — use `bg-base-300 text-base-content font-semibold`.
+  focus name tooltip, links to the item; recipes add `×amount`, loot shows none.
+- **App shell** — sticky blurred `SiteHeader` (brand wordmark, section-dropdown `MainNav` on
+  NavigationMenu, inline search, auth menu); mobile = hamburger → left slide-in Sheet drawer holding
+  nav + search. Footer restyled to tokens.
 - **No browser dialogs.** Never use `window.alert`, `window.confirm`, or `window.prompt`.
   Use a styled in-app modal instead (e.g. `src/components/ConfirmDialog.tsx`).
 
@@ -208,7 +245,7 @@ _Add desired features, content, and rules below — this section is owned by the
 - [ ] NPCs: no community-wiki source yet — decide on a data source or author manually.
 - [ ] Landmarks/Game Modes: most wiki pages are empty stubs — consider authoring descriptions
       locally instead of relying on the wiki.
-- [ ] Weapon/artillery pages: render the `StatBox` "Ammo" stat as an icon + tooltip
+- [ ] Weapon/artillery pages: render the `StatGrid` "Ammo" stat as an icon + tooltip
       (`ItemIconLink`) instead of the current plain text link, matching the loot/recipe
       icon grids. (Reverse view — ammo's "Used by" tab — is already implemented.)
 - [ ] (add more here…)

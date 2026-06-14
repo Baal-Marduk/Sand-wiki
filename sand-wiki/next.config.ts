@@ -1,7 +1,27 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  async headers() {
+    // Game sprite icons are stable per filename — cache hard so repeat visitors
+    // (and the Vercel edge) never re-download them. If an icon's *content* ever
+    // changes, rename the file to bust the cache.
+    const immutable = [
+      { key: "Cache-Control", value: "public, max-age=31536000, immutable" },
+    ];
+    return [
+      { source: "/icons/:path*", headers: immutable },
+      { source: "/tramplers/:path*", headers: immutable },
+      {
+        // Baseline security headers on every response.
+        source: "/:path*",
+        headers: [
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          { key: "X-Frame-Options", value: "SAMEORIGIN" },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;

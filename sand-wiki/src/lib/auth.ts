@@ -6,6 +6,22 @@ import { verifySession, type SessionPayload } from "./session";
 export const SESSION_COOKIE = "sand_session";
 export const SESSION_TTL_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
 
+const MIN_SECRET_LENGTH = 32;
+
+/** The session-signing secret, validated. Throws loudly if missing/weak so a
+ *  misconfigured deploy fails fast and visibly rather than silently logging
+ *  everyone out (reads) or 500ing mid-login (writes). */
+export function getSessionSecret(): string {
+  const secret = process.env.SESSION_SECRET;
+  if (!secret || secret.length < MIN_SECRET_LENGTH) {
+    throw new Error(
+      `SESSION_SECRET is missing or too short (need >= ${MIN_SECRET_LENGTH} chars). ` +
+        `Generate one: node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"`,
+    );
+  }
+  return secret;
+}
+
 /** Pure allowlist check — `csv` defaults to the ADMIN_STEAM_IDS env var. */
 export function isAdmin(steamId: string, csv = process.env.ADMIN_STEAM_IDS): boolean {
   const ids = (csv ?? "").split(",").map((s) => s.trim()).filter(Boolean);
@@ -13,8 +29,7 @@ export function isAdmin(steamId: string, csv = process.env.ADMIN_STEAM_IDS): boo
 }
 
 export async function getSession(): Promise<SessionPayload | null> {
-  const secret = process.env.SESSION_SECRET;
-  if (!secret) return null;
+  const secret = getSessionSecret();
   const jar = await cookies();
   const token = jar.get(SESSION_COOKIE)?.value;
   if (!token) return null;

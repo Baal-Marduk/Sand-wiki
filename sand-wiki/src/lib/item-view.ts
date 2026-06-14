@@ -20,7 +20,6 @@ export interface ItemFacts {
 /** Detail-panel rows — only those we have a value for. */
 export function itemDetailRows(facts: ItemFacts, trades: ItemTrades): DetailRow[] {
   const rows: DetailRow[] = [{ label: "Category", value: categoryLabel(facts.category) }];
-  if (facts.storageStack !== null) rows.push({ label: "Stack size", value: `×${facts.storageStack}` });
   if (facts.workbenchTier !== null) rows.push({ label: "Workbench tier", value: String(facts.workbenchTier) });
   if (facts.value != null) rows.push({ label: "Value", value: formatCrowns(facts.value), coin: true });
   if (trades.buy.length > 0) {
