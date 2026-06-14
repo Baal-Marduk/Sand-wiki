@@ -23,8 +23,8 @@ model Entity {
   imageAlt    String?
   derivedName String?
   sourceUrl   String?
-  lootCurated Boolean @default(false)
-  curated     Boolean @default(false)
+  lootCurated Boolean @default(false) // loot/cost links hand-edited → seed won't recreate them
+  curated     Boolean @default(false) // row hand-added/admin-applied → seed prune queries skip it
 
   itemStats     ItemStats?
   tramplerStats TramplerStats?
