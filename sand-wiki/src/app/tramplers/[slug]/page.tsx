@@ -1,5 +1,6 @@
 import { notFound } from "next/navigation";
-import { getTramplerPartBySlug } from "@/lib/queries";
+import { getTramplerPartBySlug, getLastEditor } from "@/lib/queries";
+import { editorDisplayName } from "@/lib/steam";
 import { categoryLabel } from "@/lib/taxonomy";
 import { tramplerStatCells, tramplerDetailRows } from "@/lib/trampler-view";
 import { EntityDetail } from "@/components/EntityDetail";
@@ -16,6 +17,7 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
   if (!part) notFound();
 
   const canSuggest = !!(await getSession());
+  const editor = await getLastEditor("tramplerPart", slug);
   const cost = part.outgoingLinks;
   const stats = part.tramplerStats ?? {
     dimensions: null, health: null, weight: null, weightCapacity: null, weightCompensation: null,
@@ -60,6 +62,7 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
       description={part.description}
       stats={tramplerStatCells(stats)}
       detailRows={tramplerDetailRows(stats)}
+      lastEditedBy={editor ? { steamId: editor.steamId, name: editorDisplayName(editor.personaName) } : null}
       tabs={tabs}
       sourceUrl={part.sourceUrl}
     />
