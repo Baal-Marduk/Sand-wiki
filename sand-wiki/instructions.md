@@ -187,6 +187,8 @@ Imports copy what exists and link back via `sourceUrl`.
 - **Tabs**: `ItemTabs` (client, ARIA tablist) — reused for item relationships and crate loot tiers.
 - **Active filter chips** must NOT rely on `text-primary`-on-`base-300` or `primary`/`primary-content`
   (both fail AA in the light theme) — use `bg-base-300 text-base-content font-semibold`.
+- **No browser dialogs.** Never use `window.alert`, `window.confirm`, or `window.prompt`.
+  Use a styled in-app modal instead (e.g. `src/components/ConfirmDialog.tsx`).
 
 ## Gotchas
 
