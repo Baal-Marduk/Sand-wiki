@@ -5,7 +5,7 @@ import Link from "next/link";
 import "./tech-tree.css";
 import type { TechTree, TechNode } from "@/lib/tech-tree/types";
 import { LAYOUT, computeLayout, ancestors, pathCost } from "@/lib/tech-tree/layout";
-import { Button } from "@/components/ui/button";
+import { actionButtonClass } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 
 const STORE_KEY = "sand_techtree_unlocked_v1";
@@ -13,7 +13,7 @@ const fmt = (n: number) => n.toLocaleString("en-US");
 
 function Glyph({ icon, alt }: { icon: string | null; alt: string }) {
   // eslint-disable-next-line @next/next/no-img-element
-  return icon ? <img src={icon} alt="" aria-hidden /> : <span aria-label={alt}>▦</span>;
+  return icon ? <img src={icon} alt="" aria-hidden loading="lazy" decoding="async" /> : <span aria-label={alt}>▦</span>;
 }
 
 export function TechTreeView({ tree }: { tree: TechTree }) {
@@ -60,8 +60,14 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   }, []);
 
   const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const showTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cancelHide = useCallback(() => { if (hideTimer.current) { clearTimeout(hideTimer.current); hideTimer.current = null; } }, []);
-  const scheduleHide = useCallback(() => { cancelHide(); hideTimer.current = setTimeout(() => setHover(null), 140); }, [cancelHide]);
+  const cancelShow = useCallback(() => { if (showTimer.current) { clearTimeout(showTimer.current); showTimer.current = null; } }, []);
+  const scheduleShow = useCallback((slug: string, rect: DOMRect) => {
+    cancelHide(); cancelShow();
+    showTimer.current = setTimeout(() => setHover({ slug, rect }), 320);
+  }, [cancelHide, cancelShow]);
+  const scheduleHide = useCallback(() => { cancelShow(); cancelHide(); hideTimer.current = setTimeout(() => setHover(null), 140); }, [cancelHide, cancelShow]);
 
   const ps = useMemo(() => {
     const set = new Set<string>();
@@ -127,8 +133,8 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
         <span className="tt-page-title">Tech Tree</span>
         <div className="tt-toolbar">
           <span className="tt-progress">{unlocked.size} / {tree.nodes.length} unlocked</span>
-          <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())}>Clear selection</Button>
-          <Button variant="outline" size="sm" onClick={() => setResetOpen(true)}>Reset progress</Button>
+          <button type="button" className={actionButtonClass} onClick={() => setSelected(new Set())}>Clear selection</button>
+          <button type="button" className={actionButtonClass} onClick={() => setResetOpen(true)}>Reset progress</button>
         </div>
       </header>
 
@@ -212,7 +218,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
                    tabIndex={0}
                    onClick={() => toggleSelected(n.slug)}
                    onKeyDown={(ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggleSelected(n.slug); } }}
-                   onMouseEnter={(ev) => { cancelHide(); setHover({ slug: n.slug, rect: (ev.currentTarget as HTMLElement).getBoundingClientRect() }); }}
+                   onMouseEnter={(ev) => scheduleShow(n.slug, (ev.currentTarget as HTMLElement).getBoundingClientRect())}
                    onMouseLeave={scheduleHide}>
                 <span className="tnode-rail" />
                 <button className="tnode-status" aria-label={`Mark ${n.name} ${unlocked.has(n.slug) ? "locked" : "unlocked"}`} aria-pressed={unlocked.has(n.slug)}
@@ -242,21 +248,21 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
                   <span key={s} className="tt-chip" onClick={() => toggleSelected(s)}>{byId[s].name}<i className="tt-chip-x">×</i></span>
                 ))}
               </div>
+              {cost.materials.length > 0 && (
+                <div className="tt-sum-mats">
+                  <div className="tt-sum-mats-h">Materials needed</div>
+                  <div className="tt-mat-grid">
+                    {cost.materials.map((m) => (
+                      <span key={m.name} className="tt-mat"><span className="tt-mat-ic"><Glyph icon={m.icon} alt={m.name} /></span><b>{fmt(m.amount)}</b><span className="tt-mat-name">{m.name}</span></span>
+                    ))}
+                  </div>
+                </div>
+              )}
               <div className="tt-sum-figures">
                 <div className="tt-fig tt-fig-main"><span className="tt-fig-label">Remaining to unlock</span><span className="tt-fig-val">{fmt(cost.remainingCrowns)}<i>crowns</i></span></div>
                 <div className="tt-fig"><span className="tt-fig-label">Techs left</span><span className="tt-fig-val tt-fig-sm">{cost.techsLeft}</span></div>
                 <div className="tt-fig"><span className="tt-fig-label">Full path</span><span className="tt-fig-val tt-fig-sm">{fmt(cost.fullCrowns)}</span></div>
               </div>
-              {cost.materials.length > 0 && (
-                <div className="tt-sum-mats">
-                  <div className="tt-sum-plan-h">Materials needed</div>
-                  <div className="tt-mat-grid">
-                    {cost.materials.map((m) => (
-                      <span key={m.name} className="tt-mat"><span className="tt-mat-ic"><Glyph icon={m.icon} alt={m.name} /></span><b>{fmt(m.amount)}</b> {m.name}</span>
-                    ))}
-                  </div>
-                </div>
-              )}
               {cost.techsLeft > 0 ? (
                 <div className="tt-sum-plan">
                   <div className="tt-sum-plan-h">Build order
@@ -281,10 +287,10 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
         open={resetOpen}
         onOpenChange={setResetOpen}
         title="Reset progress?"
-        description="This clears your unlocked techs back to the free starting techs."
+        description="This unchecks every tech and clears all your unlocked progress."
         confirmLabel="Reset"
         destructive
-        onConfirm={() => { const d = new Set(tree.defaultUnlocked); setUnlocked(d); persist(d); }}
+        onConfirm={() => { const cleared = new Set<string>(); setUnlocked(cleared); persist(cleared); }}
       />
     </div>
   );

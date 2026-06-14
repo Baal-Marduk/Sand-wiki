@@ -5,7 +5,7 @@ import { editorDisplayName } from "@/lib/steam";
 import { categoryLabel } from "@/lib/taxonomy";
 import { tramplerStatCells, tramplerDetailRows } from "@/lib/trampler-view";
 import { EntityDetail } from "@/components/EntityDetail";
-import { buttonVariants } from "@/components/ui/button";
+import { actionButtonClass } from "@/components/ui/button";
 import { CategoryTag } from "@/components/CategoryTag";
 import { ItemIconLink } from "@/components/ItemIconLink";
 import { type Tab } from "@/components/ItemTabs";
@@ -66,7 +66,7 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
         <>
           <CategoryTag slug={part.category} />
           {techNode && (
-            <Link href={`/tech?select=${techNode.slug}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+            <Link href={`/tech?select=${techNode.slug}`} className={actionButtonClass}>
               Show in tech tree
             </Link>
           )}

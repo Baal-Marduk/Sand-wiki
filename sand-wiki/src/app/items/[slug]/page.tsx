@@ -7,7 +7,7 @@ import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
 import { categoryLabel } from "@/lib/taxonomy";
 import { EntityDetail } from "@/components/EntityDetail";
-import { buttonVariants } from "@/components/ui/button";
+import { actionButtonClass } from "@/components/ui/button";
 import { CategoryTag } from "@/components/CategoryTag";
 import { RarityBadge } from "@/components/RarityBadge";
 import { itemStatCells } from "@/components/StatBox";
@@ -85,7 +85,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
           {item.rarity && <RarityBadge rarity={item.rarity} />}
           <CategoryTag slug={item.category} />
           {techNode && (
-            <Link href={`/tech?select=${techNode.slug}`} className={buttonVariants({ variant: "outline", size: "sm" })}>
+            <Link href={`/tech?select=${techNode.slug}`} className={actionButtonClass}>
               Show in tech tree
             </Link>
           )}
