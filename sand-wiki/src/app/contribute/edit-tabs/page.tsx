@@ -29,11 +29,13 @@ export default async function EditTabsPage({ searchParams }: { searchParams: SP 
   const entity = await getOutgoingLinks(slug, role ?? "loot");
   if (!entity) notFound();
 
-  const items = await prisma.entity.findMany({
-    where: { kind: "item" },
-    select: { slug: true, name: true },
-    orderBy: { name: "asc" },
-  });
+  const items = role
+    ? await prisma.entity.findMany({
+        where: { kind: "item" },
+        select: { slug: true, name: true },
+        orderBy: { name: "asc" },
+      })
+    : [];
 
   return (
     <article className="mx-auto max-w-3xl space-y-6 py-6">
