@@ -25,17 +25,25 @@ export function SiteHeader() {
       >
         <Link
           href="/"
-          className="font-display text-xl font-bold text-primary tracking-wide"
+          aria-label="SAND HELP — home"
+          className="group font-display text-xl font-bold tracking-wide text-foreground transition-colors hover:text-primary focus-visible:text-primary"
         >
           SAND
+          <span
+            aria-hidden="true"
+            className="mx-0.5 text-primary transition-colors group-hover:text-foreground group-focus-visible:text-foreground"
+          >
+            ·
+          </span>
+          HELP
         </Link>
 
-        <div className="hidden flex-1 md:block">
+        <div className="hidden flex-1 nav:block">
           <MainNav />
         </div>
-        <div className="flex-1 md:hidden" />
+        <div className="flex-1 nav:hidden" />
 
-        <div className="hidden items-center gap-2 md:flex">
+        <div className="hidden items-center gap-2 nav:flex">
           <SearchBox variant="navbar" />
           <Link
             href="/about"
@@ -47,7 +55,7 @@ export function SiteHeader() {
         </div>
 
         <Sheet>
-          <SheetTrigger asChild className="md:hidden">
+          <SheetTrigger asChild className="nav:hidden">
             <Button variant="ghost" size="icon" aria-label="Open menu">
               <Menu className="size-5" />
             </Button>

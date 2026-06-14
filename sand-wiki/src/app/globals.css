@@ -1,6 +1,14 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
+/* Custom breakpoint for the primary nav. The longer "SAND HELP" brand + the five
+ * section items + the inner-page search box need ~1080px to sit on one row;
+ * below that the fixed-height bar would overflow, so we drop to the hamburger
+ * drawer instead. Lands between Tailwind's lg (1024) and xl (1280). */
+@theme {
+  --breakpoint-nav: 68rem;
+}
+
 /* ── shadcn/ui design tokens (dark-only, SAND desert) ─────────────────────────
  * Binding values from the redesign spec / `.superpowers/design/` reference.
  * Rarity scale mirrors src/lib/rarity.ts (the single source of truth). */
