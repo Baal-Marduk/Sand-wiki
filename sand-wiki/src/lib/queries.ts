@@ -3,7 +3,7 @@ import { buildItemQuery, applyItemView, type ItemFilter } from "./item-filter";
 import { ammoCaliber, itemClasses, weaponCaliber } from "./ammo";
 import { toRecipeCard, type RecipeWithItems, type RecipeLine } from "./recipes";
 import { entityHref } from "./entity-links";
-import { toTechTree } from "./tech-tree/transform";
+import { toTechTree, FACTION_ROOT_PART } from "./tech-tree/transform";
 import type { TechTree } from "./tech-tree/types";
 
 /** {slug,name,icon,rarity} select for entities referenced from a recipe line. */
@@ -302,7 +302,8 @@ export async function getOutgoingLinks(slug: string, role: string) {
   return entity;
 }
 
-/** Full tech tree: all tech-node entities with costs, unlocks and same-faction prereqs. */
+/** Full tech tree: all tech-node entities with costs, unlocks and same-faction prereqs,
+ *  plus each faction's free starting part. */
 export async function getTechTree(): Promise<TechTree> {
   const rows = await prisma.entity.findMany({
     where: { kind: "tech-node" },
@@ -316,11 +317,32 @@ export async function getTechTree(): Promise<TechTree> {
         select: {
           role: true, name: true, amount: true, sortOrder: true,
           target: {
-            select: { slug: true, name: true, icon: true, techNodeStats: { select: { faction: true } } },
+            select: { slug: true, name: true, icon: true, kind: true, techNodeStats: { select: { faction: true } } },
           },
         },
       },
     },
   });
-  return toTechTree(rows);
+
+  const rootSlugs = Object.values(FACTION_ROOT_PART);
+  const rootRows = await prisma.entity.findMany({
+    where: { slug: { in: rootSlugs } },
+    select: { slug: true, name: true, icon: true, kind: true },
+  });
+  const rootParts = Object.fromEntries(
+    rootRows.map((r) => [r.slug, { name: r.name, icon: r.icon, kind: r.kind }]),
+  );
+
+  return toTechTree(rows, rootParts);
+}
+
+/** The tech-node slug that unlocks the given entity (by slug), or null. Entities are
+ *  typically unlocked by one node; the lowest-sortOrder incoming `tech-unlocks` wins. */
+export async function getUnlockingNode(entitySlug: string): Promise<{ slug: string } | null> {
+  const link = await prisma.entityLink.findFirst({
+    where: { role: "tech-unlocks", target: { slug: entitySlug } },
+    orderBy: { sortOrder: "asc" },
+    select: { source: { select: { slug: true } } },
+  });
+  return link?.source ? { slug: link.source.slug } : null;
 }
