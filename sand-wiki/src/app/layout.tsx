@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Oswald } from "next/font/google";
 import { SiteHeader } from "@/components/SiteHeader";
+import { ConditionalChrome } from "@/components/ConditionalChrome";
 import "./globals.css";
 
 const oswald = Oswald({
@@ -25,50 +26,55 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`dark ${oswald.variable}`}>
       <body className="min-h-screen bg-background text-foreground flex flex-col">
-        <SiteHeader />
-        <main className="max-w-6xl mx-auto w-full p-4 flex-1">{children}</main>
-        <footer className="border-t border-border text-sm text-muted-foreground">
-          <div className="mx-auto w-full max-w-6xl space-y-4 px-4 py-6 text-center">
-            <nav
-              aria-label="Footer"
-              className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2"
-            >
-              <Link href="/about" className="text-primary underline-offset-2 hover:underline">
-                About
-              </Link>
-              <Link
-                href="/contribute/new"
-                className="text-primary underline-offset-2 hover:underline"
-              >
-                Contribute
-              </Link>
-              <a
-                href={DISCORD_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline-offset-2 hover:underline"
-              >
-                Discord ↗
-              </a>
-              <a
-                href={STEAM_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-primary underline-offset-2 hover:underline"
-              >
-                Get the game ↗
-              </a>
-            </nav>
+        <ConditionalChrome
+          header={<SiteHeader />}
+          footer={
+            <footer className="border-t border-border text-sm text-muted-foreground">
+              <div className="mx-auto w-full max-w-6xl space-y-4 px-4 py-6 text-center">
+                <nav
+                  aria-label="Footer"
+                  className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2"
+                >
+                  <Link href="/about" className="text-primary underline-offset-2 hover:underline">
+                    About
+                  </Link>
+                  <Link
+                    href="/contribute/new"
+                    className="text-primary underline-offset-2 hover:underline"
+                  >
+                    Contribute
+                  </Link>
+                  <a
+                    href={DISCORD_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline-offset-2 hover:underline"
+                  >
+                    Discord ↗
+                  </a>
+                  <a
+                    href={STEAM_URL}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary underline-offset-2 hover:underline"
+                  >
+                    Get the game ↗
+                  </a>
+                </nav>
 
-            <p className="text-xs leading-relaxed">
-              Unofficial fan site. Not affiliated with or endorsed by tinyBuild.
-              <br />
-              SAND: Raiders of Sophie is a trademark of its respective owners.
-            </p>
+                <p className="text-xs leading-relaxed">
+                  Unofficial fan site. Not affiliated with or endorsed by tinyBuild.
+                  <br />
+                  SAND: Raiders of Sophie is a trademark of its respective owners.
+                </p>
 
-            <p className="text-xs">© 2026 SAND HELP</p>
-          </div>
-        </footer>
+                <p className="text-xs">© 2026 SAND HELP</p>
+              </div>
+            </footer>
+          }
+        >
+          {children}
+        </ConditionalChrome>
       </body>
     </html>
   );

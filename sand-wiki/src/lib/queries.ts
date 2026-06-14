@@ -3,6 +3,8 @@ import { buildItemQuery, applyItemView, type ItemFilter } from "./item-filter";
 import { ammoCaliber, itemClasses, weaponCaliber } from "./ammo";
 import { toRecipeCard, type RecipeWithItems, type RecipeLine } from "./recipes";
 import { entityHref } from "./entity-links";
+import { toTechTree } from "./tech-tree/transform";
+import type { TechTree } from "./tech-tree/types";
 
 /** {slug,name,icon,rarity} select for entities referenced from a recipe line. */
 const linkItemSelect = { select: { slug: true, name: true, icon: true, rarity: true } } as const;
@@ -298,4 +300,27 @@ export async function getOutgoingLinks(slug: string, role: string) {
     },
   });
   return entity;
+}
+
+/** Full tech tree: all tech-node entities with costs, unlocks and same-faction prereqs. */
+export async function getTechTree(): Promise<TechTree> {
+  const rows = await prisma.entity.findMany({
+    where: { kind: "tech-node" },
+    select: {
+      slug: true,
+      name: true,
+      techNodeStats: { select: { faction: true, tier: true, sortOrder: true } },
+      outgoingLinks: {
+        where: { role: { in: ["tech-prereq", "tech-unlock-cost", "tech-unlocks"] } },
+        orderBy: { sortOrder: "asc" },
+        select: {
+          role: true, name: true, amount: true, sortOrder: true,
+          target: {
+            select: { slug: true, name: true, icon: true, techNodeStats: { select: { faction: true } } },
+          },
+        },
+      },
+    },
+  });
+  return toTechTree(rows);
 }

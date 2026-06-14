@@ -63,7 +63,7 @@ export function SiteHeader() {
           <SheetContent side="right" className="bg-card border-border">
             <SheetTitle className="font-display text-primary">Menu</SheetTitle>
             <div className="mt-4 space-y-1 px-4">
-              {SECTIONS.filter((s) => s.kind === "data").map((s) => (
+              {SECTIONS.filter((s) => s.kind === "data" || s.kind === "link").map((s) => (
                 <Link
                   key={s.slug}
                   href={s.href ?? `/${s.slug}`}
