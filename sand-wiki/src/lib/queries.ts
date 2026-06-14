@@ -14,6 +14,7 @@ const recipeInclude = {
     include: {
       inputs: { include: { entity: linkItemSelect } },
       outputs: { include: { entity: linkItemSelect } },
+      location: { select: { slug: true, name: true } },
     },
   },
 } as const;
@@ -25,6 +26,7 @@ type LoadedRecipe = {
   workbench: string | null;
   tier: number | null;
   craftTimeSeconds: number | null;
+  location: { slug: string; name: string } | null;
   inputs: { amount: number; entity: { slug: string; name: string; icon: string | null; rarity: string | null } }[];
   outputs: { amount: number; entity: { slug: string; name: string; icon: string | null; rarity: string | null } }[];
 };
@@ -38,6 +40,7 @@ function toRecipeWithItems(r: LoadedRecipe): RecipeWithItems {
     workbench: r.workbench,
     tier: r.tier,
     craftTimeSeconds: r.craftTimeSeconds,
+    location: r.location,
     inputs: r.inputs.map(line),
     outputs: r.outputs.map(line),
   };
@@ -120,10 +123,21 @@ export async function getEnvEntityBySlug(slug: string) {
         orderBy: { sortOrder: "asc" },
         include: { target: { select: { slug: true, kind: true, icon: true, rarity: true } } },
       },
+      craftedAtRecipes: {
+        orderBy: { slug: "asc" },
+        include: {
+          inputs: { include: { entity: linkItemSelect } },
+          outputs: { include: { entity: linkItemSelect } },
+        },
+      },
     },
   });
-  if (!entity || entity.kind !== "environment") return null;
-  return entity;
+  if (entity === null || entity.kind !== "environment") return null;
+  // We're already on the location page, so each card's location backlink is null.
+  const craftedBy = entity.craftedAtRecipes.map((r) =>
+    toRecipeCard(toRecipeWithItems({ ...r, location: null })),
+  );
+  return { ...entity, craftedBy };
 }
 
 /** Count of env entities per category — for the Environment landing. */
