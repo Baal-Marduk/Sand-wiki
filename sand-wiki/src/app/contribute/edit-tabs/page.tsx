@@ -3,11 +3,11 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isEditableTarget, entityHref } from "@/lib/proposal-schema";
-import { getOutgoingLinks, getItemBySlug } from "@/lib/queries";
-import { linksToSnapshot } from "@/lib/link-proposal";
+import { getOutgoingLinks, getItemBySlug, getIncomingLootLinks, listLootSources } from "@/lib/queries";
+import { linksToSnapshot, incomingLootToDrafts } from "@/lib/link-proposal";
 import { linkFields, LINK_ROLES } from "@/lib/entity-links";
 import { LinkEditForm } from "@/components/LinkEditForm";
-import { submitDeleteRecipe } from "@/app/contribute/actions";
+import { submitDeleteRecipe, submitItemLootEdit } from "@/app/contribute/actions";
 import { btnGhost, btnSecondary, btnDestructive, btnSm } from "@/components/form-styles";
 
 type SP = Promise<{ type?: string; slug?: string }>;
@@ -45,12 +45,17 @@ export default async function EditTabsPage({ searchParams }: { searchParams: SP 
   const showRecipes = RECIPE_TAB_KINDS.has(entity.kind);
   const item = showRecipes ? await getItemBySlug(slug) : null;
 
+  const isItem = entity.kind === "item";
+  const lootSources = isItem ? await listLootSources() : [];
+  const lootRows = isItem ? await getIncomingLootLinks(slug) : null;
+  const lootDrafts = lootRows ? incomingLootToDrafts(lootRows) : [];
+
   return (
     <article className="mx-auto max-w-3xl space-y-6 py-6">
       <h1 className="font-display text-2xl font-bold uppercase tracking-[0.01em]">Edit tabs — {entity.name}</h1>
       <p className="text-muted-foreground">An admin reviews every change before it goes live.</p>
 
-      {role ? (
+      {role && (
         <section className="space-y-3 border border-border bg-card p-4">
           <h2 className="font-display text-sm font-semibold uppercase tracking-[0.06em] text-muted-foreground">{LINK_ROLES[role].label}</h2>
           <LinkEditForm
@@ -63,8 +68,25 @@ export default async function EditTabsPage({ searchParams }: { searchParams: SP 
             items={items}
           />
         </section>
-      ) : (
-        <p className="text-muted-foreground">No editable tabs for this entity yet.</p>
+      )}
+
+      {isItem && (
+        <section className="space-y-3 border border-border bg-card p-4">
+          <h2 className="font-display text-sm font-semibold uppercase tracking-[0.06em] text-muted-foreground">Found in</h2>
+          <p className="text-sm text-muted-foreground">Containers and landmarks where this item can be looted.</p>
+          <LinkEditForm
+            type="item"
+            slug={slug}
+            role="loot"
+            label="Found in"
+            fields={linkFields("loot")}
+            rows={lootDrafts}
+            items={lootSources}
+            action={submitItemLootEdit}
+            optionNoun="source"
+            allowCustom={false}
+          />
+        </section>
       )}
 
       {showRecipes && item && (
