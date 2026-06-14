@@ -5,6 +5,8 @@ import Link from "next/link";
 import "./tech-tree.css";
 import type { TechTree, TechNode } from "@/lib/tech-tree/types";
 import { LAYOUT, computeLayout, ancestors, pathCost } from "@/lib/tech-tree/layout";
+import { Button } from "@/components/ui/button";
+import { ConfirmDialog } from "@/components/ConfirmDialog";
 
 const STORE_KEY = "sand_techtree_unlocked_v1";
 const fmt = (n: number) => n.toLocaleString("en-US");
@@ -23,6 +25,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   const [unlocked, setUnlocked] = useState<Set<string>>(new Set());
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [hover, setHover] = useState<{ slug: string; rect: DOMRect } | null>(null);
+  const [resetOpen, setResetOpen] = useState(false);
 
   useEffect(() => {
     // Client-only hydration from localStorage; must run after mount, not during render.
@@ -38,6 +41,10 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   const persist = useCallback((s: Set<string>) => {
     try { localStorage.setItem(STORE_KEY, JSON.stringify([...s])); } catch { /* ignore */ }
   }, []);
+
+  const hideTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const cancelHide = useCallback(() => { if (hideTimer.current) { clearTimeout(hideTimer.current); hideTimer.current = null; } }, []);
+  const scheduleHide = useCallback(() => { cancelHide(); hideTimer.current = setTimeout(() => setHover(null), 140); }, [cancelHide]);
 
   const ps = useMemo(() => {
     const set = new Set<string>();
@@ -72,15 +79,17 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   return (
     <div className="tt-app">
       <header className="tt-appbar">
-        <Link href="/" className="tt-brand"><span className="tt-brand-mark">S</span><span className="tt-brand-name">SAND<span className="sub">·</span>WIKI</span></Link>
+        <Link href="/" aria-label="SAND HELP — home"
+          className="group font-display text-xl font-bold tracking-wide text-foreground transition-colors hover:text-primary focus-visible:text-primary">
+          SAND
+          <span aria-hidden="true" className="mx-0.5 text-primary transition-colors group-hover:text-foreground group-focus-visible:text-foreground">·</span>
+          HELP
+        </Link>
         <span className="tt-page-title">Tech Tree</span>
         <div className="tt-toolbar">
           <span className="tt-progress">{unlocked.size} / {tree.nodes.length} unlocked</span>
-          <button className="btn btn-ghost btn-sm" onClick={() => setSelected(new Set())}>Clear selection</button>
-          <button className="btn btn-ghost btn-sm" onClick={() => {
-            if (!confirm("Reset your unlocked progress to the starting techs?")) return;
-            const d = new Set(tree.defaultUnlocked); setUnlocked(d); persist(d);
-          }}>Reset progress</button>
+          <Button variant="ghost" size="sm" onClick={() => setSelected(new Set())}>Clear selection</Button>
+          <Button variant="outline" size="sm" onClick={() => setResetOpen(true)}>Reset progress</Button>
         </div>
       </header>
 
@@ -132,8 +141,15 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
               <div key={f.id}>
                 <div className="tt-band" style={{ ["--fac" as string]: f.accent, top: b.top - 18, height: b.height + 12, width: layout.canvasW }} />
                 <div className="tt-faction" style={{ ["--fac" as string]: f.accent, left: 8, top: b.top + b.height / 2 - 33, width: LAYOUT.ROOT_W }}>
-                  <span className="tt-faction-glyph glyph"><Glyph icon={null} alt={f.name} /></span>
-                  <div className="tt-faction-meta"><span className="tt-faction-name">{f.name}</span><span className="tt-faction-sub">Faction line</span></div>
+                  <span className="tt-faction-glyph glyph"><Glyph icon={f.rootPart?.icon ?? null} alt={f.name} /></span>
+                  <div className="tt-faction-meta">
+                    <span className="tt-faction-name">{f.name}</span>
+                    {f.rootPart?.href ? (
+                      <Link className="tt-faction-root" href={f.rootPart.href}>{f.rootPart.name}</Link>
+                    ) : (
+                      <span className="tt-faction-sub">Faction line</span>
+                    )}
+                  </div>
                 </div>
               </div>
             );
@@ -154,8 +170,8 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
                    tabIndex={0}
                    onClick={() => toggleSelected(n.slug)}
                    onKeyDown={(ev) => { if (ev.key === "Enter" || ev.key === " ") { ev.preventDefault(); toggleSelected(n.slug); } }}
-                   onMouseEnter={(ev) => setHover({ slug: n.slug, rect: (ev.currentTarget as HTMLElement).getBoundingClientRect() })}
-                   onMouseLeave={() => setHover((h) => (h?.slug === n.slug ? null : h))}>
+                   onMouseEnter={(ev) => { cancelHide(); setHover({ slug: n.slug, rect: (ev.currentTarget as HTMLElement).getBoundingClientRect() }); }}
+                   onMouseLeave={scheduleHide}>
                 <span className="tnode-rail" />
                 <button className="tnode-status" aria-label={`Mark ${n.name} ${unlocked.has(n.slug) ? "locked" : "unlocked"}`} aria-pressed={unlocked.has(n.slug)}
                         onClick={(ev) => { ev.stopPropagation(); toggleUnlocked(n.slug); }} />
@@ -170,7 +186,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
         </div>
       </div>
 
-      {hover && <Tooltip node={byId[hover.slug]} rect={hover.rect} unlocked={unlocked} nodes={tree.nodes} />}
+      {hover && <Tooltip node={byId[hover.slug]} rect={hover.rect} unlocked={unlocked} nodes={tree.nodes} onEnter={cancelHide} onLeave={scheduleHide} />}
 
       <aside className="tt-summary">
         <div className="tt-summary-h"><span className="ti">Path planner</span></div>
@@ -219,11 +235,23 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
           )}
         </div>
       </aside>
+      <ConfirmDialog
+        open={resetOpen}
+        onOpenChange={setResetOpen}
+        title="Reset progress?"
+        description="This clears your unlocked techs back to the free starting techs."
+        confirmLabel="Reset"
+        destructive
+        onConfirm={() => { const d = new Set(tree.defaultUnlocked); setUnlocked(d); persist(d); }}
+      />
     </div>
   );
 }
 
-function Tooltip({ node, rect, unlocked, nodes }: { node: TechNode; rect: DOMRect; unlocked: Set<string>; nodes: TechNode[] }) {
+function Tooltip({ node, rect, unlocked, nodes, onEnter, onLeave }: {
+  node: TechNode; rect: DOMRect; unlocked: Set<string>; nodes: TechNode[];
+  onEnter: () => void; onLeave: () => void;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [pos, setPos] = useState<{ top: number; left: number }>({ top: -9999, left: -9999 });
   useEffect(() => {
@@ -239,7 +267,8 @@ function Tooltip({ node, rect, unlocked, nodes }: { node: TechNode; rect: DOMRec
     ? node.prereqs.map((r) => nodes.find((n) => n.slug === r)?.name ?? r).join(", ")
     : "Faction root — no prerequisite";
   return (
-    <div id="tt-tip" ref={ref} className="show" style={{ top: pos.top, left: pos.left }}>
+    <div id="tt-tip" ref={ref} className="show" style={{ top: pos.top, left: pos.left }}
+         onMouseEnter={onEnter} onMouseLeave={onLeave}>
       <div className="tt-tip-h">
         <span className="tt-tip-name">{node.name}</span>
         <span className={"tt-tip-st" + (isUnlocked ? " ok" : "")}>{isUnlocked ? "Unlocked" : "Locked"}</span>
@@ -253,7 +282,18 @@ function Tooltip({ node, rect, unlocked, nodes }: { node: TechNode; rect: DOMRec
         ))}
       </div>
       <div className="tt-tip-row"><span>Requires</span><b>{reqNames}</b></div>
-      {node.unlocks.length > 0 && <div className="tt-tip-row"><span>Unlocks</span><b>{node.unlocks.map((u) => u.name).join(", ")}</b></div>}
+      {node.unlocks.length > 0 && (
+        <div className="tt-tip-unlocks">
+          <span className="tt-tip-unlocks-h">Unlocks</span>
+          <div className="tt-tip-unlocks-list">
+            {node.unlocks.map((u) => (
+              u.href
+                ? <Link key={u.name} href={u.href} className="tt-tip-unlock-link">{u.name}</Link>
+                : <span key={u.name} className="tt-tip-unlock-link is-plain">{u.name}</span>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }

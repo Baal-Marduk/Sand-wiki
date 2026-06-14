@@ -8,10 +8,6 @@
     background: color-mix(in srgb, var(--background) 86%, transparent);
     backdrop-filter: blur(10px); z-index: 60;
   }
-  .tt-brand { display: flex; align-items: center; gap: 10px; }
-  .tt-brand-mark { width: 28px; height: 28px; display: grid; place-items: center; background: var(--primary); color: #1a0f04; font-family: var(--font-display); font-weight: 700; font-size: 17px; }
-  .tt-brand-name { font-family: var(--font-display); font-weight: 700; font-size: 18px; letter-spacing: .04em; text-transform: uppercase; }
-  .tt-brand-name .sub { color: var(--primary); }
   .tt-page-title { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .1em; font-size: 13px; color: var(--muted-foreground); padding-left: 16px; border-left: 1px solid var(--border); }
   .tt-toolbar { margin-left: auto; display: flex; align-items: center; gap: 10px; }
   .tt-progress { font-family: var(--font-mono); font-size: 12px; color: var(--muted-foreground); padding: 5px 10px; border: 1px solid var(--border); }
@@ -126,7 +122,7 @@
   .tt-sum-done { font-size: 12px; color: var(--success); }
 
   /* ---- tooltip ---- */
-  #tt-tip { position: fixed; z-index: 100; width: 252px; background: var(--card-elevated); border: 1px solid var(--border-strong); box-shadow: 0 16px 40px -10px rgba(0,0,0,.8); padding: 0; opacity: 0; pointer-events: none; transition: opacity .1s ease; }
+  #tt-tip { position: fixed; z-index: 100; width: 252px; background: var(--card-elevated); border: 1px solid var(--border-strong); box-shadow: 0 16px 40px -10px rgba(0,0,0,.8); padding: 0; opacity: 0; pointer-events: auto; transition: opacity .1s ease; }
   #tt-tip.show { opacity: 1; }
   .tt-tip-h { display: flex; align-items: center; gap: 7px; padding: 9px 11px; border-bottom: 1px solid var(--border); }
   .tt-tip-code { font-family: var(--font-mono); font-size: 10px; color: var(--dim); }
@@ -159,4 +155,11 @@
 .tt-mat-ic { width: 16px; height: 16px; display: grid; place-items: center; }
 .tt-mat-ic img { width: 100%; height: 100%; object-fit: contain; }
 .tt-mat b { color: var(--foreground); }
-.tt-brand { text-decoration: none; color: inherit; }
+.tt-faction-root { font-family: var(--font-mono); font-size: 10px; color: var(--fac); text-transform: uppercase; letter-spacing: .04em; text-decoration: none; }
+.tt-faction-root:hover { text-decoration: underline; }
+.tt-tip-unlocks { padding: 9px 11px; }
+.tt-tip-unlocks-h { display: block; font-family: var(--font-display); text-transform: uppercase; letter-spacing: .06em; font-size: 10px; color: var(--muted-foreground); margin-bottom: 5px; }
+.tt-tip-unlocks-list { display: flex; flex-wrap: wrap; gap: 4px 8px; }
+.tt-tip-unlock-link { font-size: 12px; color: var(--primary); text-decoration: none; }
+.tt-tip-unlock-link:hover { text-decoration: underline; }
+.tt-tip-unlock-link.is-plain { color: var(--muted-foreground); }
