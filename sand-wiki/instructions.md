@@ -6,7 +6,7 @@ bottom is yours to keep specifying.
 
 > Note: `AGENTS.md` is separate and only carries the "this Next.js version differs from your
 > training data — read `node_modules/next/dist/docs/` first" caveat. This file is the product/
-> data/UX reference.
+> data/UX reference .
 
 ## Overview
 
