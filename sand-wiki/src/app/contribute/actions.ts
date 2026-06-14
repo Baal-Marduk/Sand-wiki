@@ -7,6 +7,9 @@ import { editableFields, isEditableTarget, coerceValue, fieldDef, entityHref, ba
 import { recipeToSnapshot, parseRecipeLines, snapshotsEqual, type RecipeSnapshot } from "@/lib/recipe-proposal";
 import { computeDiff } from "@/lib/proposal-diff";
 import { getEntityFields } from "@/lib/proposal-entity";
+import { getOutgoingLinks } from "@/lib/queries";
+import { parseLinkRows, linksToSnapshot, snapshotsEqual as linkSnapshotsEqual } from "@/lib/link-proposal";
+import { linkFields } from "@/lib/entity-links";
 
 const MAX_PENDING_PER_USER = 10;
 
@@ -116,4 +119,48 @@ export async function submitRecipeEdit(formData: FormData) {
 
   const out = newSnap.outputs[0]?.slug ?? oldSnap.outputs[0]?.slug;
   redirect(out ? `${entityHref("item", out)}?proposed=1` : "/items?proposed=1");
+}
+
+export async function submitLinksEdit(formData: FormData) {
+  const type = String(formData.get("type") ?? "");
+  const slug = String(formData.get("slug") ?? "");
+  const role = String(formData.get("role") ?? "");
+  const note = (String(formData.get("note") ?? "").trim() || null) as string | null;
+
+  if (!isEditableTarget(type)) throw new Error("Unknown target type.");
+  if (linkFields(role).length === 0) throw new Error("Unknown tab.");
+
+  const session = await requireUser(`/contribute/edit-tabs?type=${type}&slug=${slug}`);
+  await assertUnderQuota(session.steamId);
+
+  const entity = await getOutgoingLinks(slug, role);
+  if (!entity) throw new Error("Page not found.");
+
+  const items = await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, name: true } });
+  const nameBySlug = new Map(items.map((i) => [i.slug, i.name]));
+
+  const parsed = parseLinkRows(role, {
+    slugs: formData.getAll("linkSlug").map(String),
+    customNames: formData.getAll("linkName").map(String),
+    amounts: formData.getAll("linkAmount").map(String),
+    tiers: formData.getAll("linkTier").map(String),
+    value1s: formData.getAll("linkValue1").map(String),
+  }, nameBySlug);
+  if (parsed.error) throw new Error(parsed.error);
+
+  const oldSnap = linksToSnapshot(role, entity.outgoingLinks);
+  const newSnap = { role, rows: parsed.rows };
+  if (linkSnapshotsEqual(oldSnap, newSnap)) throw new Error("No changes to submit.");
+
+  await prisma.proposal.create({
+    data: {
+      kind: "links_edit",
+      targetType: type,
+      targetSlug: slug,
+      changes: { role, old: oldSnap.rows, new: newSnap.rows } as object,
+      note,
+      proposerId: session.steamId,
+    },
+  });
+  redirect(`${entityHref(type, slug)}?proposed=1`);
 }
