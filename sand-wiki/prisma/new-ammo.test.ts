@@ -1,6 +1,8 @@
 import { describe, it, expect } from "vitest";
 import { ammoRowIdentity, type NewAmmo } from "./new-ammo";
 import entries from "./new-ammo.json";
+import data from "./data.json";
+import icons from "./icons.json";
 
 const SAMPLE: NewAmmo = {
   slug: "small-cannon-ammo-low-recoil",
@@ -60,5 +62,25 @@ describe("new-ammo.json", () => {
       (s) => s.startsWith("shotgun-turret-ammo-") && s !== "shotgun-turret-ammo-smoke",
     );
     expect(extra).toHaveLength(1);
+  });
+});
+
+describe("fresh-seed parity", () => {
+  const list = entries as NewAmmo[];
+  const items = (data as { items: { slug: string; type?: string }[] }).items;
+  const iconMap = icons as Record<string, string>;
+
+  it("data.json has an AMMO item for every new entry", () => {
+    for (const e of list) {
+      const item = items.find((i) => i.slug === e.slug);
+      expect(item, `data.json missing ${e.slug}`).toBeTruthy();
+      expect(item!.type).toBe("AMMO");
+    }
+  });
+
+  it("icons.json maps every new id to its PNG path", () => {
+    for (const e of list) {
+      expect(iconMap[e.id]).toBe(`icons/${e.iconFile}`);
+    }
   });
 });

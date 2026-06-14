@@ -1496,6 +1496,42 @@
       "storageStack": 100000,
       "workbenchTier": null,
       "fromCatalog": true
+    },
+    {
+      "slug": "shotgun-turret-ammo-smoke",
+      "id": "item_shotgunTurretAmmo_smoke",
+      "name": "Shotgun Turret Ammo Smoke",
+      "displayName": "Smoke 70 mm Shell",
+      "description": "Canister shot variant for 70 mm shotgun cannons. Lays down a smoke screen rather than a lethal payload.",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": false
+    },
+    {
+      "slug": "shotgun-turret-ammo-penetration",
+      "id": "item_shotgunTurretAmmo_penetration",
+      "name": "Shotgun Turret Ammo Penetration",
+      "displayName": "Penetrating 70 mm Shell",
+      "description": "Armor-piercing shell for 70 mm shotgun cannons.",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": false
+    },
+    {
+      "slug": "small-cannon-ammo-low-recoil",
+      "id": "item_smallCannonAmmo_lowRecoil",
+      "name": "Small Cannon Ammo Low Recoil",
+      "displayName": "Low-Recoil 40 mm Shell",
+      "description": "A smaller-caliber cannon shell utilized by autocannons. Tuned for reduced recoil.",
+      "type": "AMMO",
+      "isResource": false,
+      "storageStack": 100000,
+      "workbenchTier": null,
+      "fromCatalog": false
     }
   ],
   "recipes": [
