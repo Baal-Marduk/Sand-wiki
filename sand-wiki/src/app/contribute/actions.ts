@@ -7,8 +7,8 @@ import { editableFields, isEditableTarget, coerceValue, fieldDef, entityHref, ba
 import { recipeToSnapshot, parseRecipeLines, snapshotsEqual, type RecipeSnapshot } from "@/lib/recipe-proposal";
 import { computeDiff } from "@/lib/proposal-diff";
 import { getEntityFields } from "@/lib/proposal-entity";
-import { getOutgoingLinks } from "@/lib/queries";
-import { parseLinkRows, linksToSnapshot, snapshotsEqual as linkSnapshotsEqual } from "@/lib/link-proposal";
+import { getOutgoingLinks, getIncomingLootLinks, listLootSources } from "@/lib/queries";
+import { parseLinkRows, linksToSnapshot, incomingLootToDrafts, snapshotsEqual as linkSnapshotsEqual } from "@/lib/link-proposal";
 import { linkFields } from "@/lib/entity-links";
 
 const MAX_PENDING_PER_USER = 10;
@@ -236,4 +236,51 @@ export async function submitLinksEdit(formData: FormData) {
     },
   });
   redirect(`${entityHref(type, slug)}?proposed=1`);
+}
+
+/** Item-side loot editing: reconcile which containers/landmarks an item is found in.
+ *  Mirrors submitLinksEdit but inverse — each row selects a SOURCE (held in the row's
+ *  targetSlug per the inversion convention). Free-text/unlinked sources are rejected. */
+export async function submitItemLootEdit(formData: FormData) {
+  const slug = String(formData.get("slug") ?? "");
+  const role = "loot";
+  const note = (String(formData.get("note") ?? "").trim() || null) as string | null;
+
+  const session = await requireUser(`/contribute/edit-tabs?type=item&slug=${slug}`);
+  await assertUnderQuota(session.steamId);
+
+  const oldRows = await getIncomingLootLinks(slug);
+  if (oldRows === null) throw new Error("Item not found.");
+
+  const sources = await listLootSources();
+  const nameBySlug = new Map(sources.map((s) => [s.slug, s.name]));
+
+  const parsed = parseLinkRows(role, {
+    slugs: formData.getAll("linkSlug").map(String),
+    customNames: formData.getAll("linkName").map(String),
+    amounts: formData.getAll("linkAmount").map(String),
+    tiers: formData.getAll("linkTier").map(String),
+    value1s: formData.getAll("linkValue1").map(String),
+  }, nameBySlug);
+  if (parsed.error) throw new Error(parsed.error);
+  if (parsed.rows.some((r) => r.targetSlug === null)) {
+    throw new Error("Loot sources must be existing containers or landmarks.");
+  }
+
+  const oldSnap = { role, rows: incomingLootToDrafts(oldRows) };
+  const newSnap = { role, rows: parsed.rows };
+  if (linkSnapshotsEqual(oldSnap, newSnap)) throw new Error("No changes to submit.");
+
+  await prisma.proposal.create({
+    data: {
+      kind: "loot_sources_edit",
+      targetType: "item",
+      targetSlug: slug,
+      changes: { role, old: oldSnap.rows, new: newSnap.rows } as object,
+      note,
+      proposerId: session.steamId,
+    },
+  });
+
+  redirect(`/contribute/edit-tabs?type=item&slug=${slug}&proposed=1`);
 }
