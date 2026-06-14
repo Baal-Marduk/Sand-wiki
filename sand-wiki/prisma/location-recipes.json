@@ -1,0 +1,14 @@
+{
+  "locations": ["kaiserplatz", "rauchwolke", "strudel", "sprengstofffabrik"],
+  "recipes": [
+    { "location": "kaiserplatz", "inputs": [{ "item": "crystal-handles", "amount": 1 }], "outputs": [{ "item": "energy-bar", "amount": 10 }] },
+    { "location": "kaiserplatz", "inputs": [{ "item": "resource-alloy-steel", "amount": 40 }, { "item": "resource-metal-t2", "amount": 300 }], "outputs": [{ "item": "game-packed-auto-turret-t2-container", "amount": 1 }] },
+    { "location": "rauchwolke", "inputs": [{ "item": "black-box", "amount": 1 }], "outputs": [{ "item": "resource-metal-t3", "amount": 10 }] },
+    { "location": "rauchwolke", "inputs": [{ "item": "resource-coral-piece", "amount": 1 }], "outputs": [{ "item": "resource-coral-dust", "amount": 10 }, { "item": "resource-metal-t1", "amount": 2 }] },
+    { "location": "sprengstofffabrik", "inputs": [{ "item": "crystal-handles", "amount": 1 }], "outputs": [{ "item": "energy-bar", "amount": 10 }] },
+    { "location": "sprengstofffabrik", "inputs": [{ "item": "resource-alloy-steel", "amount": 40 }, { "item": "resource-metal-t2", "amount": 300 }], "outputs": [{ "item": "game-packed-turret-t2-container", "amount": 1 }] },
+    { "location": "sprengstofffabrik", "inputs": [{ "item": "resource-fabric", "amount": 10 }, { "item": "resource-gunpowder", "amount": 10 }], "outputs": [{ "item": "rocket-launcher-ammo-armor-piercing", "amount": 3 }] },
+    { "location": "sprengstofffabrik", "inputs": [{ "item": "resource-fabric", "amount": 10 }, { "item": "resource-gunpowder", "amount": 10 }], "outputs": [{ "item": "grenade-contact", "amount": 5 }] },
+    { "location": "strudel", "inputs": [{ "item": "resource-alloy-steel", "amount": 40 }, { "item": "resource-metal-t2", "amount": 300 }], "outputs": [{ "item": "game-packed-shotgun-turret-t2-container", "amount": 1 }] }
+  ]
+}
