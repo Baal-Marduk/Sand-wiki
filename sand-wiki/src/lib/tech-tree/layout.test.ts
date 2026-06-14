@@ -38,6 +38,24 @@ describe("computeLayout", () => {
     expect(L.edges.some((e) => e.from === null && e.to === "g1a-small")).toBe(true);
     expect(L.edges.some((e) => e.from === "g1a-small" && e.to === "g2a-mid")).toBe(true);
   });
+  it("stacks faction bands vertically with a gap", () => {
+    const two: TechTree = {
+      factions: [
+        { id: "godlewski", name: "G", accent: "#4493f8" },
+        { id: "kaiser", name: "K", accent: "#e3a008" },
+      ],
+      defaultUnlocked: [],
+      nodes: [
+        node({ slug: "g1a-x", faction: "godlewski", tier: 1, letter: "a" }),
+        node({ slug: "g1a-y", faction: "godlewski", tier: 1, letter: "a" }),
+        node({ slug: "k1a-z", faction: "kaiser", tier: 1, letter: "a" }),
+      ],
+    };
+    const L = computeLayout(two);
+    // godlewski: PAD_TOP=20, 2 lanes -> height 2*92=184; kaiser band top = 20 + 184 + BAND_GAP(56) = 260
+    expect(L.bands.godlewski.top).toBe(20);
+    expect(L.bands.kaiser.top).toBe(260);
+  });
 });
 
 describe("graph helpers", () => {

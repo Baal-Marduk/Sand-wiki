@@ -21,20 +21,19 @@ export interface Layout {
 export function computeLayout(tree: TechTree): Layout {
   const codeOf = (n: TechNode) => `${n.tier}${n.letter}`;
 
-  // columns: unique (tier, letter) sorted by tier then letter
-  const codes = Array.from(new Set(tree.nodes.map(codeOf))).sort((a, b) => {
-    const ta = parseInt(a), tb = parseInt(b);
-    return ta !== tb ? ta - tb : a.slice(String(ta).length).localeCompare(b.slice(String(tb).length));
-  });
+  // distinct (tier, letter) pairs, ordered by tier then letter
+  const pairs = Array.from(
+    new Map(tree.nodes.map((n) => [`${n.tier}${n.letter}`, { tier: n.tier, letter: n.letter }])).values(),
+  ).sort((a, b) => a.tier - b.tier || a.letter.localeCompare(b.letter));
+
   const cols: Record<string, number> = {};
-  codes.forEach((c, i) => (cols[c] = i));
+  pairs.forEach((p, i) => (cols[`${p.tier}${p.letter}`] = i));
 
   // tiers group their column indices
   const tierMap = new Map<number, number[]>();
-  codes.forEach((c) => {
-    const t = parseInt(c);
-    if (!tierMap.has(t)) tierMap.set(t, []);
-    tierMap.get(t)!.push(cols[c]);
+  pairs.forEach((p) => {
+    if (!tierMap.has(p.tier)) tierMap.set(p.tier, []);
+    tierMap.get(p.tier)!.push(cols[`${p.tier}${p.letter}`]);
   });
   const tiers: TierGroup[] = [...tierMap.entries()].sort((a, b) => a[0] - b[0])
     .map(([tier, c]) => ({ tier, roman: ROMAN[tier] ?? String(tier), label: `Tier ${tier}`, cols: c }));
@@ -72,7 +71,7 @@ export function computeLayout(tree: TechTree): Layout {
     else n.prereqs.forEach((p) => edges.push({ from: p, to: n.slug }));
   }
 
-  const maxCol = codes.length - 1;
+  const maxCol = pairs.length - 1;
   const canvasW = LAYOUT.PAD_LEFT + maxCol * LAYOUT.COL_W + LAYOUT.CARD_W + 80;
   const canvasH = cursorY + 20;
   return { cols, tiers, bands, positions, edges, canvasW, canvasH };
