@@ -1,6 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
+  // Allow the dev server to be reached through an ngrok tunnel. Next blocks
+  // cross-origin access to dev assets by default, which silently breaks client
+  // hydration/HMR when the app is opened via the tunnel hostname (the page
+  // renders but no client JS runs). Dev-only; ignored in production builds.
+  allowedDevOrigins: ["*.ngrok-free.dev", "*.ngrok-free.app", "*.ngrok.io"],
   async headers() {
     // Game sprite icons are stable per filename — cache hard so repeat visitors
     // (and the Vercel edge) never re-download them. If an icon's *content* ever
