@@ -35,8 +35,8 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
 
   const canSuggest = !!(await getSession());
   const tabContent: Partial<Record<TabId, React.ReactNode>> = {
-    "crafted-by": <CraftTable recipes={crafts} canSuggest={canSuggest} />,
-    "used-in": <UsedInTable recipes={usedInCrafts} canSuggest={canSuggest} />,
+    "crafted-by": <CraftTable recipes={crafts} />,
+    "used-in": <UsedInTable recipes={usedInCrafts} />,
   };
   const tabs: Tab[] = availableTabs(trades).map((t) => ({
     id: t.id,
