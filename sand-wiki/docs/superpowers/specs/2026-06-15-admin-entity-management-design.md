@@ -137,6 +137,7 @@ Submits to `createEntity`.
 - Creating tech-node entities.
 - Editing non-image scalar fields directly as admin (still done via the existing edit-proposal flow; admin can approve their own).
 - Hard-deleting entities (disable is the soft alternative).
+- **Reference-scrubbing of disabled entities** (known limitation). Visibility is enforced on list/detail/search/sitemap only. A disabled entity can still appear as a *cross-reference* on another (enabled) page — e.g. in a loot table, build-cost list, recipe line, ammo/used-by list, or key-usage panel — and a non-admin clicking that reference lands on the detail page's 404. Hiding references would require filtering on the link relation's `target`/`source` at every such query site; deferred unless it becomes a real problem.
 
 ## Testing
 
