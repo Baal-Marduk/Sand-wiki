@@ -103,22 +103,17 @@ brand wordmark: Black Ops One. Accessibility is a hard gate — axe must pass (`
 > location). Source of record: `prisma/location-recipes.json`, loaded idempotently via
 > `npm run db:load-location-recipes`.
 
-> **🚨 DO NOT re-seed the live DB — `curated` does NOT protect field values.** The `curated`
-> flags only stop row **pruning** and link **recreation**; they do **NOT** stop the seed's item
-> upsert from overwriting source-populated **fields**. In particular `rarity` is rewritten to
-> `enrichment.rarity` or `DEFAULT_RARITY` ("Common") on **every** item, so `npm run db:seed`
-> (even `:force`) **silently reverts every manual rarity edit to Common** (descriptions too,
-> where the source has one). This bit us hard on 2026-06-14 (~42 contributor edits across 27
-> entities reverted). Rules:
-> - To add/change rows, use a **surgical targeted script** (upsert just those rows, like
->   `load-location-recipes.ts`) — never the full seed.
-> - Contributor edits are the authoritative record in the **`Proposal` table** (`status:"applied"`),
->   which survives seeds. Recover by replaying each applied edit's `changes.<field>.new` onto its
->   entity (latest-wins per slug+field; split Entity vs ItemStats fields).
-> - Neon PITR retention here is only ~6h — not a reliable backstop.
-> - **TODO (durable fix):** harden the seed so applied-proposal field values (esp. `rarity`)
->   survive a re-seed (e.g. skip overwriting fields that have an applied `edit` proposal, or
->   honor a per-field curated marker).
+> **Re-seed & contributor field edits.** As of the 2026-06 seed-curation change, the seed
+> **preserves every field a contributor edited via the contribute flow**: at start it reads
+> applied `edit` proposals (`buildLockMap` in `src/lib/seed-curation.ts`) and the item/env/
+> trampler upserts omit those fields from the `update` (even under `--force`; no bypass). So a
+> re-seed no longer reverts manual `rarity`/`description`/stat edits. Caveats that REMAIN:
+> - **Directus-only edits are NOT protected** — only edits recorded as applied proposals are.
+> - The seed still **delete+recreates loot/cost/tech links** for non-`lootCurated` rows, and
+>   still upserts source values for fields the contributor never touched.
+> So: still prefer surgical loaders (`db:load-*`) for data changes, and don't run `db:seed`
+> casually. Background: a 2026-06-14 `db:seed:force` reverted ~42 rarity edits before this
+> protection existed; they were recovered from the `Proposal` table.
 
 Community-wiki content is uneven/stubby (many landmark pages are empty; some loot tables sparse).
 Imports copy what exists and link back via `sourceUrl`.
