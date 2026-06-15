@@ -4,6 +4,7 @@ import { join } from "node:path";
 import { categoryForItem, isItemCategory, isEnvCategory, isTramplerCategory, isFaction } from "../src/lib/taxonomy";
 import { isRarity, DEFAULT_RARITY } from "../src/lib/rarity";
 import { flattenStats, lootToTiers, costToRows, mergeItems, techNodeSlug, parsePrereqLabel, validateTechTreeV2, type RawStats, type RawLoot, type RawCostLine, type RawTechNode } from "./seed-transform";
+import { buildLockMap, omitLocked, lockedHits } from "../src/lib/seed-curation";
 
 interface EnvContent { category: string; name: string; description?: string; sourceUrl?: string; loot?: RawLoot }
 
@@ -85,6 +86,18 @@ async function main() {
     readFileSync(join(__dirname, "wiki-enrichment.json"), "utf-8"),
   );
 
+  // Contributor field edits (applied "edit" proposals) are preserved across re-seeds: the
+  // upsert `update` omits any field a contributor edited. `create` stays full (new rows have
+  // no proposals). Applies even under --force — there is no bypass. See seed-curation.ts.
+  const lockMap = buildLockMap(
+    await prisma.proposal.findMany({
+      where: { status: "applied", kind: "edit" },
+      select: { targetSlug: true, changes: true },
+    }),
+  );
+  let preservedFields = 0;
+  const preservedSlugs = new Set<string>();
+
   // --- Items: upsert by slug (stable ids), prune slugs gone from the scrape ---
   for (const i of items) {
     const category = categoryForItem(i.type, i.displayName ?? i.name, i.slug);
@@ -121,10 +134,13 @@ async function main() {
       magazine: opt(flat.magazine),
       ammoName: opt(flat.ammoName),
     };
+    const locked = lockMap.get(i.slug);
+    const hits = lockedHits({ ...identity, ...stats }, locked);
+    if (hits > 0) { preservedFields += hits; preservedSlugs.add(i.slug); }
     await prisma.entity.upsert({
       where: { slug: i.slug },
       create: { slug: i.slug, kind: "item", ...identity, itemStats: { create: stats } },
-      update: { ...identity, itemStats: { upsert: { create: stats, update: stats } } },
+      update: { ...omitLocked(identity, locked), itemStats: { upsert: { create: stats, update: omitLocked(stats, locked) } } },
     });
   }
   const prunedItems = await prisma.entity.deleteMany({ where: { kind: "item", curated: false, slug: { notIn: items.map((i) => i.slug) } } });
@@ -182,10 +198,13 @@ async function main() {
     if (!isEnvCategory(e.category)) throw new Error(`Unknown env category "${e.category}" for ${slug}`);
     envSlugs.push(slug);
     const scraped = { category: e.category, name: e.name, description: opt(e.description), sourceUrl: opt(e.sourceUrl) };
+    const lockedEnv = lockMap.get(slug);
+    const envHits = lockedHits(scraped, lockedEnv);
+    if (envHits > 0) { preservedFields += envHits; preservedSlugs.add(slug); }
     const entity = await prisma.entity.upsert({
       where: { slug },
       create: { slug, kind: "environment", ...scraped },
-      update: scraped,
+      update: omitLocked(scraped, lockedEnv),
     });
     if (entity.lootCurated) {
       console.log(`Skipping loot recreate for ${slug} (lootCurated = true)`);
@@ -239,10 +258,13 @@ async function main() {
       ratedPower: opt(t.ratedPower), crewSlots: opt(t.crewSlots), itemSlots: opt(t.itemSlots),
       researchNode: opt(t.researchNode), researchName: opt(t.researchName), researchTier: opt(t.researchTier),
     };
+    const lockedT = lockMap.get(slug);
+    const tHits = lockedHits({ ...identity, ...stats }, lockedT);
+    if (tHits > 0) { preservedFields += tHits; preservedSlugs.add(slug); }
     const part = await prisma.entity.upsert({
       where: { slug },
       create: { slug, kind: "trampler-part", ...identity, tramplerStats: { create: stats } },
-      update: { ...identity, tramplerStats: { upsert: { create: stats, update: stats } } },
+      update: { ...omitLocked(identity, lockedT), tramplerStats: { upsert: { create: stats, update: omitLocked(stats, lockedT) } } },
     });
     if (part.lootCurated) {
       console.log(`Skipping cost recreate for ${slug} (lootCurated = true)`);
@@ -387,6 +409,9 @@ async function main() {
   const [itemCount, scrapedRecipeCount] = await Promise.all([prisma.entity.count({ where: { kind: "item", curated: false } }), prisma.recipe.count({ where: { curated: false } })]);
   if (itemCount !== items.length) throw new Error(`Item count mismatch after seed: DB has ${itemCount}, snapshot has ${items.length} (duplicate slugs?)`);
   if (scrapedRecipeCount !== data.recipes.length) throw new Error(`Recipe count mismatch after seed: DB has ${scrapedRecipeCount} non-curated, snapshot has ${data.recipes.length} (duplicate slugs?)`);
+  if (preservedFields > 0) {
+    console.log(`Preserved ${preservedFields} contributor-edited field(s) across ${preservedSlugs.size} entit(ies) (not overwritten by source).`);
+  }
   console.log(`Seeded ${items.length} items, ${data.recipes.length} recipes (${curatedSlugs.size} curated preserved), ${envCount} environment entities, ${tramplerCount} trampler parts.`);
 }
 
