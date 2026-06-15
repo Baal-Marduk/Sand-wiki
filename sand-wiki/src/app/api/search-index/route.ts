@@ -6,12 +6,12 @@ import { prisma } from "@/lib/db";
 export async function GET() {
   const [items, places] = await Promise.all([
     prisma.entity.findMany({
-      where: { kind: "item" },
+      where: { kind: "item", disabled: false },
       select: { slug: true, name: true, category: true, derivedName: true },
       orderBy: { name: "asc" },
     }),
     prisma.entity.findMany({
-      where: { kind: "environment", category: { in: ["loot-containers", "landmarks"] } },
+      where: { kind: "environment", category: { in: ["loot-containers", "landmarks"] }, disabled: false },
       select: { slug: true, name: true, category: true },
       orderBy: { name: "asc" },
     }),
