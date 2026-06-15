@@ -13,7 +13,8 @@ import { LootTable } from "@/components/LootTable";
 import { KeyLinksTable, type KeyLinkView } from "@/components/KeyLinksTable";
 import { UsedInTable } from "@/components/UsedInTable";
 import { type Tab } from "@/components/ItemTabs";
-import { getSession } from "@/lib/auth";
+import { getSession, sessionIsAdmin } from "@/lib/auth";
+import { AdminEntityControls } from "@/components/AdminEntityControls";
 
 type Params = Promise<{ slug: string }>;
 
@@ -43,6 +44,9 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
   const { slug } = await params;
   const entity = await getEnvEntityBySlug(slug);
   if (!entity) notFound();
+
+  const admin = await sessionIsAdmin();
+  if (entity.disabled && !admin) notFound();
 
   const canSuggest = !!(await getSession());
   const editor = await getLastEditor("envEntity", slug);
@@ -111,6 +115,12 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
       title={entity.name}
       badges={<CategoryTag slug={entity.category} />}
       description={entity.description}
+      disabled={entity.disabled}
+      adminControls={
+        admin ? (
+          <AdminEntityControls slug={entity.slug} icon={entity.icon} imageAlt={entity.imageAlt} disabled={entity.disabled} />
+        ) : undefined
+      }
       lastEditedBy={editor ? { steamId: editor.steamId, name: editorDisplayName(editor.personaName) } : null}
       tabs={tabs}
       sourceUrl={entity.sourceUrl}

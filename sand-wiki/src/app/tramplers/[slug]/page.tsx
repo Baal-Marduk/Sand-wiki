@@ -11,7 +11,8 @@ import { actionButtonClass } from "@/components/ui/button";
 import { CategoryTag } from "@/components/CategoryTag";
 import { ItemIconLink } from "@/components/ItemIconLink";
 import { type Tab } from "@/components/ItemTabs";
-import { getSession } from "@/lib/auth";
+import { getSession, sessionIsAdmin } from "@/lib/auth";
+import { AdminEntityControls } from "@/components/AdminEntityControls";
 
 type Params = Promise<{ slug: string }>;
 
@@ -41,6 +42,9 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
   const { slug } = await params;
   const part = await getTramplerPartBySlug(slug);
   if (!part) notFound();
+
+  const admin = await sessionIsAdmin();
+  if (part.disabled && !admin) notFound();
 
   const techNode = await getUnlockingNode(slug);
 
@@ -99,6 +103,12 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
       description={part.description}
       stats={tramplerStatCells(stats)}
       detailRows={tramplerDetailRows(stats)}
+      disabled={part.disabled}
+      adminControls={
+        admin ? (
+          <AdminEntityControls slug={part.slug} icon={part.icon} imageAlt={part.imageAlt} disabled={part.disabled} />
+        ) : undefined
+      }
       lastEditedBy={editor ? { steamId: editor.steamId, name: editorDisplayName(editor.personaName) } : null}
       tabs={tabs}
       sourceUrl={part.sourceUrl}
