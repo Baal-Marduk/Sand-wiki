@@ -89,6 +89,7 @@ async function main() {
   // Contributor field edits (applied "edit" proposals) are preserved across re-seeds: the
   // upsert `update` omits any field a contributor edited. `create` stays full (new rows have
   // no proposals). Applies even under --force — there is no bypass. See seed-curation.ts.
+  // Keyed by slug only; safe because Entity.slug is globally unique across kinds.
   const lockMap = buildLockMap(
     await prisma.proposal.findMany({
       where: { status: "applied", kind: "edit" },
