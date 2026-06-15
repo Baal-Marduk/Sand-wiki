@@ -1,6 +1,8 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getTramplerPartBySlug, getUnlockingNode, getLastEditor } from "@/lib/queries";
+import { metaDescription } from "@/lib/site";
 import { editorDisplayName } from "@/lib/steam";
 import { categoryLabel } from "@/lib/taxonomy";
 import { tramplerStatCells, tramplerDetailRows } from "@/lib/trampler-view";
@@ -12,6 +14,28 @@ import { type Tab } from "@/components/ItemTabs";
 import { getSession } from "@/lib/auth";
 
 type Params = Promise<{ slug: string }>;
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { slug } = await params;
+  const part = await getTramplerPartBySlug(slug);
+  if (!part) return {};
+  const description = metaDescription(
+    part.description,
+    `${part.name} — Trampler part stats and build cost in SAND: Raiders of Sophie.`,
+  );
+  const canonical = `/tramplers/${part.slug}`;
+  return {
+    title: part.name,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title: part.name,
+      description,
+      url: canonical,
+      images: part.icon ? [{ url: part.icon }] : undefined,
+    },
+  };
+}
 
 export default async function TramplerPartPage({ params }: { params: Params }) {
   const { slug } = await params;

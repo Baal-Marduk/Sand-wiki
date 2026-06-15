@@ -1,3 +1,4 @@
+import { cache } from "react";
 import { prisma } from "./db";
 import { buildItemQuery, applyItemView, type ItemFilter } from "./item-filter";
 import { ammoCaliber, itemClasses, weaponCaliber } from "./ammo";
@@ -114,7 +115,7 @@ export async function listEnvEntities(category?: string) {
   });
 }
 
-export async function getEnvEntityBySlug(slug: string) {
+export const getEnvEntityBySlug = cache(async (slug: string) => {
   const entity = await prisma.entity.findUnique({
     where: { slug },
     include: {
@@ -146,7 +147,7 @@ export async function getEnvEntityBySlug(slug: string) {
     toRecipeCard(toRecipeWithItems({ ...r, location: null })),
   );
   return { ...entity, outgoingLinks: lootLinks, keyLinks, craftedBy };
-}
+});
 
 /** Count of env entities per category — for the Environment landing. */
 export async function envCategoryCounts(): Promise<Record<string, number>> {
@@ -166,7 +167,7 @@ export async function listTramplerParts(category?: string) {
   });
 }
 
-export async function getTramplerPartBySlug(slug: string) {
+export const getTramplerPartBySlug = cache(async (slug: string) => {
   const part = await prisma.entity.findUnique({
     where: { slug },
     include: {
@@ -180,7 +181,7 @@ export async function getTramplerPartBySlug(slug: string) {
   });
   if (!part || part.kind !== "trampler-part") return null;
   return part;
-}
+});
 
 /** Count of trampler parts per category — for the Tramplers landing. */
 export async function tramplerCategoryCounts(): Promise<Record<string, number>> {
@@ -218,6 +219,17 @@ export async function listLootSources(): Promise<{ slug: string; name: string }[
     where: { kind: "environment", category: { in: ["loot-containers", "landmarks"] } },
     select: { slug: true, name: true },
     orderBy: { name: "asc" },
+  });
+}
+
+/** Every entity that has its own detail page (item / environment / trampler-part),
+ *  for the sitemap. Tech nodes are excluded — they have no per-slug route (the
+ *  interactive `/tech` tree links to them via `?select=`). */
+export async function listEntityPaths(): Promise<{ slug: string; kind: string }[]> {
+  return prisma.entity.findMany({
+    where: { kind: { in: ["item", "environment", "trampler-part"] } },
+    select: { slug: true, kind: true },
+    orderBy: { slug: "asc" },
   });
 }
 
@@ -261,7 +273,9 @@ export async function getKeyUsage(itemSlug: string): Promise<KeyUsage> {
   };
 }
 
-export async function getItemBySlug(slug: string) {
+// Wrapped in React `cache()` so a page and its `generateMetadata` share one DB
+// round-trip per request (Prisma calls aren't auto-memoized like `fetch`).
+export const getItemBySlug = cache(async (slug: string) => {
   const item = await prisma.entity.findUnique({
     where: { slug },
     include: {
@@ -275,7 +289,7 @@ export async function getItemBySlug(slug: string) {
   const usedIn = item.usedIn.map((i) => toRecipeCard(toRecipeWithItems(i.recipe)));
   // Stat fields stay nested under `item.itemStats`; the detail page reads them there.
   return { ...item, craftedBy, usedIn };
-}
+});
 
 /** {slug,name,icon,rarity} rows for ItemLinkList. */
 type LinkItem = { slug: string; name: string; icon: string | null; rarity: string | null };

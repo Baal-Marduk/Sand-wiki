@@ -4,6 +4,7 @@ import { Oswald } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ConditionalChrome } from "@/components/ConditionalChrome";
+import { SITE_URL, SITE_NAME } from "@/lib/site";
 import "./globals.css";
 
 const oswald = Oswald({
@@ -13,9 +14,25 @@ const oswald = Oswald({
   display: "swap",
 });
 
+const SITE_TITLE = "Sand Help — Unofficial SAND: Raiders of Sophie Wiki";
+const SITE_DESCRIPTION = "A community, unofficial database for SAND: Raiders of Sophie.";
+
 export const metadata: Metadata = {
-  title: "Sand Help — Unofficial SAND: Raiders of Sophie Wiki",
-  description: "A community, unofficial database for SAND: Raiders of Sophie.",
+  // metadataBase makes every relative canonical/OG URL resolve to an absolute URL.
+  metadataBase: new URL(SITE_URL),
+  // Per-page `generateMetadata` returns a bare title (e.g. "Laser Rifle"); the
+  // template appends the brand. The home/default title is used where none is set.
+  title: { default: SITE_TITLE, template: `%s — ${SITE_NAME}` },
+  description: SITE_DESCRIPTION,
+  applicationName: SITE_NAME,
+  openGraph: {
+    type: "website",
+    siteName: SITE_NAME,
+    title: SITE_TITLE,
+    description: SITE_DESCRIPTION,
+    url: "/",
+  },
+  twitter: { card: "summary", title: SITE_TITLE, description: SITE_DESCRIPTION },
 };
 
 const DISCORD_URL = "https://discord.gg/sandgame";

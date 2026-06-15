@@ -15,6 +15,11 @@ function str(v: string | string[] | undefined): string | undefined {
   return Array.isArray(v) ? v[0] : v;
 }
 
+export const metadata = {
+  title: "Items",
+  description: "Browse every weapon, resource, tool, and item in SAND: Raiders of Sophie.",
+};
+
 export default async function ItemsPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
   const q = str(sp.q);

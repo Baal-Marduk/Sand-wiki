@@ -8,6 +8,13 @@ bottom is yours to keep specifying.
 > training data — read `node_modules/next/dist/docs/` first" caveat. This file is the product/
 > data/UX reference .
 
+## Git workflow (hard rule)
+
+- **Never merge to `master` directly.** All changes land via a pull request — do the work on a
+  feature branch and **open a PR** for review. Do not fast-forward, push, or merge into `master`
+  locally. (Committing/pushing still happens only when the maintainer asks; when it does, it's to a
+  branch + PR, never straight to `master`.)
+
 ## Overview
 
 Next.js 16 (App Router) + React 19 + Prisma 6 + Neon Postgres + Tailwind v4 + **shadcn/ui**.
@@ -269,6 +276,26 @@ the React UI mirrors — but where they disagree with these files, **globals.css
   nav + search. Footer restyled to tokens.
 - **No browser dialogs.** Never use `window.alert`, `window.confirm`, or `window.prompt`.
   Use a styled in-app modal instead (e.g. `src/components/ConfirmDialog.tsx`).
+
+## SEO / metadata
+
+- **Origin** — `src/lib/site.ts` exports `SITE_URL` (from `NEXT_PUBLIC_SITE_URL`, localhost
+  fallback for dev), `SITE_NAME`, and `metaDescription(text, fallback)` (clamps to ~160 chars).
+  `SITE_URL` must be correct in production env for canonical/OG/sitemap URLs to be absolute.
+- **Root metadata** (`app/layout.tsx`) sets `metadataBase`, a title template `"%s — Sand Help"`,
+  and site-level OpenGraph/Twitter defaults. Per-page titles return a **bare** name (`"Items"`,
+  `item.name`) — the template appends the brand; don't hard-code the suffix.
+- **Detail pages** (`items|tramplers|environment/[slug]`) export `generateMetadata` with title,
+  `metaDescription(...)`, a `canonical` (relative — `metadataBase` makes it absolute), and an
+  OpenGraph block (icon as the image; `Entity.icon` already stores the full `/icons|/tramplers/…`
+  public path — **do not re-prefix it**). The `getXBySlug` getters are wrapped in React `cache()`
+  so the page + its `generateMetadata` share one DB round-trip per request.
+- **Sitemap/robots** — `app/sitemap.ts` lists the static routes + every `item|environment|
+  trampler-part` slug (via `listEntityPaths()` → `entityHref`; tech nodes excluded, no per-slug
+  route). `app/robots.ts` allows `/`, disallows `/admin` `/contribute` `/api`, links the sitemap.
+- **Not yet done** (post-launch follow-ups): per-entity OG **images** (dynamic `opengraph-image`),
+  ISR/static rendering (every detail page is currently dynamic because `getSession()` reads
+  cookies), faceted-list-URL canonicals, and JSON-LD structured data.
 
 ## Gotchas
 
