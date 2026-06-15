@@ -33,6 +33,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const [resetOpen, setResetOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const didDeepLink = useRef(false);
 
   useEffect(() => {
     // Client-only hydration from localStorage; must run after mount, not during render.
@@ -47,8 +48,10 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
+    if (didDeepLink.current) return;
     const slug = new URLSearchParams(window.location.search).get("select");
     if (!slug || !byId[slug]) return;
+    didDeepLink.current = true;
     setSelected(new Set([slug]));
     const vp = viewportRef.current, pos = posById[slug];
     if (vp && pos) {
@@ -125,10 +128,10 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     pan.current = null;
   }, []);
 
-  const zoomTo = useCallback((next: number, anchorX?: number, anchorY?: number) => {
+  const zoomTo = useCallback((factor: number, anchorX?: number, anchorY?: number) => {
     const vp = viewportRef.current; if (!vp) return;
     setZoom((prev) => {
-      const z = clampZoom(next);
+      const z = clampZoom(prev * factor);
       const ax = anchorX ?? vp.clientWidth / 2;
       const ay = anchorY ?? vp.clientHeight / 2;
       const ratio = z / prev;
@@ -137,8 +140,6 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
       return z;
     });
   }, []);
-
-  const zoomBy = useCallback((factor: number) => zoomTo(zoom * factor), [zoom, zoomTo]);
 
   const fitToScreen = useCallback(() => {
     const vp = viewportRef.current; if (!vp) return;
@@ -162,9 +163,9 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
         <div className="tt-toolbar">
           <span className="tt-progress">{unlocked.size} / {tree.nodes.length} unlocked</span>
           <div className="tt-zoom">
-            <button type="button" className={actionButtonClass} onClick={() => zoomBy(1 / ZOOM_STEP)} aria-label="Zoom out">−</button>
+            <button type="button" className={actionButtonClass} onClick={() => zoomTo(1 / ZOOM_STEP)} aria-label="Zoom out">−</button>
             <span className="tt-zoom-val">{Math.round(zoom * 100)}%</span>
-            <button type="button" className={actionButtonClass} onClick={() => zoomBy(ZOOM_STEP)} aria-label="Zoom in">+</button>
+            <button type="button" className={actionButtonClass} onClick={() => zoomTo(ZOOM_STEP)} aria-label="Zoom in">+</button>
             <button type="button" className={actionButtonClass} onClick={fitToScreen}>Fit</button>
           </div>
           <button type="button" className={actionButtonClass} onClick={() => setSelected(new Set())}>Clear selection</button>
