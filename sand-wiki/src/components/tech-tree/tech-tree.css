@@ -26,6 +26,9 @@
   .tt-tier-roman { font-size: 13px; color: var(--primary); border: 1px solid var(--border-strong); width: 22px; height: 22px; display: grid; place-items: center; letter-spacing: 0; }
 
   #tt-canvas { position: relative; }
+  .tt-sizer { position: relative; }
+  .tt-zoom { display: flex; align-items: center; gap: 6px; }
+  .tt-zoom-val { font-family: var(--font-mono); font-size: 12px; color: var(--muted-foreground); min-width: 38px; text-align: center; }
   #tt-svg { position: absolute; inset: 0; pointer-events: none; z-index: 1; }
   .tt-band { position: absolute; left: 0; z-index: 0; background: linear-gradient(90deg, color-mix(in srgb, var(--fac) 7%, transparent), transparent 38%); border-top: 1px solid color-mix(in srgb, var(--fac) 18%, var(--border)); border-bottom: 1px solid var(--border); }
   .tt-divider { position: absolute; top: 0; width: 1px; background: repeating-linear-gradient(var(--border-strong) 0 6px, transparent 6px 12px); z-index: 0; }

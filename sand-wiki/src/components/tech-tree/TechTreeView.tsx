@@ -11,6 +11,11 @@ import { ConfirmDialog } from "@/components/ConfirmDialog";
 const STORE_KEY = "sand_techtree_unlocked_v1";
 const fmt = (n: number) => n.toLocaleString("en-US");
 
+const ZOOM_MIN = 0.4;
+const ZOOM_MAX = 1.5;
+const ZOOM_STEP = 1.1; // multiplicative per wheel notch / button press
+const clampZoom = (z: number) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, z));
+
 function Glyph({ icon, alt }: { icon: string | null; alt: string }) {
   // eslint-disable-next-line @next/next/no-img-element
   return icon ? <img src={icon} alt="" aria-hidden loading="lazy" decoding="async" /> : <span aria-label={alt}>▦</span>;
@@ -27,6 +32,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   const [hover, setHover] = useState<{ slug: string; rect: DOMRect } | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const [resetOpen, setResetOpen] = useState(false);
+  const [zoom, setZoom] = useState(1);
 
   useEffect(() => {
     // Client-only hydration from localStorage; must run after mount, not during render.
@@ -47,13 +53,13 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     const vp = viewportRef.current, pos = posById[slug];
     if (vp && pos) {
       vp.scrollTo({
-        left: Math.max(0, pos.x + LAYOUT.CARD_W / 2 - vp.clientWidth / 2),
-        top: Math.max(0, pos.y + LAYOUT.CARD_H / 2 - vp.clientHeight / 2),
+        left: Math.max(0, (pos.x + LAYOUT.CARD_W / 2) * zoom - vp.clientWidth / 2),
+        top: Math.max(0, (pos.y + LAYOUT.CARD_H / 2) * zoom - vp.clientHeight / 2),
         behavior: "smooth",
       });
     }
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [byId, posById]);
+  }, [byId, posById, zoom]);
 
   const persist = useCallback((s: Set<string>) => {
     try { localStorage.setItem(STORE_KEY, JSON.stringify([...s])); } catch { /* ignore */ }
@@ -119,6 +125,28 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     pan.current = null;
   }, []);
 
+  const zoomTo = useCallback((next: number, anchorX?: number, anchorY?: number) => {
+    const vp = viewportRef.current; if (!vp) return;
+    setZoom((prev) => {
+      const z = clampZoom(next);
+      const ax = anchorX ?? vp.clientWidth / 2;
+      const ay = anchorY ?? vp.clientHeight / 2;
+      const ratio = z / prev;
+      vp.scrollLeft = (vp.scrollLeft + ax) * ratio - ax;
+      vp.scrollTop = (vp.scrollTop + ay) * ratio - ay;
+      return z;
+    });
+  }, []);
+
+  const zoomBy = useCallback((factor: number) => zoomTo(zoom * factor), [zoom, zoomTo]);
+
+  const fitToScreen = useCallback(() => {
+    const vp = viewportRef.current; if (!vp) return;
+    const z = clampZoom(Math.min(vp.clientWidth / layout.canvasW, vp.clientHeight / layout.canvasH));
+    setZoom(z);
+    vp.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+  }, [layout.canvasW, layout.canvasH]);
+
   const cost = useMemo(() => pathCost(tree.nodes, [...selected], unlocked), [tree.nodes, selected, unlocked]);
 
   return (
@@ -133,6 +161,12 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
         <span className="tt-page-title">Tech Tree</span>
         <div className="tt-toolbar">
           <span className="tt-progress">{unlocked.size} / {tree.nodes.length} unlocked</span>
+          <div className="tt-zoom">
+            <button type="button" className={actionButtonClass} onClick={() => zoomBy(1 / ZOOM_STEP)} aria-label="Zoom out">−</button>
+            <span className="tt-zoom-val">{Math.round(zoom * 100)}%</span>
+            <button type="button" className={actionButtonClass} onClick={() => zoomBy(ZOOM_STEP)} aria-label="Zoom in">+</button>
+            <button type="button" className={actionButtonClass} onClick={fitToScreen}>Fit</button>
+          </div>
           <button type="button" className={actionButtonClass} onClick={() => setSelected(new Set())}>Clear selection</button>
           <button type="button" className={actionButtonClass} onClick={() => setResetOpen(true)}>Reset progress</button>
         </div>
@@ -149,20 +183,21 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
            onPointerDown={onPanDown} onPointerMove={onPanMove} onPointerUp={endPan}
            onPointerLeave={endPan} onPointerCancel={endPan}
            onClickCapture={(e) => { if (panned.current) { panned.current = false; e.stopPropagation(); } }}>
-        <div id="tt-tierbar" style={{ width: layout.canvasW }}>
+        <div id="tt-tierbar" style={{ width: layout.canvasW * zoom }}>
           {layout.tiers.map((t) => {
             const first = t.cols[0], last = t.cols[t.cols.length - 1];
             const left = LAYOUT.PAD_LEFT + first * LAYOUT.COL_W - 24;
             const right = LAYOUT.PAD_LEFT + last * LAYOUT.COL_W + LAYOUT.CARD_W + 24;
             return (
-              <div key={t.tier} className="tt-tier-label" style={{ left, width: right - left }}>
+              <div key={t.tier} className="tt-tier-label" style={{ left: left * zoom, width: (right - left) * zoom }}>
                 <span className="tt-tier-roman">{t.roman}</span>{t.label}
               </div>
             );
           })}
         </div>
 
-        <div id="tt-canvas" style={{ position: "relative", width: layout.canvasW, height: layout.canvasH }}>
+        <div className="tt-sizer" style={{ width: layout.canvasW * zoom, height: layout.canvasH * zoom }}>
+        <div id="tt-canvas" style={{ position: "relative", width: layout.canvasW, height: layout.canvasH, transform: `scale(${zoom})`, transformOrigin: "0 0" }}>
           <svg id="tt-svg" width={layout.canvasW} height={layout.canvasH} viewBox={`0 0 ${layout.canvasW} ${layout.canvasH}`} xmlns="http://www.w3.org/2000/svg">
             {layout.edges.map((e) => {
               const to = posById[e.to]; if (!to) return null;
@@ -236,6 +271,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
               </div>
             );
           })}
+        </div>
         </div>
       </div>
 
