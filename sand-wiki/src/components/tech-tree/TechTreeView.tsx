@@ -168,7 +168,9 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     const onWheel = (e: WheelEvent) => {
       e.preventDefault();
       const r = vp.getBoundingClientRect();
-      const factor = e.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP;
+      // Scale the step to the scroll delta so trackpads (many tiny deltas) and mice (few large
+      // deltas) both zoom smoothly; clamp so a single event is always a gentle step.
+      const factor = Math.min(1.25, Math.max(0.8, Math.exp(-e.deltaY * 0.0015)));
       zoomTo(factor, e.clientX - r.left, e.clientY - r.top);
     };
     vp.addEventListener("wheel", onWheel, { passive: false });
