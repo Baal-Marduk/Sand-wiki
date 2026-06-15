@@ -17,6 +17,11 @@ const gridStyle: React.CSSProperties = {
 
 const sum = (r: Record<string, number>) => Object.values(r).reduce((a, b) => a + b, 0);
 
+export const metadata = {
+  title: "About",
+  description: "About Sand Help — an unofficial, community database for SAND: Raiders of Sophie.",
+};
+
 export default async function AboutPage() {
   const [itemCounts, envCounts, tramplerCounts, recipeCount] = await Promise.all([
     itemCategoryCounts(),

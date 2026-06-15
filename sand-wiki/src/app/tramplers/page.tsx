@@ -7,6 +7,11 @@ import { CategoryEntryCard, type CategoryEntry } from "@/components/CategoryEntr
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 const str = (v: string | string[] | undefined) => (Array.isArray(v) ? v[0] : v);
 
+export const metadata = {
+  title: "Tramplers",
+  description: "Trampler parts, stats, and build costs in SAND: Raiders of Sophie.",
+};
+
 export default async function TramplersPage({ searchParams }: { searchParams: SearchParams }) {
   const sp = await searchParams;
   const raw = str(sp.category);

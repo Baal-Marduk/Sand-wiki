@@ -1,7 +1,9 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCaliber, getUnlockingNode, getLastEditor, getKeyUsage } from "@/lib/queries";
 import { entityHref } from "@/lib/entity-links";
+import { metaDescription } from "@/lib/site";
 import { editorDisplayName } from "@/lib/steam";
 import { ammoCaliber, weaponCaliber, caliberLabel } from "@/lib/ammo";
 import { classifyTrades } from "@/lib/trades";
@@ -21,6 +23,28 @@ import { KeyLinksTable } from "@/components/KeyLinksTable";
 import { getSession } from "@/lib/auth";
 
 type Params = Promise<{ slug: string }>;
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { slug } = await params;
+  const item = await getItemBySlug(slug);
+  if (!item) return {};
+  const description = metaDescription(
+    item.description,
+    `${item.name} — stats, crafting, and where to find it in SAND: Raiders of Sophie.`,
+  );
+  const canonical = `/items/${item.slug}`;
+  return {
+    title: item.name,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title: item.name,
+      description,
+      url: canonical,
+      images: item.icon ? [{ url: item.icon }] : undefined,
+    },
+  };
+}
 
 export default async function ItemDetailPage({ params }: { params: Params }) {
   const { slug } = await params;

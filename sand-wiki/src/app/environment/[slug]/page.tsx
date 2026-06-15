@@ -1,5 +1,7 @@
+import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getEnvEntityBySlug, getLastEditor } from "@/lib/queries";
+import { metaDescription } from "@/lib/site";
 import { editorDisplayName } from "@/lib/steam";
 import { lootEntryView } from "@/lib/loot";
 import { groupLootByTier, entityHref, type LinkRow } from "@/lib/entity-links";
@@ -14,6 +16,28 @@ import { type Tab } from "@/components/ItemTabs";
 import { getSession } from "@/lib/auth";
 
 type Params = Promise<{ slug: string }>;
+
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { slug } = await params;
+  const entity = await getEnvEntityBySlug(slug);
+  if (!entity) return {};
+  const description = metaDescription(
+    entity.description,
+    `${entity.name} — location, loot, and details in SAND: Raiders of Sophie.`,
+  );
+  const canonical = `/environment/${entity.slug}`;
+  return {
+    title: entity.name,
+    description,
+    alternates: { canonical },
+    openGraph: {
+      title: entity.name,
+      description,
+      url: canonical,
+      images: entity.icon ? [{ url: entity.icon }] : undefined,
+    },
+  };
+}
 
 export default async function EnvEntityPage({ params }: { params: Params }) {
   const { slug } = await params;

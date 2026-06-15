@@ -1,5 +1,10 @@
 import { SectionPlaceholder } from "@/components/SectionPlaceholder";
 
+export const metadata = {
+  title: "Tools",
+  description: "Tools and utilities for SAND: Raiders of Sophie.",
+};
+
 export default function ToolsPage() {
   return (
     <SectionPlaceholder
