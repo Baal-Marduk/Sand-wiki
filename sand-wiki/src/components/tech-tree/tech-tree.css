@@ -59,6 +59,8 @@
   .tnode-name { font-family: var(--font-display); font-weight: 600; font-size: 13px; line-height: 1.12; color: var(--foreground); display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
   .tnode-cost { display: flex; align-items: center; gap: 5px; font-family: var(--font-mono); font-size: 12px; }
   .tnode-scrap { width: 11px; height: 11px; flex: none; background: var(--accent); clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%); }
+  .tnode-coin { width: 14px; height: 14px; flex: none; display: grid; place-items: center; }
+  .tnode-coin img { width: 100%; height: 100%; object-fit: contain; display: block; }
   .tnode-num { color: var(--primary); font-weight: 600; }
   .tnode-gear { color: var(--dim); font-size: 10px; }
   .tnode-gear i { font-style: normal; }

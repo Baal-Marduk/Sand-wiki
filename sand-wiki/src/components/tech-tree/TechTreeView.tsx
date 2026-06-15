@@ -225,7 +225,12 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
                         onClick={(ev) => { ev.stopPropagation(); toggleUnlocked(n.slug); }} />
                 <div className="tnode-main">
                   <div className="tnode-head"><span className="tnode-name" title={n.name}>{n.name}</span></div>
-                  <div className="tnode-cost"><span className="tnode-scrap" /><span className="tnode-num">{fmt(n.crowns)}</span></div>
+                  <div className="tnode-cost">
+                    {n.crownsIcon
+                      ? <span className="tnode-coin"><Glyph icon={n.crownsIcon} alt="Crowns" /></span>
+                      : <span className="tnode-scrap" />}
+                    <span className="tnode-num">{fmt(n.crowns)}</span>
+                  </div>
                 </div>
                 <span className="tnode-glyph glyph"><Glyph icon={n.glyphIcon} alt={n.name} /></span>
               </div>
