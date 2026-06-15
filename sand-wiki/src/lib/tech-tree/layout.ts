@@ -116,7 +116,7 @@ export interface PathCost {
   remainingCrowns: number;
   fullCrowns: number;
   techsLeft: number;
-  materials: { name: string; amount: number; icon: string | null }[]; // aggregated, un-unlocked only, excludes Crowns
+  materials: { name: string; amount: number; icon: string | null; href: string | null }[]; // aggregated, un-unlocked only, excludes Crowns
 }
 
 /** Cost to reach all `targets` (each target + its ancestors), counting Crowns/materials
@@ -130,7 +130,7 @@ export function pathCost(nodes: TechNode[], targets: string[], unlocked: Set<str
     ancestors(nodes, t).forEach((a) => path.add(a));
   }
   let remainingCrowns = 0, fullCrowns = 0, techsLeft = 0;
-  const mat = new Map<string, { name: string; amount: number; icon: string | null }>();
+  const mat = new Map<string, { name: string; amount: number; icon: string | null; href: string | null }>();
   for (const slug of path) {
     const n = by[slug];
     fullCrowns += n.crowns;
@@ -139,7 +139,7 @@ export function pathCost(nodes: TechNode[], targets: string[], unlocked: Set<str
     techsLeft++;
     for (const c of n.costs) {
       if (c.name === CROWNS_NAME) continue;
-      const e = mat.get(c.name) ?? { name: c.name, amount: 0, icon: c.icon };
+      const e = mat.get(c.name) ?? { name: c.name, amount: 0, icon: c.icon, href: c.href };
       e.amount += c.amount;
       mat.set(c.name, e);
     }

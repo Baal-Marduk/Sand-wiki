@@ -25,6 +25,13 @@ function Glyph({ icon, alt }: { icon: string | null; alt: string }) {
   return icon ? <img src={icon} alt="" aria-hidden loading="lazy" decoding="async" /> : <span aria-label={alt}>▦</span>;
 }
 
+function CostIcon({ icon, href, alt }: { icon: string | null; href: string | null; alt: string }) {
+  const g = <Glyph icon={icon} alt={alt} />;
+  return href
+    ? <a href={href} target="_blank" rel="noopener noreferrer" className="tt-cost-link" title={alt}>{g}</a>
+    : g;
+}
+
 export function TechTreeView({ tree }: { tree: TechTree }) {
   const layout = useMemo(() => computeLayout(tree), [tree]);
   const byId = useMemo(() => Object.fromEntries(tree.nodes.map((n) => [n.slug, n])) as Record<string, TechNode>, [tree]);
@@ -332,7 +339,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
                   <div className="tt-sum-mats-h">Materials needed</div>
                   <div className="tt-mat-grid">
                     {cost.materials.map((m) => (
-                      <span key={m.name} className="tt-mat"><span className="tt-mat-ic"><Glyph icon={m.icon} alt={m.name} /></span><b>{fmt(m.amount)}</b><span className="tt-mat-name">{m.name}</span></span>
+                      <span key={m.name} className="tt-mat"><span className="tt-mat-ic"><CostIcon icon={m.icon} href={m.href} alt={m.name} /></span><b>{fmt(m.amount)}</b><span className="tt-mat-name">{m.name}</span></span>
                     ))}
                   </div>
                 </div>
@@ -403,7 +410,7 @@ function Tooltip({ node, rect, unlocked, nodes, onEnter, onLeave }: {
       <div className="tt-tip-cost">
         {node.costs.map((c) => (
           <div key={c.name} className="tt-tip-costrow">
-            <span className="tt-tip-ic"><Glyph icon={c.icon} alt={c.name} /></span>
+            <span className="tt-tip-ic"><CostIcon icon={c.icon} href={c.href} alt={c.name} /></span>
             <b>{fmt(c.amount)}</b><span>{c.name}</span>
           </div>
         ))}

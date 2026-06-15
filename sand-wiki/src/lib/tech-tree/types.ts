@@ -11,6 +11,7 @@ export interface TechCost {
   name: string;
   amount: number;
   icon: string | null;
+  href: string | null; // detail-page link for the cost entity, or null if it has no page
 }
 
 export interface TechUnlock {

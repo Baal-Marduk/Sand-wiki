@@ -14,9 +14,9 @@ const tree: TechTree = {
   factions: [{ id: "godlewski", name: "G", accent: "#4493f8" }],
   defaultUnlocked: ["g1a-small"],
   nodes: [
-    node({ slug: "g1a-small", faction: "godlewski", tier: 1, letter: "a", crowns: 100, costs: [{ name: "Crowns", amount: 100, icon: null }] }),
-    node({ slug: "g1a-energy", faction: "godlewski", tier: 1, letter: "a", crowns: 150, costs: [{ name: "Crowns", amount: 150, icon: null }, { name: "Coral", amount: 5, icon: "/c.png" }] }),
-    node({ slug: "g2a-mid", faction: "godlewski", tier: 2, letter: "a", crowns: 500, costs: [{ name: "Crowns", amount: 500, icon: null }, { name: "Coral", amount: 10, icon: "/c.png" }], prereqs: ["g1a-small"] }),
+    node({ slug: "g1a-small", faction: "godlewski", tier: 1, letter: "a", crowns: 100, costs: [{ name: "Crowns", amount: 100, icon: null, href: null }] }),
+    node({ slug: "g1a-energy", faction: "godlewski", tier: 1, letter: "a", crowns: 150, costs: [{ name: "Crowns", amount: 150, icon: null, href: null }, { name: "Coral", amount: 5, icon: "/c.png", href: "/items/coral" }] }),
+    node({ slug: "g2a-mid", faction: "godlewski", tier: 2, letter: "a", crowns: 500, costs: [{ name: "Crowns", amount: 500, icon: null, href: null }, { name: "Coral", amount: 10, icon: "/c.png", href: "/items/coral" }], prereqs: ["g1a-small"] }),
   ],
 };
 
@@ -73,6 +73,6 @@ describe("pathCost", () => {
     expect(r.remainingCrowns).toBe(500);
     expect(r.fullCrowns).toBe(600);
     expect(r.techsLeft).toBe(1);
-    expect(r.materials).toEqual([{ name: "Coral", amount: 10, icon: "/c.png" }]);
+    expect(r.materials).toEqual([{ name: "Coral", amount: 10, icon: "/c.png", href: "/items/coral" }]);
   });
 });
