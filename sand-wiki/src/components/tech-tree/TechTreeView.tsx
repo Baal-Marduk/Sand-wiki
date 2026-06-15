@@ -141,6 +141,18 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     });
   }, []);
 
+  useEffect(() => {
+    const vp = viewportRef.current; if (!vp) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const r = vp.getBoundingClientRect();
+      const factor = e.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP;
+      zoomTo(factor, e.clientX - r.left, e.clientY - r.top);
+    };
+    vp.addEventListener("wheel", onWheel, { passive: false });
+    return () => vp.removeEventListener("wheel", onWheel);
+  }, [zoomTo]);
+
   const fitToScreen = useCallback(() => {
     const vp = viewportRef.current; if (!vp) return;
     const z = clampZoom(Math.min(vp.clientWidth / layout.canvasW, vp.clientHeight / layout.canvasH));
