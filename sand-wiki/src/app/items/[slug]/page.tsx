@@ -20,7 +20,8 @@ import { UsedInTable } from "@/components/UsedInTable";
 import { CrateDropList } from "@/components/CrateDropList";
 import { ItemLinkList } from "@/components/ItemLinkList";
 import { KeyLinksTable } from "@/components/KeyLinksTable";
-import { getSession } from "@/lib/auth";
+import { getSession, sessionIsAdmin } from "@/lib/auth";
+import { AdminEntityControls } from "@/components/AdminEntityControls";
 
 type Params = Promise<{ slug: string }>;
 
@@ -50,6 +51,9 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const { slug } = await params;
   const item = await getItemBySlug(slug);
   if (!item) notFound();
+
+  const admin = await sessionIsAdmin();
+  if (item.disabled && !admin) notFound();
 
   const techNode = await getUnlockingNode(slug);
 
@@ -137,6 +141,12 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
         isAmmo ? caliberLabel(caliber) ?? undefined : undefined,
       )}
       detailRows={detailRows}
+      disabled={item.disabled}
+      adminControls={
+        admin ? (
+          <AdminEntityControls slug={item.slug} icon={item.icon} imageAlt={item.imageAlt} disabled={item.disabled} />
+        ) : undefined
+      }
       lastEditedBy={editor ? { steamId: editor.steamId, name: editorDisplayName(editor.personaName) } : null}
       tabs={tabs}
       tabsEmptyFallback={

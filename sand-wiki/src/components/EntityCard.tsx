@@ -25,6 +25,8 @@ export interface EntityCardData {
   typeLabel?: string | null;
   /** Optional right-aligned key/value stats. */
   stats?: EntityStat[];
+  /** Admin browse only: marks the row as admin-hidden. */
+  disabled?: boolean;
 }
 
 /** The workhorse browse card (items / tramplers / environments): rarity rail +
@@ -72,6 +74,11 @@ export function EntityCard({ entity }: { entity: EntityCardData }) {
         <span className="flex min-w-0 flex-col justify-center gap-1 px-3.5 py-2.5">
           <span className="truncate font-display text-base font-semibold leading-tight text-foreground group-hover:text-primary-hover">
             {entity.name}
+            {entity.disabled && (
+              <span className="ml-2 align-middle border border-warning/60 px-1 py-0.5 font-mono text-[9px] uppercase tracking-[0.05em] text-warning">
+                Disabled
+              </span>
+            )}
           </span>
           {typeBits && (
             <span className="flex items-center gap-1.5 font-mono text-[11px] uppercase tracking-[0.04em] text-muted-foreground">

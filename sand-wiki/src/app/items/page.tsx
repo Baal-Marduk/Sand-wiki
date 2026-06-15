@@ -8,6 +8,7 @@ import { ITEM_CATEGORIES, isItemCategory, isWeaponClassCategory, categoryLabel }
 import { isRarity, rarityTier } from "@/lib/rarity";
 import { itemClass } from "@/lib/ammo";
 import type { ItemFilter } from "@/lib/item-filter";
+import { sessionIsAdmin } from "@/lib/auth";
 
 type SearchParams = Promise<Record<string, string | string[] | undefined>>;
 
@@ -58,7 +59,8 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
     workbenchTier: tier,
   };
 
-  const items = await listItems(filter);
+  const admin = await sessionIsAdmin();
+  const items = await listItems(filter, admin);
   const title = category ? categoryLabel(category) : "Items";
   const clearHref = category ? `/items?category=${category}` : "/items";
 
@@ -148,6 +150,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
                     icon: i.icon,
                     rarity: i.rarity,
                     typeLabel: itemClass(i.slug, i.name, i.ammoName),
+                    disabled: i.disabled,
                   }}
                 />
               ))}

@@ -36,6 +36,13 @@ export async function getSession(): Promise<SessionPayload | null> {
   return verifySession(token, secret);
 }
 
+/** Boolean admin check for the current request. Safe in any Server Component:
+ *  no session → false. Use to branch UI / pass into visibility-aware queries. */
+export async function sessionIsAdmin(): Promise<boolean> {
+  const session = await getSession();
+  return !!session && isAdmin(session.steamId);
+}
+
 export async function getUser() {
   const session = await getSession();
   if (!session) return null;

@@ -1,5 +1,6 @@
 import { getSection, isEnvCategory } from "@/lib/taxonomy";
 import { listEnvEntities, envCategoryCounts } from "@/lib/queries";
+import { sessionIsAdmin } from "@/lib/auth";
 import { EntityCard } from "@/components/EntityCard";
 import { CategoryQuickNav } from "@/components/CategoryQuickNav";
 import { CategoryEntryCard, type CategoryEntry } from "@/components/CategoryEntryCard";
@@ -46,7 +47,8 @@ export default async function EnvironmentPage({ searchParams }: { searchParams: 
   }
 
   // Category view: the shared browse shell (sidebar + EntityCard grid).
-  const entities = await listEnvEntities(category);
+  const admin = await sessionIsAdmin();
+  const entities = await listEnvEntities(category, admin);
   return (
     <section className="py-2">
       <div className="grid items-start gap-6 lg:grid-cols-[212px_1fr]">
@@ -83,7 +85,7 @@ export default async function EnvironmentPage({ searchParams }: { searchParams: 
               {entities.map((e) => (
                 <EntityCard
                   key={e.id}
-                  entity={{ slug: e.slug, name: e.name, href: `/environment/${e.slug}`, icon: e.icon, categorySlug: category }}
+                  entity={{ slug: e.slug, name: e.name, href: `/environment/${e.slug}`, icon: e.icon, categorySlug: category, disabled: e.disabled }}
                 />
               ))}
             </ul>

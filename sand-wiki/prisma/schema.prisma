@@ -25,6 +25,7 @@ model Entity {
   sourceUrl   String?
   lootCurated Boolean @default(false) // loot/cost links hand-edited → seed won't recreate them
   curated     Boolean @default(false) // row hand-added/admin-applied → seed prune queries skip it
+  disabled    Boolean @default(false) // admin-hidden; only admins see it. Seed never writes this column, so it survives re-seeds.
 
   itemStats     ItemStats?
   tramplerStats TramplerStats?

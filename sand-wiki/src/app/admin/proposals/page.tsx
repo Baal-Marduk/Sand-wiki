@@ -14,10 +14,15 @@ export default async function AdminProposalsPage() {
     <article className="mx-auto max-w-3xl space-y-4 py-6">
       <div className="flex items-baseline justify-between gap-3">
         <h1 className="font-display text-2xl font-bold uppercase tracking-[0.01em]">Proposals queue</h1>
-        <span className="inline-flex items-center gap-1.5 border border-warning/40 bg-card-elevated px-2 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-[0.04em] text-warning">
-          <span className="size-[7px] bg-warning" aria-hidden="true" />
-          {pending.length} pending
-        </span>
+        <div className="flex items-baseline gap-3">
+          <Link href="/admin/entities/new" className="border border-border-strong px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-[0.05em] hover:border-primary hover:text-primary-hover">
+            Add entity
+          </Link>
+          <span className="inline-flex items-center gap-1.5 border border-warning/40 bg-card-elevated px-2 py-0.5 font-mono text-[11px] font-semibold uppercase tracking-[0.04em] text-warning">
+            <span className="size-[7px] bg-warning" aria-hidden="true" />
+            {pending.length} pending
+          </span>
+        </div>
       </div>
       {pending.length === 0 ? (
         <p className="text-muted-foreground">Nothing to review.</p>

@@ -4,6 +4,7 @@ import { buildItemQuery, applyItemView, type ItemFilter } from "./item-filter";
 import { ammoCaliber, itemClasses, weaponCaliber } from "./ammo";
 import { toRecipeCard, type RecipeWithItems, type RecipeLine } from "./recipes";
 import { entityHref } from "./entity-links";
+import { visibilityWhere } from "./visibility";
 import { toTechTree, FACTION_ROOT_PART } from "./tech-tree/transform";
 import type { TechTree } from "./tech-tree/types";
 
@@ -47,11 +48,13 @@ function toRecipeWithItems(r: LoadedRecipe): RecipeWithItems {
   };
 }
 
-export async function listItems(filter: ItemFilter) {
+export async function listItems(filter: ItemFilter, isAdmin = false) {
   const { where, orderBy } = buildItemQuery(filter);
-  const items = await prisma.entity.findMany({ where, orderBy, include: { itemStats: true } });
-  // Flatten the itemStats extension onto each row so applyItemView (and item
-  // cards) can read ammoName/stat fields as plain top-level fields.
+  const items = await prisma.entity.findMany({
+    where: { ...where, ...visibilityWhere(isAdmin) },
+    orderBy,
+    include: { itemStats: true },
+  });
   const flat = items.map((i) => ({ ...i, ammoName: i.itemStats?.ammoName ?? null }));
   return applyItemView(flat, { sort: filter.sort, weaponClass: filter.weaponClass });
 }
@@ -63,7 +66,7 @@ export async function listRarities(filter: ItemFilter): Promise<string[]> {
   delete rest.rarity;
   const { where } = buildItemQuery(rest);
   const rows = await prisma.entity.findMany({
-    where: { ...where, rarity: { not: null } },
+    where: { ...where, rarity: { not: null }, disabled: false },
     distinct: ["rarity"],
     select: { rarity: true },
   });
@@ -78,7 +81,7 @@ export async function listWorkbenchTiers(filter: ItemFilter): Promise<number[]> 
   delete rest.workbenchTier;
   const { where } = buildItemQuery(rest);
   const rows = await prisma.itemStats.findMany({
-    where: { entity: where, workbenchTier: { not: null } },
+    where: { entity: { ...where, disabled: false }, workbenchTier: { not: null } },
     distinct: ["workbenchTier"],
     select: { workbenchTier: true },
     orderBy: { workbenchTier: "asc" },
@@ -94,7 +97,7 @@ export async function listWorkbenchTiers(filter: ItemFilter): Promise<number[]> 
 export async function listItemClasses(filter: ItemFilter): Promise<string[]> {
   const { where } = buildItemQuery(filter);
   const rows = await prisma.entity.findMany({
-    where,
+    where: { ...where, disabled: false },
     select: { slug: true, name: true, itemStats: { select: { ammoName: true } } },
   });
   return itemClasses(rows.map((r) => ({ slug: r.slug, name: r.name, ammoName: r.itemStats?.ammoName ?? null })));
@@ -103,14 +106,14 @@ export async function listItemClasses(filter: ItemFilter): Promise<string[]> {
 /** Count of items per category — for the home browse grid. Mirrors
  *  envCategoryCounts / tramplerCategoryCounts; reads the stored `category` column. */
 export async function itemCategoryCounts(): Promise<Record<string, number>> {
-  const rows = await prisma.entity.groupBy({ by: ["category"], where: { kind: "item" }, _count: true });
+  const rows = await prisma.entity.groupBy({ by: ["category"], where: { kind: "item", disabled: false }, _count: true });
   return Object.fromEntries(rows.map((r) => [r.category, r._count]));
 }
 
 /** Environment entities (loot containers, etc.), optionally filtered by category. */
-export async function listEnvEntities(category?: string) {
+export async function listEnvEntities(category?: string, isAdmin = false) {
   return prisma.entity.findMany({
-    where: { kind: "environment", ...(category ? { category } : {}) },
+    where: { kind: "environment", ...(category ? { category } : {}), ...visibilityWhere(isAdmin) },
     orderBy: { name: "asc" },
   });
 }
@@ -151,18 +154,16 @@ export const getEnvEntityBySlug = cache(async (slug: string) => {
 
 /** Count of env entities per category — for the Environment landing. */
 export async function envCategoryCounts(): Promise<Record<string, number>> {
-  const rows = await prisma.entity.groupBy({ by: ["category"], where: { kind: "environment" }, _count: true });
+  const rows = await prisma.entity.groupBy({ by: ["category"], where: { kind: "environment", disabled: false }, _count: true });
   return Object.fromEntries(rows.map((r) => [r.category, r._count]));
 }
 
 /** Trampler parts, optionally filtered by functional category. List cards read
  *  dimensions/research from the tramplerStats extension, so it is included. */
-export async function listTramplerParts(category?: string) {
+export async function listTramplerParts(category?: string, isAdmin = false) {
   return prisma.entity.findMany({
-    where: { kind: "trampler-part", ...(category ? { category } : {}) },
+    where: { kind: "trampler-part", ...(category ? { category } : {}), ...visibilityWhere(isAdmin) },
     include: { tramplerStats: true },
-    // researchTier now lives on the tramplerStats extension; order through the relation
-    // to preserve the original tier-then-name list ordering.
     orderBy: [{ tramplerStats: { researchTier: "asc" } }, { name: "asc" }],
   });
 }
@@ -185,7 +186,7 @@ export const getTramplerPartBySlug = cache(async (slug: string) => {
 
 /** Count of trampler parts per category — for the Tramplers landing. */
 export async function tramplerCategoryCounts(): Promise<Record<string, number>> {
-  const rows = await prisma.entity.groupBy({ by: ["category"], where: { kind: "trampler-part" }, _count: true });
+  const rows = await prisma.entity.groupBy({ by: ["category"], where: { kind: "trampler-part", disabled: false }, _count: true });
   return Object.fromEntries(rows.map((r) => [r.category, r._count]));
 }
 
@@ -227,7 +228,7 @@ export async function listLootSources(): Promise<{ slug: string; name: string }[
  *  interactive `/tech` tree links to them via `?select=`). */
 export async function listEntityPaths(): Promise<{ slug: string; kind: string }[]> {
   return prisma.entity.findMany({
-    where: { kind: { in: ["item", "environment", "trampler-part"] } },
+    where: { kind: { in: ["item", "environment", "trampler-part"] }, disabled: false },
     select: { slug: true, kind: true },
     orderBy: { slug: "asc" },
   });
@@ -366,7 +367,7 @@ export async function getOutgoingLinks(slug: string, role: string) {
  *  plus each faction's free starting part. */
 export async function getTechTree(): Promise<TechTree> {
   const rows = await prisma.entity.findMany({
-    where: { kind: "tech-node" },
+    where: { kind: "tech-node", disabled: false },
     select: {
       slug: true,
       name: true,
