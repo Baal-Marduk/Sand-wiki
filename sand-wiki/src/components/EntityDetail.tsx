@@ -34,6 +34,10 @@ export interface EntityDetailProps {
   sourceUrl?: string | null;
   /** Most recent contributor credit, shown at the bottom of the sidebar. */
   lastEditedBy?: { steamId: string; name: string } | null;
+  /** Renders a "Disabled" badge near the title (admins only ever see disabled rows). */
+  disabled?: boolean;
+  /** Admin-only control strip (image edit + disable toggle), shown below the header. */
+  adminControls?: React.ReactNode;
 }
 
 function SectionTitle({ children }: { children: React.ReactNode }) {
@@ -61,6 +65,8 @@ export function EntityDetail({
   tabsEmptyFallback,
   sourceUrl,
   lastEditedBy,
+  disabled,
+  adminControls,
 }: EntityDetailProps) {
   const hasDetails = !!detailRows && detailRows.length > 0;
   const hasSidebar = hasDetails || !!lastEditedBy;
@@ -126,13 +132,26 @@ export function EntityDetail({
           />
         )}
         <div className="min-w-[16rem] flex-1 space-y-3">
-          {badges && <div className="flex flex-wrap items-center gap-2">{badges}</div>}
+          {(badges || disabled) && (
+            <div className="flex flex-wrap items-center gap-2">
+              {disabled && (
+                <span className="border border-warning/60 bg-warning/10 px-2 py-0.5 font-display text-[11px] font-semibold uppercase tracking-[0.06em] text-warning">
+                  Disabled
+                </span>
+              )}
+              {badges}
+            </div>
+          )}
           <h1 className="font-display text-3xl font-bold uppercase leading-none tracking-[0.01em] sm:text-4xl">
             {title}
           </h1>
           {description && <DescriptionText text={description} />}
         </div>
       </header>
+
+      {adminControls && (
+        <div className="border border-border-strong bg-card-elevated p-4">{adminControls}</div>
+      )}
 
       {hasSidebar ? (
         <div className="grid items-start gap-6 lg:grid-cols-[1fr_300px]">
