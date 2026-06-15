@@ -1,5 +1,6 @@
 import { getSection, isTramplerCategory, TRAMPLER_CATEGORIES } from "@/lib/taxonomy";
 import { listTramplerParts, tramplerCategoryCounts } from "@/lib/queries";
+import { sessionIsAdmin } from "@/lib/auth";
 import { EntityCard, type EntityStat } from "@/components/EntityCard";
 import { CategoryQuickNav, categoryNavHref } from "@/components/CategoryQuickNav";
 import { CategoryEntryCard, type CategoryEntry } from "@/components/CategoryEntryCard";
@@ -44,7 +45,8 @@ export default async function TramplersPage({ searchParams }: { searchParams: Se
   }
 
   // Category view: the shared browse shell (sidebar + EntityCard grid).
-  const parts = await listTramplerParts(category);
+  const admin = await sessionIsAdmin();
+  const parts = await listTramplerParts(category, admin);
   return (
     <section className="py-2">
       <div className="grid items-start gap-6 lg:grid-cols-[212px_1fr]">
@@ -92,6 +94,7 @@ export default async function TramplersPage({ searchParams }: { searchParams: Se
                       icon: p.icon,
                       typeLabel: p.tramplerStats?.dimensions ?? null,
                       stats,
+                      disabled: p.disabled,
                     }}
                   />
                 );
