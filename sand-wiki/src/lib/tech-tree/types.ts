@@ -27,6 +27,7 @@ export interface TechNode {
   tier: number; // 1-4
   letter: string; // a-d (sub-column)
   crowns: number; // Crowns cost shown on the card (0 if none)
+  crownsIcon: string | null; // icon for the Crowns cost (real coin icon shown on the card)
   costs: TechCost[]; // all resources (tooltip + planner); Crowns first
   unlocks: TechUnlock[];
   glyphIcon: string | null; // first unlock's icon

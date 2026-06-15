@@ -40,6 +40,7 @@ describe("toTechTree", () => {
     const n = tree.nodes[0];
     expect(n.letter).toBe("a");
     expect(n.crowns).toBe(1500);
+    expect(n.crownsIcon).toBe("/icons/coin.png");
     expect(n.costs).toEqual([
       { name: "Crowns", amount: 1500, icon: "/icons/coin.png" },
       { name: "Weird Coral", amount: 15, icon: "/icons/coral.png" },
@@ -66,6 +67,7 @@ describe("toTechTree", () => {
     const tree = toTechTree(rows);
     const great = tree.nodes.find((n) => n.slug === "tech-kaiser-t3b-great-chassis")!;
     expect(great.prereqs).toEqual(["tech-kaiser-t2b-middling-chassis"]);
+    expect(great.crownsIcon).toBeNull();
     expect(tree.defaultUnlocked).not.toContain("tech-kaiser-t3b-great-chassis");
   });
 });
