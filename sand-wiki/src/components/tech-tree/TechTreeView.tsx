@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState, useCallback } from "react";
 import Link from "next/link";
 import "./tech-tree.css";
 import type { TechTree, TechNode } from "@/lib/tech-tree/types";
@@ -10,6 +10,10 @@ import { ConfirmDialog } from "@/components/ConfirmDialog";
 
 const STORE_KEY = "sand_techtree_unlocked_v1";
 const fmt = (n: number) => n.toLocaleString("en-US");
+
+// Re-anchoring scroll must happen before paint (no flash). Fall back to useEffect during SSR
+// to avoid React's "useLayoutEffect does nothing on the server" warning.
+const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect;
 
 const ZOOM_MIN = 0.4;
 const ZOOM_MAX = 1.5;
@@ -35,6 +39,8 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   const [zoom, setZoom] = useState(1);
   const zoomRef = useRef(1);
   useEffect(() => { zoomRef.current = zoom; }, [zoom]);
+  const appliedZoom = useRef(1); // zoom the current scroll position is consistent with
+  const pendingAnchor = useRef<{ ax: number; ay: number } | null>(null);
   const didDeepLink = useRef(false);
 
   useEffect(() => {
@@ -135,14 +141,27 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     const prev = zoomRef.current;
     const z = clampZoom(prev * factor);
     if (z === prev) return;
-    const ax = anchorX ?? vp.clientWidth / 2;
-    const ay = anchorY ?? vp.clientHeight / 2;
-    const ratio = z / prev;
-    vp.scrollLeft = (vp.scrollLeft + ax) * ratio - ax;
-    vp.scrollTop = (vp.scrollTop + ay) * ratio - ay;
+    // Defer the scroll re-anchor to the layout effect below: it must run AFTER the canvas
+    // transform + sizer have resized, otherwise the browser clamps scrollLeft/Top against the
+    // stale (pre-resize) scroll bounds and the cursor anchor visibly jumps each step.
+    pendingAnchor.current = { ax: anchorX ?? vp.clientWidth / 2, ay: anchorY ?? vp.clientHeight / 2 };
     zoomRef.current = z;
     setZoom(z);
   }, []);
+
+  // After the new zoom has been committed to the DOM (sizer resized, canvas scaled), re-anchor
+  // scroll so the point under the cursor stays fixed. `appliedZoom` tracks the zoom the current
+  // scroll matches, so the ratio is correct even if React coalesces several zoom steps.
+  useIsoLayoutEffect(() => {
+    const vp = viewportRef.current; if (!vp) return;
+    const from = appliedZoom.current;
+    appliedZoom.current = zoom;
+    const p = pendingAnchor.current; pendingAnchor.current = null;
+    if (!p || from === zoom) return;
+    const ratio = zoom / from;
+    vp.scrollLeft = (vp.scrollLeft + p.ax) * ratio - p.ax;
+    vp.scrollTop = (vp.scrollTop + p.ay) * ratio - p.ay;
+  }, [zoom]);
 
   useEffect(() => {
     const vp = viewportRef.current; if (!vp) return;
