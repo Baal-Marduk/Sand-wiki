@@ -33,6 +33,8 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   const viewportRef = useRef<HTMLDivElement>(null);
   const [resetOpen, setResetOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
+  const zoomRef = useRef(1);
+  useEffect(() => { zoomRef.current = zoom; }, [zoom]);
   const didDeepLink = useRef(false);
 
   useEffect(() => {
@@ -56,13 +58,13 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     const vp = viewportRef.current, pos = posById[slug];
     if (vp && pos) {
       vp.scrollTo({
-        left: Math.max(0, (pos.x + LAYOUT.CARD_W / 2) * zoom - vp.clientWidth / 2),
-        top: Math.max(0, (pos.y + LAYOUT.CARD_H / 2) * zoom - vp.clientHeight / 2),
+        left: Math.max(0, pos.x + LAYOUT.CARD_W / 2 - vp.clientWidth / 2),
+        top: Math.max(0, pos.y + LAYOUT.CARD_H / 2 - vp.clientHeight / 2),
         behavior: "smooth",
       });
     }
     /* eslint-enable react-hooks/set-state-in-effect */
-  }, [byId, posById, zoom]);
+  }, [byId, posById]);
 
   const persist = useCallback((s: Set<string>) => {
     try { localStorage.setItem(STORE_KEY, JSON.stringify([...s])); } catch { /* ignore */ }
@@ -130,15 +132,16 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
 
   const zoomTo = useCallback((factor: number, anchorX?: number, anchorY?: number) => {
     const vp = viewportRef.current; if (!vp) return;
-    setZoom((prev) => {
-      const z = clampZoom(prev * factor);
-      const ax = anchorX ?? vp.clientWidth / 2;
-      const ay = anchorY ?? vp.clientHeight / 2;
-      const ratio = z / prev;
-      vp.scrollLeft = (vp.scrollLeft + ax) * ratio - ax;
-      vp.scrollTop = (vp.scrollTop + ay) * ratio - ay;
-      return z;
-    });
+    const prev = zoomRef.current;
+    const z = clampZoom(prev * factor);
+    if (z === prev) return;
+    const ax = anchorX ?? vp.clientWidth / 2;
+    const ay = anchorY ?? vp.clientHeight / 2;
+    const ratio = z / prev;
+    vp.scrollLeft = (vp.scrollLeft + ax) * ratio - ax;
+    vp.scrollTop = (vp.scrollTop + ay) * ratio - ay;
+    zoomRef.current = z;
+    setZoom(z);
   }, []);
 
   useEffect(() => {
@@ -156,6 +159,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   const fitToScreen = useCallback(() => {
     const vp = viewportRef.current; if (!vp) return;
     const z = clampZoom(Math.min(vp.clientWidth / layout.canvasW, vp.clientHeight / layout.canvasH));
+    zoomRef.current = z;
     setZoom(z);
     vp.scrollTo({ left: 0, top: 0, behavior: "smooth" });
   }, [layout.canvasW, layout.canvasH]);
