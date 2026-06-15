@@ -403,11 +403,14 @@ async function main() {
     if (prereqRows.length > 0) await prisma.entityLink.createMany({ data: prereqRows });
   }
 
-  const techNodeCount = await prisma.entity.count({ where: { kind: "tech-node", curated: false } });
+  // Count rows whose slug is in the source set (NOT `curated:false`): a contributor-edited
+  // row stays in the snapshot but may be curated, so a curated filter would undercount it.
+  // A duplicate slug in the source still collapses on upsert → fewer rows → still caught.
+  const techNodeCount = await prisma.entity.count({ where: { kind: "tech-node", slug: { in: techSlugs } } });
   if (techNodeCount !== nodeList.length) throw new Error(`Tech-node count mismatch: DB has ${techNodeCount}, source has ${nodeList.length}`);
   console.log(`Seeded ${techNodeCount} tech nodes.`);
 
-  const [itemCount, scrapedRecipeCount] = await Promise.all([prisma.entity.count({ where: { kind: "item", curated: false } }), prisma.recipe.count({ where: { curated: false } })]);
+  const [itemCount, scrapedRecipeCount] = await Promise.all([prisma.entity.count({ where: { kind: "item", slug: { in: items.map((i) => i.slug) } } }), prisma.recipe.count({ where: { curated: false } })]);
   if (itemCount !== items.length) throw new Error(`Item count mismatch after seed: DB has ${itemCount}, snapshot has ${items.length} (duplicate slugs?)`);
   if (scrapedRecipeCount !== data.recipes.length) throw new Error(`Recipe count mismatch after seed: DB has ${scrapedRecipeCount} non-curated, snapshot has ${data.recipes.length} (duplicate slugs?)`);
   if (preservedFields > 0) {
