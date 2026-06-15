@@ -466,7 +466,7 @@ function categoryOkForKind(kind: CreatableKind, category: string): boolean {
 }
 
 export interface EntityCreateData {
-  entityData: Record<string, string | number | null>;
+  entityData: Record<string, string | number | boolean | null>; // boolean for the `curated` flag
   statData: Record<string, string | number | null>;
   statRelation: "itemStats" | "tramplerStats" | null;
 }
@@ -493,7 +493,7 @@ export function buildEntityCreateData(
   const category = (raw.category ?? "").trim();
   if (!categoryOkForKind(k, category)) throw new Error(`Category "${category}" is not valid for ${kind}.`);
 
-  const entityData: Record<string, string | number | null> = {
+  const entityData: Record<string, string | number | boolean | null> = {
     slug,
     kind: k,
     name,
