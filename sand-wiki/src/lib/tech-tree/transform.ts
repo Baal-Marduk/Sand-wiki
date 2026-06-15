@@ -41,7 +41,12 @@ export function toTechTree(
         .sort((a, b) => a.sortOrder - b.sortOrder)
         .map((l) => l.target!.slug);
 
-      const costs = costLinks.map((l) => ({ name: l.name, amount: l.amount ?? 0, icon: l.target?.icon ?? null }));
+      const costs = costLinks.map((l) => ({
+        name: l.name,
+        amount: l.amount ?? 0,
+        icon: l.target?.icon ?? null,
+        href: l.target ? entityHref(l.target.kind ?? null, l.target.slug) : null,
+      }));
       const crownsCost = costs.find((c) => c.name === CROWNS_NAME);
       const crowns = crownsCost?.amount ?? 0;
       const crownsIcon = crownsCost?.icon ?? null;

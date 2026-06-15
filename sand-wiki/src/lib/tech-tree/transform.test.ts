@@ -30,7 +30,7 @@ describe("toTechTree", () => {
           { role: "tech-unlock-cost", name: "Crowns", amount: 1500, sortOrder: 0,
             target: { slug: "coin-crown", name: "Crowns", icon: "/icons/coin.png", techNodeStats: null } },
           { role: "tech-unlock-cost", name: "Weird Coral", amount: 15, sortOrder: 1,
-            target: { slug: "weird-coral", name: "Weird Coral", icon: "/icons/coral.png", techNodeStats: null } },
+            target: { slug: "weird-coral", name: "Weird Coral", icon: "/icons/coral.png", kind: "item", techNodeStats: null } },
           { role: "tech-unlocks", name: "NZ Mk2 Energy Rod", amount: null, sortOrder: 0,
             target: { slug: "nz-mk2-energy-rod", name: "NZ Mk2 Energy Rod", icon: "/icons/rod.png", techNodeStats: null } },
         ],
@@ -42,8 +42,8 @@ describe("toTechTree", () => {
     expect(n.crowns).toBe(1500);
     expect(n.crownsIcon).toBe("/icons/coin.png");
     expect(n.costs).toEqual([
-      { name: "Crowns", amount: 1500, icon: "/icons/coin.png" },
-      { name: "Weird Coral", amount: 15, icon: "/icons/coral.png" },
+      { name: "Crowns", amount: 1500, icon: "/icons/coin.png", href: null },
+      { name: "Weird Coral", amount: 15, icon: "/icons/coral.png", href: "/items/weird-coral" },
     ]);
     expect(n.glyphIcon).toBe("/icons/rod.png");
     expect(n.unlocks[0]).toEqual({ name: "NZ Mk2 Energy Rod", slug: "nz-mk2-energy-rod", icon: "/icons/rod.png", href: null });
