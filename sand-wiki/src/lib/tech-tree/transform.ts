@@ -42,7 +42,9 @@ export function toTechTree(
         .map((l) => l.target!.slug);
 
       const costs = costLinks.map((l) => ({ name: l.name, amount: l.amount ?? 0, icon: l.target?.icon ?? null }));
-      const crowns = costs.find((c) => c.name === CROWNS_NAME)?.amount ?? 0;
+      const crownsCost = costs.find((c) => c.name === CROWNS_NAME);
+      const crowns = crownsCost?.amount ?? 0;
+      const crownsIcon = crownsCost?.icon ?? null;
       const unlocks = unlockLinks.map((l) => ({
         name: l.name,
         slug: l.target?.slug ?? null,
@@ -57,6 +59,7 @@ export function toTechTree(
         tier: r.techNodeStats!.tier,
         letter: parseLetter(r.slug),
         crowns,
+        crownsIcon,
         costs,
         unlocks,
         glyphIcon: unlocks.find((u) => u.icon)?.icon ?? null,

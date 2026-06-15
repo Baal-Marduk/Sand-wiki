@@ -11,6 +11,11 @@ import { ConfirmDialog } from "@/components/ConfirmDialog";
 const STORE_KEY = "sand_techtree_unlocked_v1";
 const fmt = (n: number) => n.toLocaleString("en-US");
 
+const ZOOM_MIN = 0.4;
+const ZOOM_MAX = 1.5;
+const ZOOM_STEP = 1.1; // multiplicative per wheel notch / button press
+const clampZoom = (z: number) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, z));
+
 function Glyph({ icon, alt }: { icon: string | null; alt: string }) {
   // eslint-disable-next-line @next/next/no-img-element
   return icon ? <img src={icon} alt="" aria-hidden loading="lazy" decoding="async" /> : <span aria-label={alt}>▦</span>;
@@ -27,6 +32,10 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   const [hover, setHover] = useState<{ slug: string; rect: DOMRect } | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
   const [resetOpen, setResetOpen] = useState(false);
+  const [zoom, setZoom] = useState(1);
+  const zoomRef = useRef(1);
+  useEffect(() => { zoomRef.current = zoom; }, [zoom]);
+  const didDeepLink = useRef(false);
 
   useEffect(() => {
     // Client-only hydration from localStorage; must run after mount, not during render.
@@ -41,8 +50,10 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
 
   useEffect(() => {
     /* eslint-disable react-hooks/set-state-in-effect */
+    if (didDeepLink.current) return;
     const slug = new URLSearchParams(window.location.search).get("select");
     if (!slug || !byId[slug]) return;
+    didDeepLink.current = true;
     setSelected(new Set([slug]));
     const vp = viewportRef.current, pos = posById[slug];
     if (vp && pos) {
@@ -119,6 +130,40 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     pan.current = null;
   }, []);
 
+  const zoomTo = useCallback((factor: number, anchorX?: number, anchorY?: number) => {
+    const vp = viewportRef.current; if (!vp) return;
+    const prev = zoomRef.current;
+    const z = clampZoom(prev * factor);
+    if (z === prev) return;
+    const ax = anchorX ?? vp.clientWidth / 2;
+    const ay = anchorY ?? vp.clientHeight / 2;
+    const ratio = z / prev;
+    vp.scrollLeft = (vp.scrollLeft + ax) * ratio - ax;
+    vp.scrollTop = (vp.scrollTop + ay) * ratio - ay;
+    zoomRef.current = z;
+    setZoom(z);
+  }, []);
+
+  useEffect(() => {
+    const vp = viewportRef.current; if (!vp) return;
+    const onWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const r = vp.getBoundingClientRect();
+      const factor = e.deltaY < 0 ? ZOOM_STEP : 1 / ZOOM_STEP;
+      zoomTo(factor, e.clientX - r.left, e.clientY - r.top);
+    };
+    vp.addEventListener("wheel", onWheel, { passive: false });
+    return () => vp.removeEventListener("wheel", onWheel);
+  }, [zoomTo]);
+
+  const fitToScreen = useCallback(() => {
+    const vp = viewportRef.current; if (!vp) return;
+    const z = clampZoom(Math.min(vp.clientWidth / layout.canvasW, vp.clientHeight / layout.canvasH));
+    zoomRef.current = z;
+    setZoom(z);
+    vp.scrollTo({ left: 0, top: 0, behavior: "smooth" });
+  }, [layout.canvasW, layout.canvasH]);
+
   const cost = useMemo(() => pathCost(tree.nodes, [...selected], unlocked), [tree.nodes, selected, unlocked]);
 
   return (
@@ -133,6 +178,12 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
         <span className="tt-page-title">Tech Tree</span>
         <div className="tt-toolbar">
           <span className="tt-progress">{unlocked.size} / {tree.nodes.length} unlocked</span>
+          <div className="tt-zoom">
+            <button type="button" className={actionButtonClass} onClick={() => zoomTo(1 / ZOOM_STEP)} aria-label="Zoom out">−</button>
+            <span className="tt-zoom-val">{Math.round(zoom * 100)}%</span>
+            <button type="button" className={actionButtonClass} onClick={() => zoomTo(ZOOM_STEP)} aria-label="Zoom in">+</button>
+            <button type="button" className={actionButtonClass} onClick={fitToScreen}>Fit</button>
+          </div>
           <button type="button" className={actionButtonClass} onClick={() => setSelected(new Set())}>Clear selection</button>
           <button type="button" className={actionButtonClass} onClick={() => setResetOpen(true)}>Reset progress</button>
         </div>
@@ -149,20 +200,21 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
            onPointerDown={onPanDown} onPointerMove={onPanMove} onPointerUp={endPan}
            onPointerLeave={endPan} onPointerCancel={endPan}
            onClickCapture={(e) => { if (panned.current) { panned.current = false; e.stopPropagation(); } }}>
-        <div id="tt-tierbar" style={{ width: layout.canvasW }}>
+        <div id="tt-tierbar" style={{ width: layout.canvasW * zoom }}>
           {layout.tiers.map((t) => {
             const first = t.cols[0], last = t.cols[t.cols.length - 1];
             const left = LAYOUT.PAD_LEFT + first * LAYOUT.COL_W - 24;
             const right = LAYOUT.PAD_LEFT + last * LAYOUT.COL_W + LAYOUT.CARD_W + 24;
             return (
-              <div key={t.tier} className="tt-tier-label" style={{ left, width: right - left }}>
+              <div key={t.tier} className="tt-tier-label" style={{ left: left * zoom, width: (right - left) * zoom }}>
                 <span className="tt-tier-roman">{t.roman}</span>{t.label}
               </div>
             );
           })}
         </div>
 
-        <div id="tt-canvas" style={{ position: "relative", width: layout.canvasW, height: layout.canvasH }}>
+        <div className="tt-sizer" style={{ width: layout.canvasW * zoom, height: layout.canvasH * zoom }}>
+        <div id="tt-canvas" style={{ position: "relative", width: layout.canvasW, height: layout.canvasH, transform: `scale(${zoom})`, transformOrigin: "0 0" }}>
           <svg id="tt-svg" width={layout.canvasW} height={layout.canvasH} viewBox={`0 0 ${layout.canvasW} ${layout.canvasH}`} xmlns="http://www.w3.org/2000/svg">
             {layout.edges.map((e) => {
               const to = posById[e.to]; if (!to) return null;
@@ -225,12 +277,18 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
                         onClick={(ev) => { ev.stopPropagation(); toggleUnlocked(n.slug); }} />
                 <div className="tnode-main">
                   <div className="tnode-head"><span className="tnode-name" title={n.name}>{n.name}</span></div>
-                  <div className="tnode-cost"><span className="tnode-scrap" /><span className="tnode-num">{fmt(n.crowns)}</span></div>
+                  <div className="tnode-cost">
+                    {n.crownsIcon
+                      ? <span className="tnode-coin"><Glyph icon={n.crownsIcon} alt="Crowns" /></span>
+                      : <span className="tnode-scrap" />}
+                    <span className="tnode-num">{fmt(n.crowns)}</span>
+                  </div>
                 </div>
                 <span className="tnode-glyph glyph"><Glyph icon={n.glyphIcon} alt={n.name} /></span>
               </div>
             );
           })}
+        </div>
         </div>
       </div>
 
