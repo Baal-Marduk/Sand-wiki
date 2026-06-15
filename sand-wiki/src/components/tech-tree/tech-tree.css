@@ -173,3 +173,8 @@
 .tt-viewport { cursor: grab; }
 .tt-viewport.is-panning { cursor: grabbing; user-select: none; }
 .tt-viewport .tnode, .tt-viewport .tt-faction-root, .tt-viewport a { cursor: pointer; }
+
+/* cost/material icons that link to a detail page (planner + tooltip, both fixed-position) */
+.tt-cost-link { display: grid; place-items: center; width: 100%; height: 100%; cursor: pointer; }
+.tt-cost-link img { width: 100%; height: 100%; object-fit: contain; }
+.tt-cost-link:hover { opacity: .8; }
