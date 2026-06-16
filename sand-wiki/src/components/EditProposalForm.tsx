@@ -4,6 +4,7 @@ import { entityHref, type EditableField, type SelectOption } from "@/lib/proposa
 import { EnumField } from "@/components/EnumField";
 import { DirtyForm, DirtySubmit } from "@/components/DirtyForm";
 import { labelCls, inputCls, textareaCls, hintCls, btnGhost } from "@/components/form-styles";
+import { RaritySelect, CategorySelect } from "@/components/StyledSelect";
 
 export function EditProposalForm({
   type,
@@ -26,7 +27,13 @@ export function EditProposalForm({
         <label key={f.field} className="flex flex-col gap-1.5">
           <span className={labelCls}>{f.label}</span>
           {f.type === "enum" ? (
-            <EnumField field={f.field} value={String(values[f.field] ?? "")} options={options[f.field] ?? []} />
+            f.field === "rarity" ? (
+              <RaritySelect name="rarity" options={options.rarity ?? []} defaultValue={String(values.rarity ?? "")} placeholder="—" />
+            ) : f.field === "category" ? (
+              <CategorySelect name="category" options={options.category ?? []} defaultValue={String(values.category ?? "")} placeholder="—" />
+            ) : (
+              <EnumField field={f.field} value={String(values[f.field] ?? "")} options={options[f.field] ?? []} />
+            )
           ) : f.type === "text" ? (
             <textarea name={f.field} defaultValue={values[f.field] ?? ""} className={textareaCls} rows={3} />
           ) : (
