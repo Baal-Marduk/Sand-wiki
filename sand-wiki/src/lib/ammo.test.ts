@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { ammoCaliber, weaponCaliber, caliberLabel, ammoTypeFor, itemClasses, CLASS_ORDER } from "./ammo";
+// (itemClass removed: class is now derived from the stored ammoType)
 
 describe("ammoCaliber", () => {
   it("reads NxN mm without degrading to the second number", () => {
@@ -50,21 +51,6 @@ describe("caliberLabel", () => {
   });
 });
 
-describe("itemClass", () => {
-  it("derives a weapon's class from its ammoName", () => {
-    expect(itemClass("some-rifle", "Service Rifle", "9x42 mm Ammo")).toBe("Rifle");
-  });
-  it("derives an ammo item's class from its own name when ammoName is null", () => {
-    expect(itemClass("ammo-1154", "11x54 mm AP Ammo", null)).toBe("Sniper");
-  });
-  it("derives a turret's class from its slug override", () => {
-    expect(itemClass("game-packed-shotgun-turret-t1-container", "Packed Shotgun Turret", null)).toBe("Shotgun");
-  });
-  it("returns null when no caliber can be derived", () => {
-    expect(itemClass("bandages", "Bandages", null)).toBeNull();
-  });
-});
-
 describe("ammoTypeFor", () => {
   it("derives ammo items from their own name", () => {
     expect(ammoTypeFor("ammo", "ammo-1154", "11x54 mm AP Ammo", null)).toBe("11x54 mm");
@@ -81,12 +67,12 @@ describe("ammoTypeFor", () => {
 });
 
 describe("itemClasses", () => {
-  it("returns distinct present classes in canonical order", () => {
+  it("returns distinct present classes in canonical order, from stored ammoType", () => {
     const rows = [
-      { slug: "a", name: "11x54 mm Ammo", ammoName: null },     // Sniper
-      { slug: "b", name: "Rifle", ammoName: "9x42 mm Ammo" },   // Rifle
-      { slug: "c", name: "Pistol", ammoName: "8x21 mm Ammo" },  // Pistol
-      { slug: "d", name: "Bandages", ammoName: null },          // none
+      { ammoType: "11x54 mm" }, // Sniper
+      { ammoType: "9x42 mm" },  // Rifle
+      { ammoType: "8x21 mm" },  // Pistol
+      { ammoType: null },       // none
     ];
     expect(itemClasses(rows)).toEqual(["Pistol", "Rifle", "Sniper"]);
   });

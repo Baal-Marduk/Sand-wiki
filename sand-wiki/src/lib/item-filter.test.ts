@@ -27,8 +27,8 @@ describe("buildItemQuery", () => {
 
 });
 
-const mk = (slug: string, name: string, rarity: string | null, ammoName?: string) => ({
-  slug, name, rarity, ammoName: ammoName ?? null,
+const mk = (slug: string, name: string, rarity: string | null, ammoType?: string) => ({
+  slug, name, rarity, ammoType: ammoType ?? null,
 });
 
 describe("applyItemView", () => {
@@ -54,17 +54,17 @@ describe("applyItemView", () => {
 
   it("filters by weapon class", () => {
     const weapons = [
-      mk("rifle", "Rifle", "Common", "9x42 mm Ammo"),  // Rifle
-      mk("snip", "Sniper", "Rare", "11x54 mm Ammo"),   // Sniper
+      mk("rifle", "Rifle", "Common", "9x42 mm"),  // Rifle
+      mk("snip", "Sniper", "Rare", "11x54 mm"),   // Sniper
     ];
     expect(applyItemView(weapons, { sort: "name", weaponClass: "Rifle" }).map((i) => i.slug)).toEqual(["rifle"]);
   });
 
   it("applies the weapon-class filter before the rarity sort", () => {
     const weapons = [
-      mk("rifle-c", "Rifle Common", "Common", "9x42 mm Ammo"),    // Rifle, tier 1
-      mk("rifle-r", "Rifle Rare", "Rare", "9x42 mm Ammo"),        // Rifle, tier 4
-      mk("snip", "Sniper", "Remarkable", "11x54 mm Ammo"),        // Sniper — filtered out
+      mk("rifle-c", "Rifle Common", "Common", "9x42 mm"),    // Rifle, tier 1
+      mk("rifle-r", "Rifle Rare", "Rare", "9x42 mm"),        // Rifle, tier 4
+      mk("snip", "Sniper", "Remarkable", "11x54 mm"),        // Sniper — filtered out
     ];
     expect(
       applyItemView(weapons, { sort: "rarity", weaponClass: "Rifle" }).map((i) => i.slug),

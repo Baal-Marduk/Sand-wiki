@@ -5,7 +5,7 @@ import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCalib
 import { entityHref } from "@/lib/entity-links";
 import { metaDescription } from "@/lib/site";
 import { editorDisplayName } from "@/lib/steam";
-import { ammoCaliber, weaponCaliber, caliberLabel } from "@/lib/ammo";
+import { caliberLabel } from "@/lib/ammo";
 import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
 import { categoryLabel } from "@/lib/taxonomy";
@@ -65,7 +65,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   // caliber; an ammo lists every weapon/turret of its caliber.
   const isAmmo = item.category === "ammo";
   const stats = item.itemStats;
-  const caliber = isAmmo ? ammoCaliber(item.name) : weaponCaliber(item.slug, stats?.ammoName ?? null);
+  const caliber = stats?.ammoType ?? null;
   const ammo = !isAmmo && caliber ? await getAmmoByCaliber(caliber) : [];
   const ammoUsers = isAmmo && caliber ? await getWeaponsByCaliber(caliber) : [];
 
