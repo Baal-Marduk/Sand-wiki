@@ -221,6 +221,27 @@ test("an ammo variant lists guns of its caliber via Used by", async ({ page }) =
   await expect(page.locator('[role="tabpanel"] a[href="/items/sniper-rifle"]')).toBeVisible();
 });
 
+test("stored ammoType pairs an ammo shell with its artillery both ways", async ({ page }) => {
+  // The weapon<->ammo pairing reads the stored ItemStats.ammoType column ("40 mm").
+  // Ammo "Low-Recoil 40 mm Shell" and artillery "Rusty 40 mm Autocannon Kit" share it.
+  await page.goto("/items/small-cannon-ammo-low-recoil");
+  await page.getByRole("tab", { name: "Used by" }).click();
+  const weaponLink = page.locator(
+    '[role="tabpanel"] a[href="/items/game-packed-auto-turret-t1-container"]'
+  );
+  await expect(weaponLink).toBeVisible();
+  await expect(weaponLink).toContainText("Rusty 40 mm Autocannon Kit");
+
+  // Reverse direction: the artillery's Ammo tab lists the shell back.
+  await page.goto("/items/game-packed-auto-turret-t1-container");
+  await page.getByRole("tab", { name: "Ammo" }).click();
+  const ammoLink = page.locator(
+    '[role="tabpanel"] a[href="/items/small-cannon-ammo-low-recoil"]'
+  );
+  await expect(ammoLink).toBeVisible();
+  await expect(ammoLink).toContainText("Low-Recoil 40 mm Shell");
+});
+
 test("artillery turret has an Ammo tab listing its shells", async ({ page }) => {
   await page.goto("/items/game-packed-turret-t1-container");
   await page.getByRole("tab", { name: "Ammo" }).click();
