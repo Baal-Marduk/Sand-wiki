@@ -40,6 +40,8 @@ export function EntitySearchBox({
     allowCustom && !!onSelectCustom && query.trim() !== "" && !hasExactOptionMatch(items, query);
   const open = query.trim() !== "" && (results.length > 0 || showCustom);
   const count = results.length + (showCustom ? 1 : 0);
+  // Clamp the stored highlight index so a shrinking result set can never leave hi out of range.
+  const safeHi = count > 0 ? Math.min(hi, count - 1) : 0;
 
   const pick = (o: LinkOption) => { onSelect(o); setQuery(""); setHi(0); searchRef.current?.focus(); };
   const pickCustom = () => {
@@ -56,7 +58,7 @@ export function EntitySearchBox({
     if (!open) return;
     if (e.key === "ArrowDown") { e.preventDefault(); setHi((h) => Math.min(h + 1, count - 1)); }
     else if (e.key === "ArrowUp") { e.preventDefault(); setHi((h) => Math.max(h - 1, 0)); }
-    else if (e.key === "Enter") { e.preventDefault(); choose(hi); }
+    else if (e.key === "Enter") { e.preventDefault(); choose(safeHi); }
     else if (e.key === "Escape") { setQuery(""); }
   };
 
@@ -83,10 +85,10 @@ export function EntitySearchBox({
             <li
               key={o.slug}
               role="option"
-              aria-selected={idx === hi}
+              aria-selected={idx === safeHi}
               onMouseEnter={() => setHi(idx)}
               onMouseDown={(e) => { e.preventDefault(); pick(o); }}
-              className={`flex cursor-pointer items-center gap-2 px-2 py-1.5 ${idx === hi ? "bg-card-elevated" : ""}`}
+              className={`flex cursor-pointer items-center gap-2 px-2 py-1.5 ${idx === safeHi ? "bg-card-elevated" : ""}`}
             >
               <ItemIcon name={o.name} size="sm" decorative icon={o.icon} rarity={o.rarity} categorySlug={o.category} />
               <span className="text-sm" style={{ color: rarityColor(o.rarity) ?? undefined }}>{o.name}</span>
@@ -95,10 +97,10 @@ export function EntitySearchBox({
           {showCustom && (
             <li
               role="option"
-              aria-selected={hi === results.length}
+              aria-selected={safeHi === results.length}
               onMouseEnter={() => setHi(results.length)}
               onMouseDown={(e) => { e.preventDefault(); pickCustom(); }}
-              className={`flex cursor-pointer items-center gap-2 border-t border-dashed border-border-strong px-2 py-1.5 italic text-muted-foreground ${hi === results.length ? "bg-card-elevated" : ""}`}
+              className={`flex cursor-pointer items-center gap-2 border-t border-dashed border-border-strong px-2 py-1.5 italic text-muted-foreground ${safeHi === results.length ? "bg-card-elevated" : ""}`}
             >
               ＋ Add &quot;{query.trim()}&quot; as custom / unlinked
             </li>
