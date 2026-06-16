@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { classifyCoinRecipe, buyOptionFromRecipe, type MigRecipe } from "./buy-migration";
+import { classifyCoinRecipe, buyOptionFromRecipe, boughtItemSlug, type MigRecipe } from "./buy-migration";
 
 const CUR = "coin-crown";
 const r = (inputs: [string, number][], outputs: [string, number][]): MigRecipe => ({
@@ -31,5 +31,14 @@ describe("buyOptionFromRecipe", () => {
       { slug: "wine-crate", amount: 1 },
     ]);
     expect(opt.yield).toBe(2);
+  });
+});
+
+describe("boughtItemSlug", () => {
+  it("returns the first non-currency output slug", () => {
+    expect(boughtItemSlug(r([[CUR, 500]], [["cannon", 1]]), CUR)).toBe("cannon");
+  });
+  it("returns null when every output is the currency", () => {
+    expect(boughtItemSlug(r([["cannon", 1]], [[CUR, 300]]), CUR)).toBeNull();
   });
 });
