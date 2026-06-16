@@ -7,6 +7,7 @@ import { entityHref } from "./entity-links";
 import { visibilityWhere, linkTargetEnabled } from "./visibility";
 import { toTechTree, FACTION_ROOT_PART } from "./tech-tree/transform";
 import type { TechTree } from "./tech-tree/types";
+import type { LinkOption } from "@/lib/link-picker";
 
 /** {slug,name,icon,rarity} select for entities referenced from a recipe line. */
 const linkItemSelect = { select: { slug: true, name: true, icon: true, rarity: true } } as const;
@@ -219,10 +220,10 @@ export async function getIncomingLootLinks(itemSlug: string) {
 
 /** Env entities usable as loot sources (containers + landmarks), for the source dropdown
  *  in the item-side loot editor. */
-export async function listLootSources(): Promise<{ slug: string; name: string }[]> {
+export async function listLootSources(): Promise<LinkOption[]> {
   return prisma.entity.findMany({
     where: { kind: "environment", category: { in: ["loot-containers", "landmarks"] } },
-    select: { slug: true, name: true },
+    select: { slug: true, name: true, rarity: true, icon: true, category: true },
     orderBy: { name: "asc" },
   });
 }
