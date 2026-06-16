@@ -269,6 +269,15 @@ the React UI mirrors — but where they disagree with these files, **globals.css
   (`labelCls`/`inputCls`/`selectCls`/`textareaCls`/`hint`/`error`/`btn*`). Use **native** form
   elements (keep `name`/`value` for server actions) styled with these classes — don't reach for
   unstyled ad-hoc inputs. Closed taxonomy sets are selects; wiki-sourced sets allow "other".
+  - **Entity/item selection uses the enriched picker, never a plain `<select>` of items.**
+    Use `EntitySearchBox` (search + `ItemIcon` + rarity color) — already wrapped by `LinkPicker`
+    (loot/cost/keys/found-in) and `RecipeEditForm` (recipe inputs/outputs). Pass options as
+    `LinkOption[]` (`{slug,name,rarity,icon,category}`); the picker emits the same index-aligned
+    FormData arrays the server parses.
+  - **Rarity and category selects use `StyledSelect`** (`RaritySelect` = color swatch + tinted
+    label; `CategorySelect` = `CategoryIcon`). They emit a hidden input with the chosen value.
+  - **Other closed or wiki-sourced enums stay native** `<select>` / `EnumField` (kind, workbench,
+    tiers, target type). `EnumField` keeps the "Other…" free-text path for wiki-sourced sets.
 - **Icon + tooltip**: `ItemIconLink` (shared by recipe ingredients and loot grids) — icon, hover/
   focus name tooltip, links to the item; recipes add `×amount`, loot shows none.
 - **App shell** — sticky blurred `SiteHeader` (brand wordmark, section-dropdown `MainNav` on
