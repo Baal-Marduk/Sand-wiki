@@ -32,6 +32,7 @@ export const EDITABLE_FIELDS: Record<string, EditableField[]> = {
     { field: "splashDamage", label: "Splash damage", type: "int" },
     { field: "magazine", label: "Magazine", type: "int" },
     { field: "ammoName", label: "Ammo", type: "string" },
+    { field: "ammoType", label: "Ammo type", type: "string" },
   ],
   envEntity: [
     { field: "name", label: "Name", type: "string" },

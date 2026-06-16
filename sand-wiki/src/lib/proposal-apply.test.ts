@@ -16,6 +16,12 @@ describe("applyableUpdate", () => {
     const tainted: Diff = { ...diff, icon: { old: "a", new: "b" } };
     expect(applyableUpdate("item", tainted)).toEqual({ rarity: "Rare", statValue: 25 });
   });
+
+  it("includes ammoType as an applyable item field routed to the stat extension", () => {
+    const diff = { ammoType: { old: null, new: "11x54 mm" } } as unknown as Diff;
+    const update = applyableUpdate("item", diff);
+    expect(update).toEqual({ ammoType: "11x54 mm" });
+  });
 });
 
 describe("detectStale", () => {

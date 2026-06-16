@@ -6,7 +6,7 @@ import { FilterSelect } from "@/components/FilterSelect";
 import { RarityChips } from "@/components/RarityChips";
 import { ITEM_CATEGORIES, isItemCategory, isWeaponClassCategory, categoryLabel } from "@/lib/taxonomy";
 import { isRarity, rarityTier } from "@/lib/rarity";
-import { itemClass } from "@/lib/ammo";
+import { caliberLabel } from "@/lib/ammo";
 import type { ItemFilter } from "@/lib/item-filter";
 import { sessionIsAdmin } from "@/lib/auth";
 
@@ -149,7 +149,7 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
                     href: `/items/${i.slug}`,
                     icon: i.icon,
                     rarity: i.rarity,
-                    typeLabel: itemClass(i.slug, i.name, i.ammoName),
+                    typeLabel: caliberLabel(i.ammoType),
                     disabled: i.disabled,
                   }}
                 />

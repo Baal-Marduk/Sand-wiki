@@ -1,6 +1,8 @@
 /** Caliber-family helpers. A "caliber" string (e.g. "11x54 mm", "12 GA", "40 mm",
  *  "Rocket") is the family key that makes same-caliber ammo variants interchangeable
- *  across the weapons/turrets that fire them. Derived at runtime — there is no stored field. */
+ *  across the weapons/turrets that fire them. The family key is stored on
+ *  `ItemStats.ammoType` (written by `ammoTypeFor`); matching reads that column. The
+ *  `ammoCaliber`/`weaponCaliber` parsers below now feed `ammoTypeFor` only (seed + backfill). */
 
 /** Extract the caliber family token from an AMMO item name. NxN mm is matched before the
  *  plain "N mm" rule so "11x54 mm" is not truncated to "54 mm". */
@@ -31,6 +33,21 @@ export function weaponCaliber(slug: string, ammoName?: string | null): string | 
   return null;
 }
 
+/** The caliber-family value to STORE on an item (the weapon↔ammo match key), or null.
+ *  Ammo derives from its own name; weapons/artillery from ammoName or a slug override.
+ *  This is the only runtime consumer of ammoCaliber/weaponCaliber — matching itself
+ *  reads the stored ItemStats.ammoType column. */
+export function ammoTypeFor(
+  category: string,
+  slug: string,
+  name: string,
+  ammoName: string | null | undefined,
+): string | null {
+  if (category === "ammo") return ammoCaliber(name);
+  if (category === "weapons" || category === "artillery") return weaponCaliber(slug, ammoName);
+  return null;
+}
+
 const LABELS: Record<string, string> = {
   "8x21 mm": "Pistol",
   "9x42 mm": "Rifle",
@@ -50,18 +67,12 @@ export function caliberLabel(caliber: string | null): string | null {
 /** Canonical display order of caliber-class labels (every value caliberLabel can return). */
 export const CLASS_ORDER = ["Pistol", "Rifle", "Sniper", "Shotgun", "Autocannon", "Naval", "Rocket"];
 
-/** The caliber-class label for an item. Weapons/turrets derive from ammoName/slug; ammo items
- *  fall back to their own name. Null when no caliber can be derived. Single source used by both
- *  the class filter and the class option list. */
-export function itemClass(slug: string, name: string, ammoName: string | null | undefined): string | null {
-  return caliberLabel(weaponCaliber(slug, ammoName) ?? ammoCaliber(name));
-}
-
-/** Distinct caliber-class labels present in the given rows, in CLASS_ORDER. */
-export function itemClasses(rows: { slug: string; name: string; ammoName: string | null }[]): string[] {
+/** Distinct caliber-class labels present in the given rows, in CLASS_ORDER.
+ *  Reads each row's stored ammoType (the match key) rather than re-parsing names. */
+export function itemClasses(rows: { ammoType: string | null }[]): string[] {
   const present = new Set<string>();
   for (const r of rows) {
-    const c = itemClass(r.slug, r.name, r.ammoName);
+    const c = caliberLabel(r.ammoType);
     if (c) present.add(c);
   }
   return CLASS_ORDER.filter((c) => present.has(c));

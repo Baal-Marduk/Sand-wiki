@@ -55,6 +55,7 @@ model ItemStats {
   splashDamage   Int?
   magazine       Int?
   ammoName       String?
+  ammoType       String?
 
   @@index([workbenchTier])
 }

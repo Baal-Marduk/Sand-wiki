@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { prisma } from "./db";
 import { buildItemQuery, applyItemView, type ItemFilter } from "./item-filter";
-import { ammoCaliber, itemClasses, weaponCaliber } from "./ammo";
+import { itemClasses } from "./ammo";
 import { toRecipeCard, type RecipeWithItems, type RecipeLine } from "./recipes";
 import { entityHref } from "./entity-links";
 import { visibilityWhere, linkTargetEnabled } from "./visibility";
@@ -60,7 +60,7 @@ export async function listItems(filter: ItemFilter, isAdmin = false) {
     orderBy,
     include: { itemStats: true },
   });
-  const flat = items.map((i) => ({ ...i, ammoName: i.itemStats?.ammoName ?? null }));
+  const flat = items.map((i) => ({ ...i, ammoType: i.itemStats?.ammoType ?? null }));
   return applyItemView(flat, { sort: filter.sort, weaponClass: filter.weaponClass });
 }
 
@@ -103,9 +103,9 @@ export async function listItemClasses(filter: ItemFilter): Promise<string[]> {
   const { where } = buildItemQuery(filter);
   const rows = await prisma.entity.findMany({
     where: { ...where, disabled: false },
-    select: { slug: true, name: true, itemStats: { select: { ammoName: true } } },
+    select: { itemStats: { select: { ammoType: true } } },
   });
-  return itemClasses(rows.map((r) => ({ slug: r.slug, name: r.name, ammoName: r.itemStats?.ammoName ?? null })));
+  return itemClasses(rows.map((r) => ({ ammoType: r.itemStats?.ammoType ?? null })));
 }
 
 /** Count of items per category — for the home browse grid. Mirrors
@@ -302,24 +302,20 @@ type LinkItem = { slug: string; name: string; icon: string | null; rarity: strin
 
 /** Ammo items whose caliber family matches `caliber` (all interchangeable variants). */
 export async function getAmmoByCaliber(caliber: string): Promise<LinkItem[]> {
-  const rows = await prisma.entity.findMany({
-    where: { kind: "item", category: "ammo", disabled: false },
+  return prisma.entity.findMany({
+    where: { kind: "item", category: "ammo", disabled: false, itemStats: { is: { ammoType: caliber } } },
     select: { slug: true, name: true, icon: true, rarity: true },
     orderBy: { name: "asc" },
   });
-  return rows.filter((r) => ammoCaliber(r.name) === caliber);
 }
 
 /** Weapons/artillery that fire the given caliber family. */
 export async function getWeaponsByCaliber(caliber: string): Promise<LinkItem[]> {
-  const rows = await prisma.entity.findMany({
-    where: { kind: "item", category: { in: ["weapons", "artillery"] }, disabled: false },
-    select: { slug: true, name: true, icon: true, rarity: true, itemStats: { select: { ammoName: true } } },
+  return prisma.entity.findMany({
+    where: { kind: "item", category: { in: ["weapons", "artillery"] }, disabled: false, itemStats: { is: { ammoType: caliber } } },
+    select: { slug: true, name: true, icon: true, rarity: true },
     orderBy: { name: "asc" },
   });
-  return rows
-    .filter((r) => weaponCaliber(r.slug, r.itemStats?.ammoName ?? null) === caliber)
-    .map(({ slug, name, icon, rarity }) => ({ slug, name, icon, rarity }));
 }
 
 /** Resolve the entities referenced by `[[slug]]` links in a description, keyed by

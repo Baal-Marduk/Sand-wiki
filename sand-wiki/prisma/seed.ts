@@ -5,6 +5,7 @@ import { categoryForItem, isItemCategory, isEnvCategory, isTramplerCategory, isF
 import { isRarity, DEFAULT_RARITY } from "../src/lib/rarity";
 import { flattenStats, lootToTiers, costToRows, mergeItems, techNodeSlug, parsePrereqLabel, validateTechTreeV2, type RawStats, type RawLoot, type RawCostLine, type RawTechNode } from "./seed-transform";
 import { buildLockMap, omitLocked, lockedHits } from "../src/lib/seed-curation";
+import { ammoTypeFor } from "../src/lib/ammo";
 
 interface EnvContent { category: string; name: string; description?: string; sourceUrl?: string; loot?: RawLoot }
 
@@ -134,6 +135,7 @@ async function main() {
       splashDamage: opt(flat.splashDamage),
       magazine: opt(flat.magazine),
       ammoName: opt(flat.ammoName),
+      ammoType: ammoTypeFor(category, i.slug, identity.name, flat.ammoName),
     };
     const locked = lockMap.get(i.slug);
     const hits = lockedHits({ ...identity, ...stats }, locked);
