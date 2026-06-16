@@ -55,10 +55,15 @@ export function StyledSelect({
     setOpen(false);
   };
   const choose = (idx: number) => { const o = options[idx]; if (o) set(o.value); };
+  const openMenu = () => {
+    const idx = options.findIndex((o) => o.value === value);
+    setHi(idx >= 0 ? idx : 0);
+    setOpen(true);
+  };
 
   const onKeyDown = (e: React.KeyboardEvent) => {
     if (!open) {
-      if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") { e.preventDefault(); setOpen(true); }
+      if (e.key === "ArrowDown" || e.key === "Enter" || e.key === " ") { e.preventDefault(); openMenu(); }
       return;
     }
     if (e.key === "ArrowDown") { e.preventDefault(); setHi((h) => Math.min(h + 1, options.length - 1)); }
@@ -75,7 +80,7 @@ export function StyledSelect({
       <input type="hidden" name={name} value={value} />
       <button
         type="button"
-        onClick={() => setOpen((o) => !o)}
+        onClick={(e) => { if (e.detail === 0) return; if (open) setOpen(false); else openMenu(); }}
         onKeyDown={onKeyDown}
         aria-haspopup="listbox"
         aria-expanded={open}
