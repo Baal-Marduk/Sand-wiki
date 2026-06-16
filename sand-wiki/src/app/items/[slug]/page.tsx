@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCaliber, getUnlockingNode, getLastEditor, getKeyUsage } from "@/lib/queries";
+import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCaliber, getUnlockingNode, getLastEditor, getKeyUsage, getBuyOptions } from "@/lib/queries";
 import { entityHref } from "@/lib/entity-links";
 import { metaDescription } from "@/lib/site";
 import { editorDisplayName } from "@/lib/steam";
@@ -22,6 +22,7 @@ import { ItemLinkList } from "@/components/ItemLinkList";
 import { KeyLinksTable } from "@/components/KeyLinksTable";
 import { getSession, sessionIsAdmin } from "@/lib/auth";
 import { AdminEntityControls } from "@/components/AdminEntityControls";
+import { BuyOptions } from "@/components/BuyOptions";
 
 type Params = Promise<{ slug: string }>;
 
@@ -71,11 +72,13 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
 
   const canSuggest = !!(await getSession());
   const editor = await getLastEditor("item", item.slug);
+  const buyOptions = await getBuyOptions(slug);
   const tabContent: Partial<Record<TabId, React.ReactNode>> = {
+    buy: <BuyOptions options={buyOptions} itemName={item.name} />,
     "crafted-by": <CraftTable recipes={crafts} />,
     "used-in": <UsedInTable recipes={usedInCrafts} />,
   };
-  const tabs: Tab[] = availableTabs(trades, false /* TODO Task 17: replace with real hasBuyOptions */).map((t) => ({
+  const tabs: Tab[] = availableTabs(trades, buyOptions.length > 0).map((t) => ({
     id: t.id,
     label: t.label,
     content: tabContent[t.id],
