@@ -458,3 +458,21 @@ export async function getLastEditor(
   });
   return p?.proposer ?? null;
 }
+
+/** Items whose purchase a given tech node unlocks (reverse of buy-unlock). */
+export async function getBuyUnlockedItems(techSlug: string) {
+  const node = await prisma.entity.findUnique({
+    where: { slug: techSlug },
+    select: {
+      incomingLinks: {
+        where: { role: "buy-unlock" },
+        select: { source: { select: { slug: true, name: true, icon: true, kind: true } } },
+      },
+    },
+  });
+  if (!node) return [];
+  const seen = new Set<string>();
+  return node.incomingLinks
+    .map((l) => l.source)
+    .filter((s) => s.kind === "item" && !seen.has(s.slug) && seen.add(s.slug));
+}
