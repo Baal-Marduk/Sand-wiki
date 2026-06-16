@@ -39,7 +39,7 @@ export function isLinkRole(role: string): role is LinkRole {
   return Object.prototype.hasOwnProperty.call(LINK_ROLES, role);
 }
 
-const TIER_ORDER = ["Normal", "Rare", "Very Rare"];
+export const TIER_ORDER = ["Normal", "Rare", "Very Rare"];
 
 export interface LootTierGroup { tier: string; rows: LinkRow[] }
 

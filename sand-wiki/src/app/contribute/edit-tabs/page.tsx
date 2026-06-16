@@ -46,7 +46,7 @@ export default async function EditTabsPage({ searchParams }: { searchParams: SP 
   const items = roles.length
     ? await prisma.entity.findMany({
         where: { kind: "item" },
-        select: { slug: true, name: true },
+        select: { slug: true, name: true, rarity: true, icon: true, category: true },
         orderBy: { name: "asc" },
       })
     : [];
