@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { groupBuyOptions, type BuyLinkRow } from "./buy-options";
+import { parseBuyOptionsForm, type BuyOptionsForm } from "./buy-options";
 
 const row = (p: Partial<BuyLinkRow>): BuyLinkRow => ({
   role: "buy-cost", buyGroup: 0, amount: 1, name: "X",
@@ -32,5 +33,43 @@ describe("groupBuyOptions", () => {
 
   it("ignores rows with a null buyGroup", () => {
     expect(groupBuyOptions([row({ buyGroup: null })])).toEqual([]);
+  });
+});
+
+describe("parseBuyOptionsForm", () => {
+  const valid: BuyOptionsForm = {
+    optGroups: ["0", "1"],
+    optYields: ["1", "1"],
+    optUnlockSlugs: ["heavy-ordnance", ""],
+    costGroups: ["0", "0", "1"],
+    costSlugs: ["coin-crown", "wine-crate", "coin-crown"],
+    costAmounts: ["500", "1", "1200"],
+  };
+
+  it("reconstructs options grouped by index, ordered by group", () => {
+    const { options, error } = parseBuyOptionsForm(valid);
+    expect(error).toBeNull();
+    expect(options).toHaveLength(2);
+    expect(options[0]).toEqual({
+      yield: 1,
+      unlockSlug: "heavy-ordnance",
+      costs: [{ targetSlug: "coin-crown", amount: 500 }, { targetSlug: "wine-crate", amount: 1 }],
+    });
+    expect(options[1]).toEqual({ yield: 1, unlockSlug: null, costs: [{ targetSlug: "coin-crown", amount: 1200 }] });
+  });
+
+  it("rejects an option with no cost components", () => {
+    const { error } = parseBuyOptionsForm({ ...valid, costGroups: ["0"], costSlugs: ["coin-crown"], costAmounts: ["500"] });
+    expect(error).toMatch(/at least one/i);
+  });
+
+  it("rejects a non-positive amount", () => {
+    const { error } = parseBuyOptionsForm({ ...valid, costAmounts: ["0", "1", "1200"] });
+    expect(error).toMatch(/positive/i);
+  });
+
+  it("rejects a non-positive yield", () => {
+    const { error } = parseBuyOptionsForm({ ...valid, optYields: ["0", "1"] });
+    expect(error).toMatch(/yield/i);
   });
 });
