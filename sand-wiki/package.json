@@ -16,6 +16,7 @@
     "db:load-location-recipes": "tsx prisma/load-location-recipes.ts",
     "db:load-key-progression": "tsx prisma/load-key-progression.ts",
     "db:load-new-ammo": "tsx prisma/load-new-ammo.ts",
+    "db:load-curated-extras": "tsx prisma/load-curated-extras.ts",
     "db:reset": "prisma migrate reset --force",
     "directus:up": "docker compose up -d directus",
     "directus:down": "docker compose down",

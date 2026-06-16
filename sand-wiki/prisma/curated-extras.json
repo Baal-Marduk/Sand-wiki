@@ -1,0 +1,11 @@
+[
+  {
+    "slug": "anti-reactor-gun-ammo",
+    "name": "Anti-Reactor Cell",
+    "derivedName": "Anti Reactor Gun Ammo",
+    "category": "ammo",
+    "rarity": "Experimental",
+    "description": "Specialized energy cell for The Great Silence anti-reactor rifle. Discharges a focused pulse that forces an emergency shutdown of an aurogen reactor that has gotten out of control.",
+    "iconFile": "icon_ammo_antiReactorGun.png"
+  }
+]
