@@ -33,7 +33,7 @@ function LineEditor({
   items: LinkOption[];
 }) {
   const optBySlug = useMemo(() => new Map(items.map((o) => [o.slug, o])), [items]);
-  const selectedSlugs = useMemo(() => lines.map((l) => l.slug).filter((s) => s !== ""), [lines]);
+  const selectedSlugs = useMemo(() => lines.map((l) => l.slug), [lines]);
 
   const update = (i: number, patch: Partial<RecipeLineDraft>) =>
     setLines(lines.map((l, j) => (j === i ? { ...l, ...patch } : l)));
