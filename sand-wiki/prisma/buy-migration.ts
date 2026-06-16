@@ -19,7 +19,7 @@ export interface ExtractedOption { costs: MigLine[]; yield: number }
 
 /** From a buy recipe, the cost components (all inputs) and the yield (the item output's
  *  amount). `itemSlug` is the bought item (the recipe's non-currency output). */
-export function buyOptionFromRecipe(rec: MigRecipe, itemSlug: string, _currencySlug: string): ExtractedOption {
+export function buyOptionFromRecipe(rec: MigRecipe, itemSlug: string): ExtractedOption {
   const costs = rec.inputs.map((l) => ({ slug: l.slug, amount: l.amount }));
   const out = rec.outputs.find((o) => o.slug === itemSlug);
   return { costs, yield: out?.amount ?? 1 };
@@ -74,7 +74,7 @@ export async function convertCoinTradesToBuyLinks(
       if (cls !== "buy") continue;
       const itemSlug = boughtItemSlug(rec, currencySlug);
       if (!itemSlug) continue;
-      const opt = buyOptionFromRecipe(rec, itemSlug, currencySlug);
+      const opt = buyOptionFromRecipe(rec, itemSlug);
       (buyByItem.get(itemSlug) ?? buyByItem.set(itemSlug, []).get(itemSlug)!).push(opt);
       buyRecipeIds.push(rec.id);
     }

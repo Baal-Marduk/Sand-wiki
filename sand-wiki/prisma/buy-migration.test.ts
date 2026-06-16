@@ -25,7 +25,7 @@ describe("classifyCoinRecipe", () => {
 
 describe("buyOptionFromRecipe", () => {
   it("extracts cost components (non-currency excluded) and yield from the item output", () => {
-    const opt = buyOptionFromRecipe(r([[CUR, 500], ["wine-crate", 1]], [["cannon", 2]]), "cannon", CUR);
+    const opt = buyOptionFromRecipe(r([[CUR, 500], ["wine-crate", 1]], [["cannon", 2]]), "cannon");
     expect(opt.costs).toEqual([
       { slug: CUR, amount: 500 },
       { slug: "wine-crate", amount: 1 },

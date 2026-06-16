@@ -10,30 +10,30 @@ const sellOpt = { recipeSlug: "y", quantity: 100, totalCrowns: 1000, unitPrice: 
 
 describe("itemDetailRows", () => {
   it("includes category and tier", () => {
-    expect(itemDetailRows(facts, noTrades)).toEqual([
+    expect(itemDetailRows(facts)).toEqual([
       { label: "Category", value: "Weapons" },
       { label: "Workbench tier", value: "2" },
     ]);
   });
 
   it("omits tier when null", () => {
-    const r = itemDetailRows({ category: "resources", storageStack: null, workbenchTier: null }, noTrades);
+    const r = itemDetailRows({ category: "resources", storageStack: null, workbenchTier: null });
     expect(r).toEqual([{ label: "Category", value: "Resources" }]);
   });
 
   it("does NOT emit a Buyable or Sellable row even when trades.buy/sell have entries", () => {
-    const r = itemDetailRows(facts, { ...noTrades, buy: [buyOpt], sell: [sellOpt] });
+    const r = itemDetailRows(facts);
     expect(r.some((row) => row.label === "Buyable")).toBe(false);
     expect(r.some((row) => row.label === "Sellable")).toBe(false);
   });
 
   it("adds a Value row from the wiki value, without a unit", () => {
-    const r = itemDetailRows({ ...facts, value: 5 }, noTrades);
+    const r = itemDetailRows({ ...facts, value: 5 });
     expect(r).toContainEqual({ label: "Value", value: "5", coin: true });
   });
 
   it("omits the Value row when value is null/undefined", () => {
-    expect(itemDetailRows(facts, noTrades).some((row) => row.label === "Value")).toBe(false);
+    expect(itemDetailRows(facts).some((row) => row.label === "Value")).toBe(false);
   });
 });
 

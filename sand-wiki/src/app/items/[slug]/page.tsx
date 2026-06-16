@@ -106,15 +106,12 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
     tabs.push({ id: "loot", label: "Loot", content: <CrateDropList drops={drops} /> });
   }
 
-  const detailRows = itemDetailRows(
-    {
-      category: item.category,
-      storageStack: stats?.storageStack ?? null,
-      workbenchTier: stats?.workbenchTier ?? null,
-      value: stats?.statValue ?? null,
-    },
-    trades,
-  );
+  const detailRows = itemDetailRows({
+    category: item.category,
+    storageStack: stats?.storageStack ?? null,
+    workbenchTier: stats?.workbenchTier ?? null,
+    value: stats?.statValue ?? null,
+  });
 
   return (
     <EntityDetail
