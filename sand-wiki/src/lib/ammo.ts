@@ -1,6 +1,8 @@
 /** Caliber-family helpers. A "caliber" string (e.g. "11x54 mm", "12 GA", "40 mm",
  *  "Rocket") is the family key that makes same-caliber ammo variants interchangeable
- *  across the weapons/turrets that fire them. Derived at runtime — there is no stored field. */
+ *  across the weapons/turrets that fire them. The family key is stored on
+ *  `ItemStats.ammoType` (written by `ammoTypeFor`); matching reads that column. The
+ *  `ammoCaliber`/`weaponCaliber` parsers below now feed `ammoTypeFor` only (seed + backfill). */
 
 /** Extract the caliber family token from an AMMO item name. NxN mm is matched before the
  *  plain "N mm" rule so "11x54 mm" is not truncated to "54 mm". */
