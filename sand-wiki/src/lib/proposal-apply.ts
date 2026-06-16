@@ -4,6 +4,7 @@ import { fieldDef } from "./proposal-schema";
 import { norm, type Diff } from "./proposal-diff";
 import { buildLineCreates, uniqueRecipeSlug, locationRecipeSlugBase, type RecipeProposalChange, type RecipeSnapshot } from "./recipe-proposal";
 import { diffLootSources, type LinkProposalChange, type ExistingLootLink } from "./link-proposal";
+import { type BuyOptionsChange } from "./buy-options";
 type RecipeNewChange = { new: RecipeSnapshot; locationSlug?: string | null };
 
 /** Proposal target type → Entity.kind (proposal types are the legacy model names). */
@@ -309,6 +310,60 @@ export async function applyItemLootProposal(proposalId: string, reviewerSteamId:
     if (touchedSlugs.size) {
       await tx.entity.updateMany({ where: { slug: { in: [...touchedSlugs] } }, data: { lootCurated: true } });
     }
+
+    await tx.proposal.update({
+      where: { id: proposalId },
+      data: { status: "applied", reviewedById: reviewerSteamId, reviewedAt: new Date() },
+    });
+  });
+}
+
+/** Apply an approved buy_options_edit proposal: full-replace the item's buy-cost,
+ *  buy-yield and buy-unlock rows from the new option list. Each option's rows share a
+ *  buyGroup (its index). Cost targets resolve to items; the yield row is a self-row
+ *  (target = the item); the optional unlock resolves to a tech-node. Marks the item
+ *  lootCurated so a reseed won't clobber the edit. */
+export async function applyBuyOptionsProposal(proposalId: string, reviewerSteamId: string): Promise<void> {
+  await prisma.$transaction(async (tx) => {
+    const p = await tx.proposal.findUnique({ where: { id: proposalId } });
+    if (!p || p.status !== "pending" || p.kind !== "buy_options_edit" || !p.targetSlug || !p.changes) {
+      throw new Error("Proposal is not an applyable pending buy-options edit.");
+    }
+    const change = p.changes as unknown as BuyOptionsChange;
+
+    const item = await tx.entity.findUnique({ where: { slug: p.targetSlug }, select: { id: true, name: true, kind: true } });
+    if (!item || item.kind !== "item") throw new Error("Item not found.");
+
+    // Resolve all referenced entities before any write.
+    const costSlugs = [...new Set(change.new.flatMap((o) => o.costs.map((c) => c.targetSlug)))];
+    const unlockSlugs = [...new Set(change.new.map((o) => o.unlockSlug).filter((s): s is string => !!s))];
+    const costEnts = await tx.entity.findMany({ where: { slug: { in: costSlugs } }, select: { id: true, slug: true, name: true } });
+    const costBySlug = new Map(costEnts.map((e) => [e.slug, e]));
+    const techEnts = await tx.entity.findMany({ where: { slug: { in: unlockSlugs }, kind: "tech-node" }, select: { id: true, slug: true, name: true } });
+    const techBySlug = new Map(techEnts.map((e) => [e.slug, e]));
+
+    const rows: {
+      sourceId: string; targetId: string | null; role: string; name: string;
+      amount: number | null; sortOrder: number; buyGroup: number;
+    }[] = [];
+    change.new.forEach((o, group) => {
+      let sortOrder = 0;
+      for (const c of o.costs) {
+        const tgt = costBySlug.get(c.targetSlug);
+        if (!tgt) throw new Error(`Cannot resolve cost item ${c.targetSlug}`);
+        rows.push({ sourceId: item.id, targetId: tgt.id, role: "buy-cost", name: tgt.name, amount: c.amount, sortOrder: sortOrder++, buyGroup: group });
+      }
+      rows.push({ sourceId: item.id, targetId: item.id, role: "buy-yield", name: item.name, amount: o.yield, sortOrder: sortOrder++, buyGroup: group });
+      if (o.unlockSlug) {
+        const tech = techBySlug.get(o.unlockSlug);
+        if (!tech) throw new Error(`Cannot resolve tech node ${o.unlockSlug}`);
+        rows.push({ sourceId: item.id, targetId: tech.id, role: "buy-unlock", name: tech.name, amount: null, sortOrder: sortOrder++, buyGroup: group });
+      }
+    });
+
+    await tx.entityLink.deleteMany({ where: { sourceId: item.id, role: { in: ["buy-cost", "buy-yield", "buy-unlock"] } } });
+    if (rows.length) await tx.entityLink.createMany({ data: rows });
+    await tx.entity.update({ where: { id: item.id }, data: { lootCurated: true } });
 
     await tx.proposal.update({
       where: { id: proposalId },
