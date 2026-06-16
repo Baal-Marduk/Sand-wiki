@@ -31,6 +31,21 @@ export function weaponCaliber(slug: string, ammoName?: string | null): string | 
   return null;
 }
 
+/** The caliber-family value to STORE on an item (the weapon↔ammo match key), or null.
+ *  Ammo derives from its own name; weapons/artillery from ammoName or a slug override.
+ *  This is the only runtime consumer of ammoCaliber/weaponCaliber — matching itself
+ *  reads the stored ItemStats.ammoType column. */
+export function ammoTypeFor(
+  category: string,
+  slug: string,
+  name: string,
+  ammoName: string | null | undefined,
+): string | null {
+  if (category === "ammo") return ammoCaliber(name);
+  if (category === "weapons" || category === "artillery") return weaponCaliber(slug, ammoName);
+  return null;
+}
+
 const LABELS: Record<string, string> = {
   "8x21 mm": "Pistol",
   "9x42 mm": "Rifle",

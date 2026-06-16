@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ammoCaliber, weaponCaliber, caliberLabel, itemClass, itemClasses, CLASS_ORDER } from "./ammo";
+import { ammoCaliber, weaponCaliber, caliberLabel, ammoTypeFor, itemClasses, CLASS_ORDER } from "./ammo";
 
 describe("ammoCaliber", () => {
   it("reads NxN mm without degrading to the second number", () => {
@@ -62,6 +62,21 @@ describe("itemClass", () => {
   });
   it("returns null when no caliber can be derived", () => {
     expect(itemClass("bandages", "Bandages", null)).toBeNull();
+  });
+});
+
+describe("ammoTypeFor", () => {
+  it("derives ammo items from their own name", () => {
+    expect(ammoTypeFor("ammo", "ammo-1154", "11x54 mm AP Ammo", null)).toBe("11x54 mm");
+  });
+  it("derives weapons from ammoName", () => {
+    expect(ammoTypeFor("weapons", "service-rifle", "Service Rifle", "9x42 mm Ammo")).toBe("9x42 mm");
+  });
+  it("derives artillery turrets from the slug override when ammoName is null", () => {
+    expect(ammoTypeFor("artillery", "game-packed-shotgun-turret-t1-container", "Packed Shotgun Turret", null)).toBe("70 mm");
+  });
+  it("returns null for non-weapon, non-ammo categories", () => {
+    expect(ammoTypeFor("medical", "bandages", "Bandages", null)).toBeNull();
   });
 });
 
