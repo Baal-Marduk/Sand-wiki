@@ -53,16 +53,18 @@ function LineEditor({
               <li key={l.key} className="flex items-center gap-2 border border-border bg-background px-2 py-1.5">
                 <ItemIcon name={l.name} size="sm" decorative icon={opt?.icon} rarity={opt?.rarity} categorySlug={opt?.category} />
                 <input type="hidden" name={`${side}Slug`} value={l.slug} />
-                <span className="flex-1 text-sm" style={{ color: rarityColor(opt?.rarity) ?? undefined }}>{l.name}</span>
-                <input
-                  name={`${side}Amount`}
-                  type="number"
-                  min={1}
-                  value={l.amount}
-                  onChange={(e) => update(i, { amount: Number(e.target.value) })}
-                  className={`${inputCls} w-16 text-center`}
-                  aria-label="Amount"
-                />
+                <span className="min-w-0 flex-1 text-sm" style={{ color: rarityColor(opt?.rarity) ?? undefined }}>{l.name}</span>
+                <div className="w-16 shrink-0">
+                  <input
+                    name={`${side}Amount`}
+                    type="number"
+                    min={1}
+                    value={l.amount}
+                    onChange={(e) => update(i, { amount: Number(e.target.value) })}
+                    className={`${inputCls} text-center`}
+                    aria-label="Amount"
+                  />
+                </div>
                 <button type="button" aria-label="Remove line" className={`${btnGhost} ${btnSm}`} onClick={() => remove(i)}>
                   ✕
                 </button>

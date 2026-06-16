@@ -82,44 +82,50 @@ export function LinkPicker({
                     value={r.name}
                     onChange={(e) => update(i, { name: e.target.value })}
                     placeholder="Custom name"
-                    className={`${inputCls} flex-1`}
+                    className={`${inputCls} min-w-0 flex-1`}
                   />
                 ) : (
-                  <span className="flex-1 text-sm" style={{ color }}>{r.name}</span>
+                  <span className="min-w-0 flex-1 text-sm" style={{ color }}>{r.name}</span>
                 )}
 
                 {fields.includes("amount") && (
-                  <input
-                    name="linkAmount"
-                    type="number"
-                    min={1}
-                    value={r.amount ?? 1}
-                    onChange={(e) => update(i, { amount: Number(e.target.value) })}
-                    className={`${inputCls} w-16 text-center`}
-                    aria-label="Amount"
-                  />
+                  <div className="w-16 shrink-0">
+                    <input
+                      name="linkAmount"
+                      type="number"
+                      min={1}
+                      value={r.amount ?? 1}
+                      onChange={(e) => update(i, { amount: Number(e.target.value) })}
+                      className={`${inputCls} text-center`}
+                      aria-label="Amount"
+                    />
+                  </div>
                 )}
                 {fields.includes("tier") && (
-                  <select
-                    name="linkTier"
-                    value={r.tier ?? ""}
-                    onChange={(e) => update(i, { tier: e.target.value })}
-                    className={`${selectCls} w-32`}
-                    aria-label="Tier"
-                  >
-                    <option value="">— tier —</option>
-                    {TIER_ORDER.map((t) => <option key={t} value={t}>{t}</option>)}
-                  </select>
+                  <div className="w-32 shrink-0">
+                    <select
+                      name="linkTier"
+                      value={r.tier ?? ""}
+                      onChange={(e) => update(i, { tier: e.target.value })}
+                      className={selectCls}
+                      aria-label="Tier"
+                    >
+                      <option value="">— tier —</option>
+                      {TIER_ORDER.map((t) => <option key={t} value={t}>{t}</option>)}
+                    </select>
+                  </div>
                 )}
                 {fields.includes("value1") && (
-                  <input
-                    name="linkValue1"
-                    value={r.value1 ?? ""}
-                    onChange={(e) => update(i, { value1: e.target.value })}
-                    placeholder="e.g. 1-2"
-                    className={`${inputCls} w-24`}
-                    aria-label="Drop range"
-                  />
+                  <div className="w-24 shrink-0">
+                    <input
+                      name="linkValue1"
+                      value={r.value1 ?? ""}
+                      onChange={(e) => update(i, { value1: e.target.value })}
+                      placeholder="e.g. 1-2"
+                      className={inputCls}
+                      aria-label="Drop range"
+                    />
+                  </div>
                 )}
 
                 <button
