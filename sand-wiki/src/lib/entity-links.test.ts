@@ -49,3 +49,17 @@ describe("isLinkRole", () => {
     expect(isLinkRole("nonsense")).toBe(false);
   });
 });
+
+describe("buy roles", () => {
+  it("registers buy-cost / buy-yield / buy-unlock as link roles", () => {
+    expect(isLinkRole("buy-cost")).toBe(true);
+    expect(isLinkRole("buy-yield")).toBe(true);
+    expect(isLinkRole("buy-unlock")).toBe(true);
+  });
+
+  it("buy-cost and buy-yield edit the amount field; buy-unlock has none", () => {
+    expect(linkFields("buy-cost")).toEqual(["amount"]);
+    expect(linkFields("buy-yield")).toEqual(["amount"]);
+    expect(linkFields("buy-unlock")).toEqual([]);
+  });
+});

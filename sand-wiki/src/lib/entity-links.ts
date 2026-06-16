@@ -23,6 +23,16 @@ export const LINK_ROLES = {
   // can never wipe a hand-edited key chain.
   "requires-key": { label: "Requires Key", fields: [] },
   "rewards-key": { label: "Key Reward", fields: [] },
+  // Buy options: an item can be purchased in several ways. All rows for one option
+  // share a `buyGroup` (see EntityLink.buyGroup). `buy-cost` = one price component,
+  // `buy-yield` = a self-row whose amount is how many of the item you receive,
+  // `buy-unlock` = an optional tech-node that gates the option. These are NOT edited
+  // via the generic LinkEditForm — they use the grouped BuyOptionsEditor. `buy-cost`/
+  // `buy-yield` are seed-managed + lock-map protected (like loot/cost); `buy-unlock`
+  // is contributor-only and seed-immune (like the key roles).
+  "buy-cost": { label: "Buy Cost", fields: ["amount"] },
+  "buy-yield": { label: "Buy Yield", fields: ["amount"] },
+  "buy-unlock": { label: "Buy Unlock", fields: [] },
 } as const;
 export type LinkRole = keyof typeof LINK_ROLES;
 export type LinkField = "amount" | "tier" | "value1";
