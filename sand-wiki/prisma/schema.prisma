@@ -105,6 +105,7 @@ model EntityLink {
   value2    String?
   value3    String?
   sortOrder Int
+  buyGroup  Int?
 
   @@index([sourceId, role])
   @@index([targetId])
