@@ -7,7 +7,8 @@ import { editableFields, isEditableTarget, coerceValue, fieldDef, entityHref, ba
 import { recipeToSnapshot, parseRecipeLines, snapshotsEqual, type RecipeSnapshot } from "@/lib/recipe-proposal";
 import { computeDiff } from "@/lib/proposal-diff";
 import { getEntityFields } from "@/lib/proposal-entity";
-import { getOutgoingLinks, getIncomingLootLinks, listLootSources } from "@/lib/queries";
+import { getOutgoingLinks, getIncomingLootLinks, listLootSources, getBuyOptionsForEdit } from "@/lib/queries";
+import { parseBuyOptionsForm, buyOptionsEqual, optionsToDrafts } from "@/lib/buy-options";
 import { parseLinkRows, linksToSnapshot, incomingLootToDrafts, snapshotsEqual as linkSnapshotsEqual } from "@/lib/link-proposal";
 import { isLinkRole } from "@/lib/entity-links";
 
@@ -300,4 +301,41 @@ export async function submitItemLootEdit(formData: FormData) {
   });
 
   redirect(`/contribute/edit-tabs?type=item&slug=${slug}&proposed=1`);
+}
+
+export async function submitBuyOptionsEdit(formData: FormData) {
+  const slug = String(formData.get("slug") ?? "");
+  const note = readNote(formData);
+
+  const session = await requireUser(`/contribute/edit-tabs?type=item&slug=${slug}`);
+  await assertUnderQuota(session.steamId);
+
+  const loaded = await getBuyOptionsForEdit(slug);
+  if (!loaded) throw new Error("Item not found.");
+
+  const parsed = parseBuyOptionsForm({
+    optGroups: formData.getAll("optGroup").map(String),
+    optYields: formData.getAll("optYield").map(String),
+    optUnlockSlugs: formData.getAll("optUnlockSlug").map(String),
+    costGroups: formData.getAll("costGroup").map(String),
+    costSlugs: formData.getAll("costSlug").map(String),
+    costAmounts: formData.getAll("costAmount").map(String),
+  });
+  if (parsed.error) throw new Error(parsed.error);
+
+  const oldDrafts = optionsToDrafts(loaded.options);
+  if (buyOptionsEqual(oldDrafts, parsed.options)) throw new Error("No changes to submit.");
+
+  await prisma.proposal.create({
+    data: {
+      kind: "buy_options_edit",
+      targetType: "item",
+      targetSlug: slug,
+      changes: { old: oldDrafts, new: parsed.options } as object,
+      note,
+      proposerId: session.steamId,
+    },
+  });
+
+  redirect(`/items/${slug}?proposed=1`);
 }
