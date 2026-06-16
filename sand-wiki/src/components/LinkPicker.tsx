@@ -1,15 +1,14 @@
 "use client";
 
-import { useMemo, useRef, useState } from "react";
+import { useMemo, useState } from "react";
 import { CUSTOM_TARGET, type LinkRowDraft } from "@/lib/link-proposal";
 import { TIER_ORDER } from "@/lib/entity-links";
 import type { LinkField } from "@/lib/entity-links";
-import { filterLinkOptions, hasExactOptionMatch, type LinkOption } from "@/lib/link-picker";
+import { type LinkOption } from "@/lib/link-picker";
 import { ItemIcon } from "@/components/ItemIcon";
 import { rarityColor } from "@/lib/rarity";
 import { labelCls, inputCls, selectCls, btnGhost, btnSm } from "@/components/form-styles";
-
-const MAX_RESULTS = 50;
+import { EntitySearchBox } from "@/components/EntitySearchBox";
 
 let nextKey = 0;
 type Row = LinkRowDraft & { key: number };
@@ -35,9 +34,6 @@ export function LinkPicker({
   allowCustom?: boolean;
 }) {
   const [rows, setRows] = useState<Row[]>(initialRows.map(toRow));
-  const [query, setQuery] = useState("");
-  const [hi, setHi] = useState(0);
-  const searchRef = useRef<HTMLInputElement>(null);
 
   const optBySlug = useMemo(() => new Map(items.map((o) => [o.slug, o])), [items]);
 
@@ -45,41 +41,15 @@ export function LinkPicker({
     () => rows.map((r) => r.targetSlug).filter((s): s is string => s !== null),
     [rows],
   );
-  const results = useMemo(
-    () => filterLinkOptions(items, query, selectedSlugs).slice(0, MAX_RESULTS),
-    [items, query, selectedSlugs],
-  );
-
-  const showCustom = allowCustom && query.trim() !== "" && !hasExactOptionMatch(items, query);
-  const open = query.trim() !== "" && (results.length > 0 || showCustom);
-  const count = results.length + (showCustom ? 1 : 0);
 
   const update = (i: number, patch: Partial<Row>) =>
     setRows(rows.map((r, j) => (j === i ? { ...r, ...patch } : r)));
   const remove = (i: number) => setRows(rows.filter((_, j) => j !== i));
 
-  const addOption = (o: LinkOption) => {
+  const addOption = (o: LinkOption) =>
     setRows([...rows, toRow({ targetSlug: o.slug, name: o.name, amount: 1, tier: "", value1: "" })]);
-    setQuery(""); setHi(0); searchRef.current?.focus();
-  };
-  const addCustom = () => {
-    const name = query.trim();
-    if (!name) return;
+  const addCustom = (name: string) =>
     setRows([...rows, toRow({ targetSlug: null, name, amount: 1, tier: "", value1: "" })]);
-    setQuery(""); setHi(0); searchRef.current?.focus();
-  };
-  const choose = (idx: number) => {
-    if (idx < results.length) addOption(results[idx]);
-    else if (showCustom) addCustom();
-  };
-
-  const onKeyDown = (e: React.KeyboardEvent) => {
-    if (!open) return;
-    if (e.key === "ArrowDown") { e.preventDefault(); setHi((h) => Math.min(h + 1, count - 1)); }
-    else if (e.key === "ArrowUp") { e.preventDefault(); setHi((h) => Math.max(h - 1, 0)); }
-    else if (e.key === "Enter") { e.preventDefault(); choose(hi); }
-    else if (e.key === "Escape") { setQuery(""); }
-  };
 
   return (
     <fieldset className="space-y-2">
@@ -166,51 +136,14 @@ export function LinkPicker({
         </ul>
       )}
 
-      <div className="relative">
-        <input
-          ref={searchRef}
-          value={query}
-          onChange={(e) => { setQuery(e.target.value); setHi(0); }}
-          onKeyDown={onKeyDown}
-          placeholder={`Add a ${optionNoun}…`}
-          className={inputCls}
-          // eslint-disable-next-line jsx-a11y/role-has-required-aria-props -- aria-controls omitted; listbox is conditionally rendered and has no stable id
-          role="combobox"
-          aria-expanded={open}
-          aria-autocomplete="list"
-        />
-        {open && (
-          <ul
-            className="absolute z-10 mt-1 max-h-64 w-full overflow-auto border border-border-strong bg-card shadow-lg"
-            role="listbox"
-          >
-            {results.map((o, idx) => (
-              <li
-                key={o.slug}
-                role="option"
-                aria-selected={idx === hi}
-                onMouseEnter={() => setHi(idx)}
-                onMouseDown={(e) => { e.preventDefault(); addOption(o); }}
-                className={`flex cursor-pointer items-center gap-2 px-2 py-1.5 ${idx === hi ? "bg-card-elevated" : ""}`}
-              >
-                <ItemIcon name={o.name} size="sm" decorative icon={o.icon} rarity={o.rarity} categorySlug={o.category} />
-                <span className="text-sm" style={{ color: rarityColor(o.rarity) ?? undefined }}>{o.name}</span>
-              </li>
-            ))}
-            {showCustom && (
-              <li
-                role="option"
-                aria-selected={hi === results.length}
-                onMouseEnter={() => setHi(results.length)}
-                onMouseDown={(e) => { e.preventDefault(); addCustom(); }}
-                className={`flex cursor-pointer items-center gap-2 border-t border-dashed border-border-strong px-2 py-1.5 italic text-muted-foreground ${hi === results.length ? "bg-card-elevated" : ""}`}
-              >
-                ＋ Add &quot;{query.trim()}&quot; as custom / unlinked
-              </li>
-            )}
-          </ul>
-        )}
-      </div>
+      <EntitySearchBox
+        items={items}
+        excludeSlugs={selectedSlugs}
+        optionNoun={optionNoun}
+        allowCustom={allowCustom}
+        onSelect={addOption}
+        onSelectCustom={addCustom}
+      />
     </fieldset>
   );
 }

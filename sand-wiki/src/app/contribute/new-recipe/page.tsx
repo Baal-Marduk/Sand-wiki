@@ -14,22 +14,23 @@ export default async function NewRecipePage({ searchParams }: { searchParams: SP
   if (!slug) notFound();
   await requireUser(`/contribute/new-recipe?type=${type}&slug=${slug}&side=${side}${location ? `&location=${location}` : ""}`);
 
-  const entity = await prisma.entity.findUnique({ where: { slug }, select: { slug: true, name: true } });
+  const entity = await prisma.entity.findUnique({ where: { slug }, select: { slug: true, name: true, kind: true } });
   if (!entity) notFound();
 
-  const items = await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, name: true }, orderBy: { name: "asc" } });
+  const items = await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, name: true, rarity: true, icon: true, category: true }, orderBy: { name: "asc" } });
   const workbenches = await getRecipeWorkbenches();
   const back = entityHref(type, slug);
 
   // A location recipe carries its location as a hidden field and seeds no line.
   // A normal recipe pre-fills the originating item on the relevant side.
   const seedLine = { slug: entity.slug, name: entity.name, amount: 1 };
+  const canSeed = entity.kind === "item";
   const snapshot: RecipeSnapshot = location
     ? { workbench: null, tier: null, craftTimeSeconds: null, inputs: [], outputs: [] }
     : {
         workbench: null, tier: null, craftTimeSeconds: null,
-        inputs: side === "input" ? [seedLine] : [],
-        outputs: side === "output" ? [seedLine] : [],
+        inputs: canSeed && side === "input" ? [seedLine] : [],
+        outputs: canSeed && side === "output" ? [seedLine] : [],
       };
   const hiddenFields: Record<string, string> = location
     ? { backType: type, backSlug: slug, locationSlug: location }

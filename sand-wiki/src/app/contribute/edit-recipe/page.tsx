@@ -23,7 +23,7 @@ export default async function EditRecipePage({ searchParams }: { searchParams: S
   if (!recipe) notFound();
 
   const snapshot = recipeToSnapshot(recipe);
-  const items = await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, name: true }, orderBy: { name: "asc" } });
+  const items = await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, name: true, rarity: true, icon: true, category: true }, orderBy: { name: "asc" } });
   const workbenches = await getRecipeWorkbenches();
   const primaryOutput = snapshot.outputs[0];
   const title = primaryOutput?.name ?? slug;

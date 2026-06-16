@@ -5,6 +5,7 @@ import { createEntity } from "@/app/admin/entities/actions";
 import type { EditableField, SelectOption } from "@/lib/proposal-schema";
 import { Button } from "@/components/ui/button";
 import { labelCls, inputCls, selectCls, textareaCls } from "@/components/form-styles";
+import { RaritySelect, CategorySelect } from "@/components/StyledSelect";
 
 type Kind = "item" | "environment" | "trampler-part";
 
@@ -61,18 +62,13 @@ export function CreateEntityForm({
 
       <label className="flex flex-col gap-1.5">
         <span className={labelCls}>Category</span>
-        <select
+        <CategorySelect
           name="category"
-          required
-          className={selectCls}
+          options={categoryOptions[kind]}
           value={category}
-          onChange={(e) => setCategory(e.target.value)}
-        >
-          <option value="" disabled>Select a category…</option>
-          {categoryOptions[kind].map((o) => (
-            <option key={o.value} value={o.value}>{o.label}</option>
-          ))}
-        </select>
+          onChange={setCategory}
+          placeholder="Select a category…"
+        />
       </label>
 
       <label className="flex flex-col gap-1.5">
@@ -89,12 +85,7 @@ export function CreateEntityForm({
         <label key={f.field} className="flex flex-col gap-1.5">
           <span className={labelCls}>{f.label}</span>
           {f.field === "rarity" ? (
-            <select name="rarity" className={selectCls} defaultValue="">
-              <option value="">—</option>
-              {rarities.map((o) => (
-                <option key={o.value} value={o.value}>{o.label}</option>
-              ))}
-            </select>
+            <RaritySelect name="rarity" options={rarities} defaultValue="" placeholder="—" />
           ) : f.type === "text" ? (
             <textarea name={f.field} rows={3} className={textareaCls} />
           ) : (

@@ -1,27 +1,25 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Link from "next/link";
 import { submitRecipeEdit } from "@/app/contribute/actions";
 import { EnumField } from "@/components/EnumField";
+import { EntitySearchBox } from "@/components/EntitySearchBox";
+import { ItemIcon } from "@/components/ItemIcon";
 import { DirtyForm, DirtySubmit } from "@/components/DirtyForm";
+import { rarityColor } from "@/lib/rarity";
+import type { LinkOption } from "@/lib/link-picker";
 import {
-  labelCls, inputCls, selectCls, textareaCls, btnGhost, btnSecondary, btnSm,
+  labelCls, inputCls, textareaCls, btnGhost, btnSm,
 } from "@/components/form-styles";
 import type { RecipeLineDraft, RecipeSnapshot } from "@/lib/recipe-proposal";
 
 type RecipeAction = (formData: FormData) => void | Promise<void>;
-
-type ItemOption = { slug: string; name: string };
 type Side = "input" | "output";
 
 let nextKey = 0;
 type Row = RecipeLineDraft & { key: number };
 const toRow = (l: RecipeLineDraft): Row => ({ ...l, key: nextKey++ });
-
-function blankLine(): Row {
-  return { slug: "", name: "", amount: 1, key: nextKey++ };
-}
 
 function LineEditor({
   side,
@@ -32,47 +30,54 @@ function LineEditor({
   side: Side;
   lines: Row[];
   setLines: (next: Row[]) => void;
-  items: ItemOption[];
+  items: LinkOption[];
 }) {
+  const optBySlug = useMemo(() => new Map(items.map((o) => [o.slug, o])), [items]);
+  const selectedSlugs = useMemo(() => lines.map((l) => l.slug), [lines]);
+
   const update = (i: number, patch: Partial<RecipeLineDraft>) =>
     setLines(lines.map((l, j) => (j === i ? { ...l, ...patch } : l)));
+  const remove = (i: number) => setLines(lines.filter((_, j) => j !== i));
+  const addLine = (o: LinkOption) =>
+    setLines([...lines, toRow({ slug: o.slug, name: o.name, amount: 1 })]);
+
   return (
     <fieldset className="space-y-2">
       <legend className={`mb-1 ${labelCls}`}>{side === "input" ? "Inputs" : "Outputs"}</legend>
-      {lines.map((l, i) => (
-        <div key={l.key} className="grid grid-cols-[1fr_84px_auto] items-center gap-2">
-          <select
-            name={`${side}Slug`}
-            value={l.slug}
-            onChange={(e) => update(i, { slug: e.target.value })}
-            className={selectCls}
-          >
-            <option value="">— select item —</option>
-            {items.map((it) => (
-              <option key={it.slug} value={it.slug}>{it.name}</option>
-            ))}
-          </select>
-          <input
-            name={`${side}Amount`}
-            type="number"
-            min={1}
-            value={l.amount}
-            onChange={(e) => update(i, { amount: Number(e.target.value) })}
-            className={`${inputCls} text-center`}
-          />
-          <button
-            type="button"
-            aria-label="Remove line"
-            className={`${btnGhost} ${btnSm}`}
-            onClick={() => setLines(lines.filter((_, j) => j !== i))}
-          >
-            ✕
-          </button>
-        </div>
-      ))}
-      <button type="button" className={`${btnSecondary} ${btnSm}`} onClick={() => setLines([...lines, blankLine()])}>
-        + Add {side}
-      </button>
+
+      {lines.length > 0 && (
+        <ul className="space-y-1.5">
+          {lines.map((l, i) => {
+            const opt = optBySlug.get(l.slug);
+            return (
+              <li key={l.key} className="flex items-center gap-2 border border-border bg-background px-2 py-1.5">
+                <ItemIcon name={l.name} size="sm" decorative icon={opt?.icon} rarity={opt?.rarity} categorySlug={opt?.category} />
+                <input type="hidden" name={`${side}Slug`} value={l.slug} />
+                <span className="flex-1 text-sm" style={{ color: rarityColor(opt?.rarity) ?? undefined }}>{l.name}</span>
+                <input
+                  name={`${side}Amount`}
+                  type="number"
+                  min={1}
+                  value={l.amount}
+                  onChange={(e) => update(i, { amount: Number(e.target.value) })}
+                  className={`${inputCls} w-16 text-center`}
+                  aria-label="Amount"
+                />
+                <button type="button" aria-label="Remove line" className={`${btnGhost} ${btnSm}`} onClick={() => remove(i)}>
+                  ✕
+                </button>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+
+      <EntitySearchBox
+        items={items}
+        excludeSlugs={selectedSlugs}
+        optionNoun="item"
+        onSelect={addLine}
+      />
     </fieldset>
   );
 }
@@ -89,15 +94,15 @@ export function RecipeEditForm({
 }: {
   slug?: string;
   snapshot: RecipeSnapshot;
-  items: ItemOption[];
+  items: LinkOption[];
   workbenches: string[];
   backHref: string;
   action?: RecipeAction;
   submitLabel?: string;
   hiddenFields?: Record<string, string>;
 }) {
-  const [inputs, setInputs] = useState<Row[]>(snapshot.inputs.length ? snapshot.inputs.map(toRow) : [blankLine()]);
-  const [outputs, setOutputs] = useState<Row[]>(snapshot.outputs.length ? snapshot.outputs.map(toRow) : [blankLine()]);
+  const [inputs, setInputs] = useState<Row[]>(snapshot.inputs.map(toRow));
+  const [outputs, setOutputs] = useState<Row[]>(snapshot.outputs.map(toRow));
 
   return (
     <DirtyForm action={action} className="space-y-5 max-w-2xl">
