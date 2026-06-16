@@ -3,10 +3,12 @@ import Link from "next/link";
 import { requireUser } from "@/lib/auth";
 import { prisma } from "@/lib/db";
 import { isEditableTarget, entityHref } from "@/lib/proposal-schema";
-import { getOutgoingLinks, getItemBySlug, getIncomingLootLinks, listLootSources, getEnvEntityBySlug } from "@/lib/queries";
+import { getOutgoingLinks, getItemBySlug, getIncomingLootLinks, listLootSources, getEnvEntityBySlug, getBuyOptionsForEdit } from "@/lib/queries";
 import { linksToSnapshot, incomingLootToDrafts } from "@/lib/link-proposal";
 import { linkFields, LINK_ROLES, type LinkRole } from "@/lib/entity-links";
+import { optionsToDrafts } from "@/lib/buy-options";
 import { LinkEditForm } from "@/components/LinkEditForm";
+import { BuyOptionsEditor } from "@/components/BuyOptionsEditor";
 import { submitDeleteRecipe, submitItemLootEdit } from "@/app/contribute/actions";
 import { btnGhost, btnSecondary, btnDestructive, btnSm } from "@/components/form-styles";
 
@@ -56,6 +58,21 @@ export default async function EditTabsPage({ searchParams }: { searchParams: SP 
   const envCraft = entity.kind === "environment" ? await getEnvEntityBySlug(slug) : null;
 
   const isItem = entity.kind === "item";
+  const itemCatalog = isItem
+    ? await prisma.entity.findMany({
+        where: { kind: "item" },
+        select: { slug: true, name: true, rarity: true, icon: true, category: true },
+        orderBy: { name: "asc" },
+      })
+    : items;
+  const buyData = isItem ? await getBuyOptionsForEdit(slug) : null;
+  const techNodes = isItem
+    ? await prisma.entity.findMany({
+        where: { kind: "tech-node" },
+        select: { slug: true, name: true, rarity: true, icon: true, category: true },
+        orderBy: { name: "asc" },
+      })
+    : [];
   const lootSources = isItem ? await listLootSources() : [];
   const lootRows = isItem ? await getIncomingLootLinks(slug) : null;
   const lootDrafts = lootRows ? incomingLootToDrafts(lootRows) : [];
@@ -84,6 +101,19 @@ export default async function EditTabsPage({ searchParams }: { searchParams: SP 
           </section>
         );
       })}
+
+      {isItem && buyData && (
+        <section className="space-y-3 border border-border bg-card p-4">
+          <h2 className="font-display text-sm font-semibold uppercase tracking-[0.06em] text-muted-foreground">Buy options</h2>
+          <p className="text-sm text-muted-foreground">How this item can be purchased — each option is a price bundle (any items), a yield, and an optional tech-tree unlock.</p>
+          <BuyOptionsEditor
+            slug={slug}
+            rows={optionsToDrafts(buyData.options)}
+            items={itemCatalog}
+            techNodes={techNodes}
+          />
+        </section>
+      )}
 
       {isItem && (
         <section className="space-y-3 border border-border bg-card p-4">
