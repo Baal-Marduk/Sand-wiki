@@ -26,10 +26,7 @@ export function itemDetailRows(facts: ItemFacts, trades: ItemTrades): DetailRow[
     const cheapest = Math.min(...trades.buy.map((b) => b.unitPrice));
     rows.push({ label: "Buyable", value: formatCrowns(cheapest), coin: true, unit: "/ unit" });
   }
-  if (trades.sell.length > 0) {
-    const best = Math.max(...trades.sell.map((s) => s.unitPrice));
-    rows.push({ label: "Sellable", value: formatCrowns(best), coin: true, unit: "/ unit" });
-  }
+  // No "Sellable" row: the "Value" row above already conveys an item's sell worth.
   return rows;
 }
 

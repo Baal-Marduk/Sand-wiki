@@ -113,15 +113,6 @@ test("buyable item shows a Buyable price row in the Details panel", async ({ pag
   await expect(details.getByText("/ unit").first()).toBeVisible();
 });
 
-test("sellable item shows a Sellable best-price row in the Details panel", async ({ page }) => {
-  await page.goto("/items/pistol-ammo");
-  const details = page.locator('aside:has(h2:text("Details"))');
-  await expect(details.getByText("Sellable")).toBeVisible();
-  // The row shows the best (max) sell unit price with the Crowns coin sprite and per-unit suffix.
-  await expect(details.locator('img[src*="coinCrown"]').first()).toBeVisible();
-  await expect(details.getByText("/ unit").first()).toBeVisible();
-});
-
 test("navbar search is hidden on home but present elsewhere", async ({ page }) => {
   const nav = page.getByRole("navigation", { name: "Primary" });
   await page.goto("/");

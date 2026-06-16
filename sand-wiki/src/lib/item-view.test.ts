@@ -21,10 +21,10 @@ describe("itemDetailRows", () => {
     expect(r).toEqual([{ label: "Category", value: "Resources" }]);
   });
 
-  it("adds Buyable/Sellable summaries from trades", () => {
+  it("adds a Buyable summary from trades, but no Sellable row (Value covers it)", () => {
     const r = itemDetailRows(facts, { ...noTrades, buy: [buyOpt], sell: [sellOpt] });
     expect(r).toContainEqual({ label: "Buyable", value: "10", coin: true, unit: "/ unit" });
-    expect(r).toContainEqual({ label: "Sellable", value: "10", coin: true, unit: "/ unit" });
+    expect(r.some((row) => row.label === "Sellable")).toBe(false);
   });
 
   it("adds a Value row from the wiki value, without a unit", () => {
