@@ -6,6 +6,8 @@ import { isRarity, DEFAULT_RARITY } from "../src/lib/rarity";
 import { flattenStats, lootToTiers, costToRows, mergeItems, techNodeSlug, parsePrereqLabel, validateTechTreeV2, type RawStats, type RawLoot, type RawCostLine, type RawTechNode } from "./seed-transform";
 import { buildLockMap, omitLocked, lockedHits } from "../src/lib/seed-curation";
 import { ammoTypeFor } from "../src/lib/ammo";
+import { convertCoinTradesToBuyLinks } from "./buy-migration";
+import { CURRENCY_SLUG } from "../src/lib/trades";
 
 interface EnvContent { category: string; name: string; description?: string; sourceUrl?: string; loot?: RawLoot }
 
@@ -418,6 +420,14 @@ async function main() {
   if (preservedFields > 0) {
     console.log(`Preserved ${preservedFields} contributor-edited field(s) across ${preservedSlugs.size} entit(ies) (not overwritten by source).`);
   }
+
+  const buyResult = await convertCoinTradesToBuyLinks(prisma, { currencySlug: CURRENCY_SLUG });
+  console.log(
+    `Buy options: converted ${buyResult.itemsConverted} item(s), ${buyResult.optionsCreated} option(s); ` +
+    `deleted ${buyResult.buyRecipesDeleted} buy + ${buyResult.sellRecipesDeleted} sell recipe(s); ` +
+    `skipped ${buyResult.itemsSkippedCurated} curated item(s).`,
+  );
+
   console.log(`Seeded ${items.length} items, ${data.recipes.length} recipes (${curatedSlugs.size} curated preserved), ${envCount} environment entities, ${tramplerCount} trampler parts.`);
 }
 
