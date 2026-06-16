@@ -445,7 +445,8 @@ export async function getUnlockingNode(entitySlug: string): Promise<{ slug: stri
 /** The most recent contributor whose proposal was applied to this entity, or null
  *  if it has never been edited. Scoped by targetType+targetSlug so recipe-targeted
  *  proposals (and any slug collision with them) are excluded. Covers edit,
- *  links_edit, and loot_sources_edit kinds — all of which carry the entity's slug. */
+ *  links_edit, loot_sources_edit, and buy_options_edit kinds — all of which carry
+ *  the entity's slug. */
 export async function getLastEditor(
   targetType: "item" | "envEntity" | "tramplerPart",
   slug: string,

@@ -6,6 +6,7 @@ import { detectStale } from "@/lib/proposal-apply";
 import type { Diff } from "@/lib/proposal-diff";
 import { recipeToSnapshot, snapshotsEqual, diffRecipeLines, type RecipeProposalChange } from "@/lib/recipe-proposal";
 import { diffLinkRows, type LinkProposalChange } from "@/lib/link-proposal";
+import type { BuyOptionsChange, BuyOptionDraft } from "@/lib/buy-options";
 import { approveProposal, rejectProposal } from "../actions";
 import { inputCls, btnSuccess, btnDestructive } from "@/components/form-styles";
 
@@ -53,6 +54,11 @@ export default async function ProposalDetail({ params }: { params: Params }) {
     linkChange = p.changes as unknown as LinkProposalChange;
   }
 
+  let buyOptionsChange: BuyOptionsChange | null = null;
+  if (p.kind === "buy_options_edit" && p.changes) {
+    buyOptionsChange = p.changes as unknown as BuyOptionsChange;
+  }
+
   // recipe_new shows everything as added (old = empty); recipe_delete shows everything as removed (new = empty).
   let recipeNewOrDelete: { old: RecipeProposalChange["old"]; new: RecipeProposalChange["new"] } | null = null;
   if (p.kind === "recipe_new" && p.changes) {
@@ -76,11 +82,13 @@ export default async function ProposalDetail({ params }: { params: Params }) {
                 ? `Tab edit · ${p.targetType} · ${p.targetSlug}`
                 : p.kind === "loot_sources_edit"
                   ? `Loot sources · ${p.targetType} · ${p.targetSlug}`
-                  : p.kind === "recipe_new"
-                    ? `New recipe`
-                    : p.kind === "recipe_delete"
-                      ? `Delete recipe · ${p.targetSlug}`
-                      : `New page · ${p.proposedName}`}
+                  : p.kind === "buy_options_edit"
+                    ? `Buy options · ${p.targetType} · ${p.targetSlug}`
+                    : p.kind === "recipe_new"
+                      ? `New recipe`
+                      : p.kind === "recipe_delete"
+                        ? `Delete recipe · ${p.targetSlug}`
+                        : `New page · ${p.proposedName}`}
         </h1>
         <p className="mt-1 font-mono text-xs uppercase tracking-[0.04em] text-muted-foreground">
           by {p.proposer.personaName ?? p.proposerId} · {p.status}
@@ -188,6 +196,32 @@ export default async function ProposalDetail({ params }: { params: Params }) {
               </table>
             </div>
           ))}
+        </div>
+      ) : p.kind === "buy_options_edit" && buyOptionsChange ? (
+        <div className="space-y-2">
+          <h2 className="mb-2 font-display text-sm font-semibold uppercase tracking-[0.06em] text-muted-foreground">Buy options</h2>
+          <table className={tableCls}>
+            <thead><tr><th className={thCls}>Option</th><th className={thCls}>Before</th><th className={thCls}>After</th></tr></thead>
+            <tbody>
+              {Array.from({ length: Math.max(buyOptionsChange.old.length, buyOptionsChange.new.length) }, (_, i) => {
+                const fmtOpt = (o: BuyOptionDraft | undefined) =>
+                  o
+                    ? `${o.yield}× for ${o.costs.map((x) => `${x.amount} ${x.targetSlug}`).join(" + ")}` +
+                      (o.unlockSlug ? ` (unlock: ${o.unlockSlug})` : "")
+                    : "—";
+                const oldOpt = buyOptionsChange!.old[i];
+                const newOpt = buyOptionsChange!.new[i];
+                const changed = JSON.stringify(oldOpt) !== JSON.stringify(newOpt);
+                return (
+                  <tr key={i} className={changed ? "bg-warning/10" : ""}>
+                    <td className={tdCls}>{i + 1}{changed && <span className={tagWarn}>changed</span>}</td>
+                    <td className={`${tdCls} text-muted-foreground`}>{fmtOpt(oldOpt)}</td>
+                    <td className={`${tdCls} font-medium`}>{fmtOpt(newOpt)}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
         </div>
       ) : (
         <div className="whitespace-pre-wrap border border-border bg-card p-3 text-sm text-foreground">{p.note}</div>

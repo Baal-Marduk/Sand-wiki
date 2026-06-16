@@ -3,7 +3,7 @@
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/db";
 import { requireAdmin } from "@/lib/auth";
-import { applyProposal, applyRecipeProposal, applyLinksProposal, applyItemLootProposal, applyRecipeNew, applyRecipeDelete } from "@/lib/proposal-apply";
+import { applyProposal, applyRecipeProposal, applyLinksProposal, applyItemLootProposal, applyRecipeNew, applyRecipeDelete, applyBuyOptionsProposal } from "@/lib/proposal-apply";
 
 export async function approveProposal(formData: FormData) {
   const session = await requireAdmin();
@@ -19,6 +19,8 @@ export async function approveProposal(formData: FormData) {
     await applyLinksProposal(id, session.steamId);
   } else if (p.kind === "loot_sources_edit") {
     await applyItemLootProposal(id, session.steamId);
+  } else if (p.kind === "buy_options_edit") {
+    await applyBuyOptionsProposal(id, session.steamId);
   } else if (p.kind === "recipe_new") {
     await applyRecipeNew(id, session.steamId);
   } else if (p.kind === "recipe_delete") {
