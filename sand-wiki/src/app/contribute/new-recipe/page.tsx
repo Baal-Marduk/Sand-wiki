@@ -17,7 +17,7 @@ export default async function NewRecipePage({ searchParams }: { searchParams: SP
   const entity = await prisma.entity.findUnique({ where: { slug }, select: { slug: true, name: true } });
   if (!entity) notFound();
 
-  const items = await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, name: true }, orderBy: { name: "asc" } });
+  const items = await prisma.entity.findMany({ where: { kind: "item" }, select: { slug: true, name: true, rarity: true, icon: true, category: true }, orderBy: { name: "asc" } });
   const workbenches = await getRecipeWorkbenches();
   const back = entityHref(type, slug);
 
