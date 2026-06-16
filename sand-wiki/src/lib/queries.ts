@@ -103,7 +103,7 @@ export async function listItemClasses(filter: ItemFilter): Promise<string[]> {
   const { where } = buildItemQuery(filter);
   const rows = await prisma.entity.findMany({
     where: { ...where, disabled: false },
-    select: { slug: true, name: true, itemStats: { select: { ammoType: true } } },
+    select: { itemStats: { select: { ammoType: true } } },
   });
   return itemClasses(rows.map((r) => ({ ammoType: r.itemStats?.ammoType ?? null })));
 }
