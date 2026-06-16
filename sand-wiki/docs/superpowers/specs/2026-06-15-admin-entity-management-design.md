@@ -137,7 +137,7 @@ Submits to `createEntity`.
 - Creating tech-node entities.
 - Editing non-image scalar fields directly as admin (still done via the existing edit-proposal flow; admin can approve their own).
 - Hard-deleting entities (disable is the soft alternative).
-- **Reference-scrubbing of disabled entities** (known limitation). Visibility is enforced on list/detail/search/sitemap only. A disabled entity can still appear as a *cross-reference* on another (enabled) page — e.g. in a loot table, build-cost list, recipe line, ammo/used-by list, or key-usage panel — and a non-admin clicking that reference lands on the detail page's 404. Hiding references would require filtering on the link relation's `target`/`source` at every such query site; deferred unless it becomes a real problem.
+- ~~**Reference-scrubbing of disabled entities** (known limitation).~~ **Resolved.** A disabled entity is now scrubbed from every cross-reference (loot tables, build-cost lists, recipe lines, ammo/used-by lists, key-usage panels, crate-drop lists, tech costs/prereqs/unlocks, and `[[slug]]` description links). Implemented by filtering the link relation's `target`/`source` (and recipe-line `entity`) at each query site in `queries.ts`, via the universal `linkTargetEnabled` WHERE fragment in `visibility.ts`. Note this scrubbing is **universal** — unlike `visibilityWhere`, it hides disabled cross-refs from admins too (admins manage disabled entities via browse lists + their own detail pages, not via stale references elsewhere).
 
 ## Testing
 

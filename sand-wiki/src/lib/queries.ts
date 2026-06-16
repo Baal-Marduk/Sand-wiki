@@ -4,18 +4,22 @@ import { buildItemQuery, applyItemView, type ItemFilter } from "./item-filter";
 import { ammoCaliber, itemClasses, weaponCaliber } from "./ammo";
 import { toRecipeCard, type RecipeWithItems, type RecipeLine } from "./recipes";
 import { entityHref } from "./entity-links";
-import { visibilityWhere } from "./visibility";
+import { visibilityWhere, linkTargetEnabled } from "./visibility";
 import { toTechTree, FACTION_ROOT_PART } from "./tech-tree/transform";
 import type { TechTree } from "./tech-tree/types";
 
 /** {slug,name,icon,rarity} select for entities referenced from a recipe line. */
 const linkItemSelect = { select: { slug: true, name: true, icon: true, rarity: true } } as const;
 
+// Recipe lines referencing a disabled entity are scrubbed (a disabled item never
+// appears as a phantom input/output on another item's crafting tabs).
+const enabledLine = { where: { entity: { disabled: false } }, include: { entity: linkItemSelect } } as const;
+
 const recipeInclude = {
   recipe: {
     include: {
-      inputs: { include: { entity: linkItemSelect } },
-      outputs: { include: { entity: linkItemSelect } },
+      inputs: enabledLine,
+      outputs: enabledLine,
       location: { select: { slug: true, name: true } },
     },
   },
@@ -125,15 +129,15 @@ export const getEnvEntityBySlug = cache(async (slug: string) => {
       // Loot tabs + the key-progression panel share this one relation include; the
       // page partitions by role. (Prisma allows including a relation only once.)
       outgoingLinks: {
-        where: { role: { in: ["loot", "requires-key", "rewards-key"] } },
+        where: { role: { in: ["loot", "requires-key", "rewards-key"] }, ...linkTargetEnabled },
         orderBy: { sortOrder: "asc" },
         include: { target: { select: { slug: true, kind: true, icon: true, rarity: true, category: true } } },
       },
       craftedAtRecipes: {
         orderBy: { slug: "asc" },
         include: {
-          inputs: { include: { entity: linkItemSelect } },
-          outputs: { include: { entity: linkItemSelect } },
+          inputs: enabledLine,
+          outputs: enabledLine,
         },
       },
     },
@@ -174,7 +178,7 @@ export const getTramplerPartBySlug = cache(async (slug: string) => {
     include: {
       tramplerStats: true,
       outgoingLinks: {
-        where: { role: "cost" },
+        where: { role: "cost", ...linkTargetEnabled },
         orderBy: { sortOrder: "asc" },
         include: { target: { select: { slug: true, kind: true, icon: true, rarity: true } } },
       },
@@ -242,7 +246,7 @@ export async function getCratesContaining(itemSlug: string): Promise<CrateDrop[]
     where: {
       role: "loot",
       target: { slug: itemSlug },
-      source: { kind: "environment", category: { in: ["loot-containers", "landmarks"] } },
+      source: { kind: "environment", category: { in: ["loot-containers", "landmarks"] }, disabled: false },
     },
     include: { source: { select: { slug: true, name: true } } },
     orderBy: [{ source: { name: "asc" } }, { sortOrder: "asc" }],
@@ -260,7 +264,7 @@ export async function getKeyUsage(itemSlug: string): Promise<KeyUsage> {
     where: {
       role: { in: ["requires-key", "rewards-key"] },
       target: { slug: itemSlug },
-      source: { kind: "environment" },
+      source: { kind: "environment", disabled: false },
     },
     include: { source: { select: { slug: true, name: true, icon: true, rarity: true, category: true } } },
     orderBy: [{ source: { name: "asc" } }, { sortOrder: "asc" }],
@@ -298,7 +302,7 @@ type LinkItem = { slug: string; name: string; icon: string | null; rarity: strin
 /** Ammo items whose caliber family matches `caliber` (all interchangeable variants). */
 export async function getAmmoByCaliber(caliber: string): Promise<LinkItem[]> {
   const rows = await prisma.entity.findMany({
-    where: { kind: "item", category: "ammo" },
+    where: { kind: "item", category: "ammo", disabled: false },
     select: { slug: true, name: true, icon: true, rarity: true },
     orderBy: { name: "asc" },
   });
@@ -308,7 +312,7 @@ export async function getAmmoByCaliber(caliber: string): Promise<LinkItem[]> {
 /** Weapons/artillery that fire the given caliber family. */
 export async function getWeaponsByCaliber(caliber: string): Promise<LinkItem[]> {
   const rows = await prisma.entity.findMany({
-    where: { kind: "item", category: { in: ["weapons", "artillery"] } },
+    where: { kind: "item", category: { in: ["weapons", "artillery"] }, disabled: false },
     select: { slug: true, name: true, icon: true, rarity: true, itemStats: { select: { ammoName: true } } },
     orderBy: { name: "asc" },
   });
@@ -327,7 +331,7 @@ export async function getLinkTargetsBySlugs(
   const result = new Map<string, { name: string; href: string; rarity: string | null }>();
   if (slugs.length === 0) return result;
   const rows = await prisma.entity.findMany({
-    where: { slug: { in: slugs } },
+    where: { slug: { in: slugs }, disabled: false },
     select: { slug: true, name: true, kind: true, rarity: true },
   });
   for (const e of rows) {
@@ -373,7 +377,7 @@ export async function getTechTree(): Promise<TechTree> {
       name: true,
       techNodeStats: { select: { faction: true, tier: true, sortOrder: true } },
       outgoingLinks: {
-        where: { role: { in: ["tech-prereq", "tech-unlock-cost", "tech-unlocks"] } },
+        where: { role: { in: ["tech-prereq", "tech-unlock-cost", "tech-unlocks"] }, ...linkTargetEnabled },
         orderBy: { sortOrder: "asc" },
         select: {
           role: true, name: true, amount: true, sortOrder: true,
@@ -387,7 +391,7 @@ export async function getTechTree(): Promise<TechTree> {
 
   const rootSlugs = Object.values(FACTION_ROOT_PART);
   const rootRows = await prisma.entity.findMany({
-    where: { slug: { in: rootSlugs } },
+    where: { slug: { in: rootSlugs }, disabled: false },
     select: { slug: true, name: true, icon: true, kind: true },
   });
   const rootParts = Object.fromEntries(
@@ -401,7 +405,7 @@ export async function getTechTree(): Promise<TechTree> {
  *  typically unlocked by one node; the lowest-sortOrder incoming `tech-unlocks` wins. */
 export async function getUnlockingNode(entitySlug: string): Promise<{ slug: string } | null> {
   const link = await prisma.entityLink.findFirst({
-    where: { role: "tech-unlocks", target: { slug: entitySlug } },
+    where: { role: "tech-unlocks", target: { slug: entitySlug }, source: { disabled: false } },
     orderBy: { sortOrder: "asc" },
     select: { source: { select: { slug: true } } },
   });
