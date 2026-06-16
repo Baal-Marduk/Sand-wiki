@@ -21,8 +21,7 @@ export function filterLinkOptions(
   const q = query.trim().toLowerCase();
   const exclude = new Set(excludeSlugs);
   return options
-    .filter((o) => !exclude.has(o.slug))
-    .filter((o) => (q === "" ? true : o.name.toLowerCase().includes(q)))
+    .filter((o) => !exclude.has(o.slug) && (q === "" || o.name.toLowerCase().includes(q)))
     .sort(byRarityThenName);
 }
 

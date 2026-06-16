@@ -28,9 +28,22 @@ describe("filterLinkOptions", () => {
     expect(r.map((o) => o.slug)).toEqual(["copper-wire", "scrap-alloy"]);
   });
 
-  it("sorts equal-rarity matches alphabetically", () => {
-    const r = filterLinkOptions(ITEMS, "scrap", []); // Common vs Noteworthy → tier order
-    expect(r.map((o) => o.name)).toEqual(["Scrap Metal", "Scrap Alloy"]);
+  it("orders two same-rarity matches alphabetically", () => {
+    const same: LinkOption[] = [
+      opt("zinc-plate", "Zinc Plate", "Common"),
+      opt("alloy-pin", "Alloy Pin", "Common"),
+    ];
+    const r = filterLinkOptions(same, "", []);
+    expect(r.map((o) => o.name)).toEqual(["Alloy Pin", "Zinc Plate"]);
+  });
+
+  it("sorts unknown/absent rarity last", () => {
+    const mixed: LinkOption[] = [
+      opt("mystery", "Mystery Thing", null),
+      opt("common-bolt", "Common Bolt", "Common"),
+    ];
+    const r = filterLinkOptions(mixed, "", []);
+    expect(r.map((o) => o.slug)).toEqual(["common-bolt", "mystery"]);
   });
 });
 
