@@ -42,6 +42,12 @@ export function EditProposalForm({
               Link to any wiki page with <code>[[slug]]</code>.
             </span>
           )}
+          {f.field === "ammoType" && (
+            <span className={hintCls}>
+              Weapons and ammo sharing the same Ammo type appear on each other&apos;s pages
+              (e.g. <code>11x54 mm</code>).
+            </span>
+          )}
         </label>
       ))}
       <label className="flex flex-col gap-1.5">
