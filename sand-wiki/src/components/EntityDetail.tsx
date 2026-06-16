@@ -36,7 +36,7 @@ export interface EntityDetailProps {
   lastEditedBy?: { steamId: string; name: string } | null;
   /** Renders a "Disabled" badge near the title (admins only ever see disabled rows). */
   disabled?: boolean;
-  /** Admin-only control strip (image edit + disable toggle), shown below the header. */
+  /** Admin-only control strip (image edit + disable toggle), shown at the very bottom. */
   adminControls?: React.ReactNode;
 }
 
@@ -149,10 +149,6 @@ export function EntityDetail({
         </div>
       </header>
 
-      {adminControls && (
-        <div className="border border-border-strong bg-card-elevated p-4">{adminControls}</div>
-      )}
-
       {hasSidebar ? (
         <div className="grid items-start gap-6 lg:grid-cols-[1fr_300px]">
           <div className="min-w-0 space-y-6">
@@ -172,6 +168,10 @@ export function EntityDetail({
       )}
 
       {source}
+
+      {adminControls && (
+        <div className="border border-border-strong bg-card-elevated p-4">{adminControls}</div>
+      )}
     </article>
   );
 }
