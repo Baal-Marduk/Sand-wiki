@@ -1137,7 +1137,7 @@
       "name": "Cannon",
       "kind": "item",
       "unlocks": [
-        "Experimental 80mm Cannon Kit"
+        "Worn 80 mm Naval Cannon Kit"
       ],
       "unlockCost": [
         {
@@ -1164,7 +1164,7 @@
       "prereqs": [
         "IV(a) Resources"
       ],
-      "note": "verify T4 kit names (Rusty/Worn/Pristine/Experimental)"
+      "note": "IV(b/c/d) re-unlock the Worn (T2) cannon kits at an alternative (higher) price — there is no separate Experimental cannon research tier, so the Experimental kits are not tech-tree-unlocked."
     },
     {
       "faction": "kaiser",
@@ -1173,7 +1173,7 @@
       "name": "Shotgun Cannon",
       "kind": "item",
       "unlocks": [
-        "Experimental 2x70 mm Twin Shotgun Cannon Kit"
+        "Worn 70 mm Shotgun Cannon Kit"
       ],
       "unlockCost": [
         {
@@ -1208,7 +1208,7 @@
       "name": "Autocannon",
       "kind": "item",
       "unlocks": [
-        "Experimental 40 mm Autocannon Kit"
+        "Worn 40 mm Autocannon Kit"
       ],
       "unlockCost": [
         {
