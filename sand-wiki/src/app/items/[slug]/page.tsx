@@ -75,7 +75,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
     "crafted-by": <CraftTable recipes={crafts} />,
     "used-in": <UsedInTable recipes={usedInCrafts} />,
   };
-  const tabs: Tab[] = availableTabs(trades).map((t) => ({
+  const tabs: Tab[] = availableTabs(trades, false /* TODO Task 17: replace with real hasBuyOptions */).map((t) => ({
     id: t.id,
     label: t.label,
     content: tabContent[t.id],

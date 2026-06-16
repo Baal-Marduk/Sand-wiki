@@ -21,9 +21,9 @@ describe("itemDetailRows", () => {
     expect(r).toEqual([{ label: "Category", value: "Resources" }]);
   });
 
-  it("adds a Buyable summary from trades, but no Sellable row (Value covers it)", () => {
+  it("does NOT emit a Buyable or Sellable row even when trades.buy/sell have entries", () => {
     const r = itemDetailRows(facts, { ...noTrades, buy: [buyOpt], sell: [sellOpt] });
-    expect(r).toContainEqual({ label: "Buyable", value: "10", coin: true, unit: "/ unit" });
+    expect(r.some((row) => row.label === "Buyable")).toBe(false);
     expect(r.some((row) => row.label === "Sellable")).toBe(false);
   });
 
@@ -39,7 +39,7 @@ describe("itemDetailRows", () => {
 
 describe("availableTabs", () => {
   it("returns nothing when there is no data", () => {
-    expect(availableTabs(noTrades)).toEqual([]);
+    expect(availableTabs(noTrades, false)).toEqual([]);
   });
 
   it("returns tabs in fixed order, only those with data", () => {
@@ -49,8 +49,18 @@ describe("availableTabs", () => {
       buy: [buyOpt],
       sell: [sellOpt],
     };
-    expect(availableTabs(trades)).toEqual([
+    expect(availableTabs(trades, false)).toEqual([
       { id: "crafted-by", label: "Crafted by" },
     ]);
+  });
+
+  it("adds a Buy tab first when the item has buy options", () => {
+    const tabs = availableTabs(noTrades, true);
+    expect(tabs[0]).toEqual({ id: "buy", label: "Buy" });
+  });
+
+  it("omits the Buy tab when there are no buy options", () => {
+    const tabs = availableTabs(noTrades, false);
+    expect(tabs.find((t) => t.id === "buy")).toBeUndefined();
   });
 });
