@@ -2,13 +2,13 @@
 
 import { useMemo, useRef, useState } from "react";
 import { CUSTOM_TARGET, type LinkRowDraft } from "@/lib/link-proposal";
+import { TIER_ORDER } from "@/lib/entity-links";
 import type { LinkField } from "@/lib/entity-links";
 import { filterLinkOptions, hasExactOptionMatch, type LinkOption } from "@/lib/link-picker";
 import { ItemIcon } from "@/components/ItemIcon";
 import { rarityColor } from "@/lib/rarity";
 import { labelCls, inputCls, selectCls, btnGhost, btnSm } from "@/components/form-styles";
 
-const TIERS = ["Normal", "Rare", "Very Rare"];
 const MAX_RESULTS = 50;
 
 let nextKey = 0;
@@ -41,12 +41,14 @@ export function LinkPicker({
 
   const optBySlug = useMemo(() => new Map(items.map((o) => [o.slug, o])), [items]);
 
-  const results = useMemo(() => {
-    const selected = rows
-      .map((r) => r.targetSlug)
-      .filter((s): s is string => s !== null);
-    return filterLinkOptions(items, query, selected).slice(0, MAX_RESULTS);
-  }, [items, query, rows]);
+  const selectedSlugs = useMemo(
+    () => rows.map((r) => r.targetSlug).filter((s): s is string => s !== null),
+    [rows],
+  );
+  const results = useMemo(
+    () => filterLinkOptions(items, query, selectedSlugs).slice(0, MAX_RESULTS),
+    [items, query, selectedSlugs],
+  );
 
   const showCustom = allowCustom && query.trim() !== "" && !hasExactOptionMatch(items, query);
   const open = query.trim() !== "" && (results.length > 0 || showCustom);
@@ -136,7 +138,7 @@ export function LinkPicker({
                     aria-label="Tier"
                   >
                     <option value="">— tier —</option>
-                    {TIERS.map((t) => <option key={t} value={t}>{t}</option>)}
+                    {TIER_ORDER.map((t) => <option key={t} value={t}>{t}</option>)}
                   </select>
                 )}
                 {fields.includes("value1") && (
