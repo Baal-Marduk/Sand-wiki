@@ -8,6 +8,7 @@ import { visibilityWhere, linkTargetEnabled } from "./visibility";
 import { toTechTree, FACTION_ROOT_PART } from "./tech-tree/transform";
 import type { TechTree } from "./tech-tree/types";
 import type { LinkOption } from "@/lib/link-picker";
+import { groupBuyOptions, type BuyLinkRow, type BuyOptionView } from "./buy-options";
 
 /** {slug,name,icon,rarity} select for entities referenced from a recipe line. */
 const linkItemSelect = { select: { slug: true, name: true, icon: true, rarity: true } } as const;
@@ -362,6 +363,38 @@ export async function getOutgoingLinks(slug: string, role: string) {
     },
   });
   return entity;
+}
+
+/** An item's buy options, grouped and ready to render. Empty array if the item has
+ *  none. buy-unlock targets resolve to tech-node slug/name; buy-cost to item slug/icon. */
+export async function getBuyOptions(itemSlug: string): Promise<BuyOptionView[]> {
+  const entity = await prisma.entity.findUnique({
+    where: { slug: itemSlug },
+    select: {
+      outgoingLinks: {
+        where: { role: { in: ["buy-cost", "buy-yield", "buy-unlock"] }, ...linkTargetEnabled },
+        orderBy: [{ buyGroup: "asc" }, { sortOrder: "asc" }],
+        select: {
+          role: true, buyGroup: true, amount: true, name: true,
+          target: { select: { slug: true, kind: true, icon: true, rarity: true } },
+        },
+      },
+    },
+  });
+  if (!entity) return [];
+  return groupBuyOptions(entity.outgoingLinks as BuyLinkRow[]);
+}
+
+/** Buy options for the editor: the item (id/name/kind) + its current options as views.
+ *  Null if the slug is not an item. */
+export async function getBuyOptionsForEdit(itemSlug: string) {
+  const item = await prisma.entity.findUnique({
+    where: { slug: itemSlug },
+    select: { id: true, name: true, kind: true },
+  });
+  if (!item || item.kind !== "item") return null;
+  const options = await getBuyOptions(itemSlug);
+  return { item, options };
 }
 
 /** Full tech tree: all tech-node entities with costs, unlocks and same-faction prereqs,

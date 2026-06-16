@@ -125,3 +125,14 @@ export function buyOptionsEqual(a: BuyOptionDraft[], b: BuyOptionDraft[]): boole
       o.costs.every((c, j) => c.targetSlug === p.costs[j].targetSlug && c.amount === p.costs[j].amount);
   });
 }
+
+/** Convert loaded buy-option views into editable drafts (for prefilling the editor). */
+export function optionsToDrafts(views: BuyOptionView[]): BuyOptionDraft[] {
+  return views.map((v) => ({
+    yield: v.yield,
+    unlockSlug: v.unlock?.slug ?? null,
+    costs: v.costs
+      .filter((c) => c.slug !== null)
+      .map((c) => ({ targetSlug: c.slug as string, amount: c.amount })),
+  }));
+}
