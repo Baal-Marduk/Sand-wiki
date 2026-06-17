@@ -20,11 +20,11 @@ async function main() {
   );
   const entries = Object.entries(file.containers);
 
-  // Resolve every non-null loot slug to an item id up front; fail loud.
+  // Resolve every non-null loot slug to an item up front; fail loud.
   const slugs = [...new Set(entries.flatMap(([, c]) => lootLinkRows(c).map((r) => r.slug).filter((s): s is string => !!s)))];
-  const items = await prisma.entity.findMany({ where: { slug: { in: slugs } }, select: { id: true, slug: true } });
-  const idBySlug = new Map(items.map((i) => [i.slug, i.id]));
-  const missing = slugs.filter((s) => !idBySlug.has(s));
+  const items = await prisma.entity.findMany({ where: { slug: { in: slugs } }, select: { id: true, slug: true, name: true } });
+  const itemBySlug = new Map(items.map((i) => [i.slug, i]));
+  const missing = slugs.filter((s) => !itemBySlug.has(s));
   if (missing.length) throw new Error(`Loot slugs not in DB (create them first): ${missing.join(", ")}`);
 
   let containers = 0, links = 0;
@@ -37,17 +37,22 @@ async function main() {
     await prisma.entityLink.deleteMany({ where: { sourceId: entity.id, role: "loot" } });
     const rows = lootLinkRows(c);
     await prisma.entityLink.createMany({
-      data: rows.map((r) => ({
+      data: rows.map((r) => {
+        const item = r.slug ? itemBySlug.get(r.slug)! : null;
+        return {
         sourceId: entity.id,
-        targetId: r.slug ? idBySlug.get(r.slug)! : null,
+        targetId: item?.id ?? null,
         role: "loot",
-        name: r.name,
+        // Store the resolved item's real wiki name; the datamined name is only a
+        // fallback for unresolved (name-only) rows.
+        name: item?.name ?? r.name,
         tier: r.tier,
         value1: r.value1,
         value2: r.value2,
         value3: r.value3,
         sortOrder: r.sortOrder,
-      })),
+        };
+      }),
     });
     containers++; links += rows.length;
     console.log(`  ✓ ${slug} (${rows.length} drops)`);
