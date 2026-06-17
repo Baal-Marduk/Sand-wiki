@@ -1,0 +1,4 @@
+# Python deps for the datamine loot chain.
+# Only the EXTRACTION half needs UnityPy (reading Unity asset bundles).
+# build_loot_sources.py and build_container_loot.py are stdlib-only.
+UnityPy>=1.20

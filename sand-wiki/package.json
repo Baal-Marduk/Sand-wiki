@@ -17,7 +17,7 @@
     "db:load-key-progression": "tsx prisma/load-key-progression.ts",
     "db:load-new-ammo": "tsx prisma/load-new-ammo.ts",
     "db:load-curated-extras": "tsx prisma/load-curated-extras.ts",
-    "loot:build": "python ../sek/sand-expedition-kit/datamine/scripts/build_container_loot.py",
+    "loot:build": "python datamine/scripts/build_container_loot.py",
     "db:load-loot-containers": "tsx prisma/load-loot-containers.ts",
     "loot:update": "npm run loot:build && npm run db:load-loot-containers",
     "loot:promote": "node -e \"if(process.env.LOOT_TARGET!=='prod'){console.error('Refusing: set LOOT_TARGET=prod to promote');process.exit(1)}\" && tsx prisma/load-loot-containers.ts",

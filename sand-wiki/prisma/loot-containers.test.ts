@@ -9,7 +9,7 @@ describe("loot-containers artifact", () => {
   const file = load<LootContainersFile>("loot-containers.json");
   const data = load<{ items: { slug: string }[] }>("data.json");
   const overrides = load<{ knownLiveSlugs: string[] }>(
-    "../../sek/sand-expedition-kit/datamine/overrides/loot-overrides.json",
+    "../datamine/overrides/loot-overrides.json",
   );
 
   it("every container is a loot-containers env", () => {

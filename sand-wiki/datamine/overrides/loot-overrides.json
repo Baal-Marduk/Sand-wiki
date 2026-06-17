@@ -1,0 +1,25 @@
+{
+ "itemSlugAliases": {
+  "item_medkit": "med-kit",
+  "item_weirdCoral": "resource-weird-coral",
+  "game_coinCrownPile_10": "coin-crown",
+  "game_ValuablePiles01_mobDrop": "small-valuables",
+  "item_rifleMusketClip": "repeater-rifle-quick-reload"
+ },
+ "knownLiveSlugs": ["resource-weird-coral"],
+ "excludeContainers": ["aurogen-crystal", "militia-box", "naval-mine", "mob-drops"],
+ "containerSlugMap": {
+  "weapons-crate": "weapon-crate",
+  "resource-crate": "parts-crate",
+  "safe": "valuables-safe",
+  "shell-box": "crate-of-shells",
+  "buried-treasure": "suspicious-pile-of-sand"
+ },
+ "containerOverrides": {
+  "weapon-crate": { "name": "Weapon Crate" },
+  "parts-crate": { "name": "Parts Crate" },
+  "valuables-safe": { "name": "Valuables Safe" },
+  "crate-of-shells": { "name": "Crate of Shells" },
+  "suspicious-pile-of-sand": { "name": "Suspicious Pile of Sand" }
+ }
+}
