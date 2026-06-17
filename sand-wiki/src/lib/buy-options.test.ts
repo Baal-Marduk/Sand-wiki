@@ -1,6 +1,6 @@
 import { describe, it, expect } from "vitest";
 import { groupBuyOptions, type BuyLinkRow } from "./buy-options";
-import { parseBuyOptionsForm, type BuyOptionsForm } from "./buy-options";
+import { parseBuyOptionsForm, type BuyOptionsForm, pricedOptions } from "./buy-options";
 
 const row = (p: Partial<BuyLinkRow>): BuyLinkRow => ({
   role: "buy-cost", buyGroup: 0, amount: 1, name: "X",
@@ -71,5 +71,32 @@ describe("parseBuyOptionsForm", () => {
   it("rejects a non-positive yield", () => {
     const { error } = parseBuyOptionsForm({ ...valid, optYields: ["0", "1"] });
     expect(error).toMatch(/yield/i);
+  });
+});
+
+describe("parseBuyOptionsForm — unlock-only options", () => {
+  it("accepts an option with an unlock and no costs", () => {
+    const { options, error } = parseBuyOptionsForm({
+      optGroups: ["0"], optYields: ["1"], optUnlockSlugs: ["heavy-ordnance"],
+      costGroups: [], costSlugs: [], costAmounts: [],
+    });
+    expect(error).toBeNull();
+    expect(options).toEqual([{ yield: 1, unlockSlug: "heavy-ordnance", costs: [] }]);
+  });
+
+  it("rejects an option with neither cost nor unlock", () => {
+    const { error } = parseBuyOptionsForm({
+      optGroups: ["0"], optYields: ["1"], optUnlockSlugs: [""],
+      costGroups: [], costSlugs: [], costAmounts: [],
+    });
+    expect(error).toMatch(/cost or .*unlock/i);
+  });
+});
+
+describe("pricedOptions", () => {
+  it("keeps options with costs and drops cost-less ones", () => {
+    const withCost = { group: 0, costs: [{ slug: "coin-crown", name: "Coin Crown", icon: null, rarity: null, amount: 5 }], yield: 1, unlock: null };
+    const unlockOnly = { group: 1, costs: [], yield: 1, unlock: { slug: "n1", name: "Node 1" } };
+    expect(pricedOptions([withCost, unlockOnly])).toEqual([withCost]);
   });
 });

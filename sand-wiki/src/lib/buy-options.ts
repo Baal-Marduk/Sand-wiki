@@ -106,10 +106,12 @@ export function parseBuyOptionsForm(form: BuyOptionsForm): ParsedBuyOptions {
   for (let i = 0; i < form.optGroups.length; i++) {
     const g = form.optGroups[i] ?? "";
     const costs = costsByGroup.get(g) ?? [];
-    if (costs.length === 0) return { options: [], error: "Each buy option needs at least one cost component." };
+    const unlockSlug = (form.optUnlockSlugs[i] ?? "").trim() || null;
+    if (costs.length === 0 && !unlockSlug) {
+      return { options: [], error: "Each buy option needs at least one cost or a tech-tree unlock." };
+    }
     const y = posInt(form.optYields[i] ?? "");
     if (y === null) return { options: [], error: "Buy option yield must be a positive whole number." };
-    const unlockSlug = (form.optUnlockSlugs[i] ?? "").trim() || null;
     options.push({ yield: y, unlockSlug, costs });
   }
   return { options, error: null };
@@ -124,6 +126,11 @@ export function buyOptionsEqual(a: BuyOptionDraft[], b: BuyOptionDraft[]): boole
       o.costs.length === p.costs.length &&
       o.costs.every((c, j) => c.targetSlug === p.costs[j].targetSlug && c.amount === p.costs[j].amount);
   });
+}
+
+/** Options shown publicly: only those with at least one priced cost component. */
+export function pricedOptions(views: BuyOptionView[]): BuyOptionView[] {
+  return views.filter((o) => o.costs.length > 0);
 }
 
 /** Convert loaded buy-option views into editable drafts (for prefilling the editor). */
