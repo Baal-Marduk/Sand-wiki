@@ -3,10 +3,12 @@ import { ItemIcon } from "@/components/ItemIcon";
 import { CoinIcon } from "@/components/CoinIcon";
 import { formatCrowns, CURRENCY_SLUG } from "@/lib/trades";
 import type { BuyOptionView } from "@/lib/buy-options";
+import { techNodeOptionLabel } from "@/lib/tech-node-label";
 
 /** Renders an item's buy options as a card list. Each card: the price components
- *  (icon + amount, joined with +), the yield ("You receive: N×"), and an optional
- *  "Unlocked by" chip linking to the tech page. */
+ *  (icon + amount, joined with +), the yield only when you receive more than one,
+ *  and an optional "Unlocked by" chip (labelled with the node's tier + letter)
+ *  linking to the tech page. */
 export function BuyOptions({ options, itemName }: { options: BuyOptionView[]; itemName: string }) {
   if (options.length === 0) return null;
   return (
@@ -24,10 +26,12 @@ export function BuyOptions({ options, itemName }: { options: BuyOptionView[]; it
               </span>
             ))}
           </div>
-          <div className="mt-2 text-sm text-muted-foreground">You receive: {o.yield}× {itemName}</div>
+          {o.yield > 1 && (
+            <div className="mt-2 text-sm text-muted-foreground">You receive: {o.yield}× {itemName}</div>
+          )}
           {o.unlock && (
             <Link href={`/tech?select=${o.unlock.slug}`} className="mt-2 inline-flex items-center gap-1.5 border border-dashed border-primary/50 px-2 py-1 text-xs text-primary">
-              Unlocked by: {o.unlock.name}
+              Unlocked by: {techNodeOptionLabel({ name: o.unlock.name, slug: o.unlock.slug, tier: null })}
             </Link>
           )}
         </li>

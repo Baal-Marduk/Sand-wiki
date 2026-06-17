@@ -7,6 +7,10 @@ describe("techNodeOptionLabel", () => {
     expect(techNodeOptionLabel({ name: "Cannon", slug: "tech-kaiser-t3b-cannon", tier: 3 })).toBe("Cannon (T3b)");
   });
 
+  it("derives tier from the slug when tier is not supplied", () => {
+    expect(techNodeOptionLabel({ name: "Cannon", slug: "tech-kaiser-t2a-cannon", tier: null })).toBe("Cannon (T2a)");
+  });
+
   it("falls back to tier only when the slug has no parseable letter", () => {
     expect(techNodeOptionLabel({ name: "X", slug: "not-a-tech-slug", tier: 4 })).toBe("X (T4)");
   });
