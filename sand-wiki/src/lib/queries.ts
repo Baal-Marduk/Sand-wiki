@@ -240,7 +240,7 @@ export async function listEntityPaths(): Promise<{ slug: string; kind: string }[
   });
 }
 
-export interface CrateDrop { crateSlug: string; crateName: string; tier: string }
+export interface CrateDrop { crateSlug: string; crateName: string; tier: string; chance: string | null }
 
 /** Crates and landmarks (with tier) whose loot tables contain the given item slug. */
 export async function getCratesContaining(itemSlug: string): Promise<CrateDrop[]> {
@@ -253,7 +253,10 @@ export async function getCratesContaining(itemSlug: string): Promise<CrateDrop[]
     include: { source: { select: { slug: true, name: true } } },
     orderBy: [{ source: { name: "asc" } }, { sortOrder: "asc" }],
   });
-  return rows.map((r) => ({ crateSlug: r.source.slug, crateName: r.source.name, tier: r.tier ?? "" }));
+  return rows.map((r) => ({
+    crateSlug: r.source.slug, crateName: r.source.name, tier: r.tier ?? "",
+    chance: r.value1 == null ? null : `${r.value1}%`,
+  }));
 }
 
 export interface KeyUsageLocation { slug: string; name: string; icon: string | null; rarity: string | null; category: string }

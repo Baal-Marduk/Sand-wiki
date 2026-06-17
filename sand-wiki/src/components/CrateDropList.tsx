@@ -7,7 +7,8 @@ export function CrateDropList({ drops }: { drops: CrateDrop[] }) {
   const byCrate = new Map<string, { name: string; tiers: string[] }>();
   for (const d of drops) {
     const e = byCrate.get(d.crateSlug) ?? { name: d.crateName, tiers: [] };
-    if (!e.tiers.includes(d.tier)) e.tiers.push(d.tier);
+    const label = d.chance ? `${d.tier} (${d.chance})` : d.tier;
+    if (!e.tiers.includes(label)) e.tiers.push(label);
     byCrate.set(d.crateSlug, e);
   }
 
