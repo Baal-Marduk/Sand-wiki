@@ -3,7 +3,7 @@ import { groupLootByTier, isLinkRole, linkFields, LINK_ROLES, type LinkRow } fro
 
 const row = (over: Partial<LinkRow>): LinkRow => ({
   targetSlug: null, targetKind: null, name: "x", icon: null, rarity: null,
-  amount: null, tier: null, value1: null, sortOrder: 0, ...over,
+  amount: null, tier: null, value1: null, value2: null, value3: null, sortOrder: 0, ...over,
 });
 
 describe("groupLootByTier", () => {

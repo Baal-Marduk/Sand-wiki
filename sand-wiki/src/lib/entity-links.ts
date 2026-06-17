@@ -8,6 +8,8 @@ export interface LinkRow {
   amount: number | null;
   tier: string | null;
   value1: string | null;
+  value2: string | null;
+  value3: string | null;
   sortOrder: number;
 }
 

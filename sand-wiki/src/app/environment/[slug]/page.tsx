@@ -59,6 +59,8 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
     amount: l.amount,
     tier: l.tier,
     value1: l.value1,
+    value2: l.value2,
+    value3: l.value3,
     sortOrder: l.sortOrder,
   }));
   // Key-progression links (which key opens this location, which key it rewards).
