@@ -11,6 +11,9 @@ describe("LootTable", () => {
     expect(html).toContain("50%");
     expect(html).toContain("1-2");
     expect(html).toContain("3-4");
+    // storm bonus shown as a relative percentage (×2.33 -> +133%), not a multiplier
+    expect(html).toContain("+133%");
+    expect(html).not.toContain("×2.33");
   });
 
   it("renders legacy rows with no chance/qty without crashing", () => {

@@ -48,8 +48,13 @@ function Qty({ value }: { value: string | null }) {
   return <span className="font-mono tabular-nums text-foreground">{value}</span>;
 }
 
+/** A storm-yield multiplier (e.g. 1.25) as a relative percentage bonus (e.g. "+25%"). */
+function bonusPct(bonus: number): string {
+  return `+${Math.round((bonus - 1) * 100)}%`;
+}
+
 /** Storm quantity. When the storm yield beats the voyage yield, the cell is promoted with
- *  a warm "storm" accent, an up-arrow, and a ×bonus multiplier chip (tooltip on hover). */
+ *  a warm "storm" accent, an up-arrow, and a +bonus percentage chip (tooltip on hover). */
 function StormCell({ entry }: { entry: LootEntryView }) {
   if (!entry.storm) return <span className="text-dim">{EM_DASH}</span>;
   if (!entry.moreInStorm) {
@@ -63,14 +68,14 @@ function StormCell({ entry }: { entry: LootEntryView }) {
         className="inline-flex items-center gap-0.5 border border-warning/40 bg-warning/10 px-1.5 py-px font-mono text-[10px] font-semibold leading-none text-warning"
       >
         <span className="text-[9px]">▲</span>
-        {entry.stormBonus != null ? `×${entry.stormBonus}` : ""}
+        {entry.stormBonus != null ? bonusPct(entry.stormBonus) : ""}
       </span>
       {entry.stormBonus != null && (
         <span
           role="tooltip"
           className="pointer-events-none invisible absolute bottom-full right-0 z-30 mb-2 whitespace-nowrap border border-border-strong bg-card-elevated px-2 py-1 text-xs text-foreground opacity-0 shadow-lg transition-opacity group-hover/storm:visible group-hover/storm:opacity-100 group-focus-within/storm:visible group-focus-within/storm:opacity-100"
         >
-          {entry.stormBonus}× more in a storm
+          {bonusPct(entry.stormBonus)} more in a storm
         </span>
       )}
     </span>
