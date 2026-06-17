@@ -7,6 +7,7 @@ import { getOutgoingLinks, getItemBySlug, getIncomingLootLinks, listLootSources,
 import { linksToSnapshot, incomingLootToDrafts } from "@/lib/link-proposal";
 import { linkFields, LINK_ROLES, type LinkRole } from "@/lib/entity-links";
 import { optionsToDrafts } from "@/lib/buy-options";
+import { techNodeOptionLabel } from "@/lib/tech-node-label";
 import { LinkEditForm } from "@/components/LinkEditForm";
 import { BuyOptionsEditor } from "@/components/BuyOptionsEditor";
 import { submitDeleteRecipe, submitItemLootEdit } from "@/app/contribute/actions";
@@ -66,13 +67,22 @@ export default async function EditTabsPage({ searchParams }: { searchParams: SP 
       })
     : items;
   const buyData = isItem ? await getBuyOptionsForEdit(slug) : null;
-  const techNodes = isItem
+  const techNodeRows = isItem
     ? await prisma.entity.findMany({
         where: { kind: "tech-node" },
-        select: { slug: true, name: true, rarity: true, icon: true, category: true },
+        select: { slug: true, name: true, rarity: true, icon: true, category: true, techNodeStats: { select: { tier: true } } },
         orderBy: { name: "asc" },
       })
     : [];
+  // Augment the picker label with tier + letter so duplicate node names (e.g. "Cannon"
+  // at several tiers) are distinguishable. The stored/public name is unchanged.
+  const techNodes = techNodeRows.map((n) => ({
+    slug: n.slug,
+    rarity: n.rarity,
+    icon: n.icon,
+    category: n.category,
+    name: techNodeOptionLabel({ name: n.name, slug: n.slug, tier: n.techNodeStats?.tier ?? null }),
+  }));
   const lootSources = isItem ? await listLootSources() : [];
   const lootRows = isItem ? await getIncomingLootLinks(slug) : null;
   const lootDrafts = lootRows ? incomingLootToDrafts(lootRows) : [];
