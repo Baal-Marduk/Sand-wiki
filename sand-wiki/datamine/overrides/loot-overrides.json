@@ -16,10 +16,13 @@
   "buried-treasure": "suspicious-pile-of-sand"
  },
  "containerOverrides": {
-  "weapon-crate": { "name": "Weapon Crate" },
-  "parts-crate": { "name": "Parts Crate" },
-  "valuables-safe": { "name": "Valuables Safe" },
-  "crate-of-shells": { "name": "Crate of Shells" },
-  "suspicious-pile-of-sand": { "name": "Suspicious Pile of Sand" }
+  "weapon-crate": { "name": "Weapon Crate", "icon": "/containers/weapons_crate.png" },
+  "parts-crate": { "name": "Parts Crate", "icon": "/containers/resource_crate.png" },
+  "food-crate": { "icon": "/containers/food_crate.png" },
+  "medical-cabinet": { "icon": "/containers/medical_cabinet.png" },
+  "valuables-safe": { "name": "Valuables Safe", "icon": "/containers/safe.png" },
+  "crate-of-shells": { "name": "Crate of Shells", "icon": "/containers/shell_box.png" },
+  "suspicious-pile-of-sand": { "name": "Suspicious Pile of Sand", "icon": "/containers/buried_treasure.png" },
+  "ironclad-loot-box": { "icon": "/containers/ironclad_loot_box.png" }
  }
 }

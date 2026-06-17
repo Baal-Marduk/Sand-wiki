@@ -6,7 +6,7 @@
  "containers": {
   "weapon-crate": {
    "name": "Weapon Crate",
-   "icon": null,
+   "icon": "/containers/weapons_crate.png",
    "category": "loot-containers",
    "tiers": [
     {
@@ -591,7 +591,7 @@
   },
   "parts-crate": {
    "name": "Parts Crate",
-   "icon": null,
+   "icon": "/containers/resource_crate.png",
    "category": "loot-containers",
    "tiers": [
     {
@@ -766,7 +766,7 @@
   },
   "food-crate": {
    "name": "Food Crate",
-   "icon": null,
+   "icon": "/containers/food_crate.png",
    "category": "loot-containers",
    "tiers": [
     {
@@ -901,7 +901,7 @@
   },
   "medical-cabinet": {
    "name": "Medical Cabinet",
-   "icon": null,
+   "icon": "/containers/medical_cabinet.png",
    "category": "loot-containers",
    "tiers": [
     {
@@ -1016,7 +1016,7 @@
   },
   "valuables-safe": {
    "name": "Valuables Safe",
-   "icon": null,
+   "icon": "/containers/safe.png",
    "category": "loot-containers",
    "tiers": [
     {
@@ -1211,7 +1211,7 @@
   },
   "crate-of-shells": {
    "name": "Crate of Shells",
-   "icon": null,
+   "icon": "/containers/shell_box.png",
    "category": "loot-containers",
    "tiers": [
     {
@@ -1456,7 +1456,7 @@
   },
   "suspicious-pile-of-sand": {
    "name": "Suspicious Pile of Sand",
-   "icon": null,
+   "icon": "/containers/buried_treasure.png",
    "category": "loot-containers",
    "tiers": [
     {
@@ -1945,7 +1945,7 @@
   },
   "ironclad-loot-box": {
    "name": "Ironclad Loot Box",
-   "icon": null,
+   "icon": "/containers/ironclad_loot_box.png",
    "category": "loot-containers",
    "tiers": [
     {
