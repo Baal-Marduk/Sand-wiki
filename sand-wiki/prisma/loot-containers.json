@@ -1,12 +1,12 @@
 {
  "meta": {
   "source": "loot_sources.json",
-  "containers": 12
+  "containers": 8
  },
  "containers": {
-  "weapons-crate": {
-   "name": "Weapons Crate",
-   "icon": "containers/weapons_crate.png",
+  "weapon-crate": {
+   "name": "Weapon Crate",
+   "icon": null,
    "category": "loot-containers",
    "tiers": [
     {
@@ -589,9 +589,9 @@
     }
    ]
   },
-  "resource-crate": {
-   "name": "Resource Crate",
-   "icon": "containers/resource_crate.png",
+  "parts-crate": {
+   "name": "Parts Crate",
+   "icon": null,
    "category": "loot-containers",
    "tiers": [
     {
@@ -766,7 +766,7 @@
   },
   "food-crate": {
    "name": "Food Crate",
-   "icon": "containers/food_crate.png",
+   "icon": null,
    "category": "loot-containers",
    "tiers": [
     {
@@ -901,7 +901,7 @@
   },
   "medical-cabinet": {
    "name": "Medical Cabinet",
-   "icon": "containers/medical_cabinet.png",
+   "icon": null,
    "category": "loot-containers",
    "tiers": [
     {
@@ -1014,9 +1014,9 @@
     }
    ]
   },
-  "safe": {
-   "name": "Safe",
-   "icon": "containers/safe.png",
+  "valuables-safe": {
+   "name": "Valuables Safe",
+   "icon": null,
    "category": "loot-containers",
    "tiers": [
     {
@@ -1209,9 +1209,9 @@
     }
    ]
   },
-  "shell-box": {
-   "name": "Shell Box",
-   "icon": "containers/shell_box.png",
+  "crate-of-shells": {
+   "name": "Crate of Shells",
+   "icon": null,
    "category": "loot-containers",
    "tiers": [
     {
@@ -1454,9 +1454,9 @@
     }
    ]
   },
-  "buried-treasure": {
-   "name": "Buried Treasure",
-   "icon": "containers/buried_treasure.png",
+  "suspicious-pile-of-sand": {
+   "name": "Suspicious Pile of Sand",
+   "icon": null,
    "category": "loot-containers",
    "tiers": [
     {
@@ -1945,7 +1945,7 @@
   },
   "ironclad-loot-box": {
    "name": "Ironclad Loot Box",
-   "icon": "containers/ironclad_loot_box.png",
+   "icon": null,
    "category": "loot-containers",
    "tiers": [
     {
@@ -2063,198 +2063,6 @@
        "resolved": true
       }
      ]
-    }
-   ]
-  },
-  "mob-drops": {
-   "name": "Mob Drops",
-   "icon": "containers/mob_drops.png",
-   "category": "loot-containers",
-   "tiers": [
-    {
-     "tier": "Melee mob",
-     "rollSets": 5,
-     "loot": [
-      {
-       "slug": "coin-crown",
-       "name": "Coin Crown",
-       "chance": 20.0,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      },
-      {
-       "slug": "small-valuables",
-       "name": "Small Valuables",
-       "chance": 20.0,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      },
-      {
-       "slug": "resource-metal-t1",
-       "name": "Resource Metal T1",
-       "chance": 20.0,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      },
-      {
-       "slug": "resource-optic-lenses",
-       "name": "Resource Optic Lenses",
-       "chance": 20.0,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      },
-      {
-       "slug": "resource-weird-coral",
-       "name": "Weird Coral",
-       "chance": 20.0,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      }
-     ]
-    },
-    {
-     "tier": "Melee mob (tool)",
-     "rollSets": 1,
-     "loot": [
-      {
-       "slug": "treasure-shovel",
-       "name": "Treasure Shovel",
-       "chance": 100.0,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      }
-     ]
-    },
-    {
-     "tier": "Ranged mob",
-     "rollSets": 6,
-     "loot": [
-      {
-       "slug": "pistol-ammo",
-       "name": "Pistol Ammo",
-       "chance": 16.7,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      },
-      {
-       "slug": "food-can",
-       "name": "Food Can",
-       "chance": 16.7,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      },
-      {
-       "slug": "resource-weapon-parts",
-       "name": "Resource Weapon Parts",
-       "chance": 16.7,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      },
-      {
-       "slug": "revolver-quick-reload-eight-shot",
-       "name": "Revolver Quick Reload Eight Shot",
-       "chance": 16.7,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      },
-      {
-       "slug": "game-key-locked-box",
-       "name": "Game Key Locked Box",
-       "chance": 16.7,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      },
-      {
-       "slug": "resource-weird-coral",
-       "name": "Weird Coral",
-       "chance": 16.7,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      }
-     ]
-    }
-   ]
-  },
-  "aurogen-crystal": {
-   "name": "Aurogen Crystal",
-   "icon": "containers/aurogen_crystal.png",
-   "category": "loot-containers",
-   "tiers": [
-    {
-     "tier": "Drops",
-     "rollSets": null,
-     "loot": []
-    }
-   ]
-  },
-  "naval-mine": {
-   "name": "Naval Mine",
-   "icon": "containers/naval_mine.png",
-   "category": "loot-containers",
-   "tiers": [
-    {
-     "tier": "Drops",
-     "rollSets": 1,
-     "loot": [
-      {
-       "slug": "resource-metal-t1",
-       "name": "Resource Metal T1",
-       "chance": 100.0,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "resolved": true
-      }
-     ]
-    }
-   ]
-  },
-  "militia-box": {
-   "name": "Militia Box",
-   "icon": "containers/militia_box.png",
-   "category": "loot-containers",
-   "tiers": [
-    {
-     "tier": "Drops",
-     "rollSets": 9,
-     "loot": []
     }
    ]
   }
