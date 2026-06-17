@@ -1,6 +1,6 @@
 import { ITEM_CATEGORIES, type Category } from "@/lib/taxonomy";
 
-export interface IndexItem { slug: string; name: string; category: string; derivedName?: string | null }
+export interface IndexItem { slug: string; name: string; category: string; derivedName?: string | null; icon?: string | null; rarity?: string | null }
 /** A searchable environment entity (loot container or landmark). `category` is its env
  *  category slug, used to group it in the dropdown and pick its icon. */
 export interface IndexPlace { slug: string; name: string; category: string }

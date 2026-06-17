@@ -3,6 +3,8 @@
 import { Fragment, useEffect, useId, useRef, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { CategoryIcon } from "@/components/CategoryIcon";
+import { ItemIcon } from "@/components/ItemIcon";
+import { rarityColor } from "@/lib/rarity";
 import { categoryLabel } from "@/lib/taxonomy";
 import { searchSuggestions, type SearchIndex, type Suggestions } from "@/lib/search";
 
@@ -34,7 +36,7 @@ function loadIndex(): Promise<SearchIndex> {
   return indexPromise;
 }
 
-interface Flat { kind: "category" | "item" | "place"; slug: string; label: string; category: string }
+interface Flat { kind: "category" | "item" | "place"; slug: string; label: string; category: string; icon?: string | null; rarity?: string | null }
 interface Group { header: string; options: Flat[] }
 
 /** Ordered dropdown groups, each included only when it has matches:
@@ -45,7 +47,7 @@ function buildGroups(s: Suggestions): Group[] {
     groups.push({ header: "Categories", options: s.categories.map((c) => ({ kind: "category", slug: c.slug, label: c.label, category: c.slug })) });
   }
   if (s.items.length) {
-    groups.push({ header: "Items", options: s.items.map((i) => ({ kind: "item", slug: i.slug, label: i.name, category: i.category })) });
+    groups.push({ header: "Items", options: s.items.map((i) => ({ kind: "item", slug: i.slug, label: i.name, category: i.category, icon: i.icon, rarity: i.rarity })) });
   }
   const loot = s.places.filter((p) => p.category === "loot-containers");
   if (loot.length) {
@@ -198,10 +200,18 @@ export function SearchBox({ variant }: { variant: "navbar" | "hero" }) {
                     onMouseEnter={() => setActive(i)}
                     onMouseDown={(e) => { e.preventDefault(); navigate(f); }}
                   >
-                    <span className="grid size-8 place-items-center border border-border bg-card text-muted-foreground">
-                      <CategoryIcon slug={f.category} className="size-4 shrink-0" />
+                    {f.kind === "item" ? (
+                      <span className="flex justify-center">
+                        <ItemIcon name={f.label} icon={f.icon} rarity={f.rarity} categorySlug={f.category} size="sm" decorative />
+                      </span>
+                    ) : (
+                      <span className="grid size-8 place-items-center border border-border bg-card text-muted-foreground">
+                        <CategoryIcon slug={f.category} className="size-4 shrink-0" />
+                      </span>
+                    )}
+                    <span className="truncate text-foreground" style={f.kind === "item" ? { color: rarityColor(f.rarity) ?? undefined } : undefined}>
+                      {highlightMatch(f.label, trimmed)}
                     </span>
-                    <span className="truncate text-foreground">{highlightMatch(f.label, trimmed)}</span>
                     {rightLabel && (
                       <span className="font-mono text-[11px] uppercase tracking-[0.03em] text-muted-foreground" aria-hidden="true">
                         {rightLabel}

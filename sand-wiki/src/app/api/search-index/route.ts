@@ -7,7 +7,7 @@ export async function GET() {
   const [items, places] = await Promise.all([
     prisma.entity.findMany({
       where: { kind: "item", disabled: false },
-      select: { slug: true, name: true, category: true, derivedName: true },
+      select: { slug: true, name: true, category: true, derivedName: true, icon: true, rarity: true },
       orderBy: { name: "asc" },
     }),
     prisma.entity.findMany({
