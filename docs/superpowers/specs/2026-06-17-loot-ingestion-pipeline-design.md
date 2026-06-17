@@ -158,6 +158,10 @@ Each future dataset is a `build_X.py` → `prisma/X.json` → `load-X.ts` triple
 
 ## Transition / one-time concerns
 
+- **Test target = a dedicated Neon DB branch.** `.env` (`DATABASE_URL` /
+  `DIRECT_DATABASE_URL`) now points at a throwaway branch of the DB, so the
+  loader can run for real with zero risk to prod. `loot:update` targets this
+  branch; `loot:promote` is the explicit, separately-credentialed prod step.
 - **Capture existing live-DB edits before first prod promote.** Any valuable
   applied contributor edits on loot containers should be exported (recoverable
   from the `Proposal` table) into `overrides/loot-overrides.json` first, since
