@@ -50,6 +50,23 @@ describe("isLinkRole", () => {
   });
 });
 
+describe("groupLootByTier ordering", () => {
+  it("sorts numeric Tier N labels in order, others after", () => {
+    const groups = groupLootByTier([
+      row({ tier: "Tier 3" }), row({ tier: "Tier 1" }),
+      row({ tier: "Drops" }), row({ tier: "Tier 2" }),
+    ]);
+    expect(groups.map((g) => g.tier)).toEqual(["Tier 1", "Tier 2", "Tier 3", "Drops"]);
+  });
+
+  it("still orders the legacy rarity tiers", () => {
+    const groups = groupLootByTier([
+      row({ tier: "Very Rare" }), row({ tier: "Normal" }), row({ tier: "Rare" }),
+    ]);
+    expect(groups.map((g) => g.tier)).toEqual(["Normal", "Rare", "Very Rare"]);
+  });
+});
+
 describe("buy roles", () => {
   it("registers buy-cost / buy-yield / buy-unlock as link roles", () => {
     expect(isLinkRole("buy-cost")).toBe(true);

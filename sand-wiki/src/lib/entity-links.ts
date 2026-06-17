@@ -63,8 +63,11 @@ export function groupLootByTier(rows: LinkRow[]): LootTierGroup[] {
     (byTier.get(tier) ?? byTier.set(tier, []).get(tier)!).push(r);
   }
   const rank = (t: string) => {
+    const m = t.match(/^Tier (\d+)$/);
+    if (m) return Number(m[1]);                 // Tier 1..N first, numerically
     const i = TIER_ORDER.indexOf(t);
-    return i === -1 ? TIER_ORDER.length + (t === "Other" ? 1 : 0) : i;
+    if (i !== -1) return 100 + i;               // legacy Normal/Rare/Very Rare next
+    return t === "Other" ? 1000 : 500;          // Other last; everything else between
   };
   return [...byTier.entries()]
     .sort((a, b) => rank(a[0]) - rank(b[0]))
