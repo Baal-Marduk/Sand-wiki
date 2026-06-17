@@ -8,6 +8,7 @@ import { editorDisplayName } from "@/lib/steam";
 import { caliberLabel } from "@/lib/ammo";
 import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
+import { pricedOptions } from "@/lib/buy-options";
 import { categoryLabel } from "@/lib/taxonomy";
 import { EntityDetail } from "@/components/EntityDetail";
 import { actionButtonClass } from "@/components/ui/button";
@@ -73,12 +74,13 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const canSuggest = !!(await getSession());
   const editor = await getLastEditor("item", item.slug);
   const buyOptions = await getBuyOptions(slug);
+  const priced = pricedOptions(buyOptions);
   const tabContent: Partial<Record<TabId, React.ReactNode>> = {
-    buy: <BuyOptions options={buyOptions} itemName={item.name} />,
+    buy: <BuyOptions options={priced} itemName={item.name} />,
     "crafted-by": <CraftTable recipes={crafts} />,
     "used-in": <UsedInTable recipes={usedInCrafts} />,
   };
-  const tabs: Tab[] = availableTabs(trades, buyOptions.length > 0).map((t) => ({
+  const tabs: Tab[] = availableTabs(trades, priced.length > 0).map((t) => ({
     id: t.id,
     label: t.label,
     content: tabContent[t.id],
