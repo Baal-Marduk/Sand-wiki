@@ -140,15 +140,17 @@ export function BuyOptionsEditor({
                   <input type="hidden" name="costGroup" value={oi} />
                   <input type="hidden" name="costSlug" value={c.targetSlug} />
                   <span className="min-w-0 flex-1 text-sm">{c.name}</span>
-                  <input
-                    name="costAmount"
-                    type="number"
-                    min={1}
-                    value={c.amount}
-                    onChange={(e) => patchCost(oi, ci, { amount: Number(e.target.value) })}
-                    className={`${inputCls} w-20 text-center`}
-                    aria-label="Amount"
-                  />
+                  <div className="w-20 shrink-0">
+                    <input
+                      name="costAmount"
+                      type="number"
+                      min={1}
+                      value={c.amount}
+                      onChange={(e) => patchCost(oi, ci, { amount: Number(e.target.value) })}
+                      className={`${inputCls} text-center`}
+                      aria-label="Amount"
+                    />
+                  </div>
                   <button
                     type="button"
                     className={`${btnGhost} ${btnSm}`}
@@ -170,15 +172,17 @@ export function BuyOptionsEditor({
 
             <label className="flex items-center gap-2">
               <span className={labelCls}>You receive</span>
-              <input
-                name="optYield"
-                type="number"
-                min={1}
-                value={o.yield}
-                onChange={(e) => patchOption(oi, { yield: Number(e.target.value) })}
-                className={`${inputCls} w-20 text-center`}
-                aria-label="Yield"
-              />
+              <div className="w-20 shrink-0">
+                <input
+                  name="optYield"
+                  type="number"
+                  min={1}
+                  value={o.yield}
+                  onChange={(e) => patchOption(oi, { yield: Number(e.target.value) })}
+                  className={`${inputCls} text-center`}
+                  aria-label="Yield"
+                />
+              </div>
             </label>
 
             <div className="space-y-1.5">
