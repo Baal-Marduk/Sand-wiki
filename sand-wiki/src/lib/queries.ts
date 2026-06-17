@@ -133,7 +133,7 @@ export const getEnvEntityBySlug = cache(async (slug: string) => {
       outgoingLinks: {
         where: { role: { in: ["loot", "requires-key", "rewards-key"] }, ...linkTargetEnabled },
         orderBy: { sortOrder: "asc" },
-        include: { target: { select: { slug: true, kind: true, icon: true, rarity: true, category: true } } },
+        include: { target: { select: { slug: true, kind: true, name: true, icon: true, rarity: true, category: true } } },
       },
       craftedAtRecipes: {
         orderBy: { slug: "asc" },

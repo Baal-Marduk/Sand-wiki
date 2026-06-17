@@ -34,8 +34,8 @@ function ItemCell({ entry }: { entry: LootEntryView }) {
     </span>
   );
   return entry.href ? (
-    <Link href={entry.href} className="group/loot inline-flex transition-opacity hover:opacity-90">
-      <span className="border-b border-transparent group-hover/loot:border-current">{label}</span>
+    <Link href={entry.href} className="inline-flex transition-opacity hover:opacity-80">
+      {label}
     </Link>
   ) : (
     label

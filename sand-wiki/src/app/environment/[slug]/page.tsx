@@ -53,7 +53,9 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
   const lootRows: LinkRow[] = entity.outgoingLinks.map((l) => ({
     targetSlug: l.target?.slug ?? null,
     targetKind: l.target?.kind ?? null,
-    name: l.name,
+    // Prefer the resolved item's real wiki name; fall back to the stored link
+    // name only for unresolved (name-only) rows.
+    name: l.target?.name ?? l.name,
     icon: l.target?.icon ?? null,
     rarity: l.target?.rarity ?? null,
     amount: l.amount,
