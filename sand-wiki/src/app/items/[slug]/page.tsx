@@ -76,7 +76,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const buyOptions = await getBuyOptions(slug);
   const priced = pricedOptions(buyOptions);
   const tabContent: Partial<Record<TabId, React.ReactNode>> = {
-    buy: <BuyOptions options={priced} itemName={item.name} />,
+    buy: <BuyOptions options={priced} />,
     "crafted-by": <CraftTable recipes={crafts} />,
     "used-in": <UsedInTable recipes={usedInCrafts} />,
   };
