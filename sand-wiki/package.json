@@ -18,6 +18,7 @@
     "db:load-new-ammo": "tsx prisma/load-new-ammo.ts",
     "db:load-curated-extras": "tsx prisma/load-curated-extras.ts",
     "db:migrate-buy-options": "tsx prisma/migrate-coin-trades-to-buy.ts",
+    "db:extract-tech-unlocks": "tsx prisma/extract-tech-unlocks-to-buy.ts",
     "db:reset": "prisma migrate reset --force",
     "directus:up": "docker compose up -d directus",
     "directus:down": "docker compose down",
