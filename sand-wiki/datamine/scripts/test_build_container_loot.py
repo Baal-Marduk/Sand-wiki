@@ -43,3 +43,15 @@ def test_storm_bonus_present():
     d = build()
     e = d["containers"]["weapon-crate"]["tiers"][0]["loot"][0]
     assert set(e) >= {"slug","name","chance","voyage","storm","stormBonus","moreInStorm","resolved"}
+
+def test_mandatory_drops_inlined_at_full_chance():
+    d = build()
+    # The Ironclad Loot Box has a guaranteed (mandatory) Alloy Steel drop that
+    # lives outside the random `cells`; it must still appear, at 100%.
+    iron = d["containers"]["ironclad-loot-box"]
+    alloy = [e for t in iron["tiers"] for e in t["loot"] if e["name"] == "Alloy Steel"]
+    assert alloy, "mandatory Alloy Steel missing from Ironclad Loot Box"
+    assert alloy[0]["chance"] == 100
+    assert alloy[0]["voyage"] == "1" and alloy[0]["storm"] == "1"
+    # resolves to the live wiki slug (added via override + knownLiveSlugs)
+    assert alloy[0]["slug"] == "resource-alloy-steel" and alloy[0]["resolved"] is True

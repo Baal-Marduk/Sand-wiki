@@ -4,9 +4,10 @@
   "item_weirdCoral": "resource-weird-coral",
   "game_coinCrownPile_10": "coin-crown",
   "game_ValuablePiles01_mobDrop": "small-valuables",
-  "item_rifleMusketClip": "repeater-rifle-quick-reload"
+  "item_rifleMusketClip": "repeater-rifle-quick-reload",
+  "item_alloySteel": "resource-alloy-steel"
  },
- "knownLiveSlugs": ["resource-weird-coral"],
+ "knownLiveSlugs": ["resource-weird-coral", "resource-alloy-steel"],
  "excludeContainers": ["aurogen-crystal", "militia-box", "naval-mine", "mob-drops"],
  "containerSlugMap": {
   "weapons-crate": "weapon-crate",

@@ -144,6 +144,38 @@ for c in sources:
             })
         tiers.append({"tier": g["label"], "rollSets": roll_sets or None, "loot": loot})
 
+    # Guaranteed (mandatory) drops live outside the random `cells` (e.g. the
+    # Ironclad box's Alloy Steel), so the cell loop above never sees them. Inline
+    # them into the first tier at 100% chance — same amount in both modes — so
+    # they aren't silently lost.
+    mand = c.get("mandatory") or []
+    if mand:
+        if not tiers:
+            tiers.append({"tier": "Drops", "rollSets": None, "loot": []})
+        loot0 = tiers[0]["loot"]
+        present = {e["slug"] for e in loot0 if e["slug"]}
+        guaranteed = []
+        for m in mand:
+            it = m["item"]
+            slug, iname, ok = resolve(it)
+            if slug and slug in present:
+                continue  # already surfaced by the random pool; don't duplicate
+            tot_n += 1
+            if ok: resolved_n += 1
+            else: unresolved[it] += 1
+            rng = fmt_range(m["min"], m["max"])
+            guaranteed.append({
+                "slug": slug,
+                "name": iname,
+                "chance": 100.0,
+                "voyage": rng,
+                "storm": rng,
+                "stormBonus": 1.0,
+                "moreInStorm": False,
+                "resolved": ok,
+            })
+        tiers[0]["loot"] = guaranteed + loot0
+
     # Remap the datamined slug onto the existing wiki slug, and apply name/icon
     # overrides (icon defaults to null — SEK container art isn't served by the wiki).
     wiki_slug = SLUG_MAP.get(dm_slug, dm_slug)

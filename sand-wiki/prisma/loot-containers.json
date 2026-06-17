@@ -1953,6 +1953,16 @@
      "rollSets": 12,
      "loot": [
       {
+       "slug": "resource-alloy-steel",
+       "name": "Alloy Steel",
+       "chance": 100.0,
+       "voyage": "1",
+       "storm": "1",
+       "stormBonus": 1.0,
+       "moreInStorm": false,
+       "resolved": true
+      },
+      {
        "slug": "resource-weapon-parts",
        "name": "Resource Weapon Parts",
        "chance": 76.9,
