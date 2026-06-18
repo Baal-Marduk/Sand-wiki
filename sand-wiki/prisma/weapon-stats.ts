@@ -26,6 +26,15 @@ export interface WeaponStatsFile {
   armor: Record<string, ArmorRaw>;
 }
 
+export interface TurretRaw {
+  fireRate: number | null;
+  projectileVelocity: number | null;
+  clipSize: number | null;
+  penetrates: boolean | null;
+  reloadSeconds: number | null;
+}
+export interface TurretStatsFile { turrets: Record<string, TurretRaw> }
+
 /** The subset of ItemStats columns this import manages. All optional; only present keys
  *  are written, so a partial patch never clobbers an unrelated column with null. */
 export interface StatPatch {
@@ -40,6 +49,8 @@ export interface StatPatch {
   armorRegenDelay?: number;
   armorRegenSpeed?: number;
   armorDurability?: number;
+  fireRate?: number;
+  projectileVelocity?: number;
 }
 
 export interface WeaponStatsArtifact {
@@ -79,5 +90,15 @@ export function armorPatch(a: ArmorRaw): StatPatch {
     armorRegenDelay: a.regen?.delay ?? undefined,
     armorRegenSpeed: a.regen?.speed ?? undefined,
     armorDurability: a.durability ?? undefined,
+  });
+}
+
+export function turretPatch(t: TurretRaw): StatPatch {
+  return prune({
+    fireRate: t.fireRate ?? undefined,
+    projectileVelocity: t.projectileVelocity ?? undefined,
+    magazine: t.clipSize ?? undefined,
+    penetrates: t.penetrates ?? undefined,
+    reloadSeconds: t.reloadSeconds ?? undefined,
   });
 }

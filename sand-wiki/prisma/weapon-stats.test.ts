@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { ammoPatch, armorPatch, rangePatch, weaponPatch } from "./weapon-stats";
+import { ammoPatch, armorPatch, rangePatch, turretPatch, weaponPatch } from "./weapon-stats";
 
 describe("rangePatch", () => {
   it("maps the four range fields", () => {
@@ -60,5 +60,20 @@ describe("armorPatch", () => {
   it("drops a null regen block", () => {
     expect(armorPatch({ armorRating: 100, regen: null, durability: 1400 }))
       .toEqual({ armorRating: 100, armorDurability: 1400 });
+  });
+});
+
+describe("turretPatch", () => {
+  it("maps fireRate, projectileVelocity, clipSize→magazine, penetrates; drops null reload", () => {
+    expect(turretPatch({
+      fireRate: 5, projectileVelocity: 150, clipSize: 2,
+      penetrates: true, reloadSeconds: null,
+    })).toEqual({ fireRate: 5, projectileVelocity: 150, magazine: 2, penetrates: true });
+  });
+  it("keeps reloadSeconds when present (cannon/shotgun turrets)", () => {
+    expect(turretPatch({
+      fireRate: 0.82, projectileVelocity: 250, clipSize: 1,
+      penetrates: true, reloadSeconds: 4.5,
+    })).toEqual({ fireRate: 0.82, projectileVelocity: 250, magazine: 1, penetrates: true, reloadSeconds: 4.5 });
   });
 });
