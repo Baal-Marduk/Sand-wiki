@@ -49,6 +49,11 @@ export interface TechNodeStats {
   sortOrder: number | null;
 }
 
+export interface LocalizedText {
+  name: string;
+  description: string | null;
+}
+
 export interface Entity {
   id: string;
   slug: string;
@@ -65,6 +70,9 @@ export interface Entity {
   itemStats: ItemStats | null;
   tramplerStats: TramplerStats | null;
   techNodeStats: TechNodeStats | null;
+  /** Optional per-locale translations (locale code -> text). EN remains the primary
+   *  `name`/`description`; this carries other locales. Absent when no translations. */
+  i18n?: Record<string, LocalizedText>;
 }
 
 /** A directed link between two entities (or a name-only link with no target). */

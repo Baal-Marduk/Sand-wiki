@@ -30,4 +30,12 @@ describe("generated data round-trip", () => {
       if (l.targetSlug) expect(s.bySlug.has(l.targetSlug)).toBe(true);
     }
   });
+
+  it("i18n is optional on entities", () => {
+    for (const e of s.entities) {
+      if (e.i18n !== undefined) {
+        for (const t of Object.values(e.i18n)) expect(typeof t.name).toBe("string");
+      }
+    }
+  });
 });
