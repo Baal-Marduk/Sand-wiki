@@ -28,6 +28,10 @@ const lootOverrides = readJson("overrides/loot-overrides.json") as LootOverrides
 const exclusions = new Set(readJson("overrides/exclusions.json") as string[]);
 const iconMap = readJson("overrides/icon-map.json") as Record<string, string>;
 const partOverrides = readJson("overrides/part-slug-map.json") as Record<string, string>;
+// Slugs intentionally kept hardcoded (baseline-only) — non-droppable/non-craftable items the
+// game registry doesn't expose for datamining (binoculars, flashlight, map, multitool). They are
+// NOT gaps to fix, so they're filtered out of the missing-from-datamine report.
+const hardcodedItems = new Set(readJson("overrides/hardcoded-items.json") as string[]);
 
 const baseline = loadBaseline();
 // Drop excluded SEK ids (junk/duplicate pseudo-items that shouldn't become wiki pages,
@@ -52,7 +56,9 @@ const i18n = buildItemI18n(loc, new Map([...rec.bySekId].map(([id, hit]) => [id,
 const merged = mergeItems(baseline.entities, mergeable, rec.bySekId, i18n);
 // Force corrected icons last (fixes stale/wrong paths in the source data).
 const entities = applyIconOverrides(merged.entities, iconMap);
-const missing = merged.missing;
+// Genuine gaps only — drop the intentionally-hardcoded baseline-only items.
+const missing = merged.missing.filter((m) => !hardcodedItems.has(m.slug));
+const hardcodedKept = merged.missing.length - missing.length;
 
 // --- trampler stats: refresh part stats from compartment_stats.json when present ---
 const compartmentStats = loadCompartmentStats();
@@ -83,7 +89,7 @@ console.log(`reconcile: ${[...rec.bySekId.values()].filter((h) => h.status === "
   `${[...rec.bySekId.values()].filter((h) => h.status === "new").length} new, ` +
   `${[...rec.bySekId.values()].filter((h) => h.status === "override").length} override`);
 console.log(`loot: refreshed ${loot.covered.size} containers, ${loot.links.length} loot links`);
-console.log(`missing-from-datamine: ${missing.length} baseline items not covered by SEK`);
+console.log(`missing-from-datamine: ${missing.length} genuine gaps (+${hardcodedKept} intentionally hardcoded, excluded)`);
 if (diff.added.length) console.log("  added:", diff.added.slice(0, 20).join(", ") + (diff.added.length > 20 ? " …" : ""));
 
 if (diff.removed.length > 0 && !allowSlugChanges) {

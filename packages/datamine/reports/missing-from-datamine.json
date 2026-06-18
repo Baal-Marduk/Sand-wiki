@@ -1,20 +1,5 @@
 [
   {
-    "slug": "binoculars",
-    "name": "Binoculars",
-    "kind": "item"
-  },
-  {
-    "slug": "flashlight",
-    "name": "Flashlight",
-    "kind": "item"
-  },
-  {
-    "slug": "map",
-    "name": "Map",
-    "kind": "item"
-  },
-  {
     "slug": "shotgun-turret-ammo-interior-explosion",
     "name": "Interior Explosion 70 mm Shell",
     "kind": "item"
