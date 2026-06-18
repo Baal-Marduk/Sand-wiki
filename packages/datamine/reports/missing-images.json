@@ -1,0 +1,222 @@
+{
+  "_doc": "Entities whose icon is absent (null) or points at a file that does not exist on disk — TODO for the next datamining/extraction pass. By kind: items -> extract_icons.py must emit /icons/<sprite> (a 'file-missing' means the data references a sprite filename that was never produced; check the icon mapping/filename). environment (landmarks/game-modes) -> render_location_thumbs.py (/locart) or render_container_thumbs.py (/containers). trampler-part -> render_part_thumbs.py / export_part_meshes_v3.py (/tramplers). tech-node entities legitimately have no own icon (the /tech page renders the unlock's glyph) and are reported under byDesign, not needsExtraction.",
+  "summary": {
+    "environment:null": 19,
+    "trampler-part:null": 2,
+    "item:file-missing": 4,
+    "item:null": 1
+  },
+  "needsExtraction": [
+    {
+      "slug": "archipel-von-leopold",
+      "name": "Archipel Von Leopold",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "dreadnaught",
+      "name": "Dreadnaught",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "factorio",
+      "name": "Factorio",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "fort-arpad",
+      "name": "Fort Arpad",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "fort-istria",
+      "name": "Fort Istria",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "fort-metternich",
+      "name": "Fort Metternich",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "fort-starhemberg",
+      "name": "Fort Starhemberg",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "fort-tarndpol",
+      "name": "Fort Tarndpol",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "kaiserplatz",
+      "name": "Kaiserplatz",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "meeresauge",
+      "name": "Meeresauge",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "rauchwolke",
+      "name": "Rauchwolke",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "schwalbenberg",
+      "name": "Schwalbenberg",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "segen",
+      "name": "Segen",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "sprengstofffabrik",
+      "name": "Sprengstofffabrik",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "storm-dive",
+      "name": "Storm Dive",
+      "kind": "environment",
+      "category": "game-modes",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "strudel",
+      "name": "Strudel",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "stufeninsel",
+      "name": "Stufeninsel",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "venedig",
+      "name": "Venedig",
+      "kind": "environment",
+      "category": "landmarks",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "voyage",
+      "name": "Voyage",
+      "kind": "environment",
+      "category": "game-modes",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "coin-crown",
+      "name": "Crowns",
+      "kind": "item",
+      "category": "misc",
+      "icon": "/icons/icon_crownCoins.png",
+      "issue": "file-missing"
+    },
+    {
+      "slug": "ironclad-s-cargo-box",
+      "name": "Ironclad's Cargo Box",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "pistol-ammo",
+      "name": "8x21 mm Ammo",
+      "kind": "item",
+      "category": "ammo",
+      "icon": "/icons/icon_ammo_pistol.png",
+      "issue": "file-missing"
+    },
+    {
+      "slug": "revolver-small-dusters",
+      "name": "EB \"Bantam\" Revolver",
+      "kind": "item",
+      "category": "weapons",
+      "icon": "/icons/icon_lowTierRevolverBrass.png",
+      "issue": "file-missing"
+    },
+    {
+      "slug": "shotgun-ammo",
+      "name": "12 GA Ammo",
+      "kind": "item",
+      "category": "ammo",
+      "icon": "/icons/icon_ammo_shotgun.png",
+      "issue": "file-missing"
+    },
+    {
+      "slug": "captain-crew-module",
+      "name": "S&H Captain's Compartment",
+      "kind": "trampler-part",
+      "category": "crew",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "s-h-lower-supporting-frame",
+      "name": "S&H Lower Supporting Frame",
+      "kind": "trampler-part",
+      "category": "structure",
+      "icon": null,
+      "issue": "null"
+    }
+  ],
+  "byDesign": {
+    "techNodeNoIcon": 93
+  }
+}

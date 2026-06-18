@@ -3,7 +3,7 @@
 // Recipes + non-loot links + parts/tech/locations entities pass through from the baseline
 // this iteration (merge framework is extensible per-kind).
 //   npx tsx transform/run.ts [--allow-slug-changes]
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 import { loadBaseline } from "./baseline";
 import { loadSekItems, loadLocalization, loadContainerLoot } from "./sek";
@@ -11,8 +11,11 @@ import { reconcile } from "./reconcile";
 import { buildItemI18n } from "./i18n";
 import { mergeItems } from "./merge";
 import { buildLootLinks, applyLoot, type LootOverrides } from "./loot";
+import { classifyImages } from "./images";
 import { diffEntities } from "./diff";
-import { validateEntities, writeArtifact, writeMissingReport } from "./emit";
+import { validateEntities, writeArtifact, writeMissingReport, writeImagesReport } from "./emit";
+
+const PUBLIC = resolve(import.meta.dirname, "../../../apps/wiki/public");
 
 const allowSlugChanges = process.argv.includes("--allow-slug-changes");
 const readJson = (p: string) => JSON.parse(readFileSync(resolve(import.meta.dirname, p), "utf-8"));
@@ -60,7 +63,14 @@ if (diff.removed.length > 0 && !allowSlugChanges) {
 }
 
 validateEntities(entities);
+
+// --- images: report entities whose icon is null or whose file is missing on disk ---
+const images = classifyImages(entities, (icon) => existsSync(resolve(PUBLIC, `.${icon}`)));
+console.log(`missing images: ${images.needsExtraction.length} need extraction ` +
+  `(+${images.byDesign.techNodeNoIcon} tech-nodes by design)`);
+
 // recipes + non-loot links + parts/tech/locations entities pass through from baseline.
 writeArtifact(entities, baseline.recipes, links);
 writeMissingReport(missing);
-console.log("wrote packages/data/generated/{entities,recipes,links}.json + reports/missing-from-datamine.json");
+writeImagesReport(images);
+console.log("wrote packages/data/generated/{entities,recipes,links}.json + reports/{missing-from-datamine,missing-images}.json");
