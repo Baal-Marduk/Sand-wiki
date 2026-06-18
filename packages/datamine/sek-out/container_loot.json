@@ -1,0 +1,2256 @@
+{
+ "weapons-crate": {
+  "name": "Weapons Crate",
+  "icon": "containers/weapons_crate.png",
+  "category": "loot-containers",
+  "tiers": [
+   {
+    "tier": "Tier 1",
+    "rollSets": 4,
+    "loot": [
+     {
+      "slug": "resource-scrapped-ammo",
+      "name": "Resource Scrapped Ammo",
+      "chance": 100.0,
+      "voyage": "15-40",
+      "storm": "20-55",
+      "stormBonus": 1.36,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "pistol-ammo",
+      "name": "Pistol Ammo",
+      "chance": 50.0,
+      "voyage": "25-45",
+      "storm": "25-45",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-musket",
+      "name": "Rifle Musket",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-ammo",
+      "name": "Rifle Ammo",
+      "chance": 25.0,
+      "voyage": "8-22",
+      "storm": "8-22",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "revolver-small",
+      "name": "Revolver Small",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "semi-automatic-pistol-decreased-mag",
+      "name": "Semi Automatic Pistol Decreased Mag",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-handmade",
+      "name": "Shotgun Handmade",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-ammo",
+      "name": "Shotgun Ammo",
+      "chance": 25.0,
+      "voyage": "8-22",
+      "storm": "8-22",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "pistol-ammo-high-velocity",
+      "name": "Pistol Ammo High Velocity",
+      "chance": 50.0,
+      "voyage": "50",
+      "storm": "50",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "repeater-rifle",
+      "name": "Repeater Rifle",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-ammo-high-velocity",
+      "name": "Rifle Ammo High Velocity",
+      "chance": 25.0,
+      "voyage": "30",
+      "storm": "30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "revolver-quick-reload",
+      "name": "Revolver Quick Reload",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "semi-automatic-pistol",
+      "name": "Semi Automatic Pistol",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun",
+      "name": "Shotgun",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-ammo-slug",
+      "name": "Shotgun Ammo Slug",
+      "chance": 25.0,
+      "voyage": "30",
+      "storm": "30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 2",
+    "rollSets": 5,
+    "loot": [
+     {
+      "slug": "resource-scrapped-ammo",
+      "name": "Resource Scrapped Ammo",
+      "chance": 100.0,
+      "voyage": "15-40",
+      "storm": "20-45",
+      "stormBonus": 1.18,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-weapon-parts",
+      "name": "Resource Weapon Parts",
+      "chance": 100.0,
+      "voyage": "3-15",
+      "storm": "4-20",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "c4-dynamite",
+      "name": "C4 Dynamite",
+      "chance": 100.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "pistol-ammo",
+      "name": "Pistol Ammo",
+      "chance": 50.0,
+      "voyage": "25-50",
+      "storm": "25-50",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-musket",
+      "name": "Rifle Musket",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-ammo",
+      "name": "Rifle Ammo",
+      "chance": 25.0,
+      "voyage": "8-22",
+      "storm": "8-22",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "revolver-small",
+      "name": "Revolver Small",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "semi-automatic-pistol-decreased-mag",
+      "name": "Semi Automatic Pistol Decreased Mag",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-handmade",
+      "name": "Shotgun Handmade",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-ammo",
+      "name": "Shotgun Ammo",
+      "chance": 25.0,
+      "voyage": "8-22",
+      "storm": "8-22",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "repeater-rifle",
+      "name": "Repeater Rifle",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "revolver-quick-reload",
+      "name": "Revolver Quick Reload",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "semi-automatic-pistol",
+      "name": "Semi Automatic Pistol",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun",
+      "name": "Shotgun",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "sniper-rifle-iron-sights",
+      "name": "Sniper Rifle Iron Sights",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "sniper-rifle-ammo",
+      "name": "Sniper Rifle Ammo",
+      "chance": 20.0,
+      "voyage": "4-8",
+      "storm": "4-8",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "grenade-contact",
+      "name": "Grenade Contact",
+      "chance": 80.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "pistol-ammo-armor",
+      "name": "Pistol Ammo Armor",
+      "chance": 40.0,
+      "voyage": "35-45",
+      "storm": "35-45",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-ammo-armor",
+      "name": "Rifle Ammo Armor",
+      "chance": 20.0,
+      "voyage": "15-25",
+      "storm": "15-25",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "semi-automatic-pistol-increased-mag",
+      "name": "Semi Automatic Pistol Increased Mag",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-high-grade-gunpowder",
+      "name": "Resource High Grade Gunpowder",
+      "chance": 20.0,
+      "voyage": "3",
+      "storm": "7",
+      "stormBonus": 2.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-repeater-aperture",
+      "name": "Rifle Repeater Aperture",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-ammo-high-velocity",
+      "name": "Rifle Ammo High Velocity",
+      "chance": 20.0,
+      "voyage": "30",
+      "storm": "30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 3",
+    "rollSets": 5,
+    "loot": [
+     {
+      "slug": "resource-scrapped-ammo",
+      "name": "Resource Scrapped Ammo",
+      "chance": 100.0,
+      "voyage": "15-40",
+      "storm": "20-45",
+      "stormBonus": 1.18,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-weapon-parts",
+      "name": "Resource Weapon Parts",
+      "chance": 100.0,
+      "voyage": "4-15",
+      "storm": "8-20",
+      "stormBonus": 1.47,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-high-grade-gunpowder",
+      "name": "Resource High Grade Gunpowder",
+      "chance": 100.0,
+      "voyage": "1-3",
+      "storm": "4-7",
+      "stormBonus": 2.75,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "pistol-ammo",
+      "name": "Pistol Ammo",
+      "chance": 75.0,
+      "voyage": "25-50",
+      "storm": "25-50",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "repeater-rifle",
+      "name": "Repeater Rifle",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-ammo",
+      "name": "Rifle Ammo",
+      "chance": 25.0,
+      "voyage": "8-30",
+      "storm": "8-30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "revolver-quick-reload",
+      "name": "Revolver Quick Reload",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun",
+      "name": "Shotgun",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-ammo",
+      "name": "Shotgun Ammo",
+      "chance": 25.0,
+      "voyage": "8-12",
+      "storm": "8-12",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "semi-automatic-pistol",
+      "name": "Semi Automatic Pistol",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "grenade-contact",
+      "name": "Grenade Contact",
+      "chance": 100.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "pistol-ammo-high-velocity",
+      "name": "Pistol Ammo High Velocity",
+      "chance": 40.0,
+      "voyage": "35-45",
+      "storm": "35-45",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-ammo-high-velocity",
+      "name": "Rifle Ammo High Velocity",
+      "chance": 20.0,
+      "voyage": "18-22",
+      "storm": "18-22",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-ammo-slug",
+      "name": "Shotgun Ammo Slug",
+      "chance": 20.0,
+      "voyage": "18-22",
+      "storm": "18-22",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "sniper-rifle-iron-sights",
+      "name": "Sniper Rifle Iron Sights",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "sniper-rifle-ammo-high-penetration",
+      "name": "Sniper Rifle Ammo High Penetration",
+      "chance": 20.0,
+      "voyage": "8-12",
+      "storm": "8-12",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "semi-automatic-pistol-increased-mag",
+      "name": "Semi Automatic Pistol Increased Mag",
+      "chance": 75.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "repeater-rifle-quick-reload",
+      "name": "Repeater Rifle Quick Reload",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     }
+    ]
+   }
+  ]
+ },
+ "resource-crate": {
+  "name": "Resource Crate",
+  "icon": "containers/resource_crate.png",
+  "category": "loot-containers",
+  "tiers": [
+   {
+    "tier": "Tier 1",
+    "rollSets": 2,
+    "loot": [
+     {
+      "slug": "resource-metal-t1",
+      "name": "Resource Metal T1",
+      "chance": 100.0,
+      "voyage": "25-105",
+      "storm": "40-160",
+      "stormBonus": 1.54,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-parts",
+      "name": "Resource Metal Parts",
+      "chance": 100.0,
+      "voyage": "15-35",
+      "storm": "20-40",
+      "stormBonus": 1.2,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "energy-bar",
+      "name": "Energy Bar",
+      "chance": 50.0,
+      "voyage": "1-2",
+      "storm": "1",
+      "stormBonus": 0.67,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-t2",
+      "name": "Resource Metal T2",
+      "chance": 100.0,
+      "voyage": "15-40",
+      "storm": "20-60",
+      "stormBonus": 1.45,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 2",
+    "rollSets": 2,
+    "loot": [
+     {
+      "slug": "resource-metal-t1",
+      "name": "Resource Metal T1",
+      "chance": 100.0,
+      "voyage": "35-110",
+      "storm": "40-160",
+      "stormBonus": 1.38,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-parts",
+      "name": "Resource Metal Parts",
+      "chance": 100.0,
+      "voyage": "15-35",
+      "storm": "20-40",
+      "stormBonus": 1.2,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-gunpowder",
+      "name": "Resource Gunpowder",
+      "chance": 100.0,
+      "voyage": "3-15",
+      "storm": "4-20",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "energy-bar",
+      "name": "Energy Bar",
+      "chance": 50.0,
+      "voyage": "1-2",
+      "storm": "1-2",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-t2",
+      "name": "Resource Metal T2",
+      "chance": 100.0,
+      "voyage": "20-45",
+      "storm": "20-60",
+      "stormBonus": 1.23,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 3",
+    "rollSets": 2,
+    "loot": [
+     {
+      "slug": "resource-metal-t1",
+      "name": "Resource Metal T1",
+      "chance": 100.0,
+      "voyage": "35-115",
+      "storm": "40-160",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-parts",
+      "name": "Resource Metal Parts",
+      "chance": 100.0,
+      "voyage": "15-35",
+      "storm": "20-40",
+      "stormBonus": 1.2,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-gunpowder",
+      "name": "Resource Gunpowder",
+      "chance": 100.0,
+      "voyage": "3-15",
+      "storm": "4-20",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "energy-bar",
+      "name": "Energy Bar",
+      "chance": 50.0,
+      "voyage": "1-2",
+      "storm": "2-3",
+      "stormBonus": 1.67,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-t2",
+      "name": "Resource Metal T2",
+      "chance": 100.0,
+      "voyage": "25-50",
+      "storm": "5-60",
+      "stormBonus": 0.87,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-high-grade-gunpowder",
+      "name": "Resource High Grade Gunpowder",
+      "chance": 100.0,
+      "voyage": "1-3",
+      "storm": "4-7",
+      "stormBonus": 2.75,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   }
+  ]
+ },
+ "food-crate": {
+  "name": "Food Crate",
+  "icon": "containers/food_crate.png",
+  "category": "loot-containers",
+  "tiers": [
+   {
+    "tier": "Tier 1",
+    "rollSets": 1,
+    "loot": [
+     {
+      "slug": "food-can",
+      "name": "Food Can",
+      "chance": 100.0,
+      "voyage": "1-3",
+      "storm": "2-4",
+      "stormBonus": 1.5,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-threads",
+      "name": "Resource Threads",
+      "chance": 100.0,
+      "voyage": "15-40",
+      "storm": "20-45",
+      "stormBonus": 1.18,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 2",
+    "rollSets": 2,
+    "loot": [
+     {
+      "slug": "food-can",
+      "name": "Food Can",
+      "chance": 100.0,
+      "voyage": "1-3",
+      "storm": "2-4",
+      "stormBonus": 1.5,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-threads",
+      "name": "Resource Threads",
+      "chance": 100.0,
+      "voyage": "15-40",
+      "storm": "20-45",
+      "stormBonus": 1.18,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-leviathan-meat",
+      "name": "Resource Leviathan Meat",
+      "chance": 50.0,
+      "voyage": "3-15",
+      "storm": "4-20",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-coral-dust",
+      "name": "Resource Coral Dust",
+      "chance": 50.0,
+      "voyage": "3-15",
+      "storm": "4-20",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 3",
+    "rollSets": 2,
+    "loot": [
+     {
+      "slug": "food-can",
+      "name": "Food Can",
+      "chance": 100.0,
+      "voyage": "2-3",
+      "storm": "2-5",
+      "stormBonus": 1.4,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-threads",
+      "name": "Resource Threads",
+      "chance": 100.0,
+      "voyage": "15-40",
+      "storm": "20-45",
+      "stormBonus": 1.18,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-leviathan-meat",
+      "name": "Resource Leviathan Meat",
+      "chance": 50.0,
+      "voyage": "3-15",
+      "storm": "4-20",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-coral-dust",
+      "name": "Resource Coral Dust",
+      "chance": 50.0,
+      "voyage": "3-15",
+      "storm": "4-20",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-reinforced-leather-strips",
+      "name": "Resource Reinforced Leather Strips",
+      "chance": 100.0,
+      "voyage": "1-3",
+      "storm": "4-6",
+      "stormBonus": 2.5,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   }
+  ]
+ },
+ "medical-cabinet": {
+  "name": "Medical Cabinet",
+  "icon": "containers/medical_cabinet.png",
+  "category": "loot-containers",
+  "tiers": [
+   {
+    "tier": "Tier 1",
+    "rollSets": 1,
+    "loot": [
+     {
+      "slug": "med-kit",
+      "name": "Med Kit",
+      "chance": 100.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-mixtures",
+      "name": "Resource Mixtures",
+      "chance": 100.0,
+      "voyage": "15-35",
+      "storm": "20-40",
+      "stormBonus": 1.2,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 2",
+    "rollSets": 1,
+    "loot": [
+     {
+      "slug": "med-kit",
+      "name": "Med Kit",
+      "chance": 100.0,
+      "voyage": "2",
+      "storm": "2",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-mixtures",
+      "name": "Resource Mixtures",
+      "chance": 100.0,
+      "voyage": "15-35",
+      "storm": "20-40",
+      "stormBonus": 1.2,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-fabric",
+      "name": "Resource Fabric",
+      "chance": 100.0,
+      "voyage": "2-15",
+      "storm": "3-20",
+      "stormBonus": 1.35,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 3",
+    "rollSets": 1,
+    "loot": [
+     {
+      "slug": "med-kit",
+      "name": "Med Kit",
+      "chance": 100.0,
+      "voyage": "2",
+      "storm": "2-3",
+      "stormBonus": 1.25,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-mixtures",
+      "name": "Resource Mixtures",
+      "chance": 100.0,
+      "voyage": "15-35",
+      "storm": "20-40",
+      "stormBonus": 1.2,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-fabric",
+      "name": "Resource Fabric",
+      "chance": 100.0,
+      "voyage": "3-15",
+      "storm": "4-20",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-optic-lenses",
+      "name": "Resource Optic Lenses",
+      "chance": 100.0,
+      "voyage": "2-3",
+      "storm": "4-7",
+      "stormBonus": 2.2,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   }
+  ]
+ },
+ "safe": {
+  "name": "Safe",
+  "icon": "containers/safe.png",
+  "category": "loot-containers",
+  "tiers": [
+   {
+    "tier": "Tier 1",
+    "rollSets": 2,
+    "loot": [
+     {
+      "slug": "coin-crown",
+      "name": "Coin Crown",
+      "chance": 100.0,
+      "voyage": "140-320",
+      "storm": "200-400",
+      "stormBonus": 1.3,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-coral-piece",
+      "name": "Resource Coral Piece",
+      "chance": 100.0,
+      "voyage": "2-14",
+      "storm": "3-16",
+      "stormBonus": 1.19,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "small-valuables",
+      "name": "Small Valuables",
+      "chance": 50.0,
+      "voyage": "15-55",
+      "storm": "25-70",
+      "stormBonus": 1.36,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "valuable-papers",
+      "name": "Valuable Papers",
+      "chance": 50.0,
+      "voyage": "10-30",
+      "storm": "15-40",
+      "stormBonus": 1.38,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 2",
+    "rollSets": 2,
+    "loot": [
+     {
+      "slug": "coin-crown",
+      "name": "Coin Crown",
+      "chance": 100.0,
+      "voyage": "140-320",
+      "storm": "200-400",
+      "stormBonus": 1.3,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-coral-piece",
+      "name": "Resource Coral Piece",
+      "chance": 100.0,
+      "voyage": "2-16",
+      "storm": "3-16",
+      "stormBonus": 1.06,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-leviathan-skin",
+      "name": "Resource Leviathan Skin",
+      "chance": 100.0,
+      "voyage": "3-15",
+      "storm": "4-20",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "small-valuables",
+      "name": "Small Valuables",
+      "chance": 50.0,
+      "voyage": "15-55",
+      "storm": "25-70",
+      "stormBonus": 1.36,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "valuable-papers",
+      "name": "Valuable Papers",
+      "chance": 50.0,
+      "voyage": "10-30",
+      "storm": "15-40",
+      "stormBonus": 1.38,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 3",
+    "rollSets": 4,
+    "loot": [
+     {
+      "slug": "coin-crown",
+      "name": "Coin Crown",
+      "chance": 100.0,
+      "voyage": "140-320",
+      "storm": "200-400",
+      "stormBonus": 1.3,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-coral-piece",
+      "name": "Resource Coral Piece",
+      "chance": 100.0,
+      "voyage": "2-14",
+      "storm": "3-16",
+      "stormBonus": 1.19,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-leviathan-skin",
+      "name": "Resource Leviathan Skin",
+      "chance": 100.0,
+      "voyage": "3-15",
+      "storm": "4-20",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "small-valuables",
+      "name": "Small Valuables",
+      "chance": 75.0,
+      "voyage": "15-55",
+      "storm": "25-125",
+      "stormBonus": 2.14,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "valuable-papers",
+      "name": "Valuable Papers",
+      "chance": 50.0,
+      "voyage": "15-30",
+      "storm": "25-40",
+      "stormBonus": 1.44,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-optic-lenses",
+      "name": "Resource Optic Lenses",
+      "chance": 100.0,
+      "voyage": "2-3",
+      "storm": "4-8",
+      "stormBonus": 2.4,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "game-key-island-door-green",
+      "name": "Game Key Island Door Green",
+      "chance": 25.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "artefact-crystal",
+      "name": "Artefact Crystal",
+      "chance": 25.0,
+      "voyage": "4-6",
+      "storm": "10-14",
+      "stormBonus": 2.4,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   }
+  ]
+ },
+ "shell-box": {
+  "name": "Shell Box",
+  "icon": "containers/shell_box.png",
+  "category": "loot-containers",
+  "tiers": [
+   {
+    "tier": "Tier 1",
+    "rollSets": 3,
+    "loot": [
+     {
+      "slug": "resource-fabric-scraps",
+      "name": "Resource Fabric Scraps",
+      "chance": 100.0,
+      "voyage": "15-40",
+      "storm": "20-45",
+      "stormBonus": 1.18,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "turret-ammo",
+      "name": "Turret Ammo",
+      "chance": 33.3,
+      "voyage": "8-30",
+      "storm": "8-30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-turret-ammo",
+      "name": "Shotgun Turret Ammo",
+      "chance": 33.3,
+      "voyage": "8-30",
+      "storm": "8-30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "small-cannon-ammo",
+      "name": "Small Cannon Ammo",
+      "chance": 33.3,
+      "voyage": "25-80",
+      "storm": "25-80",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 2",
+    "rollSets": 6,
+    "loot": [
+     {
+      "slug": "resource-fabric-scraps",
+      "name": "Resource Fabric Scraps",
+      "chance": 100.0,
+      "voyage": "15-40",
+      "storm": "20-45",
+      "stormBonus": 1.18,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-rods",
+      "name": "Resource Metal Rods",
+      "chance": 100.0,
+      "voyage": "3-15",
+      "storm": "4-20",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "turret-ammo",
+      "name": "Turret Ammo",
+      "chance": 66.7,
+      "voyage": "8-30",
+      "storm": "8-30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "small-cannon-ammo",
+      "name": "Small Cannon Ammo",
+      "chance": 33.3,
+      "voyage": "25-80",
+      "storm": "25-80",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "turret-ammo-high-velocity",
+      "name": "Turret Ammo High Velocity",
+      "chance": 33.3,
+      "voyage": "3-13",
+      "storm": "3-13",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "small-cannon-ammo-long-range",
+      "name": "Small Cannon Ammo Long Range",
+      "chance": 33.3,
+      "voyage": "15-55",
+      "storm": "15-55",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-turret-ammo",
+      "name": "Shotgun Turret Ammo",
+      "chance": 16.7,
+      "voyage": "18-30",
+      "storm": "18-30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-turret-ammo-slug",
+      "name": "Shotgun Turret Ammo Slug",
+      "chance": 16.7,
+      "voyage": "3-13",
+      "storm": "3-13",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 3",
+    "rollSets": 4,
+    "loot": [
+     {
+      "slug": "resource-fabric-scraps",
+      "name": "Resource Fabric Scraps",
+      "chance": 100.0,
+      "voyage": "15-40",
+      "storm": "20-45",
+      "stormBonus": 1.18,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-rods",
+      "name": "Resource Metal Rods",
+      "chance": 100.0,
+      "voyage": "3-15",
+      "storm": "4-20",
+      "stormBonus": 1.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-turret-ammo-smoke",
+      "name": "Shotgun Turret Ammo Smoke",
+      "chance": 75.0,
+      "voyage": "1-3",
+      "storm": "1-3",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "turret-ammo",
+      "name": "Turret Ammo",
+      "chance": 100.0,
+      "voyage": "8-30",
+      "storm": "8-30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "small-cannon-ammo",
+      "name": "Small Cannon Ammo",
+      "chance": 100.0,
+      "voyage": "25-80",
+      "storm": "25-80",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "small-cannon-ammo-low-recoil",
+      "name": "Small Cannon Ammo Low Recoil",
+      "chance": 50.0,
+      "voyage": "15-40",
+      "storm": "15-40",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-turret-ammo",
+      "name": "Shotgun Turret Ammo",
+      "chance": 100.0,
+      "voyage": "8-30",
+      "storm": "8-30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "turret-ammo-emp",
+      "name": "Turret Ammo EMP",
+      "chance": 25.0,
+      "voyage": "1-2",
+      "storm": "1-2",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "turret-ammo-delayed-detonation",
+      "name": "Turret Ammo Delayed Detonation",
+      "chance": 25.0,
+      "voyage": "5-15",
+      "storm": "5-15",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-reinforced-leather-strips",
+      "name": "Resource Reinforced Leather Strips",
+      "chance": 100.0,
+      "voyage": "1-3",
+      "storm": "4-7",
+      "stormBonus": 2.75,
+      "moreInStorm": true,
+      "resolved": true
+     }
+    ]
+   }
+  ]
+ },
+ "buried-treasure": {
+  "name": "Buried Treasure",
+  "icon": "containers/buried_treasure.png",
+  "category": "loot-containers",
+  "tiers": [
+   {
+    "tier": "Tier 1",
+    "rollSets": 6,
+    "loot": [
+     {
+      "slug": "coin-crown",
+      "name": "Coin Crown",
+      "chance": 66.7,
+      "voyage": "300-500",
+      "storm": "300-500",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "old-jacket-t2",
+      "name": "Old Jacket T2",
+      "chance": 50.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "semi-automatic-pistol",
+      "name": "Semi Automatic Pistol",
+      "chance": 33.3,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "pistol-ammo",
+      "name": "Pistol Ammo",
+      "chance": 33.3,
+      "voyage": "50",
+      "storm": "50",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "energy-bar",
+      "name": "Energy Bar",
+      "chance": 33.3,
+      "voyage": "3-5",
+      "storm": "3-5",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "grenade-contact",
+      "name": "Grenade Contact",
+      "chance": 33.3,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-t1",
+      "name": "Resource Metal T1",
+      "chance": 16.7,
+      "voyage": "120-160",
+      "storm": "120-160",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-t2",
+      "name": "Resource Metal T2",
+      "chance": 16.7,
+      "voyage": "30-50",
+      "storm": "30-50",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "food-can",
+      "name": "Food Can",
+      "chance": 16.7,
+      "voyage": "10-15",
+      "storm": "10-15",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "med-kit",
+      "name": "Med Kit",
+      "chance": 16.7,
+      "voyage": "7-10",
+      "storm": "7-10",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "repeater-rifle",
+      "name": "Repeater Rifle",
+      "chance": 16.7,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-ammo",
+      "name": "Rifle Ammo",
+      "chance": 16.7,
+      "voyage": "30",
+      "storm": "30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "turret-ammo",
+      "name": "Turret Ammo",
+      "chance": 16.7,
+      "voyage": "15-20",
+      "storm": "15-20",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "small-valuables",
+      "name": "Small Valuables",
+      "chance": 16.7,
+      "voyage": "130-150",
+      "storm": "130-150",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "c4-dynamite",
+      "name": "C4 Dynamite",
+      "chance": 16.7,
+      "voyage": "1-3",
+      "storm": "1-3",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun",
+      "name": "Shotgun",
+      "chance": 16.7,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-ammo",
+      "name": "Shotgun Ammo",
+      "chance": 16.7,
+      "voyage": "50",
+      "storm": "50",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rocket-launcher-ammo-armor-piercing",
+      "name": "Rocket Launcher Ammo Armor Piercing",
+      "chance": 16.7,
+      "voyage": "1-4",
+      "storm": "1-4",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "sniper-rifle-iron-sights",
+      "name": "Sniper Rifle Iron Sights",
+      "chance": 16.7,
+      "voyage": "1-3",
+      "storm": "1-3",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "sniper-rifle-ammo",
+      "name": "Sniper Rifle Ammo",
+      "chance": 16.7,
+      "voyage": "8-12",
+      "storm": "8-12",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "repeater-rifle-quick-reload",
+      "name": "Repeater Rifle Quick Reload",
+      "chance": 16.7,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-ammo-high-velocity",
+      "name": "Rifle Ammo High Velocity",
+      "chance": 16.7,
+      "voyage": "20-30",
+      "storm": "20-30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Tier 2",
+    "rollSets": 7,
+    "loot": [
+     {
+      "slug": "coin-crown",
+      "name": "Coin Crown",
+      "chance": 72.7,
+      "voyage": "300-700",
+      "storm": "300-700",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "old-jacket-t3",
+      "name": "Old Jacket T3",
+      "chance": 54.5,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-triplet",
+      "name": "Shotgun Triplet",
+      "chance": 45.5,
+      "voyage": "1-3",
+      "storm": "1-3",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-ammo",
+      "name": "Shotgun Ammo",
+      "chance": 45.5,
+      "voyage": "30-40",
+      "storm": "30-40",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "c4-dynamite",
+      "name": "C4 Dynamite",
+      "chance": 45.5,
+      "voyage": "2-4",
+      "storm": "2-4",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "med-kit",
+      "name": "Med Kit",
+      "chance": 27.3,
+      "voyage": "10-20",
+      "storm": "10-20",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "pistol-ammo-armor",
+      "name": "Pistol Ammo Armor",
+      "chance": 18.2,
+      "voyage": "40-60",
+      "storm": "40-60",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "small-valuables",
+      "name": "Small Valuables",
+      "chance": 18.2,
+      "voyage": "150-200",
+      "storm": "150-200",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rocket-launcher",
+      "name": "Rocket Launcher",
+      "chance": 18.2,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "turret-ammo",
+      "name": "Turret Ammo",
+      "chance": 18.2,
+      "voyage": "30",
+      "storm": "30",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-t1",
+      "name": "Resource Metal T1",
+      "chance": 9.1,
+      "voyage": "200-300",
+      "storm": "200-300",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-t2",
+      "name": "Resource Metal T2",
+      "chance": 9.1,
+      "voyage": "80-120",
+      "storm": "80-120",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-t3",
+      "name": "Resource Metal T3",
+      "chance": 9.1,
+      "voyage": "1-4",
+      "storm": "1-4",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-repeater-aperture",
+      "name": "Rifle Repeater Aperture",
+      "chance": 9.1,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rifle-ammo-armor",
+      "name": "Rifle Ammo Armor",
+      "chance": 9.1,
+      "voyage": "30-50",
+      "storm": "30-50",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "energy-bar",
+      "name": "Energy Bar",
+      "chance": 9.1,
+      "voyage": "5-8",
+      "storm": "5-8",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "semi-automatic-pistol-increased-mag",
+      "name": "Semi Automatic Pistol Increased Mag",
+      "chance": 9.1,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "valuable-papers",
+      "name": "Valuable Papers",
+      "chance": 9.1,
+      "voyage": "80-120",
+      "storm": "80-120",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "revolver-quick-reload-eight-shot",
+      "name": "Revolver Quick Reload Eight Shot",
+      "chance": 9.1,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "grenade-contact",
+      "name": "Grenade Contact",
+      "chance": 9.1,
+      "voyage": "2-3",
+      "storm": "2-3",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "sniper-rifle",
+      "name": "Sniper Rifle",
+      "chance": 9.1,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "sniper-rifle-ammo-high-penetration",
+      "name": "Sniper Rifle Ammo High Penetration",
+      "chance": 9.1,
+      "voyage": "8-16",
+      "storm": "8-16",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "food-can",
+      "name": "Food Can",
+      "chance": 9.1,
+      "voyage": "15-20",
+      "storm": "15-20",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rocket-launcher-ammo-armor-piercing",
+      "name": "Rocket Launcher Ammo Armor Piercing",
+      "chance": 9.1,
+      "voyage": "4-5",
+      "storm": "4-5",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "rocket-launcher-ammo-high-explosion",
+      "name": "Rocket Launcher Ammo High Explosion",
+      "chance": 9.1,
+      "voyage": "2-4",
+      "storm": "2-4",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     }
+    ]
+   }
+  ]
+ },
+ "ironclad-loot-box": {
+  "name": "Ironclad Loot Box",
+  "icon": "containers/ironclad_loot_box.png",
+  "category": "loot-containers",
+  "tiers": [
+   {
+    "tier": "Drops",
+    "rollSets": 12,
+    "loot": [
+     {
+      "slug": "resource-weapon-parts",
+      "name": "Resource Weapon Parts",
+      "chance": 76.9,
+      "voyage": "5-10",
+      "storm": "20-30",
+      "stormBonus": 3.33,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "energy-bar",
+      "name": "Energy Bar",
+      "chance": 64.1,
+      "voyage": "1",
+      "storm": "2-5",
+      "stormBonus": 3.5,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "food-can",
+      "name": "Food Can",
+      "chance": 35.9,
+      "voyage": "1-3",
+      "storm": "2-5",
+      "stormBonus": 1.75,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "turret-ammo-high-velocity",
+      "name": "Turret Ammo High Velocity",
+      "chance": 25.6,
+      "voyage": "3-7",
+      "storm": "8-15",
+      "stormBonus": 2.3,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-turret-ammo-slug",
+      "name": "Shotgun Turret Ammo Slug",
+      "chance": 20.5,
+      "voyage": "3-7",
+      "storm": "10-15",
+      "stormBonus": 2.5,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "small-cannon-ammo-long-range",
+      "name": "Small Cannon Ammo Long Range",
+      "chance": 20.5,
+      "voyage": "15-25",
+      "storm": "25-35",
+      "stormBonus": 1.5,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-t3",
+      "name": "Resource Metal T3",
+      "chance": 19.2,
+      "voyage": "1",
+      "storm": "1-2",
+      "stormBonus": 1.5,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "shotgun-turret-ammo-smoke",
+      "name": "Shotgun Turret Ammo Smoke",
+      "chance": 12.8,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "small-cannon-ammo-low-recoil",
+      "name": "Small Cannon Ammo Low Recoil",
+      "chance": 12.8,
+      "voyage": "15-25",
+      "storm": "25-35",
+      "stormBonus": 1.5,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "turret-ammo-delayed-detonation",
+      "name": "Turret Ammo Delayed Detonation",
+      "chance": 7.7,
+      "voyage": "4-7",
+      "storm": "8-10",
+      "stormBonus": 1.64,
+      "moreInStorm": true,
+      "resolved": true
+     },
+     {
+      "slug": "boosted-energy-bar",
+      "name": "Boosted Energy Bar",
+      "chance": 3.8,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     }
+    ]
+   }
+  ]
+ },
+ "mob-drops": {
+  "name": "Mob Drops",
+  "icon": "containers/mob_drops.png",
+  "category": "loot-containers",
+  "tiers": [
+   {
+    "tier": "Melee mob",
+    "rollSets": 5,
+    "loot": [
+     {
+      "slug": "coin-crown",
+      "name": "Coin Crown",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "small-valuables",
+      "name": "Small Valuables",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-metal-t1",
+      "name": "Resource Metal T1",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-optic-lenses",
+      "name": "Resource Optic Lenses",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-weird-coral",
+      "name": "Weird Coral",
+      "chance": 20.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Melee mob (tool)",
+    "rollSets": 1,
+    "loot": [
+     {
+      "slug": "treasure-shovel",
+      "name": "Treasure Shovel",
+      "chance": 100.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     }
+    ]
+   },
+   {
+    "tier": "Ranged mob",
+    "rollSets": 6,
+    "loot": [
+     {
+      "slug": "pistol-ammo",
+      "name": "Pistol Ammo",
+      "chance": 16.7,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "food-can",
+      "name": "Food Can",
+      "chance": 16.7,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-weapon-parts",
+      "name": "Resource Weapon Parts",
+      "chance": 16.7,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "revolver-quick-reload-eight-shot",
+      "name": "Revolver Quick Reload Eight Shot",
+      "chance": 16.7,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "game-key-locked-box",
+      "name": "Game Key Locked Box",
+      "chance": 16.7,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     },
+     {
+      "slug": "resource-weird-coral",
+      "name": "Weird Coral",
+      "chance": 16.7,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     }
+    ]
+   }
+  ]
+ },
+ "aurogen-crystal": {
+  "name": "Aurogen Crystal",
+  "icon": "containers/aurogen_crystal.png",
+  "category": "loot-containers",
+  "tiers": [
+   {
+    "tier": "Drops",
+    "rollSets": null,
+    "loot": []
+   }
+  ]
+ },
+ "naval-mine": {
+  "name": "Naval Mine",
+  "icon": "containers/naval_mine.png",
+  "category": "loot-containers",
+  "tiers": [
+   {
+    "tier": "Drops",
+    "rollSets": 1,
+    "loot": [
+     {
+      "slug": "resource-metal-t1",
+      "name": "Resource Metal T1",
+      "chance": 100.0,
+      "voyage": "1",
+      "storm": "1",
+      "stormBonus": 1.0,
+      "moreInStorm": false,
+      "resolved": true
+     }
+    ]
+   }
+  ]
+ },
+ "militia-box": {
+  "name": "Militia Box",
+  "icon": "containers/militia_box.png",
+  "category": "loot-containers",
+  "tiers": [
+   {
+    "tier": "Drops",
+    "rollSets": 9,
+    "loot": []
+   }
+  ]
+ }
+}
