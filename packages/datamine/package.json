@@ -1,0 +1,9 @@
+{
+  "name": "@sandlabs/datamine",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "loc:test": "echo \"run: python -m pytest scripts/test_build_localization.py\""
+  }
+}

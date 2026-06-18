@@ -1,0 +1,6 @@
+gamefiles/
+extracted/
+__pycache__/
+*.pyc
+.venv/
+tools/
