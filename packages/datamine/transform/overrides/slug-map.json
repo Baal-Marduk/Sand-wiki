@@ -3,5 +3,10 @@
   "item_ironcladContainer70mm": "ironclad-s-cargo-box",
   "item_ironcladContainer80mm": "ironclad-s-cargo-box",
   "game_coinCrownPile_10": "coin-crown",
-  "game_ValuablePiles01_mobDrop": "small-valuables"
+  "game_ValuablePiles01_mobDrop": "small-valuables",
+  "item_smallCannonAmmo_lowRecoil": "small-cannon-ammo-low-recoil",
+  "item_shotgunTurretAmmo_smoke": "shotgun-turret-ammo-smoke",
+  "item_turretAmmo_EMP": "turret-ammo-emp",
+  "item_rifleMusketClip": "repeater-rifle-quick-reload",
+  "Old_JacketT2": "old-jacket-t2"
 }

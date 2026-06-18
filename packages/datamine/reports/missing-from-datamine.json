@@ -145,11 +145,6 @@
     "kind": "item"
   },
   {
-    "slug": "old-jacket-t2",
-    "name": "SGOW SW.52 Body Armor",
-    "kind": "item"
-  },
-  {
     "slug": "orbital-strike-gun",
     "name": "Orbital Strike Pointer",
     "kind": "item"
@@ -185,11 +180,6 @@
     "kind": "item"
   },
   {
-    "slug": "repeater-rifle-quick-reload",
-    "name": "KF866/9R \"Mehrzel\" Repeater",
-    "kind": "item"
-  },
-  {
     "slug": "rifle-ammo-fire",
     "name": "9x42 mm Incendiary Ammo",
     "kind": "item"
@@ -220,16 +210,6 @@
     "kind": "item"
   },
   {
-    "slug": "shotgun-turret-ammo-smoke",
-    "name": "Smoke 70 mm Shell",
-    "kind": "item"
-  },
-  {
-    "slug": "small-cannon-ammo-low-recoil",
-    "name": "Low-Recoil 40 mm Shell",
-    "kind": "item"
-  },
-  {
     "slug": "smoke-grenade",
     "name": "RG79s Smoke Grenade",
     "kind": "item"
@@ -247,11 +227,6 @@
   {
     "slug": "treasure-shovel",
     "name": "Rusty Shovel",
-    "kind": "item"
-  },
-  {
-    "slug": "turret-ammo-emp",
-    "name": "EMP 80 mm Shell",
     "kind": "item"
   },
   {
