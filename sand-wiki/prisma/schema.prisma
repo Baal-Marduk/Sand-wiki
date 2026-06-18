@@ -56,6 +56,16 @@ model ItemStats {
   magazine       Int?
   ammoName       String?
   ammoType       String?
+  reloadSeconds   Float?
+  rangeFull       Float?
+  rangeMax        Float?
+  rangeMinMult    Float?
+  rangeFalloff    Boolean?
+  penetrates      Boolean?
+  armorRating     Int?
+  armorRegenDelay Float?
+  armorRegenSpeed Float?
+  armorDurability Int?
 
   @@index([workbenchTier])
 }
