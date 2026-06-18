@@ -145,12 +145,12 @@ describe("parseResearch", () => {
 });
 
 describe("parseCost", () => {
-  it("maps cost 1..4 to resolved item slugs, dropping zeros", () => {
+  it("maps cost 1..4 to resolved item slugs, dropping zeros (incl. Crowns -> coin-crown)", () => {
     const fields = { "cost 1": "75", "cost 2": "200", "cost 3": "0", "cost 4": "0" };
-    const resolve = (name: string): string | undefined =>
-      name === "Mechanical Parts" ? "resource-metal-t1" : undefined;
+    const slugs: Record<string, string> = { Crowns: "coin-crown", "Mechanical Parts": "resource-metal-t1" };
+    const resolve = (name: string): string | undefined => slugs[name];
     expect(parseCost(fields, resolve)).toEqual([
-      { name: "Crowns", amount: 75 },
+      { slug: "coin-crown", name: "Crowns", amount: 75 },
       { slug: "resource-metal-t1", name: "Mechanical Parts", amount: 200 },
     ]);
   });

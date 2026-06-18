@@ -84,7 +84,7 @@ async function main() {
     catCounts[category] = (catCounts[category] ?? 0) + 1;
     const research = parseResearch(m.research);
     const cost = parseCost(m, resolveSlug);
-    for (const c of cost) if (!c.slug && c.name !== "Crowns") unresolvedCost.add(c.name);
+    for (const c of cost) if (!c.slug) unresolvedCost.add(c.name);
     const icon = await downloadImage(m.image, slug, imgDir);
     if (!icon) noImage.push(title);
 

@@ -17,6 +17,7 @@
     "researchTier": 4,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 500
       },
@@ -46,6 +47,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 75
       },
@@ -70,6 +72,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 100
       },
@@ -100,6 +103,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 50
       },
@@ -124,6 +128,7 @@
     "researchTier": 4,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 250
       },
@@ -158,6 +163,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 75
       },
@@ -182,6 +188,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 100
       },
@@ -211,6 +218,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 150
       },
@@ -260,6 +268,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 150
       },
@@ -284,6 +293,7 @@
     "researchTier": 4,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 250
       },
@@ -318,6 +328,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 100
       },
@@ -369,6 +380,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 100
       },
@@ -395,6 +407,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 100
       },
@@ -421,6 +434,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 200
       },
@@ -517,6 +531,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 200
       },
@@ -548,6 +563,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 50
       },
@@ -579,6 +595,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 150
       },
@@ -634,6 +651,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 100
       },
@@ -702,6 +720,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 90
       },
@@ -731,6 +750,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 90
       },
@@ -760,6 +780,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 90
       },
@@ -789,6 +810,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 55
       },
@@ -813,6 +835,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 55
       },
@@ -837,6 +860,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 100
       },
@@ -1023,6 +1047,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 200
       },
@@ -1053,6 +1078,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 200
       },
@@ -1083,6 +1109,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 200
       },
@@ -1113,6 +1140,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 75
       },
@@ -1138,6 +1166,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 50
       },
@@ -1163,6 +1192,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 50
       },
@@ -1311,6 +1341,7 @@
     "researchTier": 1,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 50
       },
@@ -1474,6 +1505,7 @@
     "researchTier": 1,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 100
       },
@@ -1937,6 +1969,7 @@
     "researchTier": 4,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 200
       },
@@ -1971,6 +2004,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 10
       },
@@ -1995,6 +2029,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 20
       },
@@ -2019,6 +2054,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 15
       },
@@ -2043,6 +2079,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 15
       },
@@ -2067,6 +2104,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 15
       },
@@ -2091,6 +2129,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 15
       },
@@ -2115,6 +2154,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 30
       },
@@ -2144,6 +2184,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 30
       },
@@ -2173,6 +2214,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 40
       },
@@ -2202,6 +2244,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 40
       },
@@ -2231,6 +2274,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 100
       },
@@ -2260,6 +2304,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 100
       },
@@ -2289,6 +2334,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 200
       },
@@ -2320,6 +2366,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 50
       },
@@ -2345,6 +2392,7 @@
     "researchTier": 4,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 225
       },
@@ -2380,6 +2428,7 @@
     "researchTier": 4,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 225
       },
@@ -2415,6 +2464,7 @@
     "researchTier": 4,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 225
       },
@@ -2450,6 +2500,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 165
       },
@@ -2480,6 +2531,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 125
       },
@@ -2510,6 +2562,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 125
       },
@@ -2539,6 +2592,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 200
       },
@@ -2568,6 +2622,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 50
       },
@@ -2592,6 +2647,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 60
       },
@@ -2616,6 +2672,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 60
       },
@@ -2642,6 +2699,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 50
       },
@@ -2667,6 +2725,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 70
       },
@@ -2697,6 +2756,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 75
       },
@@ -2726,6 +2786,7 @@
     "researchTier": 4,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 200
       },
@@ -2760,6 +2821,7 @@
     "researchTier": 3,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 40
       },
@@ -2786,6 +2848,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 40
       },
@@ -2812,6 +2875,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 60
       },
@@ -2875,6 +2939,7 @@
     "researchTier": 2,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 125
       },
@@ -2924,6 +2989,7 @@
     "researchTier": 4,
     "cost": [
       {
+        "slug": "coin-crown",
         "name": "Crowns",
         "amount": 300
       },

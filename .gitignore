@@ -21,3 +21,4 @@ node_modules/
 # Separate tools living alongside the wiki (tracked elsewhere / not part of sand-wiki)
 /sand-scraper/
 /tech-tree/
+/sek

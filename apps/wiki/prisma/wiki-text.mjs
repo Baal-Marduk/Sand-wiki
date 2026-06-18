@@ -122,7 +122,7 @@ export function parseModule(wikitext) {
 }
 
 /** The four ordered cost slots of the {{Module}} infobox, by resource name.
- *  cost 1 is the Crowns currency (no item slug); 2-4 are craftable resources. */
+ *  cost 1 is the Crowns currency (resolves to the coin-crown item); 2-4 are resources. */
 const COST_SLOTS = [
   { field: "cost 1", name: "Crowns" },
   { field: "cost 2", name: "Mechanical Parts" },
@@ -131,7 +131,8 @@ const COST_SLOTS = [
 ];
 
 /** Build a [{ slug?, name, amount }] cost array from Module fields, dropping zero/blank
- *  amounts. `resolve(name)` returns an item slug or undefined; Crowns stays slug-less.
+ *  amounts. `resolve(name)` returns an item slug or undefined; Crowns resolves to the
+ *  coin-crown currency item like any other resource.
  *  @param {Record<string, string>} fields
  *  @param {(name: string) => string | undefined} resolve
  *  @returns {Array<{ slug?: string, name: string, amount: number }>} */
@@ -140,7 +141,7 @@ export function parseCost(fields, resolve) {
   for (const { field, name } of COST_SLOTS) {
     const amount = Number(fields[field]);
     if (!Number.isFinite(amount) || amount <= 0) continue;
-    const slug = name === "Crowns" ? undefined : resolve(name);
+    const slug = resolve(name);
     out.push(slug ? { slug, name, amount } : { name, amount });
   }
   return out;
