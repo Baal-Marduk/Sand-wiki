@@ -14,13 +14,16 @@ update BUNDLE_GLOBS / the field picks below, then report findings.
 """
 import json, os, glob
 import UnityPy
+import odin_parser  # sibling module (scripts/ is on sys.path when run as `python scripts/...`)
 
 AA = 'gamefiles/Sand_Data/StreamingAssets/aa/StandaloneWindows64'
 OUT = 'extracted/json/item_defs.json'
 os.makedirs('extracted/json', exist_ok=True)
 
-# Bundles most likely to hold the item config. Broaden if the asset moved.
-BUNDLE_GLOBS = ['*item*', '*inventory*', '*shared*', '*database*', 'data.unity3d', '*config*']
+# Bundles most likely to hold the item config. `configuration_assets_all` is where SandTools
+# (downloadpizza/SandTools, bundle/extract_data.py) reads SAND's config MonoBehaviours; we try
+# it first, then broaden. Broaden further if the asset moved between builds.
+BUNDLE_GLOBS = ['*configuration*', '*config*', '*item*', '*inventory*', '*shared*', '*database*', 'data.unity3d']
 
 def candidate_bundles():
     seen = set()
@@ -76,8 +79,21 @@ for bundle in candidate_bundles():
             try: tree = json.loads(raw.decode('utf-8-sig', 'replace'))
             except Exception: continue
         else:
-            try: tree = o.read_typetree()
+            try: tt = o.read_typetree()
             except Exception: continue
+            # SAND ScriptableObjects are Odin-serialized: the real item fields live in the
+            # serializationData.SerializedBytes blob, NOT the Unity typetree (which only shows
+            # the Odin envelope). Decode the blob with odin_parser; fall back to the typetree
+            # for plain (non-Odin) MonoBehaviours. (Lesson from SEK's odin_parser + SandTools.)
+            sd = tt.get('serializationData') if isinstance(tt, dict) else None
+            sbytes = None
+            if isinstance(sd, dict):
+                sbytes = sd.get('SerializedBytes') or sd.get('serializedBytes')
+            if sbytes:
+                try: tree = odin_parser.decode(sbytes)
+                except Exception: tree = tt
+            else:
+                tree = tt
         recs = list(walk_items(tree))
         if not recs:
             continue
