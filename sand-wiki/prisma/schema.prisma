@@ -65,7 +65,9 @@ model ItemStats {
   armorRating     Int?
   armorRegenDelay Float?
   armorRegenSpeed Float?
-  armorDurability Int?
+  armorDurability    Int?
+  fireRate           Float?
+  projectileVelocity Float?
 
   @@index([workbenchTier])
 }
