@@ -67,8 +67,9 @@ applied, effort collapsed to Tier 1/2/3, storm-bonus fields present).
 
 ## Weapon / ammo / armor stats
 
-Source: SEK `site/src/data/weapon_stats.json` (built datamine output) → copied to
-`datamine/data/weapon_stats.json` (committed snapshot).
+Source: SEK `site/src/data/weapon_stats.json` + `site/src/data/turret_stats.json` (built
+datamine outputs) → copied to `datamine/data/` (committed snapshots). Both feed the same
+`weapons:build` → `prisma/weapon-stats.json` artifact.
 
 Pipeline (mirrors loot containers):
 1. `npm run weapons:build` — reshape snapshot → `prisma/weapon-stats.json` (slug-keyed; commit it).
@@ -79,5 +80,7 @@ Run order: because `seed.ts` also writes these `ItemStats` columns, run
 `db:load-weapon-stats` AFTER any `db:seed`. Datamine is authoritative over the wiki
 scrape; contributor edits still win.
 
-Not imported here: magazine and ammoType (absent from weapon_stats.json — only turrets
-carry clip size), recoil/spread (intentionally skipped), and turrets (separate follow-up).
+Turret stats (fireRate, projectileVelocity, clipSize→magazine, penetrates, reloadSeconds)
+are imported for the 6 turret items. Not imported: magazine/ammoType for player weapons
+(absent from weapon_stats.json), recoil/spread, and turret extras (barrels, autoRefill,
+spreadIdleMax, fireInterval, family/tier).
