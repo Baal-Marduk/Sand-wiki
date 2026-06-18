@@ -25,6 +25,13 @@ describe("weaponPatch", () => {
   it("drops a null reload and null range entirely", () => {
     expect(weaponPatch({ reloadSeconds: null, range: null, recoil: null, spread: null })).toEqual({});
   });
+  it("keeps range when reload is null", () => {
+    expect(weaponPatch({
+      reloadSeconds: null,
+      range: { full: 10, max: 80, minMult: 0.4, falloff: false },
+      recoil: null, spread: null,
+    })).toEqual({ rangeFull: 10, rangeMax: 80, rangeMinMult: 0.4, rangeFalloff: false });
+  });
 });
 
 describe("ammoPatch", () => {
