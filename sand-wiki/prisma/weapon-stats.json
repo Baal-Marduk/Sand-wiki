@@ -1,6 +1,6 @@
 {
   "meta": {
-    "source": "datamine/data/weapon_stats.json",
+    "source": "datamine/data/{weapon,turret}_stats.json",
     "items": 61
   },
   "items": {

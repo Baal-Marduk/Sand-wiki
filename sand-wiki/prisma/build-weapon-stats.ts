@@ -8,7 +8,7 @@ import {
   type StatPatch, type TurretStatsFile, type WeaponStatsArtifact, type WeaponStatsFile,
 } from "./weapon-stats";
 
-const SOURCE = "datamine/data/weapon_stats.json";
+const SOURCE = "datamine/data/{weapon,turret}_stats.json";
 
 const raw = JSON.parse(
   readFileSync(join(__dirname, "..", "datamine/data/weapon_stats.json"), "utf-8"),
