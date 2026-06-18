@@ -1,6 +1,5 @@
-import Link from "next/link";
 import { FaSteam } from "react-icons/fa";
-import { getUser, isAdmin } from "@/lib/auth";
+import { getUser } from "@/lib/auth";
 
 const linkCls = "nav-link rounded px-2 py-1 text-sm font-semibold text-foreground hover:text-primary";
 
@@ -16,14 +15,8 @@ export async function AuthMenu() {
     );
   }
 
-  const admin = isAdmin(user.steamId);
   return (
     <div className="flex items-center gap-2">
-      {admin && (
-        <Link href="/admin/proposals" className={linkCls}>
-          Review
-        </Link>
-      )}
       {/* JS-free dropdown: <details> keeps this a server component. */}
       <details className="relative">
         <summary

@@ -1,10 +1,9 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCaliber, getUnlockingNode, getLastEditor, getKeyUsage, getBuyOptions } from "@/lib/queries";
+import { getItemBySlug, getCratesContaining, getAmmoByCaliber, getWeaponsByCaliber, getUnlockingNode, getKeyUsage, getBuyOptions } from "@/lib/queries";
 import { entityHref } from "@/lib/entity-links";
 import { metaDescription } from "@/lib/site";
-import { editorDisplayName } from "@/lib/steam";
 import { caliberLabel } from "@/lib/ammo";
 import { classifyTrades } from "@/lib/trades";
 import { availableTabs, itemDetailRows, type TabId } from "@/lib/item-view";
@@ -21,7 +20,7 @@ import { UsedInTable } from "@/components/UsedInTable";
 import { CrateDropList } from "@/components/CrateDropList";
 import { ItemLinkList } from "@/components/ItemLinkList";
 import { KeyLinksTable } from "@/components/KeyLinksTable";
-import { getSession, sessionIsAdmin } from "@/lib/auth";
+import { sessionIsAdmin } from "@/lib/auth";
 import { AdminEntityControls } from "@/components/AdminEntityControls";
 import { BuyOptions } from "@/components/BuyOptions";
 
@@ -71,8 +70,6 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
   const ammo = !isAmmo && caliber ? await getAmmoByCaliber(caliber) : [];
   const ammoUsers = isAmmo && caliber ? await getWeaponsByCaliber(caliber) : [];
 
-  const canSuggest = !!(await getSession());
-  const editor = await getLastEditor("item", item.slug);
   const buyOptions = await getBuyOptions(slug);
   const priced = pricedOptions(buyOptions);
   const tabContent: Partial<Record<TabId, React.ReactNode>> = {
@@ -122,8 +119,6 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
         { label: categoryLabel(item.category), href: `/items?category=${item.category}` },
         { label: item.name },
       ]}
-      suggest={{ type: "item", slug: item.slug }}
-      canSuggest={canSuggest}
       icon={{ name: item.name, icon: item.icon, rarity: item.rarity }}
       title={item.name}
       badges={
@@ -149,7 +144,6 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
           <AdminEntityControls slug={item.slug} icon={item.icon} imageAlt={item.imageAlt} disabled={item.disabled} />
         ) : undefined
       }
-      lastEditedBy={editor ? { steamId: editor.steamId, name: editorDisplayName(editor.personaName) } : null}
       tabs={tabs}
       tabsEmptyFallback={
         <p className="text-muted-foreground">No crafting, usage, or trade data for this item.</p>

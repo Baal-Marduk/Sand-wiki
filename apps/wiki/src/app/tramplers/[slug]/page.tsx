@@ -1,9 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { getTramplerPartBySlug, getUnlockingNode, getLastEditor } from "@/lib/queries";
+import { getTramplerPartBySlug, getUnlockingNode } from "@/lib/queries";
 import { metaDescription } from "@/lib/site";
-import { editorDisplayName } from "@/lib/steam";
 import { categoryLabel } from "@/lib/taxonomy";
 import { tramplerStatCells, tramplerDetailRows } from "@/lib/trampler-view";
 import { EntityDetail } from "@/components/EntityDetail";
@@ -11,7 +10,7 @@ import { actionButtonClass } from "@/components/ui/button";
 import { CategoryTag } from "@/components/CategoryTag";
 import { ItemIconLink } from "@/components/ItemIconLink";
 import { type Tab } from "@/components/ItemTabs";
-import { getSession, sessionIsAdmin } from "@/lib/auth";
+import { sessionIsAdmin } from "@/lib/auth";
 import { AdminEntityControls } from "@/components/AdminEntityControls";
 
 type Params = Promise<{ slug: string }>;
@@ -48,8 +47,6 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
 
   const techNode = await getUnlockingNode(slug);
 
-  const canSuggest = !!(await getSession());
-  const editor = await getLastEditor("tramplerPart", slug);
   const cost = part.outgoingLinks;
   const stats = part.tramplerStats ?? {
     dimensions: null, health: null, weight: null, weightCapacity: null, weightCompensation: null,
@@ -86,8 +83,6 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
         { label: categoryLabel(part.category), href: `/tramplers?category=${part.category}` },
         { label: part.name },
       ]}
-      suggest={{ type: "tramplerPart", slug }}
-      canSuggest={canSuggest}
       icon={{ name: part.name, icon: part.icon, decorative: true }}
       title={part.name}
       badges={
@@ -109,7 +104,6 @@ export default async function TramplerPartPage({ params }: { params: Params }) {
           <AdminEntityControls slug={part.slug} icon={part.icon} imageAlt={part.imageAlt} disabled={part.disabled} />
         ) : undefined
       }
-      lastEditedBy={editor ? { steamId: editor.steamId, name: editorDisplayName(editor.personaName) } : null}
       tabs={tabs}
       sourceUrl={part.sourceUrl}
     />

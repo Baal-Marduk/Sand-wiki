@@ -56,12 +56,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <Link href="/about" className="text-primary underline-offset-2 hover:underline">
                     About
                   </Link>
-                  <Link
-                    href="/contribute/new"
-                    className="text-primary underline-offset-2 hover:underline"
-                  >
-                    Contribute
-                  </Link>
                   <a
                     href={DISCORD_URL}
                     target="_blank"

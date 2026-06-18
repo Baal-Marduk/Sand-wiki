@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { prisma } from "@/lib/db";
 import { itemCategoryCounts, envCategoryCounts, tramplerCategoryCounts } from "@/lib/queries";
 import { StatGrid } from "@/components/StatGrid";
@@ -65,21 +64,6 @@ export default async function AboutPage() {
         <StatGrid cells={stats} />
 
         <div className="grid gap-8 sm:grid-cols-2">
-          <div>
-            <h2 className="mb-2 font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
-              How to help
-            </h2>
-            <p className="text-sm leading-relaxed text-muted-foreground">
-              Spot a wrong stat or a missing item? Propose an edit — every change is reviewed by a
-              moderator before it goes live.
-            </p>
-            <Link
-              href="/contribute/new"
-              className="mt-3 inline-flex items-center border border-border-strong px-3 py-1.5 font-display text-xs font-semibold uppercase tracking-[0.05em] text-foreground transition-colors hover:border-primary hover:bg-card-elevated hover:text-primary-hover"
-            >
-              Start contributing
-            </Link>
-          </div>
           <div>
             <h2 className="mb-2 font-display text-[11px] font-semibold uppercase tracking-[0.08em] text-muted-foreground">
               Data &amp; license

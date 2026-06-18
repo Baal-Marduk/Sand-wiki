@@ -1,8 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getEnvEntityBySlug, getLastEditor } from "@/lib/queries";
+import { getEnvEntityBySlug } from "@/lib/queries";
 import { metaDescription } from "@/lib/site";
-import { editorDisplayName } from "@/lib/steam";
 import { lootEntryView } from "@/lib/loot";
 import { groupLootByTier, entityHref, type LinkRow } from "@/lib/entity-links";
 import { categoryLabel } from "@/lib/taxonomy";
@@ -13,7 +12,7 @@ import { LootTable } from "@/components/LootTable";
 import { KeyLinksTable, type KeyLinkView } from "@/components/KeyLinksTable";
 import { UsedInTable } from "@/components/UsedInTable";
 import { type Tab } from "@/components/ItemTabs";
-import { getSession, sessionIsAdmin } from "@/lib/auth";
+import { sessionIsAdmin } from "@/lib/auth";
 import { AdminEntityControls } from "@/components/AdminEntityControls";
 
 type Params = Promise<{ slug: string }>;
@@ -48,8 +47,6 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
   const admin = await sessionIsAdmin();
   if (entity.disabled && !admin) notFound();
 
-  const canSuggest = !!(await getSession());
-  const editor = await getLastEditor("envEntity", slug);
   const lootRows: LinkRow[] = entity.outgoingLinks.map((l) => ({
     targetSlug: l.target?.slug ?? null,
     targetKind: l.target?.kind ?? null,
@@ -113,8 +110,6 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
         { label: categoryLabel(entity.category), href: `/environment?category=${entity.category}` },
         { label: entity.name },
       ]}
-      suggest={{ type: "envEntity", slug }}
-      canSuggest={canSuggest}
       icon={{ name: entity.name, icon: entity.icon, decorative: true, categorySlug: entity.category }}
       title={entity.name}
       badges={<CategoryTag slug={entity.category} />}
@@ -125,7 +120,6 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
           <AdminEntityControls slug={entity.slug} icon={entity.icon} imageAlt={entity.imageAlt} disabled={entity.disabled} />
         ) : undefined
       }
-      lastEditedBy={editor ? { steamId: editor.steamId, name: editorDisplayName(editor.personaName) } : null}
       tabs={tabs}
       sourceUrl={entity.sourceUrl}
     />

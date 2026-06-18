@@ -391,21 +391,6 @@ export async function getUnlockingNode(entitySlug: string): Promise<{ slug: stri
   return link ? { slug: link.sourceSlug } : null;
 }
 
-/** The most recent contributor whose proposal was applied to this entity, or null
- *  if it has never been edited. Scoped by targetType+targetSlug so recipe-targeted
- *  proposals (and any slug collision with them) are excluded. Covers edit,
- *  links_edit, loot_sources_edit, and buy_options_edit kinds — all of which carry
- *  the entity's slug. */
-/** Last-editor credit was sourced from applied Proposals; the proposal-correction
- *  feature is removed in this restructure, so there is no edit history. Always null.
- *  (Kept for call-site compatibility; callers render nothing when null.) */
-export async function getLastEditor(
-  _targetType: "item" | "envEntity" | "tramplerPart",
-  _slug: string,
-): Promise<{ steamId: string; personaName: string | null } | null> {
-  return null;
-}
-
 /** Items whose purchase a given tech node unlocks (reverse of buy-unlock). */
 export async function getBuyUnlockedItems(techSlug: string) {
   const node = data.getEntity(techSlug);

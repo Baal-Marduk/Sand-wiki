@@ -1,13 +1,10 @@
 import { Breadcrumb, type Crumb } from "@/components/Breadcrumb";
-import { SuggestCorrectionLink } from "@/components/SuggestCorrectionLink";
-import { EditTabsLink } from "@/components/EditTabsLink";
 import { StatGrid } from "@/components/StatGrid";
 import { ItemTabs, type Tab } from "@/components/ItemTabs";
 import { ItemDetailsPanel } from "@/components/ItemDetailsPanel";
 import { DescriptionText } from "@/components/DescriptionText";
 import { ItemIcon } from "@/components/ItemIcon";
 import type { StatCell, DetailRow } from "@/lib/item-view";
-import { steamProfileUrl } from "@/lib/steam";
 
 export interface EntityIcon {
   name: string;
@@ -20,8 +17,6 @@ export interface EntityIcon {
 
 export interface EntityDetailProps {
   breadcrumb: Crumb[];
-  suggest: { type: string; slug: string };
-  canSuggest?: boolean;
   icon?: EntityIcon;
   title: string;
   badges?: React.ReactNode;
@@ -32,8 +27,6 @@ export interface EntityDetailProps {
   /** Shown in the main column when there are no tabs (e.g. the item "no data" message). */
   tabsEmptyFallback?: React.ReactNode;
   sourceUrl?: string | null;
-  /** Most recent contributor credit, shown at the bottom of the sidebar. */
-  lastEditedBy?: { steamId: string; name: string } | null;
   /** Renders a "Disabled" badge near the title (admins only ever see disabled rows). */
   disabled?: boolean;
   /** Admin-only control strip (image edit + disable toggle), shown at the very bottom. */
@@ -53,8 +46,6 @@ function SectionTitle({ children }: { children: React.ReactNode }) {
  *  `detailRows` are provided; otherwise a single centered column. */
 export function EntityDetail({
   breadcrumb,
-  suggest,
-  canSuggest,
   icon,
   title,
   badges,
@@ -64,26 +55,12 @@ export function EntityDetail({
   tabs,
   tabsEmptyFallback,
   sourceUrl,
-  lastEditedBy,
   disabled,
   adminControls,
 }: EntityDetailProps) {
   const hasDetails = !!detailRows && detailRows.length > 0;
-  const hasSidebar = hasDetails || !!lastEditedBy;
+  const hasSidebar = hasDetails;
 
-  const editorCredit = lastEditedBy ? (
-    <div className={hasDetails ? "mt-5" : undefined}>
-      <SectionTitle>Last edited by</SectionTitle>
-      <a
-        href={steamProfileUrl(lastEditedBy.steamId)}
-        target="_blank"
-        rel="noopener noreferrer"
-        className="text-[13px] font-medium text-primary underline underline-offset-2 hover:text-primary-hover"
-      >
-        {lastEditedBy.name}
-      </a>
-    </div>
-  ) : null;
   const main = tabs && tabs.length > 0 ? <ItemTabs tabs={tabs} /> : tabsEmptyFallback ?? null;
   const hasStats = !!stats && stats.length > 0;
 
@@ -112,12 +89,6 @@ export function EntityDetail({
     <article className={`mx-auto space-y-6 py-6 ${hasSidebar ? "max-w-5xl" : "max-w-3xl"}`}>
       <div className="flex items-center justify-between gap-3">
         <Breadcrumb items={breadcrumb} />
-        {canSuggest && (
-          <div className="flex gap-2">
-            <SuggestCorrectionLink type={suggest.type} slug={suggest.slug} />
-            <EditTabsLink type={suggest.type} slug={suggest.slug} />
-          </div>
-        )}
       </div>
 
       <header className="flex flex-wrap items-start gap-5">
@@ -157,7 +128,6 @@ export function EntityDetail({
           </div>
           <aside>
             {hasDetails && <ItemDetailsPanel rows={detailRows!} />}
-            {editorCredit}
           </aside>
         </div>
       ) : (
