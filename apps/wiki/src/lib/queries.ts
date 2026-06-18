@@ -1,31 +1,14 @@
 import { cache } from "react";
-import { prisma } from "./db";
-import { buildItemQuery, applyItemView, type ItemFilter } from "./item-filter";
+import * as data from "@sandlabs/data";
+import type { Entity, Recipe } from "@sandlabs/data";
+import { applyItemView, type ItemFilter } from "./item-filter";
 import { itemClasses } from "./ammo";
 import { toRecipeCard, type RecipeWithItems, type RecipeLine } from "./recipes";
 import { entityHref } from "./entity-links";
-import { visibilityWhere, linkTargetEnabled } from "./visibility";
 import { toTechTree, FACTION_ROOT_PART } from "./tech-tree/transform";
 import type { TechTree } from "./tech-tree/types";
 import type { LinkOption } from "@/lib/link-picker";
 import { groupBuyOptions, type BuyLinkRow, type BuyOptionView } from "./buy-options";
-
-/** {slug,name,icon,rarity} select for entities referenced from a recipe line. */
-const linkItemSelect = { select: { slug: true, name: true, icon: true, rarity: true } } as const;
-
-// Recipe lines referencing a disabled entity are scrubbed (a disabled item never
-// appears as a phantom input/output on another item's crafting tabs).
-const enabledLine = { where: { entity: { disabled: false } }, include: { entity: linkItemSelect } } as const;
-
-const recipeInclude = {
-  recipe: {
-    include: {
-      inputs: enabledLine,
-      outputs: enabledLine,
-      location: { select: { slug: true, name: true } },
-    },
-  },
-} as const;
 
 /** A recipe row as loaded with `entity`-relation includes (Prisma renamed the
  *  relation field from `item` to `entity`). */
@@ -54,14 +37,50 @@ function toRecipeWithItems(r: LoadedRecipe): RecipeWithItems {
   };
 }
 
+/** Hide disabled entities from the public; admins see everything. Mirrors the old
+ *  visibilityWhere() applied in-memory. */
+function visible(rows: Entity[], isAdmin: boolean): Entity[] {
+  return isAdmin ? rows : rows.filter((e) => !e.disabled);
+}
+
+/** Matcher for ItemFilter's name/derivedName/category/workbenchTier/rarity, in-memory.
+ *  Mirrors buildItemQuery's WHERE (case-insensitive name match). */
+function matchesItemFilter(e: Entity, f: ItemFilter): boolean {
+  if (f.query) {
+    const q = f.query.toLowerCase();
+    const inName = e.name.toLowerCase().includes(q);
+    const inDerived = (e.derivedName ?? "").toLowerCase().includes(q);
+    if (!inName && !inDerived) return false;
+  }
+  if (f.category && e.category !== f.category) return false;
+  if (f.workbenchTier !== undefined && e.itemStats?.workbenchTier !== f.workbenchTier) return false;
+  if (f.rarity && e.rarity !== f.rarity) return false;
+  return true;
+}
+
+/** Resolve a recipe's line slugs to display rows, dropping any line whose entity is
+ *  disabled (mirrors the old `enabledLine` include filter). */
+function resolveRecipe(r: Recipe): LoadedRecipe {
+  const line = (l: { itemSlug: string; amount: number }) => {
+    const e = data.getEntity(l.itemSlug);
+    return e && !e.disabled
+      ? { amount: l.amount, entity: { slug: e.slug, name: e.name, icon: e.icon, rarity: e.rarity } }
+      : null;
+  };
+  const loc = r.locationSlug ? data.getEntity(r.locationSlug) : null;
+  return {
+    slug: r.slug, workbench: r.workbench, tier: r.tier, craftTimeSeconds: r.craftTimeSeconds,
+    location: loc ? { slug: loc.slug, name: loc.name } : null,
+    inputs: r.inputs.map(line).filter((x): x is NonNullable<typeof x> => x !== null),
+    outputs: r.outputs.map(line).filter((x): x is NonNullable<typeof x> => x !== null),
+  };
+}
+
 export async function listItems(filter: ItemFilter, isAdmin = false) {
-  const { where, orderBy } = buildItemQuery(filter);
-  const items = await prisma.entity.findMany({
-    where: { ...where, ...visibilityWhere(isAdmin) },
-    orderBy,
-    include: { itemStats: true },
-  });
-  const flat = items.map((i) => ({ ...i, ammoType: i.itemStats?.ammoType ?? null }));
+  const rows = visible(data.listByKind("item"), isAdmin)
+    .filter((e) => matchesItemFilter(e, filter))
+    .sort((a, b) => a.name.localeCompare(b.name)); // name-asc base order
+  const flat = rows.map((i) => ({ ...i, ammoType: i.itemStats?.ammoType ?? null }));
   return applyItemView(flat, { sort: filter.sort, weaponClass: filter.weaponClass });
 }
 
@@ -70,13 +89,12 @@ export async function listItems(filter: ItemFilter, isAdmin = false) {
 export async function listRarities(filter: ItemFilter): Promise<string[]> {
   const rest = { ...filter };
   delete rest.rarity;
-  const { where } = buildItemQuery(rest);
-  const rows = await prisma.entity.findMany({
-    where: { ...where, rarity: { not: null }, disabled: false },
-    distinct: ["rarity"],
-    select: { rarity: true },
-  });
-  return rows.map((r) => r.rarity).filter((r): r is string => r !== null);
+  const rarities = new Set<string>();
+  for (const e of data.listByKind("item")) {
+    if (e.disabled || e.rarity == null) continue;
+    if (matchesItemFilter(e, rest)) rarities.add(e.rarity);
+  }
+  return [...rarities];
 }
 
 /** Distinct non-null workbench tiers among items matching the filter (ignoring any tier
@@ -85,14 +103,14 @@ export async function listRarities(filter: ItemFilter): Promise<string[]> {
 export async function listWorkbenchTiers(filter: ItemFilter): Promise<number[]> {
   const rest = { ...filter };
   delete rest.workbenchTier;
-  const { where } = buildItemQuery(rest);
-  const rows = await prisma.itemStats.findMany({
-    where: { entity: { ...where, disabled: false }, workbenchTier: { not: null } },
-    distinct: ["workbenchTier"],
-    select: { workbenchTier: true },
-    orderBy: { workbenchTier: "asc" },
-  });
-  return rows.map((r) => r.workbenchTier).filter((t): t is number => t !== null);
+  const tiers = new Set<number>();
+  for (const e of data.listByKind("item")) {
+    if (e.disabled) continue;
+    const t = e.itemStats?.workbenchTier;
+    if (t == null) continue;
+    if (matchesItemFilter(e, rest)) tiers.add(t);
+  }
+  return [...tiers].sort((a, b) => a - b);
 }
 
 /** Distinct caliber-class labels (Pistol, Rifle, …) among items matching the filter,
@@ -101,162 +119,142 @@ export async function listWorkbenchTiers(filter: ItemFilter): Promise<number[]> 
  *  using a DB `distinct`. No field needs excluding: weaponClass is app-level and never part
  *  of buildItemQuery's where clause. */
 export async function listItemClasses(filter: ItemFilter): Promise<string[]> {
-  const { where } = buildItemQuery(filter);
-  const rows = await prisma.entity.findMany({
-    where: { ...where, disabled: false },
-    select: { itemStats: { select: { ammoType: true } } },
-  });
-  return itemClasses(rows.map((r) => ({ ammoType: r.itemStats?.ammoType ?? null })));
+  const rows = data.listByKind("item")
+    .filter((e) => !e.disabled && matchesItemFilter(e, filter))
+    .map((e) => ({ ammoType: e.itemStats?.ammoType ?? null }));
+  return itemClasses(rows);
 }
 
 /** Count of items per category — for the home browse grid. Mirrors
  *  envCategoryCounts / tramplerCategoryCounts; reads the stored `category` column. */
 export async function itemCategoryCounts(): Promise<Record<string, number>> {
-  const rows = await prisma.entity.groupBy({ by: ["category"], where: { kind: "item", disabled: false }, _count: true });
-  return Object.fromEntries(rows.map((r) => [r.category, r._count]));
+  return data.categoryCounts("item");
 }
 
 /** Environment entities (loot containers, etc.), optionally filtered by category. */
 export async function listEnvEntities(category?: string, isAdmin = false) {
-  return prisma.entity.findMany({
-    where: { kind: "environment", ...(category ? { category } : {}), ...visibilityWhere(isAdmin) },
-    orderBy: { name: "asc" },
-  });
+  const rows = category
+    ? data.listByCategory("environment", category)
+    : data.listByKind("environment");
+  return visible(rows, isAdmin).slice().sort((a, b) => a.name.localeCompare(b.name));
 }
 
 export const getEnvEntityBySlug = cache(async (slug: string) => {
-  const entity = await prisma.entity.findUnique({
-    where: { slug },
-    include: {
-      // Loot tabs + the key-progression panel share this one relation include; the
-      // page partitions by role. (Prisma allows including a relation only once.)
-      outgoingLinks: {
-        where: { role: { in: ["loot", "requires-key", "rewards-key"] }, ...linkTargetEnabled },
-        orderBy: { sortOrder: "asc" },
-        include: { target: { select: { slug: true, kind: true, name: true, icon: true, rarity: true, category: true } } },
-      },
-      craftedAtRecipes: {
-        orderBy: { slug: "asc" },
-        include: {
-          inputs: enabledLine,
-          outputs: enabledLine,
-        },
-      },
-    },
-  });
+  const entity = data.getEntity(slug);
   if (entity === null || entity.kind !== "environment") return null;
-  // `outgoingLinks` stays loot-only for back-compat with the loot tabs; key-progression
-  // links are surfaced separately so the Keys tab can render them.
-  const lootLinks = entity.outgoingLinks.filter((l) => l.role === "loot");
-  const keyLinks = entity.outgoingLinks.filter(
-    (l) => l.role === "requires-key" || l.role === "rewards-key",
+
+  const linkRoles = ["loot", "requires-key", "rewards-key"];
+  const allLinks = data.outgoingLinks(slug, linkRoles)
+    .filter((l) => l.targetSlug === null || data.isEntityEnabled(l.targetSlug));
+
+  const resolveTarget = (l: (typeof allLinks)[number]) => {
+    const t = l.targetSlug ? data.getEntity(l.targetSlug) : null;
+    return {
+      ...l,
+      target: t ? { slug: t.slug, kind: t.kind, name: t.name, icon: t.icon, rarity: t.rarity, category: t.category } : null,
+    };
+  };
+  const linksResolved = allLinks.map(resolveTarget);
+  const lootLinks = linksResolved.filter((l) => l.role === "loot");
+  const keyLinks = linksResolved.filter((l) => l.role === "requires-key" || l.role === "rewards-key");
+
+  const craftedBy = data.recipesAtLocation(slug).map((r) =>
+    toRecipeCard(toRecipeWithItems({ ...resolveRecipe(r), location: null })),
   );
-  // We're already on the location page, so each card's location backlink is null.
-  const craftedBy = entity.craftedAtRecipes.map((r) =>
-    toRecipeCard(toRecipeWithItems({ ...r, location: null })),
-  );
+
   return { ...entity, outgoingLinks: lootLinks, keyLinks, craftedBy };
 });
 
 /** Count of env entities per category — for the Environment landing. */
 export async function envCategoryCounts(): Promise<Record<string, number>> {
-  const rows = await prisma.entity.groupBy({ by: ["category"], where: { kind: "environment", disabled: false }, _count: true });
-  return Object.fromEntries(rows.map((r) => [r.category, r._count]));
+  return data.categoryCounts("environment");
 }
 
 /** Trampler parts, optionally filtered by functional category. List cards read
  *  dimensions/research from the tramplerStats extension, so it is included. */
 export async function listTramplerParts(category?: string, isAdmin = false) {
-  return prisma.entity.findMany({
-    where: { kind: "trampler-part", ...(category ? { category } : {}), ...visibilityWhere(isAdmin) },
-    include: { tramplerStats: true },
-    orderBy: [{ tramplerStats: { researchTier: "asc" } }, { name: "asc" }],
+  const rows = category
+    ? data.listByCategory("trampler-part", category)
+    : data.listByKind("trampler-part");
+  return visible(rows, isAdmin).slice().sort((a, b) => {
+    const ta = a.tramplerStats?.researchTier ?? Number.MAX_SAFE_INTEGER;
+    const tb = b.tramplerStats?.researchTier ?? Number.MAX_SAFE_INTEGER;
+    return ta - tb || a.name.localeCompare(b.name);
   });
 }
 
 export const getTramplerPartBySlug = cache(async (slug: string) => {
-  const part = await prisma.entity.findUnique({
-    where: { slug },
-    include: {
-      tramplerStats: true,
-      outgoingLinks: {
-        where: { role: "cost", ...linkTargetEnabled },
-        orderBy: { sortOrder: "asc" },
-        include: { target: { select: { slug: true, kind: true, icon: true, rarity: true } } },
-      },
-    },
-  });
+  const part = data.getEntity(slug);
   if (!part || part.kind !== "trampler-part") return null;
-  return part;
+  const costLinks = data.outgoingLinks(slug, ["cost"])
+    .filter((l) => l.targetSlug === null || data.isEntityEnabled(l.targetSlug))
+    .map((l) => {
+      const t = l.targetSlug ? data.getEntity(l.targetSlug) : null;
+      // Synthesise a stable `id` for React key usage (the page uses `c.id` as the list key).
+      const id = `${l.sourceSlug}:${l.role}:${l.sortOrder}`;
+      return { ...l, id, target: t ? { slug: t.slug, kind: t.kind, icon: t.icon, rarity: t.rarity } : null };
+    });
+  return { ...part, outgoingLinks: costLinks };
 });
 
 /** Count of trampler parts per category — for the Tramplers landing. */
 export async function tramplerCategoryCounts(): Promise<Record<string, number>> {
-  const rows = await prisma.entity.groupBy({ by: ["category"], where: { kind: "trampler-part", disabled: false }, _count: true });
-  return Object.fromEntries(rows.map((r) => [r.category, r._count]));
+  return data.categoryCounts("trampler-part");
 }
+
+// Wrapped in React `cache()` so a page and its `generateMetadata` share one DB
+// round-trip per request (Prisma calls aren't auto-memoized like `fetch`).
+export const getItemBySlug = cache(async (slug: string) => {
+  const item = data.getEntity(slug);
+  if (!item || item.kind !== "item") return null;
+  const craftedBy = data.recipesProducing(slug).map((r) => toRecipeCard(toRecipeWithItems(resolveRecipe(r))));
+  const usedIn = data.recipesUsing(slug).map((r) => toRecipeCard(toRecipeWithItems(resolveRecipe(r))));
+  return { ...item, craftedBy, usedIn };
+});
 
 /** An item's incoming loot links, resolved to their source slug + name (ordered by
  *  sortOrder). Prefills the item-side ("Found in") loot editor. Null if not an item. */
 export async function getIncomingLootLinks(itemSlug: string) {
-  const item = await prisma.entity.findUnique({
-    where: { slug: itemSlug },
-    select: {
-      kind: true,
-      incomingLinks: {
-        where: { role: "loot" },
-        orderBy: { sortOrder: "asc" },
-        select: {
-          tier: true,
-          value1: true,
-          sortOrder: true,
-          source: { select: { slug: true, name: true } },
-        },
-      },
-    },
-  });
+  const item = data.getEntity(itemSlug);
   if (!item || item.kind !== "item") return null;
-  return item.incomingLinks;
+  return data.incomingLinks(itemSlug, ["loot"])
+    .sort((a, b) => a.sortOrder - b.sortOrder)
+    .map((l) => {
+      const src = data.getEntity(l.sourceSlug)!;
+      return { tier: l.tier, value1: l.value1, sortOrder: l.sortOrder, source: { slug: src.slug, name: src.name } };
+    });
 }
 
 /** Env entities usable as loot sources (containers + landmarks), for the source dropdown
  *  in the item-side loot editor. */
 export async function listLootSources(): Promise<LinkOption[]> {
-  return prisma.entity.findMany({
-    where: { kind: "environment", category: { in: ["loot-containers", "landmarks"] } },
-    select: { slug: true, name: true, rarity: true, icon: true, category: true },
-    orderBy: { name: "asc" },
-  });
+  return data.listByKind("environment")
+    .filter((e) => e.category === "loot-containers" || e.category === "landmarks")
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((e) => ({ slug: e.slug, name: e.name, rarity: e.rarity, icon: e.icon, category: e.category }));
 }
 
 /** Every entity that has its own detail page (item / environment / trampler-part),
  *  for the sitemap. Tech nodes are excluded — they have no per-slug route (the
  *  interactive `/tech` tree links to them via `?select=`). */
 export async function listEntityPaths(): Promise<{ slug: string; kind: string }[]> {
-  return prisma.entity.findMany({
-    where: { kind: { in: ["item", "environment", "trampler-part"] }, disabled: false },
-    select: { slug: true, kind: true },
-    orderBy: { slug: "asc" },
-  });
+  return data.entityPaths();
 }
 
 export interface CrateDrop { crateSlug: string; crateName: string; tier: string; chance: string | null }
 
 /** Crates and landmarks (with tier) whose loot tables contain the given item slug. */
 export async function getCratesContaining(itemSlug: string): Promise<CrateDrop[]> {
-  const rows = await prisma.entityLink.findMany({
-    where: {
-      role: "loot",
-      target: { slug: itemSlug },
-      source: { kind: "environment", category: { in: ["loot-containers", "landmarks"] }, disabled: false },
-    },
-    include: { source: { select: { slug: true, name: true } } },
-    orderBy: [{ source: { name: "asc" } }, { sortOrder: "asc" }],
-  });
-  return rows.map((r) => ({
-    crateSlug: r.source.slug, crateName: r.source.name, tier: r.tier ?? "",
-    chance: r.value1 == null ? null : `${r.value1}%`,
-  }));
+  return data.incomingLinks(itemSlug, ["loot"])
+    .map((l) => ({ l, src: data.getEntity(l.sourceSlug)! }))
+    .filter(({ src }) => src.kind === "environment"
+      && (src.category === "loot-containers" || src.category === "landmarks")
+      && !src.disabled)
+    .sort((x, y) => x.src.name.localeCompare(y.src.name) || x.l.sortOrder - y.l.sortOrder)
+    .map(({ l, src }) => ({
+      crateSlug: src.slug, crateName: src.name, tier: l.tier ?? "",
+      chance: l.value1 == null ? null : `${l.value1}%`,
+    }));
 }
 
 export interface KeyUsageLocation { slug: string; name: string; icon: string | null; rarity: string | null; category: string }
@@ -265,61 +263,36 @@ export interface KeyUsage { opens: KeyUsageLocation[]; rewardedBy: KeyUsageLocat
 /** Reverse view for a key item: locations this key opens (incoming `requires-key`) and
  *  locations that reward it (incoming `rewards-key`). Empty arrays for non-key items. */
 export async function getKeyUsage(itemSlug: string): Promise<KeyUsage> {
-  const rows = await prisma.entityLink.findMany({
-    where: {
-      role: { in: ["requires-key", "rewards-key"] },
-      target: { slug: itemSlug },
-      source: { kind: "environment", disabled: false },
-    },
-    include: { source: { select: { slug: true, name: true, icon: true, rarity: true, category: true } } },
-    orderBy: [{ source: { name: "asc" } }, { sortOrder: "asc" }],
-  });
-  const toLoc = (r: (typeof rows)[number]): KeyUsageLocation => ({
-    slug: r.source.slug, name: r.source.name, icon: r.source.icon, rarity: r.source.rarity, category: r.source.category,
+  const rows = data.incomingLinks(itemSlug, ["requires-key", "rewards-key"])
+    .map((l) => ({ l, src: data.getEntity(l.sourceSlug)! }))
+    .filter(({ src }) => src.kind === "environment" && !src.disabled)
+    .sort((x, y) => x.src.name.localeCompare(y.src.name) || x.l.sortOrder - y.l.sortOrder);
+  const toLoc = ({ src }: (typeof rows)[number]): KeyUsageLocation => ({
+    slug: src.slug, name: src.name, icon: src.icon, rarity: src.rarity, category: src.category,
   });
   return {
-    opens: rows.filter((r) => r.role === "requires-key").map(toLoc),
-    rewardedBy: rows.filter((r) => r.role === "rewards-key").map(toLoc),
+    opens: rows.filter(({ l }) => l.role === "requires-key").map(toLoc),
+    rewardedBy: rows.filter(({ l }) => l.role === "rewards-key").map(toLoc),
   };
 }
-
-// Wrapped in React `cache()` so a page and its `generateMetadata` share one DB
-// round-trip per request (Prisma calls aren't auto-memoized like `fetch`).
-export const getItemBySlug = cache(async (slug: string) => {
-  const item = await prisma.entity.findUnique({
-    where: { slug },
-    include: {
-      itemStats: true,
-      producedBy: { include: recipeInclude },
-      usedIn: { include: recipeInclude },
-    },
-  });
-  if (!item || item.kind !== "item") return null;
-  const craftedBy = item.producedBy.map((o) => toRecipeCard(toRecipeWithItems(o.recipe)));
-  const usedIn = item.usedIn.map((i) => toRecipeCard(toRecipeWithItems(i.recipe)));
-  // Stat fields stay nested under `item.itemStats`; the detail page reads them there.
-  return { ...item, craftedBy, usedIn };
-});
 
 /** {slug,name,icon,rarity} rows for ItemLinkList. */
 type LinkItem = { slug: string; name: string; icon: string | null; rarity: string | null };
 
 /** Ammo items whose caliber family matches `caliber` (all interchangeable variants). */
 export async function getAmmoByCaliber(caliber: string): Promise<LinkItem[]> {
-  return prisma.entity.findMany({
-    where: { kind: "item", category: "ammo", disabled: false, itemStats: { is: { ammoType: caliber } } },
-    select: { slug: true, name: true, icon: true, rarity: true },
-    orderBy: { name: "asc" },
-  });
+  return data.listByKind("item")
+    .filter((e) => e.category === "ammo" && !e.disabled && e.itemStats?.ammoType === caliber)
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((e) => ({ slug: e.slug, name: e.name, icon: e.icon, rarity: e.rarity }));
 }
 
 /** Weapons/artillery that fire the given caliber family. */
 export async function getWeaponsByCaliber(caliber: string): Promise<LinkItem[]> {
-  return prisma.entity.findMany({
-    where: { kind: "item", category: { in: ["weapons", "artillery"] }, disabled: false, itemStats: { is: { ammoType: caliber } } },
-    select: { slug: true, name: true, icon: true, rarity: true },
-    orderBy: { name: "asc" },
-  });
+  return data.listByKind("item")
+    .filter((e) => (e.category === "weapons" || e.category === "artillery") && !e.disabled && e.itemStats?.ammoType === caliber)
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((e) => ({ slug: e.slug, name: e.name, icon: e.icon, rarity: e.rarity }));
 }
 
 /** Resolve the entities referenced by `[[slug]]` links in a description, keyed by
@@ -330,12 +303,9 @@ export async function getLinkTargetsBySlugs(
   slugs: string[],
 ): Promise<Map<string, { name: string; href: string; rarity: string | null }>> {
   const result = new Map<string, { name: string; href: string; rarity: string | null }>();
-  if (slugs.length === 0) return result;
-  const rows = await prisma.entity.findMany({
-    where: { slug: { in: slugs }, disabled: false },
-    select: { slug: true, name: true, kind: true, rarity: true },
-  });
-  for (const e of rows) {
+  for (const slug of slugs) {
+    const e = data.getEntity(slug);
+    if (!e || e.disabled) continue;
     const href = entityHref(e.kind, e.slug);
     if (href) result.set(e.slug, { name: e.name, href, rarity: e.rarity });
   }
@@ -345,90 +315,68 @@ export async function getLinkTargetsBySlugs(
 /** Outgoing EntityLink rows for one role on one entity (by slug), target resolved
  *  to slug/name, sorted. Used by the tab editor and its submit/apply paths. */
 export async function getOutgoingLinks(slug: string, role: string) {
-  const entity = await prisma.entity.findUnique({
-    where: { slug },
-    select: {
-      id: true,
-      name: true,
-      kind: true,
-      outgoingLinks: {
-        where: { role },
-        orderBy: { sortOrder: "asc" },
-        select: {
-          name: true,
-          amount: true,
-          tier: true,
-          value1: true,
-          sortOrder: true,
-          target: { select: { slug: true } },
-        },
-      },
-    },
-  });
-  return entity;
+  const entity = data.getEntity(slug);
+  if (!entity) return null;
+  const outgoingLinks = data.outgoingLinks(slug, [role]).map((l) => ({
+    name: l.name, amount: l.amount, tier: l.tier, value1: l.value1, sortOrder: l.sortOrder,
+    target: l.targetSlug ? { slug: l.targetSlug } : null,
+  }));
+  return { id: entity.id, name: entity.name, kind: entity.kind, outgoingLinks };
 }
 
 /** An item's buy options, grouped and ready to render. Empty array if the item has
  *  none. buy-unlock targets resolve to tech-node slug/name; buy-cost to item slug/icon. */
 export async function getBuyOptions(itemSlug: string): Promise<BuyOptionView[]> {
-  const entity = await prisma.entity.findUnique({
-    where: { slug: itemSlug },
-    select: {
-      outgoingLinks: {
-        where: { role: { in: ["buy-cost", "buy-yield", "buy-unlock"] }, ...linkTargetEnabled },
-        orderBy: [{ buyGroup: "asc" }, { sortOrder: "asc" }],
-        select: {
-          role: true, buyGroup: true, amount: true, name: true,
-          target: { select: { slug: true, kind: true, icon: true, rarity: true } },
-        },
-      },
-    },
-  });
+  const entity = data.getEntity(itemSlug);
   if (!entity) return [];
-  return groupBuyOptions(entity.outgoingLinks as BuyLinkRow[]);
+  const rows = data.outgoingLinks(itemSlug, ["buy-cost", "buy-yield", "buy-unlock"])
+    .filter((l) => l.targetSlug === null || data.isEntityEnabled(l.targetSlug))
+    .sort((a, b) => (a.buyGroup ?? 0) - (b.buyGroup ?? 0) || a.sortOrder - b.sortOrder)
+    .map((l) => {
+      const t = l.targetSlug ? data.getEntity(l.targetSlug) : null;
+      return {
+        role: l.role, buyGroup: l.buyGroup, amount: l.amount, name: l.name,
+        target: t ? { slug: t.slug, kind: t.kind, icon: t.icon, rarity: t.rarity } : null,
+      };
+    });
+  return groupBuyOptions(rows as BuyLinkRow[]);
 }
 
 /** Buy options for the editor: the item (id/name/kind) + its current options as views.
  *  Null if the slug is not an item. */
 export async function getBuyOptionsForEdit(itemSlug: string) {
-  const item = await prisma.entity.findUnique({
-    where: { slug: itemSlug },
-    select: { id: true, name: true, kind: true },
-  });
+  const item = data.getEntity(itemSlug);
   if (!item || item.kind !== "item") return null;
   const options = await getBuyOptions(itemSlug);
-  return { item, options };
+  return { item: { id: item.id, name: item.name, kind: item.kind }, options };
 }
 
 /** Full tech tree: all tech-node entities with costs, unlocks and same-faction prereqs,
  *  plus each faction's free starting part. */
 export async function getTechTree(): Promise<TechTree> {
-  const rows = await prisma.entity.findMany({
-    where: { kind: "tech-node", disabled: false },
-    select: {
-      slug: true,
-      name: true,
-      techNodeStats: { select: { faction: true, tier: true, sortOrder: true } },
-      outgoingLinks: {
-        where: { role: { in: ["tech-prereq", "tech-unlock-cost", "tech-unlocks"] }, ...linkTargetEnabled },
-        orderBy: { sortOrder: "asc" },
-        select: {
-          role: true, name: true, amount: true, sortOrder: true,
-          target: {
-            select: { slug: true, name: true, icon: true, kind: true, techNodeStats: { select: { faction: true } } },
-          },
-        },
-      },
-    },
-  });
+  const rows = data.listByKind("tech-node")
+    .filter((e) => !e.disabled)
+    .map((e) => ({
+      slug: e.slug,
+      name: e.name,
+      techNodeStats: e.techNodeStats,
+      outgoingLinks: data.outgoingLinks(e.slug, ["tech-prereq", "tech-unlock-cost", "tech-unlocks"])
+        .filter((l) => l.targetSlug === null || data.isEntityEnabled(l.targetSlug))
+        .map((l) => {
+          const t = l.targetSlug ? data.getEntity(l.targetSlug) : null;
+          return {
+            role: l.role, name: l.name, amount: l.amount, sortOrder: l.sortOrder,
+            target: t ? { slug: t.slug, name: t.name, icon: t.icon, kind: t.kind, techNodeStats: t.techNodeStats } : null,
+          };
+        }),
+    }));
 
   const rootSlugs = Object.values(FACTION_ROOT_PART);
-  const rootRows = await prisma.entity.findMany({
-    where: { slug: { in: rootSlugs }, disabled: false },
-    select: { slug: true, name: true, icon: true, kind: true },
-  });
   const rootParts = Object.fromEntries(
-    rootRows.map((r) => [r.slug, { name: r.name, icon: r.icon, kind: r.kind }]),
+    rootSlugs
+      .map((slug) => data.getEntity(slug))
+      .filter((e): e is NonNullable<typeof e> => !!e && !e.disabled)
+      .map((e) => [e.slug, { name: e.name, icon: e.icon, kind: e.kind }]),
   );
 
   return toTechTree(rows, rootParts);
@@ -437,12 +385,10 @@ export async function getTechTree(): Promise<TechTree> {
 /** The tech-node slug that unlocks the given entity (by slug), or null. Entities are
  *  typically unlocked by one node; the lowest-sortOrder incoming `tech-unlocks` wins. */
 export async function getUnlockingNode(entitySlug: string): Promise<{ slug: string } | null> {
-  const link = await prisma.entityLink.findFirst({
-    where: { role: "tech-unlocks", target: { slug: entitySlug }, source: { disabled: false } },
-    orderBy: { sortOrder: "asc" },
-    select: { source: { select: { slug: true } } },
-  });
-  return link?.source ? { slug: link.source.slug } : null;
+  const link = data.incomingLinks(entitySlug, ["tech-unlocks"])
+    .filter((l) => data.isEntityEnabled(l.sourceSlug))
+    .sort((a, b) => a.sortOrder - b.sortOrder)[0];
+  return link ? { slug: link.sourceSlug } : null;
 }
 
 /** The most recent contributor whose proposal was applied to this entity, or null
@@ -450,32 +396,27 @@ export async function getUnlockingNode(entitySlug: string): Promise<{ slug: stri
  *  proposals (and any slug collision with them) are excluded. Covers edit,
  *  links_edit, loot_sources_edit, and buy_options_edit kinds — all of which carry
  *  the entity's slug. */
+/** Last-editor credit was sourced from applied Proposals; the proposal-correction
+ *  feature is removed in this restructure, so there is no edit history. Always null.
+ *  (Kept for call-site compatibility; callers render nothing when null.) */
 export async function getLastEditor(
-  targetType: "item" | "envEntity" | "tramplerPart",
-  slug: string,
+  _targetType: "item" | "envEntity" | "tramplerPart",
+  _slug: string,
 ): Promise<{ steamId: string; personaName: string | null } | null> {
-  const p = await prisma.proposal.findFirst({
-    where: { targetType, targetSlug: slug, status: "applied" },
-    orderBy: [{ reviewedAt: "desc" }, { createdAt: "desc" }],
-    select: { proposer: { select: { steamId: true, personaName: true } } },
-  });
-  return p?.proposer ?? null;
+  return null;
 }
 
 /** Items whose purchase a given tech node unlocks (reverse of buy-unlock). */
 export async function getBuyUnlockedItems(techSlug: string) {
-  const node = await prisma.entity.findUnique({
-    where: { slug: techSlug },
-    select: {
-      incomingLinks: {
-        where: { role: "buy-unlock" },
-        select: { source: { select: { slug: true, name: true, icon: true, kind: true } } },
-      },
-    },
-  });
+  const node = data.getEntity(techSlug);
   if (!node) return [];
   const seen = new Set<string>();
-  return node.incomingLinks
-    .map((l) => l.source)
-    .filter((s) => s.kind === "item" && !seen.has(s.slug) && seen.add(s.slug));
+  return data.incomingLinks(techSlug, ["buy-unlock"])
+    .map((l) => data.getEntity(l.sourceSlug))
+    .filter((s): s is NonNullable<typeof s> => {
+      if (!s || s.kind !== "item" || seen.has(s.slug)) return false;
+      seen.add(s.slug);
+      return true;
+    })
+    .map((s) => ({ slug: s.slug, name: s.name, icon: s.icon, kind: s.kind }));
 }
