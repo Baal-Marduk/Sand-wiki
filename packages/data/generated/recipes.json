@@ -1,1 +1,859 @@
-[]
+[
+  {
+    "slug": "artefact-crystal",
+    "workbench": "Utility",
+    "tier": 1,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "crystal-handles",
+        "amount": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "artefact-crystal",
+        "amount": 4
+      }
+    ]
+  },
+  {
+    "slug": "c4-dynamite-2",
+    "workbench": "Armament",
+    "tier": 2,
+    "craftTimeSeconds": 3,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-fabric",
+        "amount": 2
+      },
+      {
+        "itemSlug": "resource-gunpowder",
+        "amount": 2
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "c4-dynamite",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "food-can",
+    "workbench": "Utility",
+    "tier": 1,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "canned-fish",
+        "amount": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "food-can",
+        "amount": 25
+      }
+    ]
+  },
+  {
+    "slug": "loc-kaiserplatz-energy-bar",
+    "workbench": null,
+    "tier": null,
+    "craftTimeSeconds": null,
+    "locationSlug": "kaiserplatz",
+    "inputs": [
+      {
+        "itemSlug": "crystal-handles",
+        "amount": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "energy-bar",
+        "amount": 10
+      }
+    ]
+  },
+  {
+    "slug": "loc-kaiserplatz-game-packed-auto-turret-t2-container",
+    "workbench": null,
+    "tier": null,
+    "craftTimeSeconds": null,
+    "locationSlug": "kaiserplatz",
+    "inputs": [
+      {
+        "itemSlug": "resource-alloy-steel",
+        "amount": 40
+      },
+      {
+        "itemSlug": "resource-metal-t2",
+        "amount": 300
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "game-packed-auto-turret-t3-container",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "loc-rauchwolke-resource-coral-dust",
+    "workbench": null,
+    "tier": null,
+    "craftTimeSeconds": null,
+    "locationSlug": "rauchwolke",
+    "inputs": [
+      {
+        "itemSlug": "resource-coral-piece",
+        "amount": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "resource-coral-dust",
+        "amount": 10
+      },
+      {
+        "itemSlug": "resource-metal-t1",
+        "amount": 2
+      }
+    ]
+  },
+  {
+    "slug": "loc-rauchwolke-resource-metal-t3",
+    "workbench": null,
+    "tier": null,
+    "craftTimeSeconds": null,
+    "locationSlug": "rauchwolke",
+    "inputs": [
+      {
+        "itemSlug": "black-box",
+        "amount": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "resource-metal-t3",
+        "amount": 10
+      }
+    ]
+  },
+  {
+    "slug": "loc-sprengstofffabrik-energy-bar",
+    "workbench": null,
+    "tier": null,
+    "craftTimeSeconds": null,
+    "locationSlug": "sprengstofffabrik",
+    "inputs": [
+      {
+        "itemSlug": "crystal-handles",
+        "amount": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "energy-bar",
+        "amount": 10
+      }
+    ]
+  },
+  {
+    "slug": "loc-sprengstofffabrik-game-packed-turret-t2-container",
+    "workbench": null,
+    "tier": null,
+    "craftTimeSeconds": null,
+    "locationSlug": "sprengstofffabrik",
+    "inputs": [
+      {
+        "itemSlug": "resource-alloy-steel",
+        "amount": 40
+      },
+      {
+        "itemSlug": "resource-metal-t2",
+        "amount": 300
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "game-packed-turret-t3-container",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "loc-sprengstofffabrik-grenade-contact",
+    "workbench": null,
+    "tier": null,
+    "craftTimeSeconds": null,
+    "locationSlug": "sprengstofffabrik",
+    "inputs": [
+      {
+        "itemSlug": "resource-fabric",
+        "amount": 10
+      },
+      {
+        "itemSlug": "resource-gunpowder",
+        "amount": 10
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "grenade-contact",
+        "amount": 5
+      }
+    ]
+  },
+  {
+    "slug": "loc-sprengstofffabrik-rocket-launcher-ammo-armor-piercing",
+    "workbench": null,
+    "tier": null,
+    "craftTimeSeconds": null,
+    "locationSlug": "sprengstofffabrik",
+    "inputs": [
+      {
+        "itemSlug": "resource-fabric",
+        "amount": 10
+      },
+      {
+        "itemSlug": "resource-gunpowder",
+        "amount": 10
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "rocket-launcher-ammo-armor-piercing",
+        "amount": 3
+      }
+    ]
+  },
+  {
+    "slug": "loc-strudel-game-packed-shotgun-turret-t2-container",
+    "workbench": null,
+    "tier": null,
+    "craftTimeSeconds": null,
+    "locationSlug": "strudel",
+    "inputs": [
+      {
+        "itemSlug": "resource-alloy-steel",
+        "amount": 40
+      },
+      {
+        "itemSlug": "resource-metal-t2",
+        "amount": 300
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "game-packed-shotgun-turret-t3-container",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "old-jacket",
+    "workbench": "Utility",
+    "tier": 1,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-fabric",
+        "amount": 2
+      },
+      {
+        "itemSlug": "resource-threads",
+        "amount": 10
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "old-jacket",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "old-jacket-t2",
+    "workbench": "Utility",
+    "tier": 1,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-fabric",
+        "amount": 5
+      },
+      {
+        "itemSlug": "resource-threads",
+        "amount": 50
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "old-jacket-t2",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "pistol-ammo",
+    "workbench": "Armament",
+    "tier": 1,
+    "craftTimeSeconds": 3,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-scrapped-ammo",
+        "amount": 5
+      },
+      {
+        "itemSlug": "resource-metal-parts",
+        "amount": 5
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "pistol-ammo",
+        "amount": 20
+      }
+    ]
+  },
+  {
+    "slug": "pistol-ammo-high-velocity",
+    "workbench": "Armament",
+    "tier": 2,
+    "craftTimeSeconds": 3,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "pistol-ammo",
+        "amount": 20
+      },
+      {
+        "itemSlug": "resource-coral-dust",
+        "amount": 2
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "pistol-ammo-high-velocity",
+        "amount": 20
+      }
+    ]
+  },
+  {
+    "slug": "repeater-rifle",
+    "workbench": "Armament",
+    "tier": 2,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-metal-rods",
+        "amount": 4
+      },
+      {
+        "itemSlug": "resource-weapon-parts",
+        "amount": 4
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "repeater-rifle",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "resource-fabric",
+    "workbench": "Utility",
+    "tier": 1,
+    "craftTimeSeconds": 2,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-fabric-scraps",
+        "amount": 5
+      },
+      {
+        "itemSlug": "resource-threads",
+        "amount": 15
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "resource-fabric",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "revolver-small",
+    "workbench": "Armament",
+    "tier": 1,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-metal-parts",
+        "amount": 25
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "revolver-small",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "revolver-small-dusters",
+    "workbench": "Armament",
+    "tier": 1,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "revolver-small",
+        "amount": 1
+      },
+      {
+        "itemSlug": "resource-metal-parts",
+        "amount": 25
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "revolver-small-dusters",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "rifle-ammo",
+    "workbench": "Armament",
+    "tier": 1,
+    "craftTimeSeconds": 3,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-metal-parts",
+        "amount": 5
+      },
+      {
+        "itemSlug": "resource-scrapped-ammo",
+        "amount": 5
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "rifle-ammo",
+        "amount": 10
+      }
+    ]
+  },
+  {
+    "slug": "rifle-ammo-high-velocity",
+    "workbench": "Armament",
+    "tier": 2,
+    "craftTimeSeconds": 3,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "rifle-ammo",
+        "amount": 10
+      },
+      {
+        "itemSlug": "resource-coral-dust",
+        "amount": 2
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "rifle-ammo-high-velocity",
+        "amount": 10
+      }
+    ]
+  },
+  {
+    "slug": "rifle-musket",
+    "workbench": "Armament",
+    "tier": 1,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-metal-parts",
+        "amount": 25
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "rifle-musket",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "semi-automatic-pistol",
+    "workbench": "Armament",
+    "tier": 2,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-metal-rods",
+        "amount": 4
+      },
+      {
+        "itemSlug": "resource-weapon-parts",
+        "amount": 4
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "semi-automatic-pistol",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "semi-automatic-pistol-decreased-mag",
+    "workbench": "Armament",
+    "tier": 1,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-metal-parts",
+        "amount": 25
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "semi-automatic-pistol-decreased-mag",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "shotgun",
+    "workbench": "Armament",
+    "tier": 2,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-fabric",
+        "amount": 4
+      },
+      {
+        "itemSlug": "resource-metal-rods",
+        "amount": 4
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "shotgun",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "shotgun-ammo",
+    "workbench": "Armament",
+    "tier": 1,
+    "craftTimeSeconds": 3,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-scrapped-ammo",
+        "amount": 5
+      },
+      {
+        "itemSlug": "resource-fabric-scraps",
+        "amount": 5
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "shotgun-ammo",
+        "amount": 10
+      }
+    ]
+  },
+  {
+    "slug": "shotgun-ammo-slug",
+    "workbench": "Armament",
+    "tier": 2,
+    "craftTimeSeconds": 3,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "shotgun-ammo",
+        "amount": 10
+      },
+      {
+        "itemSlug": "resource-metal-rods",
+        "amount": 2
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "shotgun-ammo-slug",
+        "amount": 10
+      }
+    ]
+  },
+  {
+    "slug": "shotgun-handmade",
+    "workbench": "Armament",
+    "tier": 1,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-metal-parts",
+        "amount": 25
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "shotgun-handmade",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "shotgun-handmade-choke",
+    "workbench": "Armament",
+    "tier": 1,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "shotgun-handmade",
+        "amount": 1
+      },
+      {
+        "itemSlug": "resource-metal-parts",
+        "amount": 25
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "shotgun-handmade-choke",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "shotgun-turret-ammo",
+    "workbench": "Armament",
+    "tier": 1,
+    "craftTimeSeconds": 2,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-fabric-scraps",
+        "amount": 5
+      },
+      {
+        "itemSlug": "resource-scrapped-ammo",
+        "amount": 5
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "shotgun-turret-ammo",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "small-cannon-ammo",
+    "workbench": "Armament",
+    "tier": 1,
+    "craftTimeSeconds": 1,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-scrapped-ammo",
+        "amount": 2
+      },
+      {
+        "itemSlug": "resource-metal-parts",
+        "amount": 2
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "small-cannon-ammo",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "sniper-rifle",
+    "workbench": "Armament",
+    "tier": 2,
+    "craftTimeSeconds": 10,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "sniper-rifle-iron-sights",
+        "amount": 1
+      },
+      {
+        "itemSlug": "resource-optic-lenses",
+        "amount": 2
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "sniper-rifle",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "sniper-rifle-ammo",
+    "workbench": "Armament",
+    "tier": 2,
+    "craftTimeSeconds": 2,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-high-grade-gunpowder",
+        "amount": 1
+      },
+      {
+        "itemSlug": "resource-metal-parts",
+        "amount": 25
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "sniper-rifle-ammo",
+        "amount": 6
+      }
+    ]
+  },
+  {
+    "slug": "sniper-rifle-iron-sights-silencer",
+    "workbench": "Armament",
+    "tier": 2,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "sniper-rifle-iron-sights",
+        "amount": 1
+      },
+      {
+        "itemSlug": "resource-metal-rods",
+        "amount": 5
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "sniper-rifle-iron-sights-silencer",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "sniper-rifle-silencer",
+    "workbench": "Armament",
+    "tier": 2,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "sniper-rifle",
+        "amount": 1
+      },
+      {
+        "itemSlug": "resource-metal-rods",
+        "amount": 5
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "sniper-rifle-silencer",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "sniper-rifle-silencer-2",
+    "workbench": "Armament",
+    "tier": 2,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "sniper-rifle-iron-sights-silencer",
+        "amount": 1
+      },
+      {
+        "itemSlug": "resource-optic-lenses",
+        "amount": 2
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "sniper-rifle-silencer",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "turret-ammo",
+    "workbench": "Armament",
+    "tier": 1,
+    "craftTimeSeconds": 2,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "resource-scrapped-ammo",
+        "amount": 5
+      },
+      {
+        "itemSlug": "resource-metal-parts",
+        "amount": 5
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "turret-ammo",
+        "amount": 1
+      }
+    ]
+  },
+  {
+    "slug": "valuable-papers",
+    "workbench": "Utility",
+    "tier": 1,
+    "craftTimeSeconds": 5,
+    "locationSlug": null,
+    "inputs": [
+      {
+        "itemSlug": "document-safe",
+        "amount": 1
+      }
+    ],
+    "outputs": [
+      {
+        "itemSlug": "valuable-papers",
+        "amount": 150
+      }
+    ]
+  }
+]
