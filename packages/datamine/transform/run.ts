@@ -12,6 +12,7 @@ import { buildItemI18n } from "./i18n";
 import { mergeItems } from "./merge";
 import { applyIconOverrides } from "./items";
 import { enumerateItems } from "./enumerate";
+import { canonicalSekId } from "./variants";
 import { buildLootLinks, applyLoot, type LootOverrides } from "./loot";
 import { classifyImages } from "./images";
 import { diffEntities } from "./diff";
@@ -36,8 +37,17 @@ const containerLoot = loadContainerLoot();
 // --- items: enumerate (SEK items ∪ localization registry) -> reconcile -> i18n -> merge ---
 const allItems = enumerateItems(loc, sekItems).filter((i) => !exclusions.has(i.id));
 const rec = reconcile(allItems.map((i) => ({ id: i.id, name: i.name })), baseline.entities, overrides);
+// Localization ENRICHES/MATCHES baseline entities but must never MINT new pages — the loc
+// table is noisy (internal "Note" items, debug/test boxes, name-drift dupes). Only items that
+// come from the curated SEK items.json may create a new entity; loc-only ids that don't match
+// a baseline entity (status "new") are dropped here. Matched/override loc ids still enrich + i18n.
+const realSekIds = new Set(sekItems.map((i) => canonicalSekId(i.id)));
+const mergeable = allItems.filter((it) => {
+  const hit = rec.bySekId.get(it.id);
+  return hit !== undefined && (hit.status !== "new" || realSekIds.has(it.id));
+});
 const i18n = buildItemI18n(loc, new Map([...rec.bySekId].map(([id, hit]) => [id, hit.slug])));
-const merged = mergeItems(baseline.entities, allItems, rec.bySekId, i18n);
+const merged = mergeItems(baseline.entities, mergeable, rec.bySekId, i18n);
 // Force corrected icons last (fixes stale/wrong paths in the source data).
 const entities = applyIconOverrides(merged.entities, iconMap);
 const missing = merged.missing;
