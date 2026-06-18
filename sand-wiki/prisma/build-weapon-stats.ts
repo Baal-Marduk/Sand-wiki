@@ -4,8 +4,8 @@
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import {
-  ammoPatch, armorPatch, weaponPatch,
-  type StatPatch, type WeaponStatsArtifact, type WeaponStatsFile,
+  ammoPatch, armorPatch, turretPatch, weaponPatch,
+  type StatPatch, type TurretStatsFile, type WeaponStatsArtifact, type WeaponStatsFile,
 } from "./weapon-stats";
 
 const SOURCE = "datamine/data/weapon_stats.json";
@@ -13,6 +13,9 @@ const SOURCE = "datamine/data/weapon_stats.json";
 const raw = JSON.parse(
   readFileSync(join(__dirname, "..", "datamine/data/weapon_stats.json"), "utf-8"),
 ) as WeaponStatsFile;
+const turrets = JSON.parse(
+  readFileSync(join(__dirname, "..", "datamine/data/turret_stats.json"), "utf-8"),
+) as TurretStatsFile;
 const data = JSON.parse(readFileSync(join(__dirname, "data.json"), "utf-8")) as {
   items: { id: string; slug: string }[];
 };
@@ -31,6 +34,7 @@ function add(id: string, patch: StatPatch) {
 for (const [id, w] of Object.entries(raw.weapons)) add(id, weaponPatch(w));
 for (const [id, a] of Object.entries(raw.ammo)) add(id, ammoPatch(a));
 for (const [id, a] of Object.entries(raw.armor)) add(id, armorPatch(a));
+for (const [id, t] of Object.entries(turrets.turrets)) add(id, turretPatch(t));
 
 const sorted = Object.fromEntries(Object.keys(items).sort().map((k) => [k, items[k]]));
 const artifact: WeaponStatsArtifact = {

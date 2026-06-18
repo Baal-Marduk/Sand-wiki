@@ -1,11 +1,51 @@
 {
   "meta": {
     "source": "datamine/data/weapon_stats.json",
-    "items": 55
+    "items": 61
   },
   "items": {
     "anti-reactor-gun": {
       "reloadSeconds": 3.05
+    },
+    "game-packed-auto-turret-t2-container": {
+      "fireRate": 5,
+      "projectileVelocity": 150,
+      "magazine": 2,
+      "penetrates": true
+    },
+    "game-packed-auto-turret-t3-container": {
+      "fireRate": 6.06,
+      "projectileVelocity": 150,
+      "magazine": 2,
+      "penetrates": true
+    },
+    "game-packed-shotgun-turret-t2-container": {
+      "fireRate": 0.82,
+      "projectileVelocity": 250,
+      "magazine": 1,
+      "penetrates": true,
+      "reloadSeconds": 4.5
+    },
+    "game-packed-shotgun-turret-t3-container": {
+      "fireRate": 0.82,
+      "projectileVelocity": 250,
+      "magazine": 1,
+      "penetrates": true,
+      "reloadSeconds": 4
+    },
+    "game-packed-turret-t2-container": {
+      "fireRate": 0.67,
+      "projectileVelocity": 300,
+      "magazine": 1,
+      "penetrates": true,
+      "reloadSeconds": 3.5
+    },
+    "game-packed-turret-t3-container": {
+      "fireRate": 0.67,
+      "projectileVelocity": 300,
+      "magazine": 1,
+      "penetrates": true,
+      "reloadSeconds": 2.5
     },
     "old-jacket": {
       "armorRating": 50,
