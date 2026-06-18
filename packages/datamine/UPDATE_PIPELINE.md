@@ -81,6 +81,30 @@ npx tsx packages/datamine/transform/run.ts        # -> packages/data/generated/*
 ```
 Review the diff (especially slug changes), then commit the regenerated artifact + art.
 
+## 4b. (OPTIONAL, DISABLED) Research-tree WebSocket capture
+The tech tree (node edges, unlock costs, tiers, faction assignment) is **server-side** — it is
+NOT in the game files (only the node name/description catalog is, in `ProgressionTreeDescriptions`).
+It arrives at runtime via a `GetResearchTree` message over an encrypted WebSocket
+(`wss://eus.<masterserver>/gameclient/`) after PlayFab login. `scripts/capture_research_tree.py`
+is a mitmproxy addon that can intercept and dump it.
+
+**This step is OPT-IN and DISABLED BY DEFAULT.** It is a TLS man-in-the-middle of your own
+authenticated session: ToS gray area, may fail on certificate pinning (connection just drops),
+and BattlEye is present (a proxy doesn't inject the process, but a live authenticated session is
+never zero-risk). Run it manually, on your own account, ONE shot, low volume — never automate.
+The wiki ships fine without it (the `/tech` page uses the sand-help reconstruction).
+
+To enable (manual, deliberate):
+```bash
+pip install mitmproxy
+set SAND_RESEARCH_CAPTURE=1            # env flag — without it the addon no-ops
+mitmdump -s scripts/capture_research_tree.py
+# then route SAND through 127.0.0.1:8080, trust the mitmproxy CA (mitm.it), log in, open the tree
+```
+Output: `extracted/json/research_tree_capture/*.json` + `research_tree_capture.json` (gitignored —
+it is your account data, do NOT commit). A `build_research_tree_from_capture.py` mapper into
+`research_tree.json` is authored once the real payload shape is known from a first capture.
+
 ## 5. After-update checklist
 - Bundle names can shift between builds — every extractor prints what it found; "NOT FOUND" = asset moved.
 - Re-verify slug reconciliation overrides (`transform/overrides/slug-map.json`) against the diff.

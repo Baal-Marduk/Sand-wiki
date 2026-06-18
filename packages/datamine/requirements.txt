@@ -1,3 +1,7 @@
 UnityPy
 numpy
 Pillow
+# Optional, ONLY for the opt-in/DISABLED research-tree WebSocket capture
+# (scripts/capture_research_tree.py). Not needed for the normal file-extraction pipeline.
+# Install manually if you choose to enable that step:  pip install mitmproxy
+# mitmproxy
