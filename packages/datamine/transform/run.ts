@@ -11,6 +11,7 @@ import { reconcile } from "./reconcile";
 import { buildItemI18n } from "./i18n";
 import { mergeItems } from "./merge";
 import { applyIconOverrides } from "./items";
+import { loadCompartmentStats, mergeTrampler } from "./trampler";
 import { enumerateItems } from "./enumerate";
 import { canonicalSekId } from "./variants";
 import { buildLootLinks, applyLoot, type LootOverrides } from "./loot";
@@ -26,6 +27,7 @@ const overrides = readJson("overrides/slug-map.json") as Record<string, string>;
 const lootOverrides = readJson("overrides/loot-overrides.json") as LootOverrides;
 const exclusions = new Set(readJson("overrides/exclusions.json") as string[]);
 const iconMap = readJson("overrides/icon-map.json") as Record<string, string>;
+const partOverrides = readJson("overrides/part-slug-map.json") as Record<string, string>;
 
 const baseline = loadBaseline();
 // Drop excluded SEK ids (junk/duplicate pseudo-items that shouldn't become wiki pages,
@@ -52,8 +54,19 @@ const merged = mergeItems(baseline.entities, mergeable, rec.bySekId, i18n);
 const entities = applyIconOverrides(merged.entities, iconMap);
 const missing = merged.missing;
 
+// --- trampler stats: refresh part stats from compartment_stats.json when present ---
+const compartmentStats = loadCompartmentStats();
+const withTrampler = compartmentStats.length
+  ? mergeTrampler(entities, compartmentStats, partOverrides)
+  : entities;
+if (compartmentStats.length) {
+  console.log(`trampler stats: refreshed from ${compartmentStats.length} compartments`);
+} else {
+  console.log("trampler stats: source absent (compartment_stats.json) — baseline preserved");
+}
+
 // --- loot: deep-derive container loot links, then drop any pointing at an unknown slug ---
-const knownSlugs = new Set(entities.map((e) => e.slug));
+const knownSlugs = new Set(withTrampler.map((e) => e.slug));
 const loot = buildLootLinks(containerLoot, lootOverrides);
 const dangling = loot.links.filter((l) => l.targetSlug && !knownSlugs.has(l.targetSlug));
 if (dangling.length) {
@@ -64,7 +77,7 @@ loot.links = loot.links.filter((l) => !l.targetSlug || knownSlugs.has(l.targetSl
 const links = applyLoot(baseline.links, loot);
 
 // --- diff + guards ---
-const diff = diffEntities(baseline.entities, entities);
+const diff = diffEntities(baseline.entities, withTrampler);
 console.log(`entities ${diff.total.prev} -> ${diff.total.next} | +${diff.added.length} added, -${diff.removed.length} removed`);
 console.log(`reconcile: ${[...rec.bySekId.values()].filter((h) => h.status === "matched").length} matched, ` +
   `${[...rec.bySekId.values()].filter((h) => h.status === "new").length} new, ` +
@@ -79,15 +92,15 @@ if (diff.removed.length > 0 && !allowSlugChanges) {
   process.exit(1);
 }
 
-validateEntities(entities);
+validateEntities(withTrampler);
 
 // --- images: report entities whose icon is null or whose file is missing on disk ---
-const images = classifyImages(entities, (icon) => existsSync(resolve(PUBLIC, `.${icon}`)));
+const images = classifyImages(withTrampler, (icon) => existsSync(resolve(PUBLIC, `.${icon}`)));
 console.log(`missing images: ${images.needsExtraction.length} need extraction ` +
   `(by design: ${images.byDesign.techNodeNoIcon} tech-nodes, ${images.byDesign.environmentNoIcon} locations)`);
 
 // recipes + non-loot links + parts/tech/locations entities pass through from baseline.
-writeArtifact(entities, baseline.recipes, links);
+writeArtifact(withTrampler, baseline.recipes, links);
 writeMissingReport(missing);
 writeImagesReport(images);
 console.log("wrote packages/data/generated/{entities,recipes,links}.json + reports/{missing-from-datamine,missing-images}.json");
