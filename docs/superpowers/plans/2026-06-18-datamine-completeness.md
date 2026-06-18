@@ -21,8 +21,8 @@
 Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>
 ```
 
-**Test command (transform):** `npm run test --workspace=packages/datamine`
-**Transform run:** `npm run transform --workspace=packages/datamine` (from repo root)
+**Test command (transform):** `cd packages/datamine && npm test` (the `npm run test --workspace=packages/datamine` form from repo root is broken on this Windows setup — vitest loads with an undefined config; run from inside the package dir instead).
+**Transform run:** `cd packages/datamine && npm run transform` (or `npx tsx transform/run.ts`).
 
 **Baseline-accumulation hazard:** the transform reads `packages/data/generated/*.json` as its baseline, so committing a run's output makes its noise the next baseline. Before any verification re-run, restore generated/ from the pre-change commit:
 `git checkout HEAD -- packages/data/generated/` (or the specific pre-run SHA).
