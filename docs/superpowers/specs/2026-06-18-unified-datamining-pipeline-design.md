@@ -38,6 +38,8 @@ and multi-language names.
 | Transform language | **TypeScript** — imports `@sandlabs/data` types so the output is compile-time-guaranteed to match `Entity`/`Recipe`/`EntityLink`. Extraction/build/art stay Python. |
 | Icon/art scope | **Full** — item sprites + part/location/container thumbnails + part meshes (the meshes seed sub-project #3). |
 | Translations | **Extract all locales into the artifact (data only).** EN stays primary `name`/`description`; an optional per-entity `i18n` map carries the rest. Wiki UI stays English; a language switcher is a later spec. |
+| Item-set reconciliation | **Merge.** Datamine is authoritative for items it covers; baseline-only items (the wiki has 135, SEK datamines 99) are **preserved**, and the transform emits a **`reports/missing-from-datamine.json`** listing every baseline item SEK doesn't cover (with slug + name) so the owner can investigate which/why before each data update. Same merge applies to other kinds (new datamined parts/tech are added). |
+| Location reconciliation | **Keep the curated 27.** SEK datamines 81 locations; only the wiki's existing 27 curated environment entities get pages (their loot/keys/contents refreshed from SEK). The other ~54 are not auto-created; new ones are added deliberately via `overrides/`. |
 
 ## Goals
 
@@ -164,6 +166,13 @@ Under `packages/datamine/transform/`, small single-purpose modules:
   (rarity/name/description corrections the datamine gets wrong), `buy-options.json`.
 - **`emit.ts`** — assembles the three artifact files, validates against the `@sandlabs/data`
   types (compile-time + a runtime shape check), writes them.
+- **`merge.ts`** — applies the reconciliation policy: datamined entity matched to a baseline
+  slug → refresh per-field (datamine wins where it has a value; baseline value kept where the
+  datamine field is absent, e.g. trampler stats pending the CompartmentsDatabase mapping);
+  datamined entity with no baseline match → add (except environment, which is capped to the
+  curated 27); baseline entity with no datamine match → keep unchanged. Emits
+  `reports/missing-from-datamine.json` (baseline items, and optionally other kinds, that the
+  datamine doesn't cover — slug + name + kind) for the owner to investigate.
 - **`diff.ts`** — compares freshly-built artifact vs the prior committed one; prints a report
   (entities added/removed/changed, link counts per role, slug changes) and exits non-zero if
   anything would **remove or rename an existing slug** unless `--allow-slug-changes` is passed.
