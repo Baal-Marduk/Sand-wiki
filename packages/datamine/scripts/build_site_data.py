@@ -54,7 +54,8 @@ except FileNotFoundError:
 # (build_localization.py — the devs' real strings; supersedes prettify() + hand overrides)
 LOC_ITEMS = {}
 try:
-    LOC_ITEMS = json.load(open(f'{DATA_OUT}/localization.json', encoding='utf-8'))['items']
+    _loc_raw = json.load(open(f'{DATA_OUT}/localization.json', encoding='utf-8'))['items']
+    LOC_ITEMS = {iid: (v.get('locales', {}).get('en', {})) for iid, v in _loc_raw.items()}
 except FileNotFoundError:
     print('WARNING: localization.json missing — run build_localization.py first; using fallback names')
 CHASSIS_LEGS = {}
@@ -170,13 +171,16 @@ for mode, tlist in (('voyage', voyage), ('storm', storm)):
 json.dump(sorted(tables.values(), key=lambda x: x['id']), open(f'{DATA_OUT}/loot_tables.json', 'w', encoding='utf-8'), indent=1)
 
 # ---------- items ----------
-item_ids = set()
+recipes_raw = json.load(open(f'{EXT}/craftingrecipes.json', encoding='utf-8'))
+
+# Enumerate from the COMPLETE registry, not just loot∪recipes (which misses vendor/quest/
+# world items). Union: item_defs (full ItemDatabase, when extracted) ∪ localization ∪ loot ∪
+# recipes. See docs/superpowers/specs/2026-06-18-datamine-completeness-design.md.
+item_ids = set(ITEM_DEFS.keys()) | set(LOC_ITEMS.keys())
 for t in tables.values():
     for mode in ('voyage', 'storm'):
         for i in t.get(mode, []):
             item_ids.add(i['item'])
-
-recipes_raw = json.load(open(f'{EXT}/craftingrecipes.json', encoding='utf-8'))
 for o in recipes_raw:
     for r in o['data'].get('recipes', []):
         for ing in r['inputIngredients'] + r['outputIngredients']:
