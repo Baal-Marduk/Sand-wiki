@@ -45,12 +45,25 @@ python scripts/build_container_loot.py
 > additionally drops loc-only ids that don't match a baseline entity (localization enriches, never
 > mints new wiki pages); genuinely-new items come from the curated item_defs/items.json.
 
-> **Trampler stats (datamine):** `extract_compartment_stats.py` is a DIAGNOSTIC probe →
-> `compartment_stats_probe.json`. Inspect it, report which MonoBehaviour field maps to each
-> TramplerStats key (health/weight/energy/ratedPower/crewSlots/itemSlots), then the mapping is
-> frozen and `sek-out/compartment_stats.json` is produced (keyed list with a `name` per the
-> localized compartment name). Until then the transform preserves baseline (sandhelp) stats. Match
-> is by compartment name → baseline slug (overrides/part-slug-map.json for drift).
+> **Trampler stats (datamine):** `extract_compartment_stats.py` reads the `walker_*_epb` prefabs
+> in `epb_assets_all.bundle`. Each prefab MonoBehaviour holds an Odin-serialized Entitas component
+> list (`serializationData.SerializedBytes`, decoded via `odin_parser.py`). It writes
+> `sek-out/compartment_stats.json` (name-matched via the localized compartment name; collided names
+> excluded). The transform (`trampler.ts`) refreshes only the provided fields, preserving the rest.
+>
+> RESOLVED MAPPING (2026-06-18 release build): the ONLY datamine-able gameplay stat is
+> **`health`** = `HealthDataComponent.value` (matches/corrects the baseline). `PhysicsDataComponent
+> .mass` is a physics constant (1.0/400.0), NOT the gameplay weight. **weight / energyConsumption /
+> energyCapacity / ratedPower / crewSlots / itemSlots / weightCapacity are NOT in any static asset**
+> — checked: epb prefab Entitas components (only Health/Physics/View/etc), `configuration_assets_all`
+> (CheatItemDefinitions + loot configs), and `ui_assets_all` (CompartmentStats UI is a display widget
+> with no values). They are populated at runtime/code-side, so they stay on the baseline (sandhelp).
+> To pursue further: generate `dump.cs` (step 1) and search for a WalkerCompartment balance/config
+> class; values may still be code constants rather than data.
+>
+> **Items (datamine):** `extract_item_defs.py` reads `CheatItemDefinitionsData` in
+> `configuration_assets_all` → 117 items with `Name`/`Type`/`StorageStack` (authoritative category).
+> No rarity/value/icon in that asset (baseline already has rarity; icons via sprite-match).
 
 ## 3. Art (slow, ~GBs RAM)
 ```bash
