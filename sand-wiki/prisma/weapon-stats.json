@@ -1,0 +1,378 @@
+{
+  "meta": {
+    "source": "datamine/data/weapon_stats.json",
+    "items": 55
+  },
+  "items": {
+    "anti-reactor-gun": {
+      "reloadSeconds": 3.05
+    },
+    "old-jacket": {
+      "armorRating": 50,
+      "armorRegenDelay": 6,
+      "armorRegenSpeed": 7,
+      "armorDurability": 1400
+    },
+    "old-jacket-t2": {
+      "armorRating": 100,
+      "armorRegenDelay": 8,
+      "armorRegenSpeed": 6,
+      "armorDurability": 1400
+    },
+    "old-jacket-t3": {
+      "armorRating": 150,
+      "armorRegenDelay": 10,
+      "armorRegenSpeed": 5,
+      "armorDurability": 1400
+    },
+    "orbital-strike-gun": {
+      "reloadSeconds": 3.05
+    },
+    "pistol-ammo": {
+      "damage": 50,
+      "penetrates": false,
+      "rangeFull": 35,
+      "rangeMax": 150,
+      "rangeMinMult": 0.3,
+      "rangeFalloff": true
+    },
+    "pistol-ammo-armor": {
+      "penetrates": false,
+      "rangeFull": 15,
+      "rangeMax": 150,
+      "rangeMinMult": 0.1,
+      "rangeFalloff": true
+    },
+    "pistol-ammo-fire": {
+      "damage": 50,
+      "penetrates": true,
+      "rangeFull": 35,
+      "rangeMax": 150,
+      "rangeMinMult": 0.3,
+      "rangeFalloff": true
+    },
+    "pistol-ammo-high-velocity": {
+      "damage": 50,
+      "penetrates": false,
+      "rangeFull": 50,
+      "rangeMax": 150,
+      "rangeMinMult": 0.6,
+      "rangeFalloff": true
+    },
+    "pistol-ammo-toxic": {
+      "damage": 50,
+      "penetrates": false,
+      "rangeFull": 35,
+      "rangeMax": 150,
+      "rangeMinMult": 0.3,
+      "rangeFalloff": true
+    },
+    "repeater-rifle": {
+      "reloadSeconds": 1.434,
+      "rangeFull": 5,
+      "rangeMax": 300,
+      "rangeMinMult": 0.7,
+      "rangeFalloff": true
+    },
+    "revolver-quick-reload": {
+      "reloadSeconds": 3,
+      "rangeFull": 50,
+      "rangeMax": 150,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "revolver-quick-reload-eight-shot": {
+      "reloadSeconds": 3,
+      "rangeFull": 50,
+      "rangeMax": 150,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "revolver-small": {
+      "reloadSeconds": 2.783,
+      "rangeFull": 150,
+      "rangeMax": 150,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "revolver-small-dusters": {
+      "reloadSeconds": 2.783,
+      "rangeFull": 150,
+      "rangeMax": 150,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "rifle-ammo": {
+      "damage": 50,
+      "penetrates": false,
+      "rangeFull": 100,
+      "rangeMax": 300,
+      "rangeMinMult": 0.6,
+      "rangeFalloff": true
+    },
+    "rifle-ammo-armor": {
+      "penetrates": false,
+      "rangeFull": 50,
+      "rangeMax": 300,
+      "rangeMinMult": 0.5,
+      "rangeFalloff": true
+    },
+    "rifle-ammo-fire": {
+      "damage": 50,
+      "penetrates": false,
+      "rangeFull": 100,
+      "rangeMax": 300,
+      "rangeMinMult": 0.6,
+      "rangeFalloff": true
+    },
+    "rifle-ammo-high-velocity": {
+      "damage": 50,
+      "penetrates": false,
+      "rangeFull": 300,
+      "rangeMax": 300,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "rifle-ammo-toxic": {
+      "damage": 50,
+      "penetrates": false,
+      "rangeFull": 100,
+      "rangeMax": 300,
+      "rangeMinMult": 0.6,
+      "rangeFalloff": true
+    },
+    "rifle-musket": {
+      "reloadSeconds": 2.95,
+      "rangeFull": 8,
+      "rangeMax": 300,
+      "rangeMinMult": 1,
+      "rangeFalloff": true
+    },
+    "rifle-repeater-aperture": {
+      "reloadSeconds": 1.434,
+      "rangeFull": 5,
+      "rangeMax": 300,
+      "rangeMinMult": 0.7,
+      "rangeFalloff": true
+    },
+    "rocket-launcher": {
+      "reloadSeconds": 5
+    },
+    "rocket-launcher-ammo-armor-piercing": {
+      "damage": 300,
+      "penetrates": true,
+      "rangeFull": 35,
+      "rangeMax": 150,
+      "rangeMinMult": 0.3,
+      "rangeFalloff": true
+    },
+    "rocket-launcher-ammo-high-explosion": {
+      "damage": 300,
+      "penetrates": true
+    },
+    "semi-automatic-pistol": {
+      "reloadSeconds": 2.4,
+      "rangeFull": 15,
+      "rangeMax": 150,
+      "rangeMinMult": 0.5,
+      "rangeFalloff": true
+    },
+    "semi-automatic-pistol-decreased-mag": {
+      "reloadSeconds": 1.8,
+      "rangeFull": 15,
+      "rangeMax": 150,
+      "rangeMinMult": 0.5,
+      "rangeFalloff": true
+    },
+    "semi-automatic-pistol-increased-mag": {
+      "reloadSeconds": 3.2,
+      "rangeFull": 15,
+      "rangeMax": 150,
+      "rangeMinMult": 0.5,
+      "rangeFalloff": true
+    },
+    "shotgun": {
+      "reloadSeconds": 5.15,
+      "rangeFull": 8,
+      "rangeMax": 30,
+      "rangeMinMult": 0.7,
+      "rangeFalloff": true
+    },
+    "shotgun-ammo": {
+      "damage": 22,
+      "penetrates": false,
+      "rangeFull": 6,
+      "rangeMax": 30,
+      "rangeMinMult": 0.3,
+      "rangeFalloff": true
+    },
+    "shotgun-ammo-armor": {
+      "damage": 12,
+      "penetrates": false,
+      "rangeFull": 6,
+      "rangeMax": 30,
+      "rangeMinMult": 0.3,
+      "rangeFalloff": true
+    },
+    "shotgun-ammo-explosive": {
+      "damage": 10,
+      "penetrates": false,
+      "rangeFull": 30,
+      "rangeMax": 30,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "shotgun-ammo-fire": {
+      "damage": 22,
+      "penetrates": false,
+      "rangeFull": 6,
+      "rangeMax": 30,
+      "rangeMinMult": 0.3,
+      "rangeFalloff": true
+    },
+    "shotgun-ammo-slug": {
+      "damage": 150,
+      "penetrates": false,
+      "rangeFull": 8,
+      "rangeMax": 30,
+      "rangeMinMult": 0.3,
+      "rangeFalloff": true
+    },
+    "shotgun-ammo-toxic": {
+      "damage": 22,
+      "penetrates": false,
+      "rangeFull": 6,
+      "rangeMax": 30,
+      "rangeMinMult": 0.3,
+      "rangeFalloff": true
+    },
+    "shotgun-handmade": {
+      "reloadSeconds": 2.5,
+      "rangeFull": 6,
+      "rangeMax": 30,
+      "rangeMinMult": 0.6,
+      "rangeFalloff": true
+    },
+    "shotgun-handmade-choke": {
+      "reloadSeconds": 2.5,
+      "rangeFull": 6,
+      "rangeMax": 30,
+      "rangeMinMult": 0.6,
+      "rangeFalloff": true
+    },
+    "shotgun-triplet": {
+      "reloadSeconds": 5.15,
+      "rangeFull": 8,
+      "rangeMax": 30,
+      "rangeMinMult": 0.7,
+      "rangeFalloff": true
+    },
+    "shotgun-turret-ammo": {
+      "damage": 110,
+      "penetrates": false,
+      "rangeFull": 35,
+      "rangeMax": 75,
+      "rangeMinMult": 0.2,
+      "rangeFalloff": true
+    },
+    "shotgun-turret-ammo-interior-explosion": {
+      "damage": 300,
+      "penetrates": true,
+      "rangeFull": 25,
+      "rangeMax": 75,
+      "rangeMinMult": 0.2,
+      "rangeFalloff": true
+    },
+    "shotgun-turret-ammo-slug": {
+      "damage": 300,
+      "penetrates": true,
+      "rangeFull": 75,
+      "rangeMax": 75,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "shotgun-turret-ammo-smoke": {
+      "damage": 300,
+      "penetrates": true,
+      "rangeFull": 75,
+      "rangeMax": 75,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "small-cannon-ammo": {
+      "damage": 50,
+      "penetrates": false
+    },
+    "small-cannon-ammo-long-range": {
+      "damage": 50,
+      "penetrates": true
+    },
+    "small-cannon-ammo-low-recoil": {
+      "damage": 50,
+      "penetrates": true
+    },
+    "sniper-rifle": {
+      "reloadSeconds": 3.8,
+      "rangeFull": 250,
+      "rangeMax": 250,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "sniper-rifle-ammo": {
+      "damage": 100,
+      "penetrates": false,
+      "rangeFull": 50,
+      "rangeMax": 250,
+      "rangeMinMult": 0.6,
+      "rangeFalloff": true
+    },
+    "sniper-rifle-ammo-high-penetration": {
+      "damage": 75,
+      "penetrates": true,
+      "rangeFull": 50,
+      "rangeMax": 250,
+      "rangeMinMult": 0.5,
+      "rangeFalloff": true
+    },
+    "sniper-rifle-double-barrel": {
+      "reloadSeconds": 5,
+      "rangeFull": 250,
+      "rangeMax": 250,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "sniper-rifle-iron-sights": {
+      "reloadSeconds": 2.5,
+      "rangeFull": 250,
+      "rangeMax": 250,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "sniper-rifle-iron-sights-silencer": {
+      "reloadSeconds": 2.5,
+      "rangeFull": 50,
+      "rangeMax": 250,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "sniper-rifle-silencer": {
+      "reloadSeconds": 3.8,
+      "rangeFull": 50,
+      "rangeMax": 250,
+      "rangeMinMult": 1,
+      "rangeFalloff": false
+    },
+    "turret-ammo": {
+      "damage": 300,
+      "penetrates": false
+    },
+    "turret-ammo-delayed-detonation": {
+      "damage": 75,
+      "penetrates": true
+    },
+    "turret-ammo-high-velocity": {
+      "damage": 300,
+      "penetrates": false
+    }
+  }
+}
