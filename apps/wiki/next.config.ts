@@ -27,6 +27,7 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  transpilePackages: ["@sandlabs/data"],
 };
 
 export default nextConfig;
