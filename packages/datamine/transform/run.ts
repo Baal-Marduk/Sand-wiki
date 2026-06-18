@@ -10,7 +10,7 @@ import { loadSekItems, loadLocalization, loadContainerLoot } from "./sek";
 import { reconcile } from "./reconcile";
 import { buildItemI18n } from "./i18n";
 import { mergeItems } from "./merge";
-import { applyIconOverrides } from "./items";
+import { applyIconOverrides, applyEntityOverrides, type EntityOverride } from "./items";
 import { loadCompartmentStats, mergeTrampler } from "./trampler";
 import { enumerateItems } from "./enumerate";
 import { canonicalSekId } from "./variants";
@@ -32,6 +32,9 @@ const partOverrides = readJson("overrides/part-slug-map.json") as Record<string,
 // game registry doesn't expose for datamining (binoculars, flashlight, map, multitool). They are
 // NOT gaps to fix, so they're filtered out of the missing-from-datamine report.
 const hardcodedItems = new Set(readJson("overrides/hardcoded-items.json") as string[]);
+// Curated display-level fixes the datamine can't express (disable a redundant duplicate,
+// disambiguate identical names). slug -> {name?, disabled?, category?}.
+const entityOverrides = readJson("overrides/entity-overrides.json") as Record<string, EntityOverride>;
 
 const baseline = loadBaseline();
 // Drop excluded SEK ids (junk/duplicate pseudo-items that shouldn't become wiki pages,
@@ -55,7 +58,7 @@ const mergeable = allItems.filter((it) => {
 const i18n = buildItemI18n(loc, new Map([...rec.bySekId].map(([id, hit]) => [id, hit.slug])));
 const merged = mergeItems(baseline.entities, mergeable, rec.bySekId, i18n);
 // Force corrected icons last (fixes stale/wrong paths in the source data).
-const entities = applyIconOverrides(merged.entities, iconMap);
+const entities = applyEntityOverrides(applyIconOverrides(merged.entities, iconMap), entityOverrides);
 // Genuine gaps only — drop the intentionally-hardcoded baseline-only items.
 const missing = merged.missing.filter((m) => !hardcodedItems.has(m.slug));
 const hardcodedKept = merged.missing.length - missing.length;

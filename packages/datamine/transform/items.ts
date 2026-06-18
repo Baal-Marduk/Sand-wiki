@@ -29,6 +29,24 @@ export function applyIconOverrides(entities: Entity[], iconMap: Record<string, s
   return entities.map((e) => (iconMap[e.slug] ? { ...e, icon: iconMap[e.slug] } : e));
 }
 
+/** Curated, display-level entity field overrides keyed by slug, for fixes the datamine can't
+ *  express: hide a redundant duplicate (disabled) or disambiguate identical names. Only the
+ *  whitelisted fields below are overridable; applied after the merge so they always win. */
+export interface EntityOverride { name?: string; disabled?: boolean; category?: string }
+
+export function applyEntityOverrides(entities: Entity[], overrides: Record<string, EntityOverride>): Entity[] {
+  return entities.map((e) => {
+    const o = overrides[e.slug];
+    if (!o) return e;
+    return {
+      ...e,
+      ...(o.name !== undefined ? { name: o.name } : {}),
+      ...(o.disabled !== undefined ? { disabled: o.disabled } : {}),
+      ...(o.category !== undefined ? { category: o.category } : {}),
+    };
+  });
+}
+
 /** Datamine-owned fields to refresh over a matched baseline item. Only includes a field
  *  when the datamine actually provides a value, so the merge keeps the baseline otherwise. */
 export type ItemPatch = Partial<Pick<Entity, "rarity" | "icon" | "description">>;

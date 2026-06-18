@@ -1,0 +1,6 @@
+{
+  "ironclad-s-cargo-box": { "disabled": true },
+  "game-alarm-lock-box-black": { "name": "Box with Radio Beacon (Black)" },
+  "game-alarm-lock-box-green": { "name": "Box with Radio Beacon (Green)" },
+  "game-alarm-lock-box-yellow": { "name": "Box with Radio Beacon (Yellow)" }
+}

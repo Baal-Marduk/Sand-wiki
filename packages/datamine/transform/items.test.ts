@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { sekItemPatch, newItemEntity, applyIconOverrides } from "./items";
+import { sekItemPatch, newItemEntity, applyIconOverrides, applyEntityOverrides } from "./items";
 import type { SekItem } from "./sek";
 import type { Entity } from "@sandlabs/data";
 
@@ -58,5 +58,23 @@ describe("items transform", () => {
     );
     expect(out.find((x) => x.slug === "coin-crown")?.icon).toBe("/icons/icon_item_coinCrown.png");
     expect(out.find((x) => x.slug === "other")?.icon).toBe("/icons/keep.png");
+  });
+
+  it("applyEntityOverrides forces name/disabled by slug, leaves others and unset fields untouched", () => {
+    const e = (slug: string, name: string): Entity => ({
+      id: slug, slug, kind: "item", name, description: null, category: "misc",
+      rarity: null, icon: null, imageAlt: null, derivedName: null, sourceUrl: null,
+      disabled: false, itemStats: null, tramplerStats: null, techNodeStats: null,
+    });
+    const out = applyEntityOverrides(
+      [e("dupe", "Dupe"), e("box-black", "Box with Radio Beacon"), e("other", "Other")],
+      { "dupe": { disabled: true }, "box-black": { name: "Box with Radio Beacon (Black)" } },
+    );
+    const dupe = out.find((x) => x.slug === "dupe")!;
+    expect(dupe.disabled).toBe(true);
+    expect(dupe.name).toBe("Dupe"); // name not in override -> untouched
+    expect(out.find((x) => x.slug === "box-black")!.name).toBe("Box with Radio Beacon (Black)");
+    expect(out.find((x) => x.slug === "box-black")!.disabled).toBe(false); // disabled untouched
+    expect(out.find((x) => x.slug === "other")!.name).toBe("Other"); // unmapped -> untouched
   });
 });
