@@ -26,11 +26,6 @@
     "db:migrate-buy-options": "tsx prisma/migrate-coin-trades-to-buy.ts",
     "db:extract-tech-unlocks": "tsx prisma/extract-tech-unlocks-to-buy.ts",
     "db:reset": "prisma migrate reset --force",
-    "directus:up": "docker compose up -d directus",
-    "directus:down": "docker compose down",
-    "directus:snapshot": "docker compose exec directus npx directus schema snapshot --yes ./snapshots/snapshot.yaml",
-    "directus:apply": "docker compose exec directus npx directus schema apply --yes ./snapshots/snapshot.yaml",
-    "directus:moderator": "node prisma/setup-directus-moderator.mjs",
     "data:export": "tsx scripts/export-entities.ts"
   },
   "dependencies": {
