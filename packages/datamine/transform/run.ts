@@ -11,6 +11,7 @@ import { reconcile } from "./reconcile";
 import { buildItemI18n } from "./i18n";
 import { mergeItems } from "./merge";
 import { applyIconOverrides } from "./items";
+import { enumerateItems } from "./enumerate";
 import { buildLootLinks, applyLoot, type LootOverrides } from "./loot";
 import { classifyImages } from "./images";
 import { diffEntities } from "./diff";
@@ -32,10 +33,11 @@ const sekItems = loadSekItems().filter((i) => !exclusions.has(i.id));
 const loc = loadLocalization();
 const containerLoot = loadContainerLoot();
 
-// --- items: reconcile -> i18n -> merge ---
-const rec = reconcile(sekItems.map((i) => ({ id: i.id, name: i.name })), baseline.entities, overrides);
+// --- items: enumerate (SEK items ∪ localization registry) -> reconcile -> i18n -> merge ---
+const allItems = enumerateItems(loc, sekItems).filter((i) => !exclusions.has(i.id));
+const rec = reconcile(allItems.map((i) => ({ id: i.id, name: i.name })), baseline.entities, overrides);
 const i18n = buildItemI18n(loc, new Map([...rec.bySekId].map(([id, hit]) => [id, hit.slug])));
-const merged = mergeItems(baseline.entities, sekItems, rec.bySekId, i18n);
+const merged = mergeItems(baseline.entities, allItems, rec.bySekId, i18n);
 // Force corrected icons last (fixes stale/wrong paths in the source data).
 const entities = applyIconOverrides(merged.entities, iconMap);
 const missing = merged.missing;
