@@ -40,6 +40,7 @@ export interface TurretStatsFile { turrets: Record<string, TurretRaw> }
 export interface StatPatch {
   damage?: number;
   reloadSeconds?: number;
+  magazine?: number;
   rangeFull?: number;
   rangeMax?: number;
   rangeMinMult?: number;
