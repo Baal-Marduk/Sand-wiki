@@ -24,4 +24,18 @@ describe("buildItemI18n", () => {
     const m = buildItemI18n(loc, bySlug);
     expect(m.has("iron")).toBe(false);
   });
+
+  it("resolves _Melee/_Ranged loc variants via the canonical id (slug map is keyed by canonical id)", () => {
+    const locVar: Localization = {
+      locales: ["en", "fr"],
+      items: {
+        item_smokeGrenade_Melee: { locales: { en: { name: "Smoke Grenade", desc: null }, fr: { name: "Grenade fumigène", desc: null } } },
+        item_smokeGrenade_Ranged: { locales: { en: { name: "Smoke Grenade", desc: null }, fr: { name: "Grenade fumigène", desc: null } } },
+      },
+      compartments: {}, factions: [],
+    };
+    // reconcile keys by canonical id (enumerate.ts), so the slug map has the canonical id only.
+    const m = buildItemI18n(locVar, new Map([["item_smokeGrenade", "smoke-grenade"]]));
+    expect(m.get("smoke-grenade")).toEqual({ fr: { name: "Grenade fumigène", description: null } });
+  });
 });
