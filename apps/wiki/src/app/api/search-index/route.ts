@@ -1,21 +1,21 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
+import * as data from "@sandlabs/data";
 
 /** Lightweight index for client-side search autocomplete: all items plus the
- *  environment entities (loot containers + landmarks) that get their own dropdown groups. */
+ *  environment entities (loot containers + landmarks) that get their own dropdown groups.
+ *  Sourced from the static @sandlabs/data layer (no DB on the read path). */
 export async function GET() {
-  const [items, places] = await Promise.all([
-    prisma.entity.findMany({
-      where: { kind: "item", disabled: false },
-      select: { slug: true, name: true, category: true, derivedName: true, icon: true, rarity: true },
-      orderBy: { name: "asc" },
-    }),
-    prisma.entity.findMany({
-      where: { kind: "environment", category: { in: ["loot-containers", "landmarks"] }, disabled: false },
-      select: { slug: true, name: true, category: true },
-      orderBy: { name: "asc" },
-    }),
-  ]);
+  const items = data.listByKind("item")
+    .filter((e) => !e.disabled)
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((e) => ({
+      slug: e.slug, name: e.name, category: e.category,
+      derivedName: e.derivedName, icon: e.icon, rarity: e.rarity,
+    }));
+  const places = data.listByKind("environment")
+    .filter((e) => !e.disabled && (e.category === "loot-containers" || e.category === "landmarks"))
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((e) => ({ slug: e.slug, name: e.name, category: e.category }));
   return NextResponse.json({ items, places }, {
     headers: { "cache-control": "public, max-age=3600" },
   });
