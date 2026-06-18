@@ -1,5 +1,6 @@
 import type { LocalizedText } from "@sandlabs/data";
 import type { Localization } from "./sek";
+import { canonicalSekId } from "./variants";
 
 /** Build a slug -> {locale -> LocalizedText} map for ITEMS, carrying every NON-EN locale
  *  (EN stays the entity's primary name/description). Slugs come from reconcile (sekId->slug).
@@ -10,7 +11,7 @@ export function buildItemI18n(
 ): Map<string, Record<string, LocalizedText>> {
   const out = new Map<string, Record<string, LocalizedText>>();
   for (const [sekId, entry] of Object.entries(loc.items)) {
-    const slug = slugBySekId.get(sekId);
+    const slug = slugBySekId.get(canonicalSekId(sekId));
     if (!slug) continue;
     const i18n: Record<string, LocalizedText> = {};
     for (const [locale, t] of Object.entries(entry.locales)) {
