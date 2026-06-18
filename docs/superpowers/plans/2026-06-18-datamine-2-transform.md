@@ -23,8 +23,8 @@
 
 ## Scope (this plan)
 
-- **In:** `@sandlabs/data` `i18n` schema add; the transform framework (`reconcile → items → i18n → merge → emit → diff → run`); item field-refresh + new-item add; all-locale **item** i18n; the `missing-from-datamine` report; baseline-lossless merge across all kinds; slug-safety diff guard; first real run on the committed `sek-out/`.
-- **Deferred (noted, extensible within the same framework):** deep per-field datamine refresh for parts/tech/locations/loot (the baseline already carries these richly; merge preserves them) — added incrementally as SEK gains data (e.g. CompartmentsDatabase trampler stats after a real extraction). **Part/compartment i18n** (the `compArmor_*` ↔ `walker_*_epb` id mapping needs the CompartmentsDatabase; item i18n lands now).
+- **In:** `@sandlabs/data` `i18n` schema add; the transform framework (`reconcile → items → i18n → loot → merge → emit → diff → run`); item field-refresh + new-item add; all-locale **item** i18n; **deep-derive of container loot** (the curated env entities' loot links refreshed from SEK `container_loot.json`); the `missing-from-datamine` report; baseline-lossless merge; slug-safety diff guard; first real run on the committed `sek-out/`.
+- **Deferred (noted, extensible within the same framework):** deep per-field datamine refresh for **parts** and **tech** — the baseline carries these *richer* than SEK does today (SEK tech = crowns+edges only; SEK parts = geometry, no logistics stats), so merge **preserves** them until a real extraction provides better data (CompartmentsDatabase trampler stats; richer tech). **Part/compartment i18n** (the `compArmor_*` ↔ `walker_*_epb` id mapping needs the CompartmentsDatabase; item i18n lands now).
 
 ---
 
@@ -47,6 +47,8 @@ packages/datamine/
     items.test.ts
     i18n.ts                                    # CREATE — localization -> per-slug i18n map
     i18n.test.ts
+    loot.ts                                    # CREATE — SEK container_loot -> loot links
+    loot.test.ts
     merge.ts                                   # CREATE — merge policy + missing report
     merge.test.ts
     emit.ts                                    # CREATE — validate + write artifact
@@ -55,7 +57,8 @@ packages/datamine/
     run.ts                                     # CREATE — orchestrator (tsx entry)
     overrides/
       slug-map.json                            # CREATE — { sekId: wikiSlug } for unmatched/drift
-    fixtures/                                  # CREATE — tiny sek-out + baseline fixtures for tests
+      loot-overrides.json                      # SEED (copied) — containerSlugMap + excludeContainers
+  sek-out/container_loot.json                  # SEED (copied from SEK) — reconciled container loot
   reports/
     missing-from-datamine.json                 # GENERATED (committed after first run)
 ```
@@ -251,6 +254,14 @@ function read<T>(file: string, dir = SEK): T {
 
 export function loadSekItems(dir = SEK): SekItem[] { return read("items.json", dir); }
 export function loadLocalization(dir = SEK): Localization { return read("localization.json", dir); }
+
+// --- container loot (already reconciled to wiki slugs + tier-collapse by build_container_loot.py) ---
+export interface LootEntry { slug: string; name: string; chance: number; voyage: string | null; storm: string | null }
+export interface LootTier { tier: string; rollSets: number; loot: LootEntry[] }
+export interface Container { name: string; icon: string; category: string; tiers: LootTier[] }
+export type ContainerLoot = Record<string, Container>;  // keyed by SEK container slug
+
+export function loadContainerLoot(dir = SEK): ContainerLoot { return read("container_loot.json", dir); }
 ```
 
 - [ ] **Step 3: Typecheck**
@@ -713,6 +724,136 @@ git commit -m "feat(transform): item merge policy + missing-from-datamine report
 
 ---
 
+## Task 7B: `loot.ts` — deep-derive container loot (TDD)
+
+**Files:**
+- Create (seed): `packages/datamine/sek-out/container_loot.json`, `packages/datamine/transform/overrides/loot-overrides.json`
+- Create: `packages/datamine/transform/loot.ts`, `loot.test.ts`
+
+SEK's `container_loot.json` is already reconciled to wiki item slugs with tier-collapse. The loot module maps it to `loot`-role `EntityLink` rows (env slug ← `containerSlugMap`, excluding `excludeContainers`) and **full-overwrites** the loot links for the containers it covers (keeping all other links — non-loot, and loot for uncovered containers).
+
+- [ ] **Step 1: Seed the loot inputs (copy from committed SEK / existing wiki overrides)**
+
+```bash
+cd /d/Documents/SandLabs
+cp sek/sand-expedition-kit/datamine/container_loot.json packages/datamine/sek-out/container_loot.json
+# the override map (containerSlugMap + excludeContainers) already exists in the wiki's datamine copy:
+cp apps/wiki/datamine/overrides/loot-overrides.json packages/datamine/transform/overrides/loot-overrides.json
+```
+Verify both are valid JSON: `node -e "require('./packages/datamine/sek-out/container_loot.json'); require('./packages/datamine/transform/overrides/loot-overrides.json'); console.log('ok')"`.
+
+- [ ] **Step 2: Write the failing test `packages/datamine/transform/loot.test.ts`**
+
+```ts
+import { describe, it, expect } from "vitest";
+import { buildLootLinks, applyLoot } from "./loot";
+import type { ContainerLoot } from "./sek";
+import type { EntityLink } from "@sandlabs/data";
+
+const cl: ContainerLoot = {
+  "weapons-crate": {
+    name: "Weapons Crate", icon: "x.png", category: "loot-containers",
+    tiers: [{ tier: "Tier 1", rollSets: 4, loot: [
+      { slug: "pistol-ammo", name: "Pistol Ammo", chance: 50, voyage: "25-45", storm: "25-45" },
+      { slug: "rifle-musket", name: "Rifle Musket", chance: 25, voyage: "1", storm: "1" },
+    ] }],
+  },
+  "mob-drops": { name: "Mob Drops", icon: "", category: "loot-containers", tiers: [] }, // excluded
+};
+const ov = { containerSlugMap: { "weapons-crate": "weapon-crate" }, excludeContainers: ["mob-drops"] };
+
+describe("loot transform", () => {
+  it("maps container_loot to loot links under the mapped env slug, skipping excluded", () => {
+    const { covered, links } = buildLootLinks(cl, ov);
+    expect([...covered]).toEqual(["weapon-crate"]);
+    expect(links).toHaveLength(2);
+    expect(links[0]).toEqual({
+      sourceSlug: "weapon-crate", targetSlug: "pistol-ammo", role: "loot", name: "Pistol Ammo",
+      amount: null, tier: "Tier 1", value1: "50", value2: "25-45", value3: "25-45", sortOrder: 0, buyGroup: null,
+    });
+    expect(links[1].sortOrder).toBe(1);
+  });
+
+  it("full-overwrites loot for covered containers, keeps other links", () => {
+    const base: EntityLink[] = [
+      { sourceSlug: "weapon-crate", targetSlug: "old-item", role: "loot", name: "Old", amount: null, tier: "Tier 1", value1: "10", value2: null, value3: null, sortOrder: 0, buyGroup: null },
+      { sourceSlug: "weapon-crate", targetSlug: "x", role: "cost", name: "X", amount: 1, tier: null, value1: null, value2: null, value3: null, sortOrder: 0, buyGroup: null },
+      { sourceSlug: "other-crate", targetSlug: "y", role: "loot", name: "Y", amount: null, tier: "Tier 1", value1: "5", value2: null, value3: null, sortOrder: 0, buyGroup: null },
+    ];
+    const out = applyLoot(base, buildLootLinks(cl, ov));
+    // old weapon-crate loot replaced; weapon-crate cost kept; other-crate loot kept; new weapon-crate loot added
+    expect(out.filter((l) => l.role === "loot" && l.sourceSlug === "weapon-crate").map((l) => l.targetSlug)).toEqual(["pistol-ammo", "rifle-musket"]);
+    expect(out.find((l) => l.role === "cost" && l.sourceSlug === "weapon-crate")).toBeTruthy();
+    expect(out.find((l) => l.sourceSlug === "other-crate")).toBeTruthy();
+  });
+});
+```
+
+- [ ] **Step 3: Run, confirm FAIL**
+
+Run: `npm run test --workspace=packages/datamine -- loot`
+Expected: FAIL — `./loot` exports missing.
+
+- [ ] **Step 4: Implement `packages/datamine/transform/loot.ts`**
+
+```ts
+import type { EntityLink } from "@sandlabs/data";
+import type { ContainerLoot } from "./sek";
+
+export interface LootOverrides {
+  containerSlugMap: Record<string, string>;
+  excludeContainers: string[];
+}
+
+export interface LootResult { covered: Set<string>; links: EntityLink[] }
+
+/** Build loot-role EntityLink rows from SEK container_loot, mapping each SEK container slug to
+ *  its wiki env slug (containerSlugMap; identity if unmapped) and skipping excludeContainers.
+ *  chance -> value1, voyage range -> value2, storm range -> value3; tier from the tier label. */
+export function buildLootLinks(cl: ContainerLoot, ov: LootOverrides): LootResult {
+  const exclude = new Set(ov.excludeContainers ?? []);
+  const map = ov.containerSlugMap ?? {};
+  const covered = new Set<string>();
+  const links: EntityLink[] = [];
+  for (const [sekSlug, c] of Object.entries(cl)) {
+    if (exclude.has(sekSlug)) continue;
+    const envSlug = map[sekSlug] ?? sekSlug;
+    covered.add(envSlug);
+    let sort = 0;
+    for (const t of c.tiers) {
+      for (const e of t.loot) {
+        links.push({
+          sourceSlug: envSlug, targetSlug: e.slug, role: "loot", name: e.name,
+          amount: null, tier: t.tier, value1: String(e.chance),
+          value2: e.voyage ?? null, value3: e.storm ?? null, sortOrder: sort++, buyGroup: null,
+        });
+      }
+    }
+  }
+  return { covered, links };
+}
+
+/** Full-overwrite loot links for covered containers; keep every other link unchanged. */
+export function applyLoot(baseLinks: EntityLink[], result: LootResult): EntityLink[] {
+  const kept = baseLinks.filter((l) => !(l.role === "loot" && result.covered.has(l.sourceSlug)));
+  return kept.concat(result.links);
+}
+```
+
+- [ ] **Step 5: Run, confirm PASS**
+
+Run: `npm run test --workspace=packages/datamine -- loot`
+Expected: PASS (2 tests).
+
+- [ ] **Step 6: Commit**
+
+```bash
+git add packages/datamine/sek-out/container_loot.json packages/datamine/transform/overrides/loot-overrides.json packages/datamine/transform/loot.ts packages/datamine/transform/loot.test.ts
+git commit -m "feat(transform): deep-derive container loot links from SEK (TDD)"
+```
+
+---
+
 ## Task 8: `diff.ts` — baseline diff + slug-safety guard (TDD)
 
 **Files:**
@@ -832,38 +973,55 @@ export function writeMissingReport(missing: unknown): void {
 - [ ] **Step 2: Create `packages/datamine/transform/run.ts` (orchestrator)**
 
 ```ts
-// Orchestrates the transform: load baseline + sek-out, reconcile items, build i18n, merge,
-// diff, validate, write artifact + missing report. Recipes/links/other-kind entities pass
-// through from the baseline unchanged in this iteration (merge framework is extensible).
+// Orchestrates the transform: load baseline + sek-out, reconcile items, build i18n, merge
+// items, deep-derive container loot links, diff, validate, write artifact + missing report.
+// Recipes + non-loot links + parts/tech/locations entities pass through from the baseline
+// this iteration (merge framework is extensible per-kind).
 //   npx tsx transform/run.ts [--allow-slug-changes]
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
 import { loadBaseline } from "./baseline";
-import { loadSekItems, loadLocalization } from "./sek";
+import { loadSekItems, loadLocalization, loadContainerLoot } from "./sek";
 import { reconcile } from "./reconcile";
 import { buildItemI18n } from "./i18n";
 import { mergeItems } from "./merge";
+import { buildLootLinks, applyLoot, type LootOverrides } from "./loot";
 import { diffEntities } from "./diff";
 import { validateEntities, writeArtifact, writeMissingReport } from "./emit";
 
 const allowSlugChanges = process.argv.includes("--allow-slug-changes");
-const overrides = JSON.parse(
-  readFileSync(resolve(import.meta.dirname, "overrides/slug-map.json"), "utf-8"),
-) as Record<string, string>;
+const readJson = (p: string) => JSON.parse(readFileSync(resolve(import.meta.dirname, p), "utf-8"));
+const overrides = readJson("overrides/slug-map.json") as Record<string, string>;
+const lootOverrides = readJson("overrides/loot-overrides.json") as LootOverrides;
 
 const baseline = loadBaseline();
 const sekItems = loadSekItems();
 const loc = loadLocalization();
+const containerLoot = loadContainerLoot();
 
+// --- items: reconcile -> i18n -> merge ---
 const rec = reconcile(sekItems.map((i) => ({ id: i.id, name: i.name })), baseline.entities, overrides);
 const i18n = buildItemI18n(loc, new Map([...rec.bySekId].map(([id, hit]) => [id, hit.slug])));
 const { entities, missing } = mergeItems(baseline.entities, sekItems, rec.bySekId, i18n);
 
+// --- loot: deep-derive container loot links, then drop any pointing at an unknown slug ---
+const knownSlugs = new Set(entities.map((e) => e.slug));
+const loot = buildLootLinks(containerLoot, lootOverrides);
+const dangling = loot.links.filter((l) => l.targetSlug && !knownSlugs.has(l.targetSlug));
+if (dangling.length) {
+  console.warn(`loot: dropping ${dangling.length} link(s) to unknown item slugs:`,
+    [...new Set(dangling.map((l) => l.targetSlug))].slice(0, 20).join(", "));
+}
+loot.links = loot.links.filter((l) => !l.targetSlug || knownSlugs.has(l.targetSlug));
+const links = applyLoot(baseline.links, loot);
+
+// --- diff + guards ---
 const diff = diffEntities(baseline.entities, entities);
 console.log(`entities ${diff.total.prev} -> ${diff.total.next} | +${diff.added.length} added, -${diff.removed.length} removed`);
 console.log(`reconcile: ${[...rec.bySekId.values()].filter((h) => h.status === "matched").length} matched, ` +
   `${[...rec.bySekId.values()].filter((h) => h.status === "new").length} new, ` +
   `${[...rec.bySekId.values()].filter((h) => h.status === "override").length} override`);
+console.log(`loot: refreshed ${loot.covered.size} containers, ${loot.links.length} loot links`);
 console.log(`missing-from-datamine: ${missing.length} baseline items not covered by SEK`);
 if (diff.added.length) console.log("  added:", diff.added.slice(0, 20).join(", ") + (diff.added.length > 20 ? " …" : ""));
 
@@ -874,8 +1032,8 @@ if (diff.removed.length > 0 && !allowSlugChanges) {
 }
 
 validateEntities(entities);
-// recipes + links + non-item entities pass through from baseline this iteration.
-writeArtifact(entities, baseline.recipes, baseline.links);
+// recipes + non-loot links + parts/tech/locations entities pass through from baseline.
+writeArtifact(entities, baseline.recipes, links);
 writeMissingReport(missing);
 console.log("wrote packages/data/generated/{entities,recipes,links}.json + reports/missing-from-datamine.json");
 ```
@@ -908,14 +1066,15 @@ Expected: prints entity counts, reconcile breakdown (≈88 matched / ≈10 new /
 - [ ] **Step 2: Review the diff output + the regenerated artifact**
 
 - Confirm `entities 377 -> ~387` (added the ~10 new SEK items, removed 0).
-- `git diff --stat packages/data/generated/` should show entities.json changed (i18n added to matched items, ~10 new items, refreshed rarity/icon/desc), recipes/links unchanged.
+- Confirm `loot: refreshed ~8 containers` and a loot-link count; check the dangling-drop warning is empty or small (if non-empty, the dropped item slugs may need `itemSlugAliases` — note them; out of scope to fully resolve in this run).
+- `git diff --stat packages/data/generated/` should show entities.json changed (i18n added to matched items where non-EN locales exist, ~10 new items, refreshed rarity/icon/desc) AND links.json changed (loot links for the ~8 containers refreshed); recipes.json unchanged.
 - Spot-check one matched item gained `i18n` (only if `sek-out/localization.json` carries non-EN locales — the Plan-1 seed is EN-only, so `i18n` will be EMPTY until a real all-locale extraction; that's expected. The merge still runs correctly; i18n populates after Plan 3's extraction).
 - Read `packages/datamine/reports/missing-from-datamine.json` — the ~47 baseline items SEK doesn't cover (for owner investigation).
 
 - [ ] **Step 3: Run the data-package round-trip test against the regenerated artifact**
 
 Run: `npm run test --workspace=packages/data`
-Expected: PASS — the regenerated `entities/recipes/links` still satisfy the round-trip integrity test (unique slugs; every recipe/link slug resolves). If a NEW item is referenced by no link/recipe that's fine; the guard is that links/recipes reference KNOWN slugs, and links/recipes are unchanged baseline so they still resolve.
+Expected: PASS — the regenerated `entities/recipes/links` still satisfy the round-trip integrity test (unique slugs; every recipe/link slug resolves). Recipes + non-loot links are unchanged baseline; the refreshed loot links were filtered in `run.ts` to drop any target not in the entity set, so every loot link also resolves. If the round-trip fails on a loot target, the `run.ts` dangling-filter missed a case — investigate.
 
 - [ ] **Step 4: Verify the wiki still builds + renders against the regenerated artifact**
 
@@ -935,7 +1094,7 @@ git commit -m "feat(datamine): first transform run — merge SEK items + missing
 
 ## Self-Review Notes (for the executor)
 
-- **Lossless is the bar.** The merge only *adds* and *refreshes*; it must never remove a baseline slug (the `diff.ts` guard enforces this). recipes/links/non-item entities pass through unchanged this iteration — that's intentional, not an omission (the baseline already carries them richly; SEK doesn't improve them yet).
+- **Lossless is the bar.** The merge only *adds* and *refreshes* entities; it must never remove a baseline slug (the `diff.ts` guard enforces this). Loot links for the ~8 covered containers are full-overwritten from SEK (deep-derive); recipes + non-loot links + parts/tech/locations entities pass through unchanged this iteration — intentional (the baseline carries those richer than SEK does today).
 - **i18n will be empty until Plan 3.** The Plan-1 `localization.json` seed is EN-only, so `buildItemI18n` yields nothing to attach yet. The code path is correct and tested; real translations land when the all-locale extraction runs (Plan 3). Don't "fix" the empty i18n.
 - **New items default to `category: misc`.** Acceptable for this framework-proving run; refine later.
 - **Match key is name-based.** If the diff shows a matched item refreshing the WRONG baseline entity (name collision), add an `overrides/slug-map.json` entry (sekId → correct slug) and re-run.
