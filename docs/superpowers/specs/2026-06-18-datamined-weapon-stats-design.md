@@ -47,7 +47,7 @@ Dev/test ids (e.g. `DevSiegeRevolver*`) have no matching wiki item; the build dr
 ```
 SEK site/src/data/weapon_stats.json            (built datamine output, on disk)
   └─copy→ sand-wiki/datamine/data/weapon_stats.json     (committed provenance snapshot)
-            └─build→ sand-wiki/prisma/build-weapon-stats.mjs   (npm run weapons:build)
+            └─build→ sand-wiki/prisma/build-weapon-stats.ts    (npm run weapons:build, via tsx)
                        reads weapon_stats.json + prisma/data.json (id→slug, category)
                        emits→ sand-wiki/prisma/weapon-stats.json  (committed, slug-keyed)
                                 └─load→ sand-wiki/prisma/load-weapon-stats.ts
@@ -140,7 +140,7 @@ can have `seed.ts` import `weapon-stats.json` for fresh-seed consistency — not
 ## NPM scripts
 
 ```
-weapons:build          => node prisma/build-weapon-stats.mjs
+weapons:build          => tsx prisma/build-weapon-stats.ts
 db:load-weapon-stats   => tsx  prisma/load-weapon-stats.ts
 ```
 

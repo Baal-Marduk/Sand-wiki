@@ -6,6 +6,9 @@
 export interface RangeRaw { full: number; max: number; minMult: number; falloff: boolean }
 export interface WeaponRaw { reloadSeconds: number | null; range: RangeRaw | null; recoil: unknown; spread: unknown }
 export interface AmmoRaw {
+  // `turret`/`stack` are intentionally not imported: turret ammo are still real wiki
+  // items (we import their damage/range), and `stack` is inventory stack size, not magazine.
+  // Only turret *weapons* (turret_stats.json) are deferred.
   turret: boolean;
   damagePhysical: number | null;
   range: RangeRaw | null;
