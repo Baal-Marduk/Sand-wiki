@@ -27,6 +27,8 @@ export interface WeaponStatsFile {
 }
 
 export interface TurretRaw {
+  // family/tier/variant/barrels/fireInterval/autoRefill/ammoTypes/spreadIdleMax/source
+  // exist in turret_stats.json but are intentionally not imported.
   fireRate: number | null;
   projectileVelocity: number | null;
   clipSize: number | null;

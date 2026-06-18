@@ -76,4 +76,10 @@ describe("turretPatch", () => {
       penetrates: true, reloadSeconds: 4.5,
     })).toEqual({ fireRate: 0.82, projectileVelocity: 250, magazine: 1, penetrates: true, reloadSeconds: 4.5 });
   });
+  it("returns an empty patch when every field is null", () => {
+    expect(turretPatch({
+      fireRate: null, projectileVelocity: null, clipSize: null,
+      penetrates: null, reloadSeconds: null,
+    })).toEqual({});
+  });
 });
