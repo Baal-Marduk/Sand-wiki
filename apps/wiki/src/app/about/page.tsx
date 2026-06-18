@@ -1,5 +1,4 @@
-import { prisma } from "@/lib/db";
-import { itemCategoryCounts, envCategoryCounts, tramplerCategoryCounts } from "@/lib/queries";
+import { itemCategoryCounts, envCategoryCounts, tramplerCategoryCounts, recipeCount } from "@/lib/queries";
 import { StatGrid } from "@/components/StatGrid";
 
 // Shared with the Home hero — desert glow + faint blueprint grid.
@@ -22,18 +21,18 @@ export const metadata = {
 };
 
 export default async function AboutPage() {
-  const [itemCounts, envCounts, tramplerCounts, recipeCount] = await Promise.all([
+  const [itemCounts, envCounts, tramplerCounts, recipes] = await Promise.all([
     itemCategoryCounts(),
     envCategoryCounts(),
     tramplerCategoryCounts(),
-    prisma.recipe.count(),
+    recipeCount(),
   ]);
 
   const stats = [
     { label: "Items", value: sum(itemCounts) },
     { label: "Trampler parts", value: sum(tramplerCounts) },
     { label: "Environments", value: sum(envCounts) },
-    { label: "Recipes", value: recipeCount },
+    { label: "Recipes", value: recipes },
   ];
 
   return (

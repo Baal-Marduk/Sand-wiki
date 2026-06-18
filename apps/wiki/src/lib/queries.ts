@@ -10,6 +10,11 @@ import type { TechTree } from "./tech-tree/types";
 import type { LinkOption } from "@/lib/link-picker";
 import { groupBuyOptions, type BuyLinkRow, type BuyOptionView } from "./buy-options";
 
+/** Total recipe count from the static data (replaces the old prisma.recipe.count). */
+export async function recipeCount(): Promise<number> {
+  return data.store.recipes.length;
+}
+
 /** A recipe row as loaded with `entity`-relation includes (Prisma renamed the
  *  relation field from `item` to `entity`). */
 type LoadedRecipe = {
