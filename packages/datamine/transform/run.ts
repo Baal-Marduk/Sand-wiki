@@ -18,9 +18,12 @@ const allowSlugChanges = process.argv.includes("--allow-slug-changes");
 const readJson = (p: string) => JSON.parse(readFileSync(resolve(import.meta.dirname, p), "utf-8"));
 const overrides = readJson("overrides/slug-map.json") as Record<string, string>;
 const lootOverrides = readJson("overrides/loot-overrides.json") as LootOverrides;
+const exclusions = new Set(readJson("overrides/exclusions.json") as string[]);
 
 const baseline = loadBaseline();
-const sekItems = loadSekItems();
+// Drop excluded SEK ids (junk/duplicate pseudo-items that shouldn't become wiki pages,
+// e.g. game_treasureShovel) before any reconcile/merge so they never get added.
+const sekItems = loadSekItems().filter((i) => !exclusions.has(i.id));
 const loc = loadLocalization();
 const containerLoot = loadContainerLoot();
 

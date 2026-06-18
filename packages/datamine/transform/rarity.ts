@@ -1,9 +1,11 @@
+// SEK rarity enum -> wiki rarity name. Covers every value SEK emits
+// (COMMON/UNCOMMON/NOTEWORTHY/REMARKABLE/RARE) plus EXPERIMENTAL for safety.
 const RARITY: Record<string, string> = {
   COMMON: "Common",
+  UNCOMMON: "Uncommon",
   NOTEWORTHY: "Noteworthy",
+  REMARKABLE: "Remarkable",
   RARE: "Rare",
-  EPIC: "Epic",
-  LEGENDARY: "Legendary",
   EXPERIMENTAL: "Experimental",
 };
 

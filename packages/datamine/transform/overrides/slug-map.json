@@ -1,1 +1,7 @@
-{}
+{
+  "item_ironcladContainer40mm": "ironclad-s-cargo-box",
+  "item_ironcladContainer70mm": "ironclad-s-cargo-box",
+  "item_ironcladContainer80mm": "ironclad-s-cargo-box",
+  "game_coinCrownPile_10": "coin-crown",
+  "game_ValuablePiles01_mobDrop": "small-valuables"
+}

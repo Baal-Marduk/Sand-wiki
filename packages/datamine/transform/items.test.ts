@@ -26,6 +26,22 @@ describe("items transform", () => {
     expect(e.icon).toBe("/icons/emp.png");
     expect(e.description).toBe("Boom.");
     expect(e.disabled).toBe(false);
-    expect(e.category).toBe("misc"); // default; refined by overrides/later mapping
+    expect(e.category).toBe("misc"); // type null -> misc default
+  });
+
+  it("newItemEntity derives category from the SEK type", () => {
+    expect(newItemEntity("x", sek({ type: "WEAPON" })).category).toBe("weapons");
+    expect(newItemEntity("x", sek({ type: "AMMO" })).category).toBe("ammo");
+    expect(newItemEntity("x", sek({ type: "TURRET_AMMO" })).category).toBe("ammo");
+    expect(newItemEntity("x", sek({ type: "RESOURCE_T2" })).category).toBe("resources");
+    expect(newItemEntity("x", sek({ type: "FOOD" })).category).toBe("medical");
+    expect(newItemEntity("x", sek({ type: "MONEY" })).category).toBe("misc");
+    expect(newItemEntity("x", sek({ type: null })).category).toBe("misc");
+  });
+
+  it("maps the full SEK rarity enum, keeps null otherwise", () => {
+    expect(sekItemPatch(sek({ rarity: "UNCOMMON" })).rarity).toBe("Uncommon");
+    expect(sekItemPatch(sek({ rarity: "REMARKABLE" })).rarity).toBe("Remarkable");
+    expect(sekItemPatch(sek({ rarity: "COMMON" })).rarity).toBe("Common");
   });
 });

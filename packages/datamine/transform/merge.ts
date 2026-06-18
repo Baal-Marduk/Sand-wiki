@@ -20,6 +20,7 @@ export function mergeItems(
 ): MergeItemsResult {
   const bySlug = new Map(baseline.map((e) => [e.slug, e]));
   const matchedSlugs = new Set<string>();
+  const addedSlugs = new Set<string>();
   const additions: Entity[] = [];
 
   const applyI18n = (e: Entity): Entity => {
@@ -30,17 +31,23 @@ export function mergeItems(
   for (const it of sekItems) {
     const hit = bySekId.get(it.id);
     if (!hit) continue;
-    if (hit.status === "new") {
-      additions.push(applyI18n(newItemEntity(hit.slug, it)));
-      continue;
-    }
     const base = bySlug.get(hit.slug);
-    if (!base) { // override/matched pointing at a missing slug -> treat as new
-      additions.push(applyI18n(newItemEntity(hit.slug, it)));
+    if (base) {
+      // matched or override pointing at an existing baseline slug -> refresh once.
+      // Multiple SEK ids can map to the same slug (e.g. overrides); first refresh wins.
+      if (!matchedSlugs.has(hit.slug)) {
+        matchedSlugs.add(hit.slug);
+        bySlug.set(hit.slug, applyI18n({ ...base, ...sekItemPatch(it) }));
+      }
       continue;
     }
-    matchedSlugs.add(hit.slug);
-    bySlug.set(hit.slug, applyI18n({ ...base, ...sekItemPatch(it) }));
+    // new (or override pointing at a not-yet-existing slug) -> add once.
+    // Dedupe so several SEK ids mapped to one slug (e.g. the 3 Ironclad cargo box calibers)
+    // collapse into a single entity instead of producing duplicate slugs.
+    if (!addedSlugs.has(hit.slug)) {
+      addedSlugs.add(hit.slug);
+      additions.push(applyI18n(newItemEntity(hit.slug, it)));
+    }
   }
 
   const missing: MissingEntry[] = baseline

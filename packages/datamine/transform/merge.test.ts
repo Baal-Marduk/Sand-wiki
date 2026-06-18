@@ -45,4 +45,30 @@ describe("mergeItems", () => {
     expect(entities.find((e) => e.slug === "legacy-item")).toBeTruthy();
     expect(missing).toEqual([{ slug: "legacy-item", name: "Legacy Item", kind: "item" }]);
   });
+
+  it("collapses multiple SEK ids mapped to one new slug into a single entity", () => {
+    const sekIds: SekItem[] = [
+      sek({ id: "a40", name: "Ironclad's Cargo Box", rarity: "COMMON" }),
+      sek({ id: "a70", name: "Ironclad's Cargo Box", rarity: "COMMON" }),
+      sek({ id: "a80", name: "Ironclad's Cargo Box", rarity: "COMMON" }),
+    ];
+    const map = new Map([
+      ["a40", { slug: "ironclad-s-cargo-box", status: "override" as const }],
+      ["a70", { slug: "ironclad-s-cargo-box", status: "override" as const }],
+      ["a80", { slug: "ironclad-s-cargo-box", status: "override" as const }],
+    ]);
+    const out = mergeItems([], sekIds, map, new Map());
+    expect(out.entities.filter((e) => e.slug === "ironclad-s-cargo-box")).toHaveLength(1);
+  });
+
+  it("refreshes (not duplicates) when an override points at an existing baseline slug", () => {
+    const out = mergeItems(
+      [baseEntity("coin-crown", "Crowns", { category: "misc", rarity: "Uncommon" })],
+      [sek({ id: "game_coinCrownPile_10", name: "Coin Crown Pile 10", rarity: "COMMON" })],
+      new Map([["game_coinCrownPile_10", { slug: "coin-crown", status: "override" as const }]]),
+      new Map(),
+    );
+    expect(out.entities.filter((e) => e.slug === "coin-crown")).toHaveLength(1);
+    expect(out.missing).toEqual([]); // coin-crown was matched via override -> not missing
+  });
 });
