@@ -14,7 +14,7 @@ import { EntityDetail } from "@/components/EntityDetail";
 import { actionButtonClass } from "@/components/ui/button";
 import { CategoryTag } from "@/components/CategoryTag";
 import { RarityBadge } from "@/components/RarityBadge";
-import { itemStatCells } from "@/components/StatBox";
+import { itemStatCells, EMPTY_ITEM_STATS } from "@/components/StatBox";
 import { type Tab } from "@/components/ItemTabs";
 import { CraftTable } from "@/components/CraftTable";
 import { UsedInTable } from "@/components/UsedInTable";
@@ -139,7 +139,7 @@ export default async function ItemDetailPage({ params }: { params: Params }) {
       }
       description={item.description}
       stats={itemStatCells(
-        stats ?? { statType: null, damage: null, playerDamage: null, tramplerDamage: null, splashDamage: null, magazine: null },
+        stats ?? EMPTY_ITEM_STATS,
         isAmmo ? caliberLabel(caliber) ?? undefined : undefined,
       )}
       detailRows={detailRows}
