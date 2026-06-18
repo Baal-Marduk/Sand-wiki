@@ -4,6 +4,15 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "test": "vitest run --passWithNoTests",
+    "transform": "tsx transform/run.ts",
     "loc:test": "echo \"run: python -m pytest scripts/test_build_localization.py\""
+  },
+  "dependencies": {
+    "@sandlabs/data": "*"
+  },
+  "devDependencies": {
+    "tsx": "^4.22.4",
+    "vitest": "^4.1.8"
   }
 }
