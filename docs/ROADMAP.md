@@ -15,19 +15,32 @@ Living plan for the repo-wide restructure. Each sub-project gets its own
 
 ## Sub-projects
 
-### 1. Foundation — IN PROGRESS
+### 1. Foundation — CORE DONE (on `feat/monorepo-static-foundation`, not yet merged)
 Branch `feat/monorepo-static-foundation`.
 Spec: `docs/superpowers/specs/2026-06-18-monorepo-static-foundation-design.md`.
+Plans: `docs/superpowers/plans/2026-06-18-foundation-1-*.md` (done) and `-foundation-2-*.md`
+(executed in reduced scope — see below).
 
-- npm-workspaces skeleton: `apps/wiki`, `packages/datamine`, `packages/data`.
-- Freeze current dev-DB entities → committed JSON (one-time export).
-- Rewire wiki read path (`lib/queries.ts` et al.) off Prisma onto `packages/data`.
-- Remove Directus entirely.
-- Drop entity Prisma models (`Entity`, `ItemStats`, `TramplerStats`, `TechNodeStats`,
-  `EntityLink`, `Recipe*`, `Proposal`).
-- Add user-content tables: `Tip`, `TipVote` (+ `SteamUser` relation updates).
-- Replace the corrections/proposals flow with a **tips tab** + `/admin/tips` moderation.
-- Drop entity-correction workflow entirely.
+**DONE:**
+- ✅ npm-workspaces skeleton: `apps/wiki`, `packages/data` (the `packages/datamine` relocation
+  is folded into sub-project #2, not done here).
+- ✅ Froze entities → committed JSON (`packages/data/generated/*.json`: 377 entities, 39
+  recipes, 1081 links), round-trip integrity-tested.
+- ✅ Rewired the ENTIRE wiki read path (`lib/queries.ts` + `api/search-index`) off Prisma onto
+  `@sandlabs/data`. Parity verified function-by-function. Build green, 292 tests pass.
+- ✅ Removed Directus entirely (runtime, compose, snapshots, directus npm scripts).
+- ✅ Removed the obsolete proposal/contribute write flows + `getLastEditor` + the
+  suggest-correction / edit-tabs UI.
+
+**DEFERRED (deliberately — see decisions 2026-06-18):**
+- ⏸ **Tips feature** (`Tip`/`TipVote` schema, tips tab, `/admin/tips`) — future feature, not
+  built. Corrections were removed with no replacement in the interim.
+- ⏸ **Entity DB teardown** — the connected DB is PRODUCTION, so NO migration was run and NO
+  tables/data were dropped. All Prisma models (incl. `Entity`, `Recipe*`, `Proposal`) and data
+  remain intact; the app simply no longer reads them. Drop only once fully confident in the
+  static path.
+- ⏸ **Admin entity image/disable controls** — kept DORMANT (still write `prisma.entity`, which
+  the JSON-backed site ignores). The only remaining `prisma.entity` writes in the app.
 
 ### 2. Unified datamining pipeline — NOT STARTED
 - One pipeline emitting **items + environment + trampler + tech-tree** as the JSON that

@@ -1,5 +1,17 @@
 # Foundation Part 2 — Tips Feature, Write-Flow Removal & DB Teardown Implementation Plan
 
+> **EXECUTION STATUS (2026-06-18): partially executed in REDUCED scope.**
+> Per user decision, only the non-destructive cleanup was done:
+> - ✅ Removed Directus (Task 7's Directus parts).
+> - ✅ Removed proposal/contribute write flows + suggest/edit UI (most of Task 6).
+> - ✅ (Beyond this plan) migrated `api/search-index` to `@sandlabs/data`.
+> - ⏸ **Tips feature (Tasks 1 tips-models, 2, 3, 4, 5) — NOT done.** Deferred as a future feature.
+> - ⏸ **DB teardown (Task 1 drops, Task 8) — NOT done.** The connected DB is production; no
+>   migration was run, no models/tables/data dropped. `schema.prisma` is unchanged.
+> - ⏸ **Admin entity image/disable controls — KEPT dormant** (not deleted as Task 6 specified).
+> This plan is retained as the blueprint for when tips + teardown are taken up later.
+
+
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
 **Goal:** Replace the entity-correction/proposal system with a community **tips** feature (post + vote + admin moderation), delete the proposal/contribute/admin-entity write flows and Directus, then drop the now-unused entity Prisma tables — dev first, prod last.
