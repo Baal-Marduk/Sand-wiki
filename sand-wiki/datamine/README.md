@@ -64,3 +64,20 @@ python scripts/build_loot_sources.py        # -> data/loot_sources.json
 `python -m pytest datamine/scripts` — runs `build_container_loot.py` against the
 committed inputs and asserts the artifact shape (8 reconciled containers, aliases
 applied, effort collapsed to Tier 1/2/3, storm-bonus fields present).
+
+## Weapon / ammo / armor stats
+
+Source: SEK `site/src/data/weapon_stats.json` (built datamine output) → copied to
+`datamine/data/weapon_stats.json` (committed snapshot).
+
+Pipeline (mirrors loot containers):
+1. `npm run weapons:build` — reshape snapshot → `prisma/weapon-stats.json` (slug-keyed; commit it).
+2. `npm run db:load-weapon-stats` — update `ItemStats` for matched items. Seed-safe,
+   prod-safe, idempotent; respects contributor edits. Run the dev branch first.
+
+Run order: because `seed.ts` also writes these `ItemStats` columns, run
+`db:load-weapon-stats` AFTER any `db:seed`. Datamine is authoritative over the wiki
+scrape; contributor edits still win.
+
+Not imported here: magazine and ammoType (absent from weapon_stats.json — only turrets
+carry clip size), recoil/spread (intentionally skipped), and turrets (separate follow-up).
