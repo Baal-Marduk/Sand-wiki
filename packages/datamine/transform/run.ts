@@ -67,7 +67,7 @@ validateEntities(entities);
 // --- images: report entities whose icon is null or whose file is missing on disk ---
 const images = classifyImages(entities, (icon) => existsSync(resolve(PUBLIC, `.${icon}`)));
 console.log(`missing images: ${images.needsExtraction.length} need extraction ` +
-  `(+${images.byDesign.techNodeNoIcon} tech-nodes by design)`);
+  `(by design: ${images.byDesign.techNodeNoIcon} tech-nodes, ${images.byDesign.environmentNoIcon} locations)`);
 
 // recipes + non-loot links + parts/tech/locations entities pass through from baseline.
 writeArtifact(entities, baseline.recipes, links);

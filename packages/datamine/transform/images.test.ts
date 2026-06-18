@@ -12,7 +12,8 @@ describe("classifyImages", () => {
   const entities = [
     ent("has-icon", "item", "/icons/ok.png"),       // file present
     ent("broken", "item", "/icons/gone.png"),        // file missing
-    ent("no-icon", "environment", null),             // null icon
+    ent("no-icon", "trampler-part", null),           // null icon -> needs extraction
+    ent("a-location", "environment", null),          // null env -> by design (no game icon)
     ent("tech", "tech-node", null),                  // null but by design
   ];
   // only /icons/ok.png "exists"
@@ -30,8 +31,10 @@ describe("classifyImages", () => {
     expect(r.needsExtraction.map((m) => m.slug)).not.toContain("has-icon");
   });
 
-  it("counts tech-node null icons as by-design, not needing extraction", () => {
+  it("counts tech-node and environment null icons as by-design, not needing extraction", () => {
     expect(r.byDesign.techNodeNoIcon).toBe(1);
+    expect(r.byDesign.environmentNoIcon).toBe(1);
     expect(r.needsExtraction.map((m) => m.slug)).not.toContain("tech");
+    expect(r.needsExtraction.map((m) => m.slug)).not.toContain("a-location");
   });
 });
