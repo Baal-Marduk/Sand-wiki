@@ -1,31 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { buildItemQuery, applyItemView } from "./item-filter";
-
-describe("buildItemQuery", () => {
-  it("defaults to kind:item and name-ascending", () => {
-    expect(buildItemQuery({})).toEqual({ where: { kind: "item" }, orderBy: { name: "asc" } });
-  });
-
-  it("filters by name OR derivedName (case-insensitive) and category", () => {
-    expect(buildItemQuery({ query: "rifle", category: "weapons" }).where).toEqual({
-      kind: "item",
-      OR: [
-        { name: { contains: "rifle", mode: "insensitive" } },
-        { derivedName: { contains: "rifle", mode: "insensitive" } },
-      ],
-      category: "weapons",
-    });
-  });
-
-  it("filters by workbench tier through the itemStats relation", () => {
-    expect(buildItemQuery({ workbenchTier: 2 }).where).toEqual({ kind: "item", itemStats: { workbenchTier: 2 } });
-  });
-
-  it("filters by rarity", () => {
-    expect(buildItemQuery({ rarity: "Rare" }).where).toEqual({ kind: "item", rarity: "Rare" });
-  });
-
-});
+import { applyItemView } from "./item-filter";
 
 const mk = (slug: string, name: string, rarity: string | null, ammoType?: string) => ({
   slug, name, rarity, ammoType: ammoType ?? null,
