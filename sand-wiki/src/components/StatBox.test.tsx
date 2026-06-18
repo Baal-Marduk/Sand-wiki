@@ -51,4 +51,11 @@ describe("itemStatCells — new datamined fields", () => {
     expect(cell(cells, "Velocity")).toBe("150 m/s");
     expect(cell(cells, "Magazine")).toBe(2);
   });
+
+  it("renders range without multiplier when falloff is true but minMult is null", () => {
+    const cells = itemStatCells({
+      ...EMPTY_ITEM_STATS, rangeFull: 8, rangeMax: 30, rangeMinMult: null, rangeFalloff: true,
+    });
+    expect(cell(cells, "Range")).toBe("8→30 m");
+  });
 });
