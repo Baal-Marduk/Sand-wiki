@@ -1,86 +1,111 @@
-"""Diagnostic probe for walker-compartment gameplay stats (health/weight/energy/...).
+"""Extract walker-compartment gameplay stats -> sek-out/compartment_stats.json.
 
-CompartmentsDatabase.json is geometry-only (cells/sockets) — it has NO gameplay stats. The
-wiki's 120 trampler-part entities carry those stats from sandhelp.io. To datamine them we must
-read the stat-bearing MonoBehaviour on each walker_*_epb prefab.
+CompartmentsDatabase.json is geometry-only. The real per-compartment stats live on the
+walker_*_epb prefabs (epb_assets_all.bundle) as an Odin-serialized Entitas component list in
+each prefab MonoBehaviour's serializationData.SerializedBytes blob.
 
-This is DIAGNOSTIC-FIRST: it does not assume the component/field names. It loads the walker
-prefab bundle, finds prefabs whose name matches walker_*_epb, and for each prints the
-MonoBehaviour component names + their numeric fields. Output -> extracted/json/compartment_stats_probe.json
-so the owner can report which component holds health/weight/energy/ratedPower/crewSlots/itemSlots.
-The final field mapping is frozen in trampler.ts (CompartmentStat) only after this report.
+Investigation (2026-06-18, release build) found the ONLY gameplay-stat component carrying a
+usable number is HealthDataComponent.value (matches/【corrects】 the wiki baseline health).
+PhysicsDataComponent.mass is a physics constant (1.0 / 400.0), NOT the gameplay weight, so it
+is intentionally NOT emitted. weight / energy / ratedPower / crewSlots / itemSlots are NOT on
+the prefabs — they live in a balance/research config not yet located (TODO: hunt it down; until
+then the transform keeps those baseline/sandhelp values).
+
+Each record is matched to the wiki entity BY NAME via the localized compartment name
+(localization.json `compartments`, keyed by blueprintName). Output feeds transform/trampler.ts
+(mergeTrampler), which refreshes only the provided fields and preserves the rest.
 
 Run from packages/datamine/:  python scripts/extract_compartment_stats.py
 """
-import json, os, re, glob
+import sys, os, json, re
 import UnityPy
+sys.path.insert(0, os.path.dirname(__file__))
+import odin_parser
 
 AA = 'gamefiles/Sand_Data/StreamingAssets/aa/StandaloneWindows64'
-OUT = 'extracted/json/compartment_stats_probe.json'
-os.makedirs('extracted/json', exist_ok=True)
+BUNDLE = os.path.join(AA, 'epb_assets_all.bundle')
+LOC = 'sek-out/localization.json'
+OUT = 'sek-out/compartment_stats.json'
 
-EPB = re.compile(r'^walker_.+_epb$')
-# Bundles likely to hold walker part prefabs. Broaden if empty.
-BUNDLE_GLOBS = ['*walker*', '*compartment*', '*part*', '*epb*']
+# localized compartment names, keyed by blueprintName (e.g. walker_compCargo_SmallM_Metal_1x1)
+loc = {}
+try:
+    loc = json.load(open(LOC, encoding='utf-8')).get('compartments', {})
+except FileNotFoundError:
+    print(f'WARNING: {LOC} missing — run build_localization.py first (names will be blank)')
 
-def candidate_bundles():
-    seen = set()
-    for g in BUNDLE_GLOBS:
-        for p in glob.glob(os.path.join(AA, g + '.bundle')) + glob.glob(os.path.join(AA, g)):
-            if p not in seen and os.path.isfile(p):
-                seen.add(p); yield p
+def en_name(blueprint):
+    v = loc.get(blueprint)
+    if v:
+        return v.get('locales', {}).get('en', {}).get('name')
+    return None
 
-def numeric_fields(tree, prefix=''):
-    """Flatten numeric leaves of a typetree dict (one level of nesting kept via dotted keys)."""
-    out = {}
-    if not isinstance(tree, dict):
-        return out
-    for k, v in tree.items():
-        if isinstance(v, (int, float)) and not isinstance(v, bool):
-            out[prefix + k] = v
-        elif isinstance(v, dict):
-            out.update(numeric_fields(v, prefix + k + '.'))
-    return out
+env = UnityPy.load(BUNDLE)
+objs = {o.path_id: o for o in env.objects}
 
-probe = {}
-for bundle in candidate_bundles():
+by_name = {}            # compartment name -> record (dedup by name)
+conflicts = []          # (name, healths) when one name has divergent health
+scanned = 0
+for o in env.objects:
+    if o.type.name != 'GameObject':
+        continue
     try:
-        env = UnityPy.load(bundle)
-    except Exception as e:
-        print(f'  skip {os.path.basename(bundle)}: {e}'); continue
-    for o in env.objects:
-        if o.type.name != 'GameObject':
+        go = o.read(); goname = getattr(go, 'm_Name', '') or ''
+    except Exception:
+        continue
+    # buildable compartments only (comp*) — these are the wiki trampler-part entities
+    if not goname.startswith('walker_comp'):
+        continue
+    for cp in getattr(go, 'm_Components', []):
+        pid = getattr(cp, 'm_PathID', None) or getattr(cp, 'path_id', None)
+        co = objs.get(pid)
+        if not co or co.type.name != 'MonoBehaviour':
             continue
         try:
-            go = o.read()
+            tt = co.read_typetree()
         except Exception:
             continue
-        name = getattr(go, 'm_Name', '') or ''
-        if not EPB.match(name):
+        sd = tt.get('serializationData') if isinstance(tt, dict) else None
+        sb = sd.get('SerializedBytes') if isinstance(sd, dict) else None
+        if not sb:
             continue
-        comps = {}
-        for c in getattr(go, 'm_Components', []):
-            try:
-                comp = c.read()
-            except Exception:
-                continue
-            if comp.type.name != 'MonoBehaviour':
-                continue
-            try:
-                tt = comp.read_typetree()
-            except Exception:
-                continue
-            nums = numeric_fields(tt)
-            if nums:
-                comps[getattr(comp, 'm_Name', '') or 'MonoBehaviour'] = nums
-        if comps:
-            probe[name] = comps
+        blueprint = tt.get('blueprintName') or goname.removesuffix('_epb')
+        try:
+            doc = odin_parser.decode(sb)
+        except Exception:
+            continue
+        comps = doc.get('components', {})
+        items = comps.get('$items', []) if isinstance(comps, dict) else []
+        health = None
+        for c in items:
+            if isinstance(c, dict) and 'HealthDataComponent' in (c.get('$type') or ''):
+                health = c.get('value')
+                break
+        if health is None:
+            continue
+        scanned += 1
+        name = en_name(blueprint)
+        if not name:
+            continue
+        hval = int(health) if float(health).is_integer() else health
+        prev = by_name.get(name)
+        if prev is None:
+            by_name[name] = {'epbId': blueprint, 'name': name, 'health': hval}
+        elif prev['health'] != hval:
+            # Same localized name covers multiple distinct parts with different health — the
+            # wiki entity is matched BY NAME, so we can't tell which variant it is. Drop the
+            # name entirely (keep the baseline/sandhelp health) rather than write a wrong value.
+            conflicts.append((name, prev['health'], hval, blueprint))
 
-json.dump(probe, open(OUT, 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
-print(f'wrote {OUT}: {len(probe)} compartment prefabs with numeric MonoBehaviour fields')
-if probe:
-    sample = next(iter(probe))
-    print(f'sample {sample}:')
-    print(json.dumps(probe[sample], indent=1)[:1200])
-else:
-    print('NO walker_*_epb prefabs with numeric fields found — broaden BUNDLE_GLOBS or inspect bundle names.')
+# Exclude every name that had a health collision — only unambiguous health is trustworthy.
+collided = {c[0] for c in conflicts}
+records = sorted((r for r in by_name.values() if r['name'] not in collided), key=lambda r: r['name'])
+os.makedirs(os.path.dirname(OUT), exist_ok=True)
+json.dump(records, open(OUT, 'w', encoding='utf-8'), indent=1, ensure_ascii=False)
+print(f'wrote {OUT}: {len(records)} compartments with health (scanned {scanned} comp prefabs)')
+if conflicts:
+    print(f'NOTE: {len(conflicts)} name-collisions (same localized name, different health) — first kept:')
+    for n, a, b, bp in conflicts[:15]:
+        print(f'  {n!r}: kept {a}, also saw {b} ({bp})')
+if not records:
+    print('NO compartment health found — check bundle/odin decode or localization compartment names.')

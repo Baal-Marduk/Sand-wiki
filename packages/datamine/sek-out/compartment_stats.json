@@ -1,0 +1,572 @@
+[
+ {
+  "epbId": "walker_compCruise_Medium_Metal_1x3",
+  "name": "Cruising Accelerator",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compSteering_Long_Wood_1x2",
+  "name": "KF \"Kormylo\" Wheelhouse",
+  "health": 3500
+ },
+ {
+  "epbId": "walker_compWeapon_AutoCannon_Frame_1x1",
+  "name": "KF \"Nest\" 40 mm Autocannon",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compWeapon_Shotgun_Frame_1x1",
+  "name": "KF \"Nest\" 70 mm Shotgun Cannon",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compWeapon_Cannon_Frame_1x1",
+  "name": "KF \"Nest\" 80 mm Cannon",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compDeck_TurretSlot_FrameCMetal_1x1",
+  "name": "KF \"Nest\" Framed Armored Turret Deck",
+  "health": 4500
+ },
+ {
+  "epbId": "walker_compWeapon_TurretSlot_Frame_1x1",
+  "name": "KF \"Nest\" Framed Turret Deck",
+  "health": 3000
+ },
+ {
+  "epbId": "walker_compWeapon_BattleRam_2x2",
+  "name": "KF \"Prolomnyk\" Battering Ram",
+  "health": 8000
+ },
+ {
+  "epbId": "walker_compReactor_Long_Wood_1x3",
+  "name": "NZ AzE80 Motor-Reactor, Covered",
+  "health": 9500
+ },
+ {
+  "epbId": "walker_compReactor_Round_Metal_2x1",
+  "name": "NZ AzE81 Motor-Reactor, Armored",
+  "health": 12500
+ },
+ {
+  "epbId": "walker_compReactor_Round_Open_2x1",
+  "name": "NZ AzE81L Deck Motor-Reactor, Rounded",
+  "health": 6500
+ },
+ {
+  "epbId": "walker_compReactor_Round_Framed_2x1",
+  "name": "NZ AzE81L Motor-Reactor, Framed Rounded",
+  "health": 6500
+ },
+ {
+  "epbId": "walker_compReactor_Long_Open_1x3",
+  "name": "NZ AzE81S Deck Motor-Reactor, Long",
+  "health": 6500
+ },
+ {
+  "epbId": "walker_compReactor_Long_Framed_1x3",
+  "name": "NZ AzE81S Motor-Reactor, Framed Long",
+  "health": 6500
+ },
+ {
+  "epbId": "walker_compReactor_Long_Metal_1x3",
+  "name": "NZ AzE82 Motor-Reactor, Armored",
+  "health": 12500
+ },
+ {
+  "epbId": "walker_compMedical_Metal_1x1",
+  "name": "NZ MAk-2 Medical Bay",
+  "health": 3000
+ },
+ {
+  "epbId": "walker_compEngine_Small_Metal_1x1",
+  "name": "NZ Mb2k Maneuver Engine, Small",
+  "health": 1500
+ },
+ {
+  "epbId": "walker_compEngine_Medium_Metal_1x2",
+  "name": "NZ Mb3 Maneuver Engine, Medium",
+  "health": 2500
+ },
+ {
+  "epbId": "walker_compCrafting_Open_1x1",
+  "name": "S&H Armaments Workbench",
+  "health": 1500
+ },
+ {
+  "epbId": "walker_compCrafting_Wood_2x1",
+  "name": "S&H Armaments Workshop",
+  "health": 3500
+ },
+ {
+  "epbId": "walker_compCorridor_Small_Wood_1x1",
+  "name": "S&H Auxiliary Corridor",
+  "health": 800
+ },
+ {
+  "epbId": "walker_compBalcony_Full_Open_3x1",
+  "name": "S&H Balcony, Extended L&R",
+  "health": 200
+ },
+ {
+  "epbId": "walker_compBalcony_Left_Open_2x1",
+  "name": "S&H Balcony, Extended Left",
+  "health": 200
+ },
+ {
+  "epbId": "walker_compBalcony_Right_Open_2x1",
+  "name": "S&H Balcony, Extended Right",
+  "health": 200
+ },
+ {
+  "epbId": "walker_compBalcony_InnerCorner_Open_1x1",
+  "name": "S&H Balcony, Inner Corner",
+  "health": 300
+ },
+ {
+  "epbId": "walker_compBalcony_InnerCorner_OpenLeft_1x1",
+  "name": "S&H Balcony, Inner Corner (L)",
+  "health": 300
+ },
+ {
+  "epbId": "walker_compBalcony_InnerCorner_OpenRight_1x1",
+  "name": "S&H Balcony, Inner Corner (R)",
+  "health": 300
+ },
+ {
+  "epbId": "walker_compBalcony_Bridge_Open_1x1",
+  "name": "S&H Bridge Balcony",
+  "health": 200
+ },
+ {
+  "epbId": "walker_compDeck_Square_Canopy_1x1",
+  "name": "S&H Canopy Deck",
+  "health": 300
+ },
+ {
+  "epbId": "walker_compCaptainCrew_Wood_1x1",
+  "name": "S&H Captain's Cabin",
+  "health": 3500
+ },
+ {
+  "epbId": "walker_compCargo_LargeL_Wood_1x2",
+  "name": "S&H Cargo Bay, L-Shape",
+  "health": 7000
+ },
+ {
+  "epbId": "walker_compCargo_LargeP_Wood_1x2",
+  "name": "S&H Cargo Bay, Parallel",
+  "health": 7000
+ },
+ {
+  "epbId": "walker_compCargo_LargeU_Wood_1x2",
+  "name": "S&H Cargo Bay, U-Shape",
+  "health": 7000
+ },
+ {
+  "epbId": "walker_compCargo_Large_Wood_1x1",
+  "name": "S&H Cargo Compartment, Large",
+  "health": 4500
+ },
+ {
+  "epbId": "walker_compCargo_SmallM_Wood_1x1",
+  "name": "S&H Cargo Compartment, Medium",
+  "health": 3500
+ },
+ {
+  "epbId": "walker_compCargo_SmallP_Wood_1x1",
+  "name": "S&H Cargo Compartment, Small",
+  "health": 2500
+ },
+ {
+  "epbId": "walker_compCargo_SmallL_Wood_1x1",
+  "name": "S&H Cargo Compartment, Small L-Shape",
+  "health": 2500
+ },
+ {
+  "epbId": "walker_compCargo_SmallP_Open_1x1",
+  "name": "S&H Cargo Deck",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compCargo_SmallP_Frame_1x1",
+  "name": "S&H Cargo Deck, Framed",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compCargo_SmallL_Frame_1x1",
+  "name": "S&H Cargo Deck, Framed L-Shape",
+  "health": 2500
+ },
+ {
+  "epbId": "walker_compCargo_SmallSingle_Frame_1x1",
+  "name": "S&H Cargo Deck, Framed Light",
+  "health": 1750
+ },
+ {
+  "epbId": "walker_compCargo_SmallL_Open_1x1",
+  "name": "S&H Cargo Deck, L-Shape",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compCargo_SmallSingle_Open_1x1",
+  "name": "S&H Cargo Deck, Light",
+  "health": 1500
+ },
+ {
+  "epbId": "walker_compCrafting_Small_Wood_1x1",
+  "name": "S&H Compact Armaments Workshop",
+  "health": 2500
+ },
+ {
+  "epbId": "walker_compDeck_BeveledRound_Open_2x1_mirror",
+  "name": "S&H Deck, Round-Beveled",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compDeck_Square_OpenNoRailings_1x1",
+  "name": "S&H Deck, Standard (no railings)",
+  "health": 200
+ },
+ {
+  "epbId": "walker_compSpecial_Entry_Open_1x1",
+  "name": "S&H Entrance Area",
+  "health": 500
+ },
+ {
+  "epbId": "walker_compSpecial_Entry_Wood_1x1",
+  "name": "S&H Entrance Vestibule",
+  "health": 800
+ },
+ {
+  "epbId": "walker_compSpecial_Entry_Frame_1x1",
+  "name": "S&H Fortified Entrance Area",
+  "health": 500
+ },
+ {
+  "epbId": "walker_compDeck_Square_FrameStairs_1x1",
+  "name": "S&H Framed Stairs",
+  "health": 400
+ },
+ {
+  "epbId": "walker_compStructure_SupportTriangle_Frame_1x1",
+  "name": "S&H Lower Corner Supporting Frame",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compStructure_SupportTriangle_FrameLeft_1x1",
+  "name": "S&H Lower Corner Supporting Frame (L)",
+  "health": 400
+ },
+ {
+  "epbId": "walker_compStructure_SupportTriangle_FrameRight_1x1",
+  "name": "S&H Lower Corner Supporting Frame (R)",
+  "health": 400
+ },
+ {
+  "epbId": "walker_compStructure_Support_Frame_1x1",
+  "name": "S&H Lower Supporting Frame",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compStructure_SupportExtended_Full_1x3",
+  "name": "S&H Lower Supporting Frame Extended (L&R)",
+  "health": 800
+ },
+ {
+  "epbId": "walker_compStructure_SupportExtended_Left_1x2",
+  "name": "S&H Lower Supporting Frame Extended (L)",
+  "health": 600
+ },
+ {
+  "epbId": "walker_compStructure_SupportExtended_Right_1x2",
+  "name": "S&H Lower Supporting Frame Extended (R)",
+  "health": 600
+ },
+ {
+  "epbId": "walker_compSteering_Long_Framed_1x2",
+  "name": "S&H M78 Framed Steering Deck",
+  "health": 2500
+ },
+ {
+  "epbId": "walker_compSteering_Square_Open_1x1",
+  "name": "S&H M78k Flybridge",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compSteering_Square_Framed_1x1",
+  "name": "S&H M78k Framed Steering Deck",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compSteering_Long_Open_1x2",
+  "name": "S&H M78l Flybridge",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compSteering_Round_Open_2x1",
+  "name": "S&H M78r Flybridge",
+  "health": 2500
+ },
+ {
+  "epbId": "walker_compSteering_Round_Framed_2x1",
+  "name": "S&H M78r Framed Steering Deck",
+  "health": 2500
+ },
+ {
+  "epbId": "walker_compCrew_Small_Wood_1x1",
+  "name": "S&H MK1 Crew Cabin, Single",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compCrew_Medium_Wood_1x2",
+  "name": "S&H MK2 Crew Cabin, 2 People",
+  "health": 2500
+ },
+ {
+  "epbId": "walker_compCrew_Large_Wood_2x2",
+  "name": "S&H MK4 Crew Cabin, 4 People",
+  "health": 3500
+ },
+ {
+  "epbId": "walker_compBalcony_StairsLeft_Open_1x1",
+  "name": "S&H Mounted Stairs, Left",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compBalcony_StairsRight_Open_1x2",
+  "name": "S&H Mounted Stairs, Right",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compBalcony_Middle_Open_1x1",
+  "name": "S&H Standard Balcony",
+  "health": 200
+ },
+ {
+  "epbId": "walker_compDeck_Square_Frame_1x1",
+  "name": "S&H Supporting Frame",
+  "health": 400
+ },
+ {
+  "epbId": "walker_compDeck_SquareS_Frame_1x1",
+  "name": "S&H Supporting Frame, Solid",
+  "health": 400
+ },
+ {
+  "epbId": "walker_compDeck_Triangle_Frame_1x1",
+  "name": "S&H Supporting Frame, Triangle",
+  "health": 400
+ },
+ {
+  "epbId": "walker_compWeapon_AutoCannon_Open_2x1",
+  "name": "S.Trs 40 mm Autocannon",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compWeapon_Shotgun_Open_2x1",
+  "name": "S.Trs 70 mm Shotgun Cannon",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compWeapon_Cannon_Open_2x1",
+  "name": "S.Trs 80 mm Cannon",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compBalcony_Middle_Metal_1x1",
+  "name": "S.Trs Armored Balcony ",
+  "health": 500
+ },
+ {
+  "epbId": "walker_compBalcony_Full_Metal_3x1",
+  "name": "S.Trs Armored Balcony, Extended L&R",
+  "health": 500
+ },
+ {
+  "epbId": "walker_compBalcony_Left_Metal_2x1",
+  "name": "S.Trs Armored Balcony, Extended Left",
+  "health": 500
+ },
+ {
+  "epbId": "walker_compBalcony_Right_Metal_2x1",
+  "name": "S.Trs Armored Balcony, Extended Right",
+  "health": 500
+ },
+ {
+  "epbId": "walker_compBalcony_InnerCorner_Metal_1x1",
+  "name": "S.Trs Armored Balcony, Inner Corner",
+  "health": 750
+ },
+ {
+  "epbId": "walker_compBalcony_InnerCorner_MetalLeft_1x1",
+  "name": "S.Trs Armored Balcony, Inner Corner (L)",
+  "health": 750
+ },
+ {
+  "epbId": "walker_compBalcony_InnerCorner_MetalRight_1x1",
+  "name": "S.Trs Armored Balcony, Inner Corner (R)",
+  "health": 750
+ },
+ {
+  "epbId": "walker_compDeck_SquareH_Armored_1x1",
+  "name": "S.Trs Armored Deck",
+  "health": 1100
+ },
+ {
+  "epbId": "walker_compDeck_Square_ArmoredNoRailings_1x1",
+  "name": "S.Trs Armored Deck (no railings)",
+  "health": 1100
+ },
+ {
+  "epbId": "walker_compDeck_Triangle_FrameArmored_1x1",
+  "name": "S.Trs Armored Frame, Triangle",
+  "health": 1100
+ },
+ {
+  "epbId": "walker_compWeapon_TurretSlot_MetalOpen_1x1",
+  "name": "S.Trs Armored Turret Deck",
+  "health": 3500
+ },
+ {
+  "epbId": "walker_compWeapon_TurretSlot_MetalCorner_1x1",
+  "name": "S.Trs Armored Turret Deck, Corner",
+  "health": 3500
+ },
+ {
+  "epbId": "walker_compCorridor_Small_Metal_1x1",
+  "name": "S.Trs Auxiliary Corridor",
+  "health": 300
+ },
+ {
+  "epbId": "walker_compCaptainCrew_Metal_1x1",
+  "name": "S.Trs Captain's Cabin",
+  "health": 5500
+ },
+ {
+  "epbId": "walker_compCargo_LargeL_Metal_1x2",
+  "name": "S.Trs Cargo Bay, L-Shape",
+  "health": 11000
+ },
+ {
+  "epbId": "walker_compCargo_LargeP_Metal_1x2",
+  "name": "S.Trs Cargo Bay, Parallel",
+  "health": 11000
+ },
+ {
+  "epbId": "walker_compCargo_LargeU_Metal_1x2",
+  "name": "S.Trs Cargo Bay, U-Shape",
+  "health": 11000
+ },
+ {
+  "epbId": "walker_compCargo_Large_Metal_1x1",
+  "name": "S.Trs Cargo Compartment, Large",
+  "health": 6500
+ },
+ {
+  "epbId": "walker_compCargo_SmallM_Metal_1x1",
+  "name": "S.Trs Cargo Compartment, Medium",
+  "health": 5500
+ },
+ {
+  "epbId": "walker_compCargo_SmallP_Metal_1x1",
+  "name": "S.Trs Cargo Compartment, Small",
+  "health": 4500
+ },
+ {
+  "epbId": "walker_compCargo_SmallL_Metal_1x1",
+  "name": "S.Trs Cargo Compartment, Small L-Shape",
+  "health": 4500
+ },
+ {
+  "epbId": "walker_compSpecial_Entry_Metal_1x1",
+  "name": "S.Trs Entrance Vestibule",
+  "health": 1100
+ },
+ {
+  "epbId": "walker_compArmor_Spot_Metal_1x1",
+  "name": "S.Trs HA Armor Plate",
+  "health": 1500
+ },
+ {
+  "epbId": "walker_compArmor_Framed_Metal_1x1",
+  "name": "S.Trs HAs Framed Armor Plate",
+  "health": 1500
+ },
+ {
+  "epbId": "walker_compArmor_FramedReverse_Metal_1x1",
+  "name": "S.Trs HAs-R Framed Armor Plate",
+  "health": 1500
+ },
+ {
+  "epbId": "walker_compCrew_Medium_Metal_1x2",
+  "name": "S.Trs K81v Crew Cabin, 2 People",
+  "health": 4500
+ },
+ {
+  "epbId": "walker_compSteering_Long_Metal_1x2",
+  "name": "S.Trs K81v Pilot Bridge",
+  "health": 4500
+ },
+ {
+  "epbId": "walker_compSteering_Round_Metal_2x1",
+  "name": "S.Trs K82v Pilot Bridge",
+  "health": 4500
+ },
+ {
+  "epbId": "walker_compSpecial_Embrasure_Metal_1x1",
+  "name": "S.Trs M78v Embrasure",
+  "health": 3000
+ },
+ {
+  "epbId": "walker_compCrew_Small_Metal_1x1",
+  "name": "S.Trs MB75 Crew Cabin, Single",
+  "health": 3500
+ },
+ {
+  "epbId": "walker_compCrew_Large_Metal_2x2",
+  "name": "S.Trs MB77e Crew Cabin, 4 People",
+  "health": 5500
+ },
+ {
+  "epbId": "walker_compWeapon_TurretSlot_Open_1x1",
+  "name": "S.Trs Turret Deck",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compWeapon_TurretSlot_OpenCorner_1x1",
+  "name": "S.Trs Turret Deck, Corner",
+  "health": 2000
+ },
+ {
+  "epbId": "walker_compWeapon_TurretSlot_OpenMetal_2x1",
+  "name": "S.Trs Wide Armored Turret Deck",
+  "health": 4000
+ },
+ {
+  "epbId": "walker_compWeapon_TurretSlot_Open_2x1",
+  "name": "S.Trs Wide Turret Deck",
+  "health": 2750
+ },
+ {
+  "epbId": "walker_compWeapon_AutoCannon_Metal_1x1",
+  "name": "SGOW Armored 40 mm Autocannon",
+  "health": 5000
+ },
+ {
+  "epbId": "walker_compWeapon_Shotgun_Metal_1x1",
+  "name": "SGOW Armored 70 mm Shotgun Cannon",
+  "health": 5000
+ },
+ {
+  "epbId": "walker_compWeapon_Cannon_Metal_1x1",
+  "name": "SGOW Armored 80 mm Cannon",
+  "health": 5000
+ },
+ {
+  "epbId": "walker_compWeapon_TurretSlot_Metal_1x1",
+  "name": "SGOW Universal casemate",
+  "health": 5000
+ }
+]

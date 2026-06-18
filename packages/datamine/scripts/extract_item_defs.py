@@ -40,9 +40,14 @@ TYPE_KEYS  = ['type', 'itemType', 'category']
 VALUE_KEYS = ['pawnValue', 'sellValue', 'value', 'price']
 
 def pick(d, keys):
-    for k in keys:
-        if isinstance(d, dict) and d.get(k) not in (None, ''):
-            return d[k]
+    if not isinstance(d, dict):
+        return None
+    # case-insensitive: SAND's CheatItemDefinitionsData uses PascalCase (Name/Type/StorageStack).
+    lower = {k.lower(): k for k in d}
+    for want in keys:
+        actual = lower.get(want.lower())
+        if actual is not None and d[actual] not in (None, ''):
+            return d[actual]
     return None
 
 def walk_items(obj):

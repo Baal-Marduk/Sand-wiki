@@ -5721,7 +5721,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "1x1",
-      "health": 2500,
+      "health": 2000,
       "weight": 1000,
       "weightCapacity": null,
       "weightCompensation": null,
@@ -6031,7 +6031,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "2x1",
-      "health": 300,
+      "health": 2000,
       "weight": 150,
       "weightCapacity": null,
       "weightCompensation": null,
@@ -6279,7 +6279,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "1x1",
-      "health": 400,
+      "health": 2000,
       "weight": 200,
       "weightCapacity": null,
       "weightCompensation": null,
@@ -6496,7 +6496,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "1x2",
-      "health": 2500,
+      "health": 2000,
       "weight": 800,
       "weightCapacity": null,
       "weightCompensation": null,
@@ -6589,7 +6589,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "1x1",
-      "health": 1500,
+      "health": 2000,
       "weight": 800,
       "weightCapacity": null,
       "weightCompensation": null,
@@ -6620,7 +6620,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "1x2",
-      "health": 2000,
+      "health": 2500,
       "weight": 1500,
       "weightCapacity": null,
       "weightCompensation": null,
@@ -6651,7 +6651,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "2x2",
-      "health": 3000,
+      "health": 3500,
       "weight": 1800,
       "weightCapacity": null,
       "weightCompensation": null,
@@ -6682,7 +6682,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "1x1",
-      "health": 250,
+      "health": 2000,
       "weight": 100,
       "weightCapacity": null,
       "weightCompensation": null,
@@ -6713,7 +6713,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "1x1",
-      "health": 250,
+      "health": 2000,
       "weight": 100,
       "weightCapacity": null,
       "weightCompensation": null,
@@ -7240,7 +7240,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "1x1",
-      "health": 1100,
+      "health": 300,
       "weight": 700,
       "weightCapacity": null,
       "weightCompensation": null,
@@ -7612,7 +7612,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "1x2",
-      "health": 3000,
+      "health": 4500,
       "weight": 2000,
       "weightCapacity": null,
       "weightCompensation": null,
@@ -7767,7 +7767,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "1x1",
-      "health": 2500,
+      "health": 3500,
       "weight": 1100,
       "weightCapacity": null,
       "weightCompensation": null,
@@ -7798,7 +7798,7 @@
     "itemStats": null,
     "tramplerStats": {
       "dimensions": "2x2",
-      "health": 4000,
+      "health": 5500,
       "weight": 2300,
       "weightCapacity": null,
       "weightCompensation": null,
