@@ -10,6 +10,7 @@ import { loadSekItems, loadLocalization, loadContainerLoot } from "./sek";
 import { reconcile } from "./reconcile";
 import { buildItemI18n } from "./i18n";
 import { mergeItems } from "./merge";
+import { applyIconOverrides } from "./items";
 import { buildLootLinks, applyLoot, type LootOverrides } from "./loot";
 import { classifyImages } from "./images";
 import { diffEntities } from "./diff";
@@ -22,6 +23,7 @@ const readJson = (p: string) => JSON.parse(readFileSync(resolve(import.meta.dirn
 const overrides = readJson("overrides/slug-map.json") as Record<string, string>;
 const lootOverrides = readJson("overrides/loot-overrides.json") as LootOverrides;
 const exclusions = new Set(readJson("overrides/exclusions.json") as string[]);
+const iconMap = readJson("overrides/icon-map.json") as Record<string, string>;
 
 const baseline = loadBaseline();
 // Drop excluded SEK ids (junk/duplicate pseudo-items that shouldn't become wiki pages,
@@ -33,7 +35,10 @@ const containerLoot = loadContainerLoot();
 // --- items: reconcile -> i18n -> merge ---
 const rec = reconcile(sekItems.map((i) => ({ id: i.id, name: i.name })), baseline.entities, overrides);
 const i18n = buildItemI18n(loc, new Map([...rec.bySekId].map(([id, hit]) => [id, hit.slug])));
-const { entities, missing } = mergeItems(baseline.entities, sekItems, rec.bySekId, i18n);
+const merged = mergeItems(baseline.entities, sekItems, rec.bySekId, i18n);
+// Force corrected icons last (fixes stale/wrong paths in the source data).
+const entities = applyIconOverrides(merged.entities, iconMap);
+const missing = merged.missing;
 
 // --- loot: deep-derive container loot links, then drop any pointing at an unknown slug ---
 const knownSlugs = new Set(entities.map((e) => e.slug));

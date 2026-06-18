@@ -22,6 +22,13 @@ export function mapCategory(type: string | null): string {
   return TYPE_CATEGORY[type.toUpperCase()] ?? "misc";
 }
 
+/** Force specific entity icons (slug -> icon path). Fixes stale/wrong icon paths in the
+ *  source data (SEK or baseline) by pointing at a sprite that actually exists on disk.
+ *  Applied after the merge so it always wins. */
+export function applyIconOverrides(entities: Entity[], iconMap: Record<string, string>): Entity[] {
+  return entities.map((e) => (iconMap[e.slug] ? { ...e, icon: iconMap[e.slug] } : e));
+}
+
 /** Datamine-owned fields to refresh over a matched baseline item. Only includes a field
  *  when the datamine actually provides a value, so the merge keeps the baseline otherwise. */
 export type ItemPatch = Partial<Pick<Entity, "rarity" | "icon" | "description">>;

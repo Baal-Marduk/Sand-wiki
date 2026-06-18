@@ -2,18 +2,9 @@
   "_doc": "Entities whose icon is absent (null) or points at a file that does not exist on disk — TODO for the next datamining/extraction pass. By kind: items -> extract_icons.py must emit /icons/<sprite> (a 'file-missing' means the data references a sprite filename that was never produced; check the icon mapping/filename). trampler-part -> render_part_thumbs.py / export_part_meshes_v3.py (/tramplers). By design (reported under byDesign, NOT needsExtraction): tech-node entities have no own icon (the /tech page renders the unlock's glyph); environment locations (landmarks/game-modes) have NO icon in the game files at all, so they are never extractable (loot containers, which do have art, are unaffected).",
   "summary": {
     "trampler-part:null": 2,
-    "item:file-missing": 4,
     "item:null": 1
   },
   "needsExtraction": [
-    {
-      "slug": "coin-crown",
-      "name": "Crowns",
-      "kind": "item",
-      "category": "misc",
-      "icon": "/icons/icon_crownCoins.png",
-      "issue": "file-missing"
-    },
     {
       "slug": "ironclad-s-cargo-box",
       "name": "Ironclad's Cargo Box",
@@ -21,30 +12,6 @@
       "category": "misc",
       "icon": null,
       "issue": "null"
-    },
-    {
-      "slug": "pistol-ammo",
-      "name": "8x21 mm Ammo",
-      "kind": "item",
-      "category": "ammo",
-      "icon": "/icons/icon_ammo_pistol.png",
-      "issue": "file-missing"
-    },
-    {
-      "slug": "revolver-small-dusters",
-      "name": "EB \"Bantam\" Revolver",
-      "kind": "item",
-      "category": "weapons",
-      "icon": "/icons/icon_lowTierRevolverBrass.png",
-      "issue": "file-missing"
-    },
-    {
-      "slug": "shotgun-ammo",
-      "name": "12 GA Ammo",
-      "kind": "item",
-      "category": "ammo",
-      "icon": "/icons/icon_ammo_shotgun.png",
-      "issue": "file-missing"
     },
     {
       "slug": "captain-crew-module",

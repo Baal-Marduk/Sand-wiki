@@ -1,6 +1,7 @@
 import { describe, it, expect } from "vitest";
-import { sekItemPatch, newItemEntity } from "./items";
+import { sekItemPatch, newItemEntity, applyIconOverrides } from "./items";
 import type { SekItem } from "./sek";
+import type { Entity } from "@sandlabs/data";
 
 const sek = (o: Partial<SekItem>): SekItem => ({
   id: "x", name: "X", icon: null, rarity: null, type: null, pawnValue: null, short: null, desc: null, ...o,
@@ -43,5 +44,19 @@ describe("items transform", () => {
     expect(sekItemPatch(sek({ rarity: "UNCOMMON" })).rarity).toBe("Uncommon");
     expect(sekItemPatch(sek({ rarity: "REMARKABLE" })).rarity).toBe("Remarkable");
     expect(sekItemPatch(sek({ rarity: "COMMON" })).rarity).toBe("Common");
+  });
+
+  it("applyIconOverrides forces the mapped icon, leaves others untouched", () => {
+    const e = (slug: string, icon: string | null): Entity => ({
+      id: slug, slug, kind: "item", name: slug, description: null, category: "misc",
+      rarity: null, icon, imageAlt: null, derivedName: null, sourceUrl: null,
+      disabled: false, itemStats: null, tramplerStats: null, techNodeStats: null,
+    });
+    const out = applyIconOverrides(
+      [e("coin-crown", "/icons/wrong.png"), e("other", "/icons/keep.png")],
+      { "coin-crown": "/icons/icon_item_coinCrown.png" },
+    );
+    expect(out.find((x) => x.slug === "coin-crown")?.icon).toBe("/icons/icon_item_coinCrown.png");
+    expect(out.find((x) => x.slug === "other")?.icon).toBe("/icons/keep.png");
   });
 });
