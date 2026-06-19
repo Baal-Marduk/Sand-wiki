@@ -37,3 +37,8 @@ export function writeImagesReport(report: unknown): void {
   mkdirSync(REPORTS, { recursive: true });
   writeFileSync(resolve(REPORTS, "missing-images.json"), JSON.stringify(report, null, 2) + "\n");
 }
+
+export function writeRecipesMissingReport(missing: unknown): void {
+  mkdirSync(REPORTS, { recursive: true });
+  writeFileSync(resolve(REPORTS, "missing-recipes.json"), JSON.stringify(missing, null, 2) + "\n");
+}

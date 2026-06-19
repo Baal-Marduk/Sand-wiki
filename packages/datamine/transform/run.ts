@@ -12,12 +12,14 @@ import { buildItemI18n } from "./i18n";
 import { mergeItems } from "./merge";
 import { applyIconOverrides, applyEntityOverrides, type EntityOverride } from "./items";
 import { loadCompartmentStats, mergeTrampler } from "./trampler";
+import { loadWeaponStats, loadTurretStats, mergeCombatStats } from "./combat-stats";
+import { loadRecipes, mergeRecipes } from "./recipes";
 import { enumerateItems } from "./enumerate";
 import { canonicalSekId } from "./variants";
 import { buildLootLinks, applyLoot, type LootOverrides } from "./loot";
 import { classifyImages } from "./images";
 import { diffEntities } from "./diff";
-import { validateEntities, writeArtifact, writeMissingReport, writeImagesReport } from "./emit";
+import { validateEntities, writeArtifact, writeMissingReport, writeImagesReport, writeRecipesMissingReport } from "./emit";
 
 const PUBLIC = resolve(import.meta.dirname, "../../../apps/wiki/public");
 
@@ -74,8 +76,17 @@ if (compartmentStats.length) {
   console.log("trampler stats: source absent (compartment_stats.json) — baseline preserved");
 }
 
+// --- combat stats: refresh item ItemStats from weapon/turret datasets ---
+const withCombat = mergeCombatStats(withTrampler, loadWeaponStats(), loadTurretStats(), rec.bySekId);
+const combatRefreshed = withCombat.filter((e, i) => e.itemStats !== withTrampler[i].itemStats).length;
+console.log(`combat stats: refreshed ${combatRefreshed} items`);
+
+// --- recipes: merge crafting recipes over baseline (keep baseline-only + report) ---
+const recipeMerge = mergeRecipes(baseline.recipes, loadRecipes(), rec.bySekId);
+console.log(`recipes: ${recipeMerge.recipes.length} total (${recipeMerge.missing.length} baseline-only kept)`);
+
 // --- loot: deep-derive container loot links, then drop any pointing at an unknown slug ---
-const knownSlugs = new Set(withTrampler.map((e) => e.slug));
+const knownSlugs = new Set(withCombat.map((e) => e.slug));
 const loot = buildLootLinks(containerLoot, lootOverrides);
 const dangling = loot.links.filter((l) => l.targetSlug && !knownSlugs.has(l.targetSlug));
 if (dangling.length) {
@@ -86,7 +97,7 @@ loot.links = loot.links.filter((l) => !l.targetSlug || knownSlugs.has(l.targetSl
 const links = applyLoot(baseline.links, loot);
 
 // --- diff + guards ---
-const diff = diffEntities(baseline.entities, withTrampler);
+const diff = diffEntities(baseline.entities, withCombat);
 console.log(`entities ${diff.total.prev} -> ${diff.total.next} | +${diff.added.length} added, -${diff.removed.length} removed`);
 console.log(`reconcile: ${[...rec.bySekId.values()].filter((h) => h.status === "matched").length} matched, ` +
   `${[...rec.bySekId.values()].filter((h) => h.status === "new").length} new, ` +
@@ -101,15 +112,16 @@ if (diff.removed.length > 0 && !allowSlugChanges) {
   process.exit(1);
 }
 
-validateEntities(withTrampler);
+validateEntities(withCombat);
 
 // --- images: report entities whose icon is null or whose file is missing on disk ---
-const images = classifyImages(withTrampler, (icon) => existsSync(resolve(PUBLIC, `.${icon}`)));
+const images = classifyImages(withCombat, (icon) => existsSync(resolve(PUBLIC, `.${icon}`)));
 console.log(`missing images: ${images.needsExtraction.length} need extraction ` +
   `(by design: ${images.byDesign.techNodeNoIcon} tech-nodes, ${images.byDesign.environmentNoIcon} locations)`);
 
 // recipes + non-loot links + parts/tech/locations entities pass through from baseline.
-writeArtifact(withTrampler, baseline.recipes, links);
+writeArtifact(withCombat, recipeMerge.recipes, links);
 writeMissingReport(missing);
+writeRecipesMissingReport(recipeMerge.missing);
 writeImagesReport(images);
-console.log("wrote packages/data/generated/{entities,recipes,links}.json + reports/{missing-from-datamine,missing-images}.json");
+console.log("wrote packages/data/generated/{entities,recipes,links}.json + reports/{missing-from-datamine,missing-images,missing-recipes}.json");
