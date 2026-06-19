@@ -13898,6 +13898,19 @@
   },
   {
     "sourceSlug": "ironclad-loot-box",
+    "targetSlug": "resource-alloy-steel",
+    "role": "loot",
+    "name": "Alloy Steel",
+    "amount": null,
+    "tier": "Drops",
+    "value1": "100",
+    "value2": "1",
+    "value3": "1",
+    "sortOrder": 0,
+    "buyGroup": null
+  },
+  {
+    "sourceSlug": "ironclad-loot-box",
     "targetSlug": "resource-weapon-parts",
     "role": "loot",
     "name": "Resource Weapon Parts",
@@ -13906,7 +13919,7 @@
     "value1": "76.9",
     "value2": "5-10",
     "value3": "20-30",
-    "sortOrder": 0,
+    "sortOrder": 1,
     "buyGroup": null
   },
   {
@@ -13919,7 +13932,7 @@
     "value1": "64.1",
     "value2": "1",
     "value3": "2-5",
-    "sortOrder": 1,
+    "sortOrder": 2,
     "buyGroup": null
   },
   {
@@ -13932,7 +13945,7 @@
     "value1": "35.9",
     "value2": "1-3",
     "value3": "2-5",
-    "sortOrder": 2,
+    "sortOrder": 3,
     "buyGroup": null
   },
   {
@@ -13945,7 +13958,7 @@
     "value1": "25.6",
     "value2": "3-7",
     "value3": "8-15",
-    "sortOrder": 3,
+    "sortOrder": 4,
     "buyGroup": null
   },
   {
@@ -13958,7 +13971,7 @@
     "value1": "20.5",
     "value2": "3-7",
     "value3": "10-15",
-    "sortOrder": 4,
+    "sortOrder": 5,
     "buyGroup": null
   },
   {
@@ -13971,7 +13984,7 @@
     "value1": "20.5",
     "value2": "15-25",
     "value3": "25-35",
-    "sortOrder": 5,
+    "sortOrder": 6,
     "buyGroup": null
   },
   {
@@ -13984,7 +13997,7 @@
     "value1": "19.2",
     "value2": "1",
     "value3": "1-2",
-    "sortOrder": 6,
+    "sortOrder": 7,
     "buyGroup": null
   },
   {
@@ -13997,7 +14010,7 @@
     "value1": "12.8",
     "value2": "1",
     "value3": "1",
-    "sortOrder": 7,
+    "sortOrder": 8,
     "buyGroup": null
   },
   {
@@ -14010,7 +14023,7 @@
     "value1": "12.8",
     "value2": "15-25",
     "value3": "25-35",
-    "sortOrder": 8,
+    "sortOrder": 9,
     "buyGroup": null
   },
   {
@@ -14023,7 +14036,7 @@
     "value1": "7.7",
     "value2": "4-7",
     "value3": "8-10",
-    "sortOrder": 9,
+    "sortOrder": 10,
     "buyGroup": null
   },
   {
@@ -14036,7 +14049,7 @@
     "value1": "3.8",
     "value2": "1",
     "value3": "1",
-    "sortOrder": 10,
+    "sortOrder": 11,
     "buyGroup": null
   }
 ]

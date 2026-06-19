@@ -18,7 +18,8 @@ import json, re, os, collections
 
 DATAMINE = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))  # packages/datamine
 SEK_OUT = os.path.join(DATAMINE, "sek-out")
-WIKI = os.path.normpath(os.path.join(DATAMINE, "..", "..", "sand-wiki", "prisma"))
+# Wiki item snapshot (id<->slug<->name) used only to resolve loot item refs to wiki slugs.
+WIKI = os.path.normpath(os.path.join(DATAMINE, "..", "..", "apps", "wiki", "prisma"))
 
 sources = json.load(open(os.path.join(SEK_OUT, "loot_sources.json"), encoding="utf-8"))
 sek_items = {i["id"]: i for i in json.load(open(os.path.join(SEK_OUT, "items.json"), encoding="utf-8"))}
@@ -30,7 +31,7 @@ by_name = {w["name"].lower(): w for w in wiki_items}
 DROP_SUFFIX = re.compile(r"(_mob ?drop|_mine ?drop|mobdrop|minedrop)$", re.I)
 
 # Corrections live in a committed override file so the pipeline is fully replayable.
-OVERRIDES = json.load(open(os.path.join(DATAMINE, "overrides", "loot-overrides.json"), encoding="utf-8"))
+OVERRIDES = json.load(open(os.path.join(DATAMINE, "transform", "overrides", "loot-overrides.json"), encoding="utf-8"))
 ALIAS = OVERRIDES["itemSlugAliases"]
 KNOWN_LIVE_SLUGS = set(OVERRIDES["knownLiveSlugs"])
 # Container reconciliation against the existing wiki model: drop non-containers,

@@ -30,4 +30,8 @@ export interface LootTier { tier: string; rollSets: number; loot: LootEntry[] }
 export interface Container { name: string; icon: string; category: string; tiers: LootTier[] }
 export type ContainerLoot = Record<string, Container>;  // keyed by SEK container slug
 
-export function loadContainerLoot(dir = SEK): ContainerLoot { return read("container_loot.json", dir); }
+export function loadContainerLoot(dir = SEK): ContainerLoot {
+  // build_container_loot.py emits a { meta, containers } envelope; tolerate a bare map too.
+  const raw = read<Record<string, unknown>>("container_loot.json", dir);
+  return (raw.containers ?? raw) as ContainerLoot;
+}
