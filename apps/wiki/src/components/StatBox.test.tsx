@@ -5,28 +5,38 @@ const cell = (cells: ReturnType<typeof itemStatCells>, label: string) =>
   cells.find((c) => c.label === label)?.value;
 
 describe("itemStatCells — new datamined fields", () => {
-  it("renders weapon reload + range (with falloff multiplier)", () => {
+  it("renders weapon reload (1 decimal) + range as max only", () => {
     const cells = itemStatCells({
-      ...EMPTY_ITEM_STATS, reloadSeconds: 3.05,
+      ...EMPTY_ITEM_STATS, reloadSeconds: 1.434,
       rangeFull: 15, rangeMax: 150, rangeMinMult: 0.5, rangeFalloff: true,
     });
-    expect(cell(cells, "Reload")).toBe("3.05s");
-    expect(cell(cells, "Range")).toBe("15→150 m ·×0.5");
+    expect(cell(cells, "Reload")).toBe("1.4s");
+    expect(cell(cells, "Range")).toBe("150 m");
   });
 
-  it("renders range without multiplier when falloff is false", () => {
-    const cells = itemStatCells({
-      ...EMPTY_ITEM_STATS, rangeFull: 8, rangeMax: 30, rangeMinMult: 0.4, rangeFalloff: false,
-    });
-    expect(cell(cells, "Range")).toBe("8→30 m");
+  it("rounds reload to one decimal", () => {
+    expect(cell(itemStatCells({ ...EMPTY_ITEM_STATS, reloadSeconds: 2.783 }), "Reload")).toBe("2.8s");
+    expect(cell(itemStatCells({ ...EMPTY_ITEM_STATS, reloadSeconds: 5 }), "Reload")).toBe("5.0s");
   });
 
-  it("renders ammo damage, range and penetrates (only when true)", () => {
+  it("shows ammo damage + range (max only) + penetrates (only when true)", () => {
     const cells = itemStatCells({
       ...EMPTY_ITEM_STATS, damage: 50, rangeFull: 35, rangeMax: 150, rangeMinMult: 0.3, rangeFalloff: true, penetrates: true,
     });
     expect(cell(cells, "Damage")).toBe(50);
+    expect(cell(cells, "Range")).toBe("150 m");
     expect(cell(cells, "Penetrates")).toBe("Yes");
+  });
+
+  it("hides damage for guns/turrets (reloadSeconds or fireRate present) — not reliably extracted per-weapon", () => {
+    const gun = itemStatCells({ ...EMPTY_ITEM_STATS, damage: 60, playerDamage: 40, reloadSeconds: 2.5 });
+    expect(gun.find((c) => c.label === "Damage")).toBeUndefined();
+    expect(gun.find((c) => c.label === "Damage (Player)")).toBeUndefined();
+    expect(cell(gun, "Reload")).toBe("2.5s");
+
+    const turret = itemStatCells({ ...EMPTY_ITEM_STATS, damage: 300, fireRate: 5 });
+    expect(turret.find((c) => c.label === "Damage")).toBeUndefined();
+    expect(cell(turret, "Fire rate")).toBe("5/s");
   });
 
   it("omits the Penetrates cell when penetrates is false", () => {
@@ -52,10 +62,8 @@ describe("itemStatCells — new datamined fields", () => {
     expect(cell(cells, "Magazine")).toBe(2);
   });
 
-  it("renders range without multiplier when falloff is true but minMult is null", () => {
-    const cells = itemStatCells({
-      ...EMPTY_ITEM_STATS, rangeFull: 8, rangeMax: 30, rangeMinMult: null, rangeFalloff: true,
-    });
-    expect(cell(cells, "Range")).toBe("8→30 m");
+  it("renders Range from rangeMax even when rangeFull is absent", () => {
+    const cells = itemStatCells({ ...EMPTY_ITEM_STATS, rangeMax: 30 });
+    expect(cell(cells, "Range")).toBe("30 m");
   });
 });

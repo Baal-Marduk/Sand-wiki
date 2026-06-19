@@ -32,12 +32,6 @@ export const EMPTY_ITEM_STATS: ItemStatFields = {
   armorDurability: null, fireRate: null, projectileVelocity: null,
 };
 
-/** "35→150 m", with a "·×0.3" suffix only when the round has damage falloff. */
-function formatRange(full: number, max: number, minMult: number | null, falloff: boolean | null): string {
-  const base = `${full}→${max} m`;
-  return falloff && minMult != null ? `${base} ·×${minMult}` : base;
-}
-
 /** "5/s · 6s delay" (or "5/s" when there is no delay). */
 function formatRegen(speed: number, delay: number | null): string {
   return delay != null ? `${speed}/s · ${delay}s delay` : `${speed}/s`;
@@ -45,14 +39,17 @@ function formatRegen(speed: number, delay: number | null): string {
 
 export function itemStatCells(item: ItemStatFields, typeLabel?: string): StatCell[] {
   const cells: StatCell[] = [];
-  if (item.damage != null) cells.push({ label: "Damage", value: item.damage });
-  if (item.playerDamage != null) cells.push({ label: "Damage (Player)", value: item.playerDamage });
-  if (item.tramplerDamage != null) cells.push({ label: "Damage (Trampler)", value: item.tramplerDamage });
-  if (item.splashDamage != null) cells.push({ label: "Splash Damage", value: item.splashDamage });
-  if (item.rangeFull != null && item.rangeMax != null) {
-    cells.push({ label: "Range", value: formatRange(item.rangeFull, item.rangeMax, item.rangeMinMult, item.rangeFalloff) });
+  // Damage is only reliably datamined for ammo. Guns/turrets (which carry reloadSeconds/fireRate)
+  // have only inconsistent baseline damage that isn't a real per-weapon stat, so hide it there.
+  const isWeapon = item.reloadSeconds != null || item.fireRate != null;
+  if (!isWeapon) {
+    if (item.damage != null) cells.push({ label: "Damage", value: item.damage });
+    if (item.playerDamage != null) cells.push({ label: "Damage (Player)", value: item.playerDamage });
+    if (item.tramplerDamage != null) cells.push({ label: "Damage (Trampler)", value: item.tramplerDamage });
+    if (item.splashDamage != null) cells.push({ label: "Splash Damage", value: item.splashDamage });
   }
-  if (item.reloadSeconds != null) cells.push({ label: "Reload", value: `${item.reloadSeconds}s` });
+  if (item.rangeMax != null) cells.push({ label: "Range", value: `${item.rangeMax} m` });
+  if (item.reloadSeconds != null) cells.push({ label: "Reload", value: `${item.reloadSeconds.toFixed(1)}s` });
   if (item.fireRate != null) cells.push({ label: "Fire rate", value: `${item.fireRate}/s` });
   if (item.projectileVelocity != null) cells.push({ label: "Velocity", value: `${item.projectileVelocity} m/s` });
   if (item.magazine != null) cells.push({ label: "Magazine", value: item.magazine });
