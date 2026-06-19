@@ -1,5 +1,25 @@
 {
  "turrets": {
+  "game_packedAutoTurretT1Container": {
+   "family": "auto",
+   "tier": "T1",
+   "variant": null,
+   "barrels": 2,
+   "fireRate": 4.0,
+   "fireInterval": 0.5,
+   "reloadSeconds": null,
+   "clipSize": 2,
+   "autoRefill": true,
+   "ammoTypes": [
+    "item_smallCannonAmmo",
+    "item_smallCannonAmmo_longRange",
+    "item_smallCannonAmmo_lowRecoil"
+   ],
+   "spreadIdleMax": 1.5,
+   "projectileVelocity": 150,
+   "penetrates": true,
+   "source": "walker_autoMountedTurret_T1"
+  },
   "game_packedAutoTurretT2Container": {
    "family": "auto",
    "tier": "T2",
@@ -39,6 +59,47 @@
    "projectileVelocity": 150,
    "penetrates": true,
    "source": "walker_autoMountedTurret_T3"
+  },
+  "game_packedAutoTurretT4Accelerating_Container": {
+   "family": "auto",
+   "tier": "T4",
+   "variant": "Accelerating",
+   "barrels": 2,
+   "fireRate": 6.06,
+   "fireInterval": 0.33,
+   "reloadSeconds": null,
+   "clipSize": 2,
+   "autoRefill": true,
+   "ammoTypes": [
+    "item_smallCannonAmmo",
+    "item_smallCannonAmmo_longRange",
+    "item_smallCannonAmmo_lowRecoil"
+   ],
+   "spreadIdleMax": 0.5,
+   "projectileVelocity": 150,
+   "penetrates": true,
+   "source": "walker_autoMountedTurret_T4_Accelerating"
+  },
+  "game_packedShotgunTurretT1Container": {
+   "family": "shotgun",
+   "tier": "T1",
+   "variant": null,
+   "barrels": 1,
+   "fireRate": 0.82,
+   "fireInterval": 1.22,
+   "reloadSeconds": 5,
+   "clipSize": 1,
+   "autoRefill": false,
+   "ammoTypes": [
+    "item_shotgunTurretAmmo",
+    "item_shotgunTurretAmmo_slug",
+    "item_shotgunTurretAmmo_smoke",
+    "item_shotgunTurretAmmo_interiorExplosion"
+   ],
+   "spreadIdleMax": 0.0,
+   "projectileVelocity": 250,
+   "penetrates": true,
+   "source": "walker_shotgunMountedTurret_T1"
   },
   "game_packedShotgunTurretT2Container": {
    "family": "shotgun",
@@ -82,6 +143,48 @@
    "penetrates": true,
    "source": "walker_shotgunMountedTurret_T3"
   },
+  "game_packedShotgunTurretT4DoubleBarrel_Container": {
+   "family": "shotgun",
+   "tier": "T4",
+   "variant": "DoubleBarrel",
+   "barrels": 1,
+   "fireRate": 0.82,
+   "fireInterval": 1.22,
+   "reloadSeconds": 6,
+   "clipSize": 2,
+   "autoRefill": false,
+   "ammoTypes": [
+    "item_shotgunTurretAmmo",
+    "item_shotgunTurretAmmo_slug",
+    "item_shotgunTurretAmmo_smoke",
+    "item_shotgunTurretAmmo_interiorExplosion"
+   ],
+   "spreadIdleMax": 0.0,
+   "projectileVelocity": 250,
+   "penetrates": true,
+   "source": "walker_shotgunMountedTurret_T4_DoubleBarrel"
+  },
+  "game_packedTurretT1Container": {
+   "family": "cannon",
+   "tier": "T1",
+   "variant": null,
+   "barrels": 1,
+   "fireRate": 0.67,
+   "fireInterval": 1.5,
+   "reloadSeconds": 4.5,
+   "clipSize": 1,
+   "autoRefill": false,
+   "ammoTypes": [
+    "item_turretAmmo",
+    "item_turretAmmo_highVelocity",
+    "item_turretAmmo_EMP",
+    "item_turretAmmo_delayedDetonation"
+   ],
+   "spreadIdleMax": 0.0,
+   "projectileVelocity": 300,
+   "penetrates": true,
+   "source": "walker_cannonMountedTurret_T1"
+  },
   "game_packedTurretT2Container": {
    "family": "cannon",
    "tier": "T2",
@@ -123,6 +226,43 @@
    "projectileVelocity": 300,
    "penetrates": true,
    "source": "walker_cannonMountedTurret_T3"
+  },
+  "game_packedTurretT4_DoubleBarrelContainer": {
+   "family": "cannon",
+   "tier": "T4",
+   "variant": "DoubleBarrel",
+   "barrels": 1,
+   "fireRate": 0.67,
+   "fireInterval": 1.5,
+   "reloadSeconds": 3.5,
+   "clipSize": 2,
+   "autoRefill": false,
+   "ammoTypes": [
+    "item_turretAmmo",
+    "item_turretAmmo_highVelocity"
+   ],
+   "spreadIdleMax": 0.0,
+   "projectileVelocity": null,
+   "penetrates": false,
+   "source": "walker_cannonMountedTurret_T4_DoubleBarrel"
+  },
+  "game_packedTurretT4_RailGunContainer": {
+   "family": "cannon",
+   "tier": "T4",
+   "variant": "RailGun",
+   "barrels": 1,
+   "fireRate": 0.67,
+   "fireInterval": 1.5,
+   "reloadSeconds": 3.5,
+   "clipSize": 1,
+   "autoRefill": false,
+   "ammoTypes": [
+    "item_turretAmmo"
+   ],
+   "spreadIdleMax": 0.0,
+   "projectileVelocity": 2000,
+   "penetrates": true,
+   "source": "walker_cannonMountedTurret_T4_RailGun"
   }
  }
 }

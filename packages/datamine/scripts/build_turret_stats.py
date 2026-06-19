@@ -11,12 +11,14 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 SRC = HERE.parent / "extracted" / "json" / "turret_stats.json"
-ITEMS = HERE.parent / "sek-out" / "items.json"
+DEFS = HERE.parent / "extracted" / "json" / "item_defs.json"
 OUT = HERE.parent / "sek-out" / "turret_stats.json"
 
 raw = json.loads(SRC.read_text(encoding="utf-8"))["turrets"]
-items = json.loads(ITEMS.read_text(encoding="utf-8"))
-item_ids = {i["id"] for i in items} if isinstance(items, list) else set(items)
+# Enumerate turret containers from the COMPLETE item registry (CheatItemDefinitions), not the
+# loot-derived items.json — otherwise T1/T4/railgun (absent from loot tables) are dropped.
+defs = json.loads(DEFS.read_text(encoding="utf-8"))
+item_ids = set(defs.keys())
 
 # index mined turrets by (family, tier, variant) — non-armored only (containers are carryable)
 by_key = {}
