@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import Script from "next/script";
 import { Oswald } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -88,6 +89,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {children}
         </ConditionalChrome>
         <Analytics />
+        {/* Cloudflare Web Analytics */}
+        <Script
+          src="https://static.cloudflareinsights.com/beacon.min.js"
+          strategy="afterInteractive"
+          data-cf-beacon='{"token": "6adb0f5c668c4f8a91c4ff95423d0ee7"}'
+        />
       </body>
     </html>
   );
