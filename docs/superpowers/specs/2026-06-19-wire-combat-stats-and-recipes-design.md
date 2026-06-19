@@ -56,7 +56,6 @@ Loaders `loadWeaponStats()` / `loadTurretStats()` (read `sek-out/weapon_stats.js
 | ammo `damagePhysical` | `damage` |
 | ammo/weapon `range.full` / `.max` / `.minMult` / `.falloff` | `rangeFull` / `rangeMax` / `rangeMinMult` / `rangeFalloff` |
 | ammo/turret `penetrates` | `penetrates` |
-| ammo `stack[-1]` (max-tier stack) | `storageStack` |
 | weapon `reloadSeconds` | `reloadSeconds` |
 | turret `fireRate` | `fireRate` |
 | turret `projectileVelocity` | `projectileVelocity` |
@@ -64,8 +63,17 @@ Loaders `loadWeaponStats()` / `loadTurretStats()` (read `sek-out/weapon_stats.js
 | armor rating/regen fields | `armorRating` / `armorRegenDelay` / `armorRegenSpeed` / `armorDurability` |
 
 (`null`/absent values are omitted so the baseline value is kept. Baseline-only fields the datamine
-never carries — `ammoType` caliber string, `statType`, `workbenchTier`, `ammoName`,
+never carries — `storageStack`, `ammoType` caliber string, `statType`, `workbenchTier`, `ammoName`,
 `playerDamage`, `tramplerDamage`, `splashDamage` — are preserved.)
+
+**Verified against the release-build extraction (2026-06-19):** combat values match the baseline
+(damage/range/penetrates/armor identical on the sampled items → the merge confirms/refreshes, no
+regression). Armor field names confirmed: `armorRating`, `regen.delay`→`armorRegenDelay`,
+`regen.speed`→`armorRegenSpeed`, `durability`→`armorDurability`. **`storageStack` is deliberately
+NOT mapped:** the ammo `stack` array is per-tier backpack carry capacity `[T1,T2,T3]`, not the
+item's storage stack (e.g. pistol-ammo baseline 100000 vs `stack[-1]` 1000). The real
+`storageStack` lives in `item_defs` (`CheatItemDefinitions.StorageStack`) — a future wiring; until
+then it stays baseline.
 
 `mergeCombatStats(baseline, weapons, ammo, armor, turrets, bySekId)`:
 - For each baseline `item` entity, collect patches from every sub-map whose SEK id reconciles to
@@ -162,7 +170,7 @@ geometry, tech tree, trampler weight/energy. Tracked in `memory/datamine-deferre
   mitigated by §4 (regenerate first) + the never-commit-stale rule.
 - **`craftingrecipes.json` extraction missing:** may require a new extractor (bounded; same UnityPy
   pattern). Flagged so the plan can confirm-or-write it.
-- **Armor field names unverified:** the armor sub-map mapping is frozen against the regenerated
-  `weapon_stats.json` before wiring (diagnostic-first, as with compartment stats).
+- **Armor field names:** VERIFIED against the release extraction (3 armor entries, regen.delay/
+  speed + durability). No longer a risk.
 - **Recipe item-id reconciliation gaps:** unknown ids are dropped-with-warning, not invented;
   surfaced in the run log for review.
