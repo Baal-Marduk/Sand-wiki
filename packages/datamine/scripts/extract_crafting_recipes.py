@@ -39,7 +39,8 @@ for o in env.objects:
         })
 
 os.makedirs("sek-out", exist_ok=True)
-json.dump(out, open(OUT, "w", encoding="utf-8"), ensure_ascii=False, indent=1)
+with open(OUT, "w", encoding="utf-8") as f:
+    json.dump(out, f, ensure_ascii=False, indent=1)
 print(f"wrote {OUT}: {len(out)} crafting recipes")
 if not out:
     print("NO recipes found — check bundle name / MonoBehaviour layout for this build.")
