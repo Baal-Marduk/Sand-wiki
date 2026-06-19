@@ -136,6 +136,13 @@ The merge must run against release-build data, not the committed playtest `sek-o
 - **itemStats:** `extract_weapon_stats.py` → `build_weapon_stats.py`; `extract_turret_stats.py` →
   `build_turret_stats.py`. Verify each script's source bundle resolves on the release build
   (every extractor prints what it found; "NOT FOUND" = bundle moved → repoint).
+- **`build_turret_stats.py` enumeration FIX (required):** it currently keys output off the
+  loot-derived `sek-out/items.json` (only 6 turret containers → T2/T3), silently dropping T1/T4/
+  railgun. The extraction already mines all 30 mounted-turret variants; switch the container
+  enumeration to `extracted/json/item_defs.json` (CheatItemDefinitions, all 13 turret containers).
+  `container_key()` already resolves the variants (railgun/doublebarrel/accelerating), so all 13
+  match → turret coverage goes 6 → 13 (baseline has 12). `build_weapon_stats.py` has no such
+  bottleneck (it passes the extraction through: 72 weapons / 37 ammo / 3 armor).
 - **recipes:** `build_site_data.py` produces `recipes.json` (and refreshes `items.json`/
   `locations.json`). It needs `extracted/json/craftingrecipes.json` (+ loottables/lootsets/
   item_defs). **Dependency:** confirm a vendored extractor produces `craftingrecipes.json` from
