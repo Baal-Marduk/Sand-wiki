@@ -44,12 +44,12 @@ describe("itemStatCells — new datamined fields", () => {
     expect(cells.find((c) => c.label === "Penetrates")).toBeUndefined();
   });
 
-  it("renders armor rating, durability and combined regen", () => {
+  it("renders armor rating and combined regen, but hides durability (disabled for now)", () => {
     const cells = itemStatCells({
       ...EMPTY_ITEM_STATS, armorRating: 150, armorDurability: 1400, armorRegenSpeed: 5, armorRegenDelay: 10,
     });
     expect(cell(cells, "Armor")).toBe(150);
-    expect(cell(cells, "Durability")).toBe(1400);
+    expect(cells.find((c) => c.label === "Durability")).toBeUndefined();
     expect(cell(cells, "Regen")).toBe("5/s · 10s delay");
   });
 

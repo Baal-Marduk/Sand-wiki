@@ -55,7 +55,7 @@ export function itemStatCells(item: ItemStatFields, typeLabel?: string): StatCel
   if (item.magazine != null) cells.push({ label: "Magazine", value: item.magazine });
   if (item.penetrates === true) cells.push({ label: "Penetrates", value: "Yes" });
   if (item.armorRating != null) cells.push({ label: "Armor", value: item.armorRating });
-  if (item.armorDurability != null) cells.push({ label: "Durability", value: item.armorDurability });
+  // Durability hidden for now (kept in the data; re-enable by restoring this cell).
   if (item.armorRegenSpeed != null) cells.push({ label: "Regen", value: formatRegen(item.armorRegenSpeed, item.armorRegenDelay) });
   const typeValue = typeLabel ?? item.statType;
   if (typeValue) cells.push({ label: "Type", value: typeValue });
