@@ -1,0 +1,38 @@
+# OPTIONAL CI: on push to master, SSH into the VPS and run the deploy script,
+# which builds the images on the server and restarts the stack. This keeps a
+# single source of truth (the compose build) and needs no container registry.
+#
+# Required repo secrets (Settings -> Secrets and variables -> Actions):
+#   VPS_HOST  - server IP or hostname
+#   VPS_USER  - SSH user (must be in the `docker` group)
+#   VPS_KEY   - private SSH key authorized on the VPS
+#   VPS_PATH  - absolute path to the repo checkout on the VPS (e.g. /opt/sandlabs)
+#
+# Note: building Next.js on a small VPS is memory-hungry. If the box has < 2 GB
+# RAM, either add swap or switch to a registry-based pipeline (build in CI,
+# push to GHCR, `docker compose pull` on the VPS). See docs/vps-deploy.md.
+
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+concurrency:
+  group: vps-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy over SSH
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_KEY }}
+          script: |
+            cd ${{ secrets.VPS_PATH }}
+            ./deploy/deploy.sh

@@ -1,0 +1,32 @@
+# Build context is the repo root. Exclude everything the image doesn't need so
+# the context upload is small and host artifacts never leak into the image.
+**/node_modules
+**/.next
+**/.git
+.git
+.github
+.worktrees
+.superpowers
+.claude
+**/test-results
+**/playwright-report
+**/*.log
+
+# Secrets / local env — never bake into an image layer.
+**/.env
+**/.env.*
+!**/.env.example
+*.pem
+*.key
+
+# Tools that aren't part of the deployed wiki.
+sand-scraper
+tech-tree
+sek
+apps/wiki/datamine
+apps/wiki/directus
+
+# Editor / OS cruft
+.vscode
+.idea
+.DS_Store

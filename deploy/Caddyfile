@@ -1,0 +1,8 @@
+# Caddy fetches and renews a Let's Encrypt cert for $DOMAIN automatically.
+# It terminates TLS and reverse-proxies everything to the Next.js app.
+# The app's standalone server.js serves /_next/static and /public itself.
+
+{$DOMAIN} {
+	encode zstd gzip
+	reverse_proxy app:3000
+}

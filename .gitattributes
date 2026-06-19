@@ -1,0 +1,6 @@
+# Deploy/runtime files run on Linux — force LF so a Windows checkout never
+# commits CRLF (a CRLF shebang or Dockerfile breaks on the VPS).
+*.sh            text eol=lf
+Dockerfile      text eol=lf
+deploy/Caddyfile text eol=lf
+docker-compose.yml text eol=lf

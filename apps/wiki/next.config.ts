@@ -1,6 +1,14 @@
 import type { NextConfig } from "next";
+import path from "node:path";
 
 const nextConfig: NextConfig = {
+  // Self-hosting: emit a self-contained `.next/standalone` server (server.js +
+  // only the traced node_modules) so the Docker runtime needs no `npm install`.
+  output: "standalone",
+  // We live in an npm-workspaces monorepo. By default tracing roots at apps/wiki
+  // and drops the workspace dep `@sandlabs/data` (and hoisted root node_modules).
+  // Point the trace root at the repo root so they're included in standalone.
+  outputFileTracingRoot: path.join(import.meta.dirname, "../.."),
   // Allow the dev server to be reached through an ngrok tunnel. Next blocks
   // cross-origin access to dev assets by default, which silently breaks client
   // hydration/HMR when the app is opened via the tunnel hostname (the page

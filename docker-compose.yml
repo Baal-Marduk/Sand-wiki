@@ -1,0 +1,78 @@
+# Full self-hosted stack for the sand-wiki.
+#
+#   db      - PostgreSQL 16 with a persistent named volume
+#   migrate - runs `prisma migrate deploy` once, then exits (gates the app)
+#   app     - the Next.js standalone server (internal only, behind Caddy)
+#   caddy   - public entrypoint on 80/443, automatic HTTPS, proxies to app:3000
+#
+# Config comes from a .env file in this directory (see .env.example).
+# Build context is the repo root so the monorepo workspace deps are available.
+
+services:
+  db:
+    image: postgres:16-bookworm
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # Not published to the host: only reachable on the internal compose network.
+
+  migrate:
+    build:
+      context: .
+      dockerfile: apps/wiki/Dockerfile
+      target: builder
+    command: npx prisma migrate deploy --schema=apps/wiki/prisma/schema.prisma
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      DIRECT_DATABASE_URL: ${DIRECT_DATABASE_URL}
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: "no"
+
+  app:
+    build:
+      context: .
+      dockerfile: apps/wiki/Dockerfile
+      target: runner
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: ${DATABASE_URL}
+      DIRECT_DATABASE_URL: ${DIRECT_DATABASE_URL}
+      # Add any NEXT_PUBLIC_* or other runtime vars here.
+    depends_on:
+      db:
+        condition: service_healthy
+      migrate:
+        condition: service_completed_successfully
+    expose:
+      - "3000"
+
+  caddy:
+    image: caddy:2
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - app
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:
