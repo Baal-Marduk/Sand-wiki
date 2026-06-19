@@ -2,5 +2,7 @@
   "coin-crown": "/icons/icon_item_coinCrown.png",
   "pistol-ammo": "/icons/icon_pistol_ammo.png",
   "shotgun-ammo": "/icons/icon_shotgun_ammo.png",
-  "revolver-small-dusters": "/icons/icon_revolverSmall_dusters.png"
+  "revolver-small-dusters": "/icons/icon_revolverSmall_dusters.png",
+  "semi-automatic-pistol": "/icons/icon_pistol.png",
+  "rifle-musket": "/icons/icon_item_repeaterRifleOneShot.png"
 }
