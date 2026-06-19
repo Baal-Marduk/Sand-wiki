@@ -1,0 +1,1088 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SAND Wiki — Visual Redesign Reference</title>
+<link rel="stylesheet" href="sand-wiki.css">
+<style>
+  /* ===== Review-page chrome (neutral, sits OUTSIDE the SAND product) ===== */
+  :root {
+    --rv-bg: #0a0a0b;
+    --rv-panel: #141416;
+    --rv-line: #26262a;
+    --rv-text: #e6e6ea;
+    --rv-muted: #8b8b94;
+    --rv-dim: #5c5c64;
+    --rv-accent: #e8893b;
+  }
+  body {
+    margin: 0; background: var(--rv-bg); color: var(--rv-text);
+    font-family: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+  a { color: inherit; }
+
+  /* Doc header */
+  .doc-header { padding: 56px 48px 36px; border-bottom: 1px solid var(--rv-line); max-width: 1400px; }
+  .doc-header .kicker { font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: .22em; font-size: 12px; color: var(--rv-accent); font-weight: 600; }
+  .doc-header h1 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 42px; margin: 12px 0 14px; letter-spacing: .01em; text-transform: uppercase; }
+  .doc-header p { color: var(--rv-muted); font-size: 15px; line-height: 1.6; max-width: 760px; margin: 0 0 8px; }
+  .doc-header .meta { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 18px; }
+  .doc-header .pill { font-family: ui-monospace, monospace; font-size: 11px; color: var(--rv-muted); border: 1px solid var(--rv-line); padding: 4px 9px; }
+  .doc-header .pill b { color: var(--rv-text); font-weight: 600; }
+
+  /* Sticky section nav */
+  .secnav {
+    position: sticky; top: 0; z-index: 50; display: flex; flex-wrap: wrap; gap: 2px;
+    padding: 10px 48px; background: rgba(10,10,11,.9); backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--rv-line);
+  }
+  .secnav a {
+    font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: .04em;
+    font-size: 12px; font-weight: 500; color: var(--rv-muted); padding: 6px 11px;
+    border: 1px solid transparent; transition: color .12s, border-color .12s;
+  }
+  .secnav a:hover { color: var(--rv-text); border-color: var(--rv-line); }
+
+  /* Showcase section */
+  .showcase { padding: 52px 48px; border-bottom: 1px solid var(--rv-line); scroll-margin-top: 56px; }
+  .showcase > .sc-head { max-width: 820px; margin-bottom: 34px; }
+  .sc-head .sc-num { font-family: ui-monospace, monospace; font-size: 12px; color: var(--rv-accent); letter-spacing: .1em; }
+  .sc-head h2 { font-family: 'Oswald', sans-serif; font-weight: 700; font-size: 28px; text-transform: uppercase; letter-spacing: .01em; margin: 8px 0 12px; }
+  .sc-head p { color: var(--rv-muted); font-size: 14px; line-height: 1.65; margin: 0; }
+  .sc-head .deviation { margin-top: 14px; padding: 11px 14px; border-left: 2px solid var(--rv-accent); background: var(--rv-panel); font-size: 13px; color: var(--rv-muted); }
+  .sc-head .deviation b { color: var(--rv-accent); font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: .05em; font-size: 11px; }
+
+  /* Frame label + grouping */
+  .frame-label {
+    font-family: 'Oswald', sans-serif; text-transform: uppercase; letter-spacing: .08em;
+    font-size: 12px; font-weight: 600; color: var(--rv-text); margin-bottom: 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .frame-label .state {
+    font-family: ui-monospace, monospace; font-size: 10px; letter-spacing: .02em; text-transform: none;
+    color: var(--rv-dim); border: 1px solid var(--rv-line); padding: 2px 7px; font-weight: 400;
+  }
+  .frames-row { display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start; }
+  .frame-block { display: flex; flex-direction: column; }
+  .state-stack { display: flex; flex-direction: column; gap: 30px; }
+  .state-row { display: flex; flex-wrap: wrap; gap: 30px; align-items: flex-start; }
+
+  /* Browser window chrome (squared, dark) */
+  .browser { border: 1px solid var(--rv-line); background: #100c07; box-shadow: 0 24px 60px -24px rgba(0,0,0,.8); }
+  .browser-bar { display: flex; align-items: center; gap: 12px; padding: 9px 12px; background: #161108; border-bottom: 1px solid var(--border); }
+  .browser-dots { display: flex; gap: 6px; }
+  .browser-dots i { width: 10px; height: 10px; background: #2a2012; display: block; }
+  .browser-url {
+    flex: 1; font-family: ui-monospace, monospace; font-size: 11px; color: #74695a;
+    background: #0d0a06; border: 1px solid #2a2012; padding: 4px 10px;
+  }
+  .browser-body { overflow: hidden; }
+
+  /* Phone frame */
+  .phone { width: 390px; border: 8px solid #1a1a1d; border-radius: 30px; background: #000; box-shadow: 0 24px 60px -24px rgba(0,0,0,.8); overflow: hidden; }
+  .phone-notch { height: 26px; background: #0d0a06; display: flex; align-items: center; justify-content: center; }
+  .phone-notch::before { content: ''; width: 90px; height: 6px; background: #1a1a1d; border-radius: 3px; }
+  .phone-body { height: 720px; overflow: hidden; position: relative; background: var(--background); }
+  .phone-scroll { height: 100%; overflow: hidden; }
+
+  .device-tag { font-family: ui-monospace, monospace; font-size: 11px; color: var(--rv-dim); margin-bottom: 8px; letter-spacing: .03em; }
+
+  /* utility */
+  .flow > * + * { margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<header class="doc-header">
+  <div class="kicker">Unofficial Wiki · Visual Redesign Reference</div>
+  <h1>SAND: Raiders of Sophie — Wiki</h1>
+  <p>Approved high-fidelity visual reference for the shadcn/ui rebuild. Every screen is shown at desktop and mobile width with its key states (hover, active filter, empty, loading). These are framework-free HTML/CSS mockups — precise about color, type, spacing, density, and component states — not production React.</p>
+  <p>Direction: polished chrome (sticky blurred nav, hero, cards — <i>rusthelp</i>) wrapped around dense, utilitarian data grids and stat tables (<i>rustlabs</i>). Identity: SAND desert / orange. Dark only. Squared corners. Oswald display.</p>
+  <div class="meta">
+    <span class="pill">theme <b>dark-only</b></span>
+    <span class="pill">--radius <b>0</b></span>
+    <span class="pill">display <b>Oswald</b></span>
+    <span class="pill">primary <b>#e8893b</b></span>
+    <span class="pill">rarity tiers <b>6</b></span>
+    <span class="pill">AA contrast <b>@14px</b></span>
+  </div>
+</header>
+
+<nav class="secnav">
+  <a href="#foundations">Foundations</a>
+  <a href="#shell">1 · App shell</a>
+  <a href="#home">2 · Home</a>
+  <a href="#items">3 · Items list</a>
+  <a href="#detail">4 · EntityDetail</a>
+  <a href="#tramplers">5 · Tramplers & Env</a>
+  <a href="#search">6 · Search</a>
+  <a href="#contribute">7 · Contribute / Admin</a>
+  <a href="#about">8 · About & Auth</a>
+</nav>
+
+<!-- ============================================================
+     FOUNDATIONS
+     ============================================================ -->
+<section class="showcase" id="foundations">
+  <div class="sc-head">
+    <div class="sc-num">SYSTEM · 00</div>
+    <h2>Foundations</h2>
+    <p>The unified token set every screen below is built from. Mirrors the locked spec values and <code>src/lib/rarity.ts</code> exactly. Where the earlier brainstorm rounds disagreed (e.g. card surface tints, rarity rail vs. full tile), I converged on the values shown here — deviations are flagged per-section.</p>
+  </div>
+
+  <div class="sw" style="display:grid; gap:32px; grid-template-columns:repeat(auto-fit,minmax(320px,1fr)); max-width:1400px;">
+
+    <!-- Surfaces + text -->
+    <div>
+      <div class="frame-label">Surfaces &amp; text</div>
+      <div class="card" style="padding:0; overflow:hidden;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;">
+          <div style="background:var(--background);padding:18px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);"><div class="mono" style="font-size:11px;color:var(--muted-foreground)">background</div><div class="mono" style="font-size:12px;color:var(--dim)">#0d0a06</div></div>
+          <div style="background:var(--card);padding:18px;border-bottom:1px solid var(--border);"><div class="mono" style="font-size:11px;color:var(--muted-foreground)">card</div><div class="mono" style="font-size:12px;color:var(--dim)">#15100a</div></div>
+          <div style="background:var(--card-elevated);padding:18px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);"><div class="mono" style="font-size:11px;color:var(--muted-foreground)">card-elevated</div><div class="mono" style="font-size:12px;color:var(--dim)">#1d160d</div></div>
+          <div style="background:var(--border);padding:18px;border-bottom:1px solid var(--border-strong);"><div class="mono" style="font-size:11px;color:var(--foreground)">border</div><div class="mono" style="font-size:12px;color:var(--muted-foreground)">#2a2012</div></div>
+        </div>
+        <div style="padding:16px;display:flex;flex-direction:column;gap:7px;">
+          <span style="color:var(--foreground)">foreground — #ece0cb · primary text</span>
+          <span style="color:var(--muted-foreground)">muted-foreground — #9a8f7c · labels</span>
+          <span style="color:var(--dim)">dim — #74695a · meta / hints</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Brand + state -->
+    <div>
+      <div class="frame-label">Brand &amp; state</div>
+      <div class="card" style="padding:16px;display:flex;flex-direction:column;gap:10px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="swatch" style="flex:1;min-width:80px;background:var(--primary);color:#1a0f04;padding:14px 10px;font-family:var(--font-mono);font-size:11px;font-weight:600;">primary<br>#e8893b</span>
+          <span class="swatch" style="flex:1;min-width:80px;background:var(--secondary);color:#fff;padding:14px 10px;font-family:var(--font-mono);font-size:11px;font-weight:600;">secondary<br>#b5532a</span>
+          <span class="swatch" style="flex:1;min-width:80px;background:var(--accent);color:#1a0f04;padding:14px 10px;font-family:var(--font-mono);font-size:11px;font-weight:600;">accent<br>#c9a24b</span>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          <span class="tag tag-info">info</span>
+          <span class="tag tag-success">success</span>
+          <span class="tag tag-warning">warning</span>
+          <span class="tag tag-destructive">destructive</span>
+        </div>
+        <div style="font-size:12px;color:var(--dim);border-top:1px solid var(--border);padding-top:10px;margin-top:2px;">Primary text always sits on a dark fg (<span class="mono">#1a0f04</span>), never <span class="mono">--primary</span> on <span class="mono">--card</span>.</div>
+      </div>
+    </div>
+
+    <!-- Rarity -->
+    <div>
+      <div class="frame-label">Rarity tiers 1–6 <span class="state">src/lib/rarity.ts</span></div>
+      <div class="card" style="padding:16px;display:flex;flex-direction:column;gap:8px;">
+        <div class="rarity-row" style="display:flex;align-items:center;gap:10px;"><span style="width:22px;height:22px;background:var(--rarity-1)"></span><span class="rarity-badge" style="color:var(--rarity-1);border-color:var(--rarity-1)">1 · Common</span><span class="mono" style="margin-left:auto;color:var(--dim);font-size:11px">#adadad</span></div>
+        <div class="rarity-row" style="display:flex;align-items:center;gap:10px;"><span style="width:22px;height:22px;background:var(--rarity-2)"></span><span class="rarity-badge" style="color:var(--rarity-2);border-color:var(--rarity-2)">2 · Uncommon</span><span class="mono" style="margin-left:auto;color:var(--dim);font-size:11px">#82b276</span></div>
+        <div class="rarity-row" style="display:flex;align-items:center;gap:10px;"><span style="width:22px;height:22px;background:var(--rarity-3)"></span><span class="rarity-badge" style="color:var(--rarity-3);border-color:var(--rarity-3)">3 · Rare</span><span class="mono" style="margin-left:auto;color:var(--dim);font-size:11px">#85b3db</span></div>
+        <div class="rarity-row" style="display:flex;align-items:center;gap:10px;"><span style="width:22px;height:22px;background:var(--rarity-4)"></span><span class="rarity-badge" style="color:var(--rarity-4);border-color:var(--rarity-4)">4 · Epic</span><span class="mono" style="margin-left:auto;color:var(--dim);font-size:11px">#ab85d4</span></div>
+        <div class="rarity-row" style="display:flex;align-items:center;gap:10px;"><span style="width:22px;height:22px;background:var(--rarity-5)"></span><span class="rarity-badge" style="color:var(--rarity-5);border-color:var(--rarity-5)">5 · Legendary</span><span class="mono" style="margin-left:auto;color:var(--dim);font-size:11px">#e2a554</span></div>
+        <div class="rarity-row" style="display:flex;align-items:center;gap:10px;"><span style="width:22px;height:22px;background:var(--rarity-6)"></span><span class="rarity-badge" style="color:var(--rarity-6);border-color:var(--rarity-6)">6 · Relic</span><span class="mono" style="margin-left:auto;color:var(--dim);font-size:11px">#ec3f4a</span></div>
+      </div>
+    </div>
+
+    <!-- Type -->
+    <div>
+      <div class="frame-label">Type ramp</div>
+      <div class="card" style="padding:18px;display:flex;flex-direction:column;gap:12px;">
+        <div><div class="mono" style="font-size:10px;color:var(--dim)">Oswald 700 · display / H1</div><div class="display" style="font-size:34px;font-weight:700;line-height:1">Scrap Repeater</div></div>
+        <div><div class="mono" style="font-size:10px;color:var(--dim)">Oswald 600 · H3 / card name</div><div class="display" style="font-size:20px;font-weight:600;line-height:1.1">Used in crafting</div></div>
+        <div style="border-top:1px solid var(--border);padding-top:12px"><div class="mono" style="font-size:10px;color:var(--dim)">System sans · body 14/1.55</div><div style="font-size:14px;color:var(--foreground)">A pneumatic repeater rebuilt from salvaged rail stock. Reliable in dust, brutal up close.</div></div>
+        <div><div class="mono" style="font-size:10px;color:var(--dim)">Mono · data / stat</div><div class="mono" style="font-size:14px;color:var(--foreground)">DMG 42 · RATE 5.5/s · 1,240 scrap</div></div>
+      </div>
+    </div>
+
+    <!-- Spacing + radius -->
+    <div>
+      <div class="frame-label">Spacing scale &amp; radius</div>
+      <div class="card" style="padding:18px;display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;align-items:flex-end;gap:6px;">
+          <span style="width:4px;height:4px;background:var(--primary)"></span>
+          <span style="width:8px;height:8px;background:var(--primary)"></span>
+          <span style="width:12px;height:12px;background:var(--primary)"></span>
+          <span style="width:16px;height:16px;background:var(--primary)"></span>
+          <span style="width:20px;height:20px;background:var(--primary)"></span>
+          <span style="width:24px;height:24px;background:var(--primary)"></span>
+          <span style="width:32px;height:32px;background:var(--primary)"></span>
+          <span style="width:40px;height:40px;background:var(--primary)"></span>
+          <span style="width:48px;height:48px;background:var(--primary)"></span>
+        </div>
+        <div class="mono" style="font-size:11px;color:var(--dim)">4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 48</div>
+        <div style="border-top:1px solid var(--border);padding-top:12px;display:flex;align-items:center;gap:14px;">
+          <span style="width:54px;height:34px;border:1px solid var(--border-strong);background:var(--card-elevated)"></span>
+          <span style="font-size:13px;color:var(--muted-foreground)">All corners <b style="color:var(--foreground)">0px</b> — no rounding on cards, buttons, badges, inputs or chips.</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Components mini -->
+    <div>
+      <div class="frame-label">Core components</div>
+      <div class="card" style="padding:18px;display:flex;flex-direction:column;gap:14px;">
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <button class="btn btn-primary">Lancer</button>
+          <button class="btn btn-ghost">Filter</button>
+          <button class="btn btn-secondary">Export</button>
+        </div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;align-items:center;">
+          <button class="chip" aria-pressed="true">Rare <span class="chip-count">14</span></button>
+          <button class="chip">Epic <span class="chip-count">6</span></button>
+          <span class="tag tag-warning"><span class="tag-dot" style="background:var(--warning)"></span>À arbitrer</span>
+        </div>
+        <div class="search"><span class="search-icon">⌕</span><input class="input" placeholder="Search the wastes…"></div>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- ============================================================
+     1 · APP SHELL
+     ============================================================ -->
+<section class="showcase" id="shell">
+  <div class="sc-head">
+    <div class="sc-num">SCREEN · 01</div>
+    <h2>App shell</h2>
+    <p>Sticky blurred header — brand mark, section-dropdown nav, global search, auth menu — over a quiet restyled footer. On mobile the nav collapses to a hamburger that opens a left slide-in drawer. The blur + 82%-opacity background is the only place transparency is used.</p>
+    <div class="deviation"><b>Deviation</b> &nbsp;The navbar-search brainstorm placed search inline in the bar at all widths; I keep it inline on desktop but move it into the drawer on mobile so the bar holds only brand + hamburger + auth at narrow widths.</div>
+  </div>
+
+  <div class="frames-row">
+    <!-- DESKTOP -->
+    <div class="frame-block">
+      <div class="frame-label">Desktop <span class="state">header · section dropdown open</span></div>
+      <div class="browser" style="width:1080px;">
+        <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">sandwiki.gg / items / weapons</div></div>
+        <div class="browser-body sw" style="position:relative;">
+          <div class="appbar">
+            <div class="brand"><span class="brand-mark">S</span><span class="brand-name">SAND<span class="sub">·</span>WIKI</span></div>
+            <nav class="nav">
+              <a class="nav-item" aria-current="page" href="#">Items <span class="nav-caret">▾</span></a>
+              <a class="nav-item" href="#">Tramplers</a>
+              <a class="nav-item" href="#">Environments</a>
+              <a class="nav-item" href="#">Crafting</a>
+              <a class="nav-item" href="#">About</a>
+            </nav>
+            <div class="search" style="margin-left:auto;width:240px;"><span class="search-icon">⌕</span><input class="input" placeholder="Search the wastes…"></div>
+            <div class="avatar">RX</div>
+          </div>
+          <!-- open dropdown -->
+          <div class="menu" style="position:absolute;top:54px;left:118px;width:260px;">
+            <div class="menu-label">Browse items</div>
+            <a class="menu-item" href="#"><span class="mi-icon">▦</span>Weapons <span class="cnt mono" style="margin-left:auto;color:var(--dim);font-size:11px">128</span></a>
+            <a class="menu-item" href="#"><span class="mi-icon">▦</span>Ammunition <span class="cnt mono" style="margin-left:auto;color:var(--dim);font-size:11px">34</span></a>
+            <a class="menu-item" href="#"><span class="mi-icon">▦</span>Gear &amp; Armor <span class="cnt mono" style="margin-left:auto;color:var(--dim);font-size:11px">96</span></a>
+            <a class="menu-item" href="#"><span class="mi-icon">▦</span>Tools <span class="cnt mono" style="margin-left:auto;color:var(--dim);font-size:11px">41</span></a>
+            <a class="menu-item" href="#"><span class="mi-icon">▦</span>Resources <span class="cnt mono" style="margin-left:auto;color:var(--dim);font-size:11px">73</span></a>
+            <div class="menu-sep"></div>
+            <a class="menu-item" href="#" style="color:var(--primary)">All items →</a>
+          </div>
+          <!-- page filler -->
+          <div style="padding:24px;height:170px;display:flex;align-items:center;justify-content:center;color:var(--dim);font-family:var(--font-display);text-transform:uppercase;letter-spacing:.1em;font-size:13px;">— page content —</div>
+
+          <!-- footer -->
+          <div class="footer" style="display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:32px;">
+            <div>
+              <div class="brand" style="margin-bottom:12px;"><span class="brand-mark">S</span><span class="brand-name">SAND<span class="sub">·</span>WIKI</span></div>
+              <p style="color:var(--dim);font-size:12px;line-height:1.6;max-width:240px;">Community-maintained reference for SAND: Raiders of Sophie. Not affiliated with the developers.</p>
+            </div>
+            <div><div class="footer-col-title">Browse</div><a class="footer-link" href="#">Weapons</a><a class="footer-link" href="#">Gear</a><a class="footer-link" href="#">Tramplers</a><a class="footer-link" href="#">Environments</a></div>
+            <div><div class="footer-col-title">Contribute</div><a class="footer-link" href="#">Submit an item</a><a class="footer-link" href="#">Edit guidelines</a><a class="footer-link" href="#">Proposals queue</a></div>
+            <div><div class="footer-col-title">Community</div><a class="footer-link" href="#">Discord</a><a class="footer-link" href="#">Changelog</a><a class="footer-link" href="#">Report data error</a></div>
+          </div>
+          <div style="border-top:1px solid var(--border);padding:14px 24px;display:flex;justify-content:space-between;color:var(--dim);font-size:11px;font-family:var(--font-mono);"><span>© 2026 SAND Wiki · CC-BY-SA</span><span>Patch 0.42 · "Glass Flats"</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE -->
+    <div class="frame-block">
+      <div class="frame-label">Mobile <span class="state">drawer open</span></div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-body sw">
+          <div class="appbar" style="padding:0 14px;gap:12px;">
+            <button class="hamburger"><span></span><span></span><span></span></button>
+            <div class="brand"><span class="brand-mark">S</span><span class="brand-name" style="font-size:16px">SAND<span class="sub">·</span>WIKI</span></div>
+            <div class="avatar" style="margin-left:auto">RX</div>
+          </div>
+          <!-- drawer overlay -->
+          <div class="drawer">
+            <div class="drawer-panel">
+              <div class="search" style="margin-bottom:14px;"><span class="search-icon">⌕</span><input class="input" placeholder="Search…"></div>
+              <a class="drawer-nav-item" style="color:var(--primary)">Items <span class="mono" style="font-size:11px;color:var(--dim)">372</span></a>
+              <a class="drawer-nav-item">Tramplers <span class="mono" style="font-size:11px;color:var(--dim)">18</span></a>
+              <a class="drawer-nav-item">Environments <span class="mono" style="font-size:11px;color:var(--dim)">11</span></a>
+              <a class="drawer-nav-item">Crafting</a>
+              <a class="drawer-nav-item">About</a>
+              <div style="margin-top:auto;display:flex;flex-direction:column;gap:8px;">
+                <button class="btn btn-ghost" style="justify-content:center;">Contribute</button>
+                <div style="display:flex;align-items:center;gap:10px;padding:8px 4px;"><div class="avatar">RX</div><div><div style="font-size:13px;color:var(--foreground)">Raider_X</div><div class="mono" style="font-size:11px;color:var(--dim)">Editor · 214 edits</div></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- AUTH MENU state -->
+    <div class="frame-block">
+      <div class="frame-label">Auth menu <span class="state">signed-in</span></div>
+      <div class="sw" style="width:280px;">
+        <div class="menu">
+          <div style="display:flex;align-items:center;gap:11px;padding:8px 11px 12px;border-bottom:1px solid var(--border);margin-bottom:5px;">
+            <div class="avatar" style="width:38px;height:38px;font-size:15px;">RX</div>
+            <div><div style="font-size:14px;color:var(--foreground);font-weight:600;">Raider_X</div><div class="mono" style="font-size:11px;color:var(--dim)">Editor · 214 edits</div></div>
+          </div>
+          <a class="menu-item" href="#"><span class="mi-icon">◳</span>My contributions</a>
+          <a class="menu-item" href="#"><span class="mi-icon">✎</span>Drafts <span class="tag tag-warning" style="margin-left:auto;padding:1px 6px;">3</span></a>
+          <a class="menu-item" href="#"><span class="mi-icon">⚑</span>Watchlist</a>
+          <div class="menu-sep"></div>
+          <a class="menu-item" href="#"><span class="mi-icon">⚙</span>Settings</a>
+          <a class="menu-item" href="#" style="color:var(--destructive)"><span class="mi-icon" style="color:var(--destructive)">⏻</span>Sign out</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     2 · HOME
+     ============================================================ -->
+<section class="showcase" id="home">
+  <div class="sc-head">
+    <div class="sc-num">SCREEN · 02</div>
+    <h2>Home</h2>
+    <p>Hero with the hero-variant search front and center, a faint blueprint grid, then section / category entry cards. The hero is the only screen that uses the radial desert-glow background; everything else stays flat.</p>
+  </div>
+
+  <div class="frames-row">
+    <!-- DESKTOP -->
+    <div class="frame-block">
+      <div class="frame-label">Desktop <span class="state">default</span></div>
+      <div class="browser" style="width:1080px;">
+        <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">sandwiki.gg</div></div>
+        <div class="browser-body sw">
+          <div class="appbar">
+            <div class="brand"><span class="brand-mark">S</span><span class="brand-name">SAND<span class="sub">·</span>WIKI</span></div>
+            <nav class="nav"><a class="nav-item" href="#">Items <span class="nav-caret">▾</span></a><a class="nav-item" href="#">Tramplers</a><a class="nav-item" href="#">Environments</a><a class="nav-item" href="#">Crafting</a><a class="nav-item" href="#">About</a></nav>
+            <button class="btn btn-ghost btn-sm" style="margin-left:auto">Sign in</button>
+          </div>
+          <div class="hero">
+            <div class="hero-grid"></div>
+            <div style="position:relative;max-width:640px;margin:0 auto;text-align:center;display:flex;flex-direction:column;align-items:center;gap:18px;">
+              <span class="eyebrow">Unofficial database · Patch 0.42</span>
+              <h1 class="display" style="font-size:48px;font-weight:700;line-height:.98;">EVERYTHING IN<br>THE WASTES</h1>
+              <p style="color:var(--muted-foreground);font-size:15px;max-width:440px;">372 items, 18 tramplers and 11 environments — crafting trees, loot tables and stats, maintained by raiders.</p>
+              <div class="search" style="width:100%;max-width:460px;"><span class="search-icon" style="font-size:18px;">⌕</span><input class="input" style="padding:13px 13px 13px 38px;font-size:15px;" placeholder="Search weapons, gear, resources…"></div>
+              <div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;">
+                <span class="mono" style="font-size:11px;color:var(--dim)">Popular:</span>
+                <a class="mono" style="font-size:11px;color:var(--accent)" href="#">Scrap Repeater</a><a class="mono" style="font-size:11px;color:var(--accent)" href="#">Fuel Cell</a><a class="mono" style="font-size:11px;color:var(--accent)" href="#">Husk Strider</a>
+              </div>
+            </div>
+          </div>
+          <div style="padding:32px 24px;">
+            <div class="display" style="text-transform:uppercase;letter-spacing:.08em;font-size:13px;color:var(--muted-foreground);margin-bottom:16px;">Browse by category</div>
+            <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px;">
+              <a class="entry" href="#"><span class="entry-icon glyph"></span><div><div class="entry-title">Weapons</div><div class="entry-meta">128 entries · 6 types</div></div></a>
+              <a class="entry" href="#"><span class="entry-icon glyph"></span><div><div class="entry-title">Gear &amp; Armor</div><div class="entry-meta">96 entries · 4 slots</div></div></a>
+              <a class="entry" href="#"><span class="entry-icon glyph"></span><div><div class="entry-title">Resources</div><div class="entry-meta">73 entries</div></div></a>
+              <a class="entry" href="#"><span class="entry-icon glyph"></span><div><div class="entry-title">Tramplers</div><div class="entry-meta">18 rideable</div></div></a>
+              <a class="entry" href="#"><span class="entry-icon glyph"></span><div><div class="entry-title">Environments</div><div class="entry-meta">11 regions</div></div></a>
+              <a class="entry" href="#"><span class="entry-icon glyph"></span><div><div class="entry-title">Crafting</div><div class="entry-meta">240 recipes</div></div></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE -->
+    <div class="frame-block">
+      <div class="frame-label">Mobile <span class="state">default</span></div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-body sw">
+          <div class="appbar" style="padding:0 14px;gap:12px;">
+            <button class="hamburger"><span></span><span></span><span></span></button>
+            <div class="brand"><span class="brand-mark">S</span><span class="brand-name" style="font-size:16px">SAND<span class="sub">·</span>WIKI</span></div>
+            <div class="avatar" style="margin-left:auto">⌕</div>
+          </div>
+          <div class="hero" style="padding:36px 18px;">
+            <div class="hero-grid"></div>
+            <div style="position:relative;text-align:center;display:flex;flex-direction:column;align-items:center;gap:14px;">
+              <span class="eyebrow">Patch 0.42</span>
+              <h1 class="display" style="font-size:32px;font-weight:700;line-height:1;">EVERYTHING IN<br>THE WASTES</h1>
+              <div class="search" style="width:100%;"><span class="search-icon">⌕</span><input class="input" placeholder="Search…"></div>
+            </div>
+          </div>
+          <div style="padding:18px 14px;">
+            <div class="display" style="text-transform:uppercase;letter-spacing:.08em;font-size:12px;color:var(--muted-foreground);margin-bottom:12px;">Browse</div>
+            <div style="display:grid;gap:10px;">
+              <a class="entry" href="#"><span class="entry-icon glyph"></span><div><div class="entry-title">Weapons</div><div class="entry-meta">128 entries</div></div></a>
+              <a class="entry" href="#"><span class="entry-icon glyph"></span><div><div class="entry-title">Gear &amp; Armor</div><div class="entry-meta">96 entries</div></div></a>
+              <a class="entry" href="#"><span class="entry-icon glyph"></span><div><div class="entry-title">Tramplers</div><div class="entry-meta">18 rideable</div></div></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     3 · ITEMS LIST
+     ============================================================ -->
+<section class="showcase" id="items">
+  <div class="sc-head">
+    <div class="sc-num">SCREEN · 03</div>
+    <h2>Items list</h2>
+    <p><code>[ sidebar | grid ]</code>. Sticky category sidebar with per-category counts, a row of rarity filter chips, and a responsive EntityCard grid. The EntityCard is the workhorse: <b>rarity rail</b> + <b>sprite tile</b> + <b>name/type</b> + <b>right-aligned stats</b>. On mobile the sidebar collapses to a horizontal chip row that opens a category drawer.</p>
+    <div class="deviation"><b>Deviation</b> &nbsp;The <i>cards.html</i> round used a full rarity-tinted card background; the <i>rarity-filter</i> round used a thin rail. I unified on the <b>4px rail + neutral card</b> (keeps AA contrast on names and lets the grid stay calm) and reserve full rarity color for the badge + detail header.</div>
+  </div>
+
+  <div class="frames-row">
+    <!-- DESKTOP default -->
+    <div class="frame-block">
+      <div class="frame-label">Desktop <span class="state">default · one card hovered</span></div>
+      <div class="browser" style="width:1080px;">
+        <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">sandwiki.gg / items / weapons</div></div>
+        <div class="browser-body sw">
+          <div class="appbar">
+            <div class="brand"><span class="brand-mark">S</span><span class="brand-name">SAND<span class="sub">·</span>WIKI</span></div>
+            <nav class="nav"><a class="nav-item" aria-current="page" href="#">Items <span class="nav-caret">▾</span></a><a class="nav-item" href="#">Tramplers</a><a class="nav-item" href="#">Environments</a><a class="nav-item" href="#">Crafting</a></nav>
+            <div class="search" style="margin-left:auto;width:220px;"><span class="search-icon">⌕</span><input class="input" placeholder="Search the wastes…"></div>
+            <div class="avatar">RX</div>
+          </div>
+          <div style="display:grid;grid-template-columns:212px 1fr;">
+            <!-- sidebar -->
+            <aside style="border-right:1px solid var(--border);padding:18px 0;position:relative;">
+              <div class="side-title">Categories</div>
+              <div class="side-cat">
+                <a class="side-cat-item" aria-current="true" href="#">Weapons <span class="cnt">128</span></a>
+                <a class="side-cat-item" href="#">Ammunition <span class="cnt">34</span></a>
+                <a class="side-cat-item" href="#">Gear &amp; Armor <span class="cnt">96</span></a>
+                <a class="side-cat-item" href="#">Tools <span class="cnt">41</span></a>
+                <a class="side-cat-item" href="#">Resources <span class="cnt">73</span></a>
+                <a class="side-cat-item" href="#">Consumables <span class="cnt">38</span></a>
+                <a class="side-cat-item" href="#">Components <span class="cnt">52</span></a>
+              </div>
+            </aside>
+            <!-- main -->
+            <div style="padding:20px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:14px;">
+                <h2 class="display" style="font-size:24px;text-transform:uppercase;">Weapons</h2>
+                <span class="mono" style="font-size:12px;color:var(--dim)">128 results</span>
+              </div>
+              <!-- rarity chips -->
+              <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:18px;align-items:center;">
+                <span class="label" style="margin-right:2px;">Rarity</span>
+                <button class="chip"><span class="tag-dot" style="background:var(--rarity-1)"></span>Common <span class="chip-count">31</span></button>
+                <button class="chip"><span class="tag-dot" style="background:var(--rarity-2)"></span>Uncommon <span class="chip-count">42</span></button>
+                <button class="chip"><span class="tag-dot" style="background:var(--rarity-3)"></span>Rare <span class="chip-count">28</span></button>
+                <button class="chip"><span class="tag-dot" style="background:var(--rarity-4)"></span>Epic <span class="chip-count">17</span></button>
+                <button class="chip"><span class="tag-dot" style="background:var(--rarity-5)"></span>Legendary <span class="chip-count">8</span></button>
+                <button class="chip"><span class="tag-dot" style="background:var(--rarity-6)"></span>Relic <span class="chip-count">2</span></button>
+              </div>
+              <!-- grid -->
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <!-- hovered card -->
+                <a class="ec" href="#" style="border-color:var(--border-strong);background:var(--card-elevated);"><span class="ec-rail" style="background:var(--rarity-2)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name" style="color:var(--primary-hover)">Scrap Repeater</span><span class="ec-type"><span style="color:var(--rarity-2)">●</span>Repeater · Uncommon</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">dmg</span><span class="v">42</span></span><span class="ec-stat"><span class="k">rate</span><span class="v">5.5</span></span></span></a>
+                <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-3)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">Dune Carbine</span><span class="ec-type"><span style="color:var(--rarity-3)">●</span>Rifle · Rare</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">dmg</span><span class="v">58</span></span><span class="ec-stat"><span class="k">rate</span><span class="v">3.1</span></span></span></a>
+                <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-1)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">Rebar Maul</span><span class="ec-type"><span style="color:var(--rarity-1)">●</span>Melee · Common</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">dmg</span><span class="v">96</span></span><span class="ec-stat"><span class="k">stam</span><span class="v">22</span></span></span></a>
+                <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-3)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">Sandflu Revolver</span><span class="ec-type"><span style="color:var(--rarity-3)">●</span>Pistol · Rare</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">dmg</span><span class="v">71</span></span><span class="ec-stat"><span class="k">rate</span><span class="v">2.0</span></span></span></a>
+                <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-4)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">Glasscutter SMG</span><span class="ec-type"><span style="color:var(--rarity-4)">●</span>SMG · Epic</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">dmg</span><span class="v">31</span></span><span class="ec-stat"><span class="k">rate</span><span class="v">12</span></span></span></a>
+                <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-6)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">Sophie's Lament</span><span class="ec-type"><span style="color:var(--rarity-6)">●</span>Marksman · Relic</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">dmg</span><span class="v">140</span></span><span class="ec-stat"><span class="k">rate</span><span class="v">1.2</span></span></span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE -->
+    <div class="frame-block">
+      <div class="frame-label">Mobile <span class="state">category chip row</span></div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-body sw">
+          <div class="appbar" style="padding:0 14px;gap:12px;"><button class="hamburger"><span></span><span></span><span></span></button><div class="brand"><span class="brand-mark">S</span><span class="brand-name" style="font-size:16px">SAND<span class="sub">·</span>WIKI</span></div><div class="avatar" style="margin-left:auto">RX</div></div>
+          <div style="padding:14px;">
+            <h2 class="display" style="font-size:22px;text-transform:uppercase;margin-bottom:10px;">Weapons</h2>
+            <!-- category chip row -->
+            <div style="display:flex;gap:7px;overflow:hidden;margin-bottom:10px;">
+              <button class="chip" aria-pressed="true">Weapons</button>
+              <button class="chip">Ammo</button>
+              <button class="chip">Gear</button>
+              <button class="chip">Tools</button>
+            </div>
+            <div style="display:flex;gap:7px;margin-bottom:14px;">
+              <button class="chip"><span class="tag-dot" style="background:var(--rarity-3)"></span>Rare</button>
+              <button class="chip"><span class="tag-dot" style="background:var(--rarity-4)"></span>Epic</button>
+              <button class="chip">Filters ▾</button>
+            </div>
+            <div style="display:grid;gap:10px;">
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-2)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name" style="font-size:15px">Scrap Repeater</span><span class="ec-type"><span style="color:var(--rarity-2)">●</span>Repeater</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">dmg</span><span class="v">42</span></span></span></a>
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-3)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name" style="font-size:15px">Dune Carbine</span><span class="ec-type"><span style="color:var(--rarity-3)">●</span>Rifle</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">dmg</span><span class="v">58</span></span></span></a>
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-1)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name" style="font-size:15px">Rebar Maul</span><span class="ec-type"><span style="color:var(--rarity-1)">●</span>Melee</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">dmg</span><span class="v">96</span></span></span></a>
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-6)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name" style="font-size:15px">Sophie's Lament</span><span class="ec-type"><span style="color:var(--rarity-6)">●</span>Marksman</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">dmg</span><span class="v">140</span></span></span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- STATE ROW -->
+  <div style="margin-top:38px;">
+    <div class="frame-label">Grid states</div>
+    <div class="state-row">
+      <!-- active filter -->
+      <div class="frame-block">
+        <div class="device-tag">active filter — Rare + Epic</div>
+        <div class="browser" style="width:520px;">
+          <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">…/weapons?rarity=rare,epic</div></div>
+          <div class="browser-body sw" style="padding:16px;">
+            <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;align-items:center;">
+              <button class="chip" aria-pressed="true"><span class="tag-dot" style="background:var(--rarity-3)"></span>Rare</button>
+              <button class="chip" aria-pressed="true"><span class="tag-dot" style="background:var(--rarity-4)"></span>Epic</button>
+              <button class="chip">Legendary</button>
+              <button class="btn btn-ghost btn-sm" style="margin-left:auto">Clear</button>
+            </div>
+            <div class="mono" style="font-size:11px;color:var(--dim);margin-bottom:10px;">45 of 128 · filtered</div>
+            <div style="display:grid;gap:10px;">
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-3)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name" style="font-size:15px">Dune Carbine</span><span class="ec-type"><span style="color:var(--rarity-3)">●</span>Rifle · Rare</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">dmg</span><span class="v">58</span></span></span></a>
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-4)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name" style="font-size:15px">Glasscutter SMG</span><span class="ec-type"><span style="color:var(--rarity-4)">●</span>SMG · Epic</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">dmg</span><span class="v">31</span></span></span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- empty -->
+      <div class="frame-block">
+        <div class="device-tag">empty — no matches</div>
+        <div class="browser" style="width:420px;">
+          <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">…/weapons?rarity=relic&type=bow</div></div>
+          <div class="browser-body sw">
+            <div class="empty">
+              <span class="empty-glyph glyph"></span>
+              <span class="empty-title">No items match</span>
+              <span style="font-size:13px;max-width:240px;">No weapons match the selected filters. Try removing a rarity or clearing the type filter.</span>
+              <button class="btn btn-ghost btn-sm">Clear all filters</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- skeleton -->
+      <div class="frame-block">
+        <div class="device-tag">loading — skeleton</div>
+        <div class="browser" style="width:420px;">
+          <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">…/weapons</div></div>
+          <div class="browser-body sw" style="padding:16px;display:grid;gap:10px;">
+            <div class="ec skeleton" style="border-color:var(--border)"><span class="ec-rail" style="background:var(--border-strong)"></span><span class="ec-sprite" style="background:var(--border)"></span><span class="ec-body" style="gap:8px;"><span class="sk-line" style="width:120px"></span><span class="sk-line" style="width:70px;height:8px"></span></span><span class="ec-stats" style="gap:8px;"><span class="sk-line" style="width:40px"></span></span></div>
+            <div class="ec skeleton" style="border-color:var(--border)"><span class="ec-rail" style="background:var(--border-strong)"></span><span class="ec-sprite" style="background:var(--border)"></span><span class="ec-body" style="gap:8px;"><span class="sk-line" style="width:96px"></span><span class="sk-line" style="width:60px;height:8px"></span></span><span class="ec-stats" style="gap:8px;"><span class="sk-line" style="width:40px"></span></span></div>
+            <div class="ec skeleton" style="border-color:var(--border)"><span class="ec-rail" style="background:var(--border-strong)"></span><span class="ec-sprite" style="background:var(--border)"></span><span class="ec-body" style="gap:8px;"><span class="sk-line" style="width:140px"></span><span class="sk-line" style="width:80px;height:8px"></span></span><span class="ec-stats" style="gap:8px;"><span class="sk-line" style="width:40px"></span></span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     4 · ENTITY DETAIL
+     ============================================================ -->
+<section class="showcase" id="detail">
+  <div class="sc-head">
+    <div class="sc-num">SCREEN · 04</div>
+    <h2>EntityDetail</h2>
+    <p>Large sprite + rarity badge + category badge header, a prominent stat grid, tabbed relationship tables (crafting / used-in / loot), and a Details facts panel. <b>Adaptive layout:</b> when an entity has relationship rows it uses a <code>[ main | facts sidebar ]</code> split; entities with no relations fall back to a single centered column (shown as a state below).</p>
+    <div class="deviation"><b>Deviation</b> &nbsp;The <i>detail-stats</i> round stacked stats as a vertical list; I promoted them to a bordered stat grid (rustlabs density) so the headline numbers read first. Crafting / Used-in / Loot were three separate panels in the brainstorm — unified into one tabbed table here.</div>
+  </div>
+
+  <div class="frames-row">
+    <!-- DESKTOP -->
+    <div class="frame-block">
+      <div class="frame-label">Desktop <span class="state">with relations · crafting tab</span></div>
+      <div class="browser" style="width:1080px;">
+        <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">sandwiki.gg / items / scrap-repeater</div></div>
+        <div class="browser-body sw">
+          <div class="appbar"><div class="brand"><span class="brand-mark">S</span><span class="brand-name">SAND<span class="sub">·</span>WIKI</span></div><nav class="nav"><a class="nav-item" aria-current="page" href="#">Items <span class="nav-caret">▾</span></a><a class="nav-item" href="#">Tramplers</a><a class="nav-item" href="#">Environments</a></nav><div class="search" style="margin-left:auto;width:200px;"><span class="search-icon">⌕</span><input class="input" placeholder="Search…"></div><div class="avatar">RX</div></div>
+
+          <!-- breadcrumb -->
+          <div style="padding:12px 24px;border-bottom:1px solid var(--border);font-family:var(--font-mono);font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.04em;">Items <span style="color:var(--border-strong)">/</span> Weapons <span style="color:var(--border-strong)">/</span> <span style="color:var(--muted-foreground)">Scrap Repeater</span></div>
+
+          <!-- header -->
+          <div style="padding:24px;display:flex;gap:22px;align-items:flex-start;border-bottom:1px solid var(--border);">
+            <span class="glyph" style="width:120px;height:120px;font-size:52px;border-left:3px solid var(--rarity-2);flex:none;"></span>
+            <div style="flex:1;display:flex;flex-direction:column;gap:10px;">
+              <div style="display:flex;gap:8px;align-items:center;">
+                <span class="rarity-badge" style="color:var(--rarity-2);border-color:var(--rarity-2)"><span class="tag-dot" style="background:var(--rarity-2)"></span>Uncommon</span>
+                <span class="tag">Weapon · Repeater</span>
+                <span class="tag tag-success" style="margin-left:auto"><span class="tag-dot" style="background:var(--success)"></span>Craftable</span>
+              </div>
+              <h1 class="display" style="font-size:38px;font-weight:700;line-height:1;">Scrap Repeater</h1>
+              <p style="color:var(--muted-foreground);max-width:560px;font-size:14px;">A pneumatic repeater rebuilt from salvaged rail stock. Reliable in dust, brutal up close — favored by Glass Flats scavengers for its forgiving reload.</p>
+              <div style="display:flex;gap:8px;margin-top:4px;"><button class="btn btn-primary btn-sm">View recipe</button><button class="btn btn-ghost btn-sm">⚑ Watch</button><button class="btn btn-ghost btn-sm">✎ Edit</button></div>
+            </div>
+          </div>
+
+          <!-- body split -->
+          <div style="display:grid;grid-template-columns:1fr 300px;gap:0;">
+            <!-- main -->
+            <div style="padding:22px;border-right:1px solid var(--border);">
+              <!-- stat grid -->
+              <div class="side-title" style="padding:0 0 10px;">Statistics</div>
+              <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;">
+                <div class="stat"><span class="stat-label">Damage</span><span class="stat-value">42</span></div>
+                <div class="stat"><span class="stat-label">Fire rate</span><span class="stat-value">5.5<span class="unit">/s</span></span></div>
+                <div class="stat"><span class="stat-label">Range</span><span class="stat-value">28<span class="unit">m</span></span></div>
+                <div class="stat"><span class="stat-label">Magazine</span><span class="stat-value">12</span></div>
+                <div class="stat"><span class="stat-label">Reload</span><span class="stat-value">2.1<span class="unit">s</span></span></div>
+                <div class="stat"><span class="stat-label">Durability</span><span class="stat-value">240</span></div>
+                <div class="stat"><span class="stat-label">Weight</span><span class="stat-value">3.4<span class="unit">kg</span></span></div>
+                <div class="stat"><span class="stat-label">Value</span><span class="stat-value">1,240<span class="unit">scrap</span></span></div>
+              </div>
+
+              <!-- tabs -->
+              <div class="tabs">
+                <button class="tab" aria-selected="true">Crafting <span class="tab-count">4</span></button>
+                <button class="tab">Used in <span class="tab-count">3</span></button>
+                <button class="tab">Loot from <span class="tab-count">6</span></button>
+              </div>
+              <table class="dtable" style="margin-top:2px;">
+                <thead><tr><th>Ingredient</th><th>Type</th><th class="num">Qty</th><th class="num">Each</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="cell-name"><span class="glyph mini-glyph"></span>Scrap Metal</span></td><td><span style="color:var(--rarity-1)">Common</span></td><td class="num">18</td><td class="num">4</td></tr>
+                  <tr><td><span class="cell-name"><span class="glyph mini-glyph"></span>Copper Wire</span></td><td><span style="color:var(--rarity-1)">Common</span></td><td class="num">6</td><td class="num">9</td></tr>
+                  <tr><td><span class="cell-name"><span class="glyph mini-glyph"></span>Pneumatic Coil</span></td><td><span style="color:var(--rarity-3)">Rare</span></td><td class="num">2</td><td class="num">85</td></tr>
+                  <tr><td><span class="cell-name"><span class="glyph mini-glyph"></span>Rifled Barrel</span></td><td><span style="color:var(--rarity-2)">Uncommon</span></td><td class="num">1</td><td class="num">120</td></tr>
+                </tbody>
+              </table>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:11px 12px;background:var(--card-elevated);border:1px solid var(--border);border-top:none;font-family:var(--font-mono);font-size:12px;">
+                <span style="color:var(--muted-foreground)">Bench: <span style="color:var(--foreground)">Gunsmith II</span> · 45s</span>
+                <span style="color:var(--dim)">Total: <span style="color:var(--accent)">389 scrap</span></span>
+              </div>
+            </div>
+
+            <!-- facts panel -->
+            <aside style="padding:22px;">
+              <div class="side-title" style="padding:0 0 12px;">Details</div>
+              <dl style="display:flex;flex-direction:column;gap:0;font-size:13px;">
+                <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);"><dt style="color:var(--muted-foreground)">Item ID</dt><dd class="mono" style="color:var(--foreground)">wpn_0042</dd></div>
+                <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);"><dt style="color:var(--muted-foreground)">Slot</dt><dd style="color:var(--foreground)">Primary</dd></div>
+                <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);"><dt style="color:var(--muted-foreground)">Ammo</dt><dd style="color:var(--accent)">Scrap Slug</dd></div>
+                <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);"><dt style="color:var(--muted-foreground)">Stack size</dt><dd class="mono" style="color:var(--foreground)">1</dd></div>
+                <div style="display:flex;justify-content:space-between;padding:9px 0;border-bottom:1px solid var(--border);"><dt style="color:var(--muted-foreground)">Added</dt><dd class="mono" style="color:var(--foreground)">0.31</dd></div>
+                <div style="display:flex;justify-content:space-between;padding:9px 0;"><dt style="color:var(--muted-foreground)">Last edit</dt><dd class="mono" style="color:var(--dim)">3d ago</dd></div>
+              </dl>
+              <div style="margin-top:16px;padding:12px;border:1px solid var(--border);background:var(--card-elevated);">
+                <div class="side-title" style="padding:0 0 8px;">Drops from</div>
+                <div style="display:flex;flex-direction:column;gap:7px;">
+                  <a href="#" style="display:flex;align-items:center;gap:9px;font-size:13px;color:var(--foreground)"><span class="glyph mini-glyph" style="width:24px;height:24px;font-size:12px"></span>Husk Strider <span class="mono" style="margin-left:auto;color:var(--dim);font-size:11px">12%</span></a>
+                  <a href="#" style="display:flex;align-items:center;gap:9px;font-size:13px;color:var(--foreground)"><span class="glyph mini-glyph" style="width:24px;height:24px;font-size:12px"></span>Rustgut cache <span class="mono" style="margin-left:auto;color:var(--dim);font-size:11px">8%</span></a>
+                </div>
+              </div>
+            </aside>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE -->
+    <div class="frame-block">
+      <div class="frame-label">Mobile <span class="state">stacked · loot tab</span></div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-body sw" style="overflow:hidden;">
+          <div class="appbar" style="padding:0 14px;gap:12px;"><button class="hamburger"><span></span><span></span><span></span></button><div class="brand"><span class="brand-mark">S</span><span class="brand-name" style="font-size:16px">SAND<span class="sub">·</span>WIKI</span></div><div class="avatar" style="margin-left:auto">RX</div></div>
+          <div style="padding:16px 14px;display:flex;flex-direction:column;gap:14px;">
+            <span class="glyph" style="width:88px;height:88px;font-size:38px;border-left:3px solid var(--rarity-2)"></span>
+            <div style="display:flex;gap:7px;"><span class="rarity-badge" style="color:var(--rarity-2);border-color:var(--rarity-2)">Uncommon</span><span class="tag">Repeater</span></div>
+            <h1 class="display" style="font-size:28px;font-weight:700;line-height:1;">Scrap Repeater</h1>
+            <div class="stat-grid" style="grid-template-columns:repeat(2,1fr);">
+              <div class="stat"><span class="stat-label">Damage</span><span class="stat-value">42</span></div>
+              <div class="stat"><span class="stat-label">Fire rate</span><span class="stat-value">5.5<span class="unit">/s</span></span></div>
+              <div class="stat"><span class="stat-label">Range</span><span class="stat-value">28<span class="unit">m</span></span></div>
+              <div class="stat"><span class="stat-label">Value</span><span class="stat-value">1,240</span></div>
+            </div>
+            <div class="tabs" style="overflow:hidden;"><button class="tab">Crafting</button><button class="tab" aria-selected="true">Loot</button><button class="tab">Used in</button></div>
+            <table class="dtable">
+              <thead><tr><th>Source</th><th class="num">Chance</th></tr></thead>
+              <tbody>
+                <tr><td><span class="cell-name"><span class="glyph mini-glyph"></span>Husk Strider</span></td><td class="num">12%</td></tr>
+                <tr><td><span class="cell-name"><span class="glyph mini-glyph"></span>Rustgut cache</span></td><td class="num">8%</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- centered variant -->
+  <div style="margin-top:38px;">
+    <div class="frame-label">Adaptive fallback <span class="state">no relations → centered column</span></div>
+    <div class="browser" style="width:680px;">
+      <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">sandwiki.gg / items / cloth-strips</div></div>
+      <div class="browser-body sw" style="padding:28px;display:flex;flex-direction:column;align-items:center;gap:16px;text-align:center;">
+        <span class="glyph" style="width:96px;height:96px;font-size:42px;border-left:3px solid var(--rarity-1)"></span>
+        <div style="display:flex;gap:7px;"><span class="rarity-badge" style="color:var(--rarity-1);border-color:var(--rarity-1)">Common</span><span class="tag">Resource</span></div>
+        <h1 class="display" style="font-size:30px;font-weight:700;">Cloth Strips</h1>
+        <p style="color:var(--muted-foreground);max-width:420px;font-size:14px;">Torn fabric salvaged from tents and corpses. A base crafting material with no stats of its own.</p>
+        <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);width:100%;max-width:420px;">
+          <div class="stat" style="align-items:center;text-align:center"><span class="stat-label">Stack</span><span class="stat-value">50</span></div>
+          <div class="stat" style="align-items:center;text-align:center"><span class="stat-label">Weight</span><span class="stat-value">0.1</span></div>
+          <div class="stat" style="align-items:center;text-align:center"><span class="stat-label">Value</span><span class="stat-value">2</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     5 · TRAMPLERS & ENVIRONMENTS
+     ============================================================ -->
+<section class="showcase" id="tramplers">
+  <div class="sc-head">
+    <div class="sc-num">SCREEN · 05</div>
+    <h2>Tramplers &amp; Environment list pages</h2>
+    <p>Both reuse the items browse shell — same sidebar, chip filters and card grid — with category-appropriate stats. Tramplers carry mount stats (speed / cargo / health); the rail still encodes rarity. Environments swap the rarity rail for a <b>threat-level</b> color and surface region type + biome resources.</p>
+  </div>
+
+  <div class="frames-row">
+    <!-- TRAMPLERS desktop -->
+    <div class="frame-block">
+      <div class="frame-label">Tramplers <span class="state">desktop · browse shell</span></div>
+      <div class="browser" style="width:660px;">
+        <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">sandwiki.gg / tramplers</div></div>
+        <div class="browser-body sw">
+          <div class="appbar"><div class="brand"><span class="brand-mark">S</span><span class="brand-name">SAND<span class="sub">·</span>WIKI</span></div><nav class="nav"><a class="nav-item" href="#">Items</a><a class="nav-item" aria-current="page" href="#">Tramplers</a><a class="nav-item" href="#">Environments</a></nav></div>
+          <div style="padding:18px;">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;"><h2 class="display" style="font-size:22px;text-transform:uppercase;">Tramplers</h2><span class="mono" style="font-size:12px;color:var(--dim)">18 rideable</span></div>
+            <div style="display:flex;gap:7px;margin-bottom:14px;"><button class="chip" aria-pressed="true">All</button><button class="chip">Beast</button><button class="chip">Vehicle</button></div>
+            <div style="display:grid;gap:10px;">
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-3)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">Husk Strider</span><span class="ec-type"><span style="color:var(--rarity-3)">●</span>Beast · Rare</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">spd</span><span class="v">38</span></span><span class="ec-stat"><span class="k">cargo</span><span class="v">60</span></span></span></a>
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-2)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">Ironback</span><span class="ec-type"><span style="color:var(--rarity-2)">●</span>Beast · Uncommon</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">spd</span><span class="v">22</span></span><span class="ec-stat"><span class="k">cargo</span><span class="v">140</span></span></span></a>
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-4)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">Dune Roller</span><span class="ec-type"><span style="color:var(--rarity-4)">●</span>Vehicle · Epic</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">spd</span><span class="v">64</span></span><span class="ec-stat"><span class="k">cargo</span><span class="v">90</span></span></span></a>
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-5)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">Sophie-Class Hauler</span><span class="ec-type"><span style="color:var(--rarity-5)">●</span>Vehicle · Legendary</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">spd</span><span class="v">30</span></span><span class="ec-stat"><span class="k">cargo</span><span class="v">320</span></span></span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ENVIRONMENTS desktop -->
+    <div class="frame-block">
+      <div class="frame-label">Environments <span class="state">desktop · threat rail</span></div>
+      <div class="browser" style="width:660px;">
+        <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">sandwiki.gg / environments</div></div>
+        <div class="browser-body sw">
+          <div class="appbar"><div class="brand"><span class="brand-mark">S</span><span class="brand-name">SAND<span class="sub">·</span>WIKI</span></div><nav class="nav"><a class="nav-item" href="#">Items</a><a class="nav-item" href="#">Tramplers</a><a class="nav-item" aria-current="page" href="#">Environments</a></nav></div>
+          <div style="padding:18px;">
+            <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;"><h2 class="display" style="font-size:22px;text-transform:uppercase;">Environments</h2><span class="mono" style="font-size:12px;color:var(--dim)">11 regions</span></div>
+            <div style="display:flex;gap:7px;margin-bottom:14px;align-items:center;"><span class="label">Threat</span><button class="chip"><span class="tag-dot" style="background:var(--success)"></span>Low</button><button class="chip"><span class="tag-dot" style="background:var(--warning)"></span>Moderate</button><button class="chip"><span class="tag-dot" style="background:var(--destructive)"></span>High</button></div>
+            <div style="display:grid;gap:10px;">
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--warning)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">The Glass Flats</span><span class="ec-type">Open desert · 4 resources</span></span><span class="ec-stats"><span class="tag tag-warning"><span class="tag-dot" style="background:var(--warning)"></span>Moderate</span></span></a>
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--destructive)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">Rustgut Canyon</span><span class="ec-type">Canyon · 6 resources</span></span><span class="ec-stats"><span class="tag tag-destructive"><span class="tag-dot" style="background:var(--destructive)"></span>High</span></span></a>
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-6)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">Sophie's Maw</span><span class="ec-type">Crater · 9 resources</span></span><span class="ec-stats"><span class="tag" style="color:var(--rarity-6);border-color:var(--rarity-6)"><span class="tag-dot" style="background:var(--rarity-6)"></span>Extreme</span></span></a>
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--success)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name">The Ashen Reach</span><span class="ec-type">Ashland · 3 resources</span></span><span class="ec-stats"><span class="tag tag-success"><span class="tag-dot" style="background:var(--success)"></span>Low</span></span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MOBILE -->
+    <div class="frame-block">
+      <div class="frame-label">Mobile <span class="state">tramplers</span></div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-body sw">
+          <div class="appbar" style="padding:0 14px;gap:12px;"><button class="hamburger"><span></span><span></span><span></span></button><div class="brand"><span class="brand-mark">S</span><span class="brand-name" style="font-size:16px">SAND<span class="sub">·</span>WIKI</span></div><div class="avatar" style="margin-left:auto">RX</div></div>
+          <div style="padding:14px;">
+            <h2 class="display" style="font-size:22px;text-transform:uppercase;margin-bottom:10px;">Tramplers</h2>
+            <div style="display:flex;gap:7px;margin-bottom:12px;"><button class="chip" aria-pressed="true">All</button><button class="chip">Beast</button><button class="chip">Vehicle</button></div>
+            <div style="display:grid;gap:10px;">
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-3)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name" style="font-size:15px">Husk Strider</span><span class="ec-type"><span style="color:var(--rarity-3)">●</span>Beast</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">spd</span><span class="v">38</span></span></span></a>
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-4)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name" style="font-size:15px">Dune Roller</span><span class="ec-type"><span style="color:var(--rarity-4)">●</span>Vehicle</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">spd</span><span class="v">64</span></span></span></a>
+              <a class="ec" href="#"><span class="ec-rail" style="background:var(--rarity-5)"></span><span class="ec-sprite glyph"></span><span class="ec-body"><span class="ec-name" style="font-size:15px">Sophie Hauler</span><span class="ec-type"><span style="color:var(--rarity-5)">●</span>Vehicle</span></span><span class="ec-stats"><span class="ec-stat"><span class="k">spd</span><span class="v">30</span></span></span></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     6 · SEARCH + AUTOCOMPLETE
+     ============================================================ -->
+<section class="showcase" id="search">
+  <div class="sc-head">
+    <div class="sc-num">SCREEN · 06</div>
+    <h2>Search + autocomplete</h2>
+    <p>Two surfaces share one result component. The <b>navbar variant</b> drops a compact panel under the header input; the <b>hero variant</b> opens a larger panel with category sections. Matched substrings highlight in <span style="color:var(--primary)">--primary</span>; keyboard selection uses the elevated card wash. An empty-query state suggests popular entries; a no-results state stays factual.</p>
+  </div>
+
+  <div class="frames-row">
+    <!-- navbar variant -->
+    <div class="frame-block">
+      <div class="frame-label">Navbar variant <span class="state">typing "scr"</span></div>
+      <div class="browser" style="width:620px;">
+        <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">sandwiki.gg</div></div>
+        <div class="browser-body sw" style="position:relative;min-height:300px;">
+          <div class="appbar"><div class="brand"><span class="brand-mark">S</span><span class="brand-name">SAND<span class="sub">·</span>WIKI</span></div><div class="search" style="margin-left:auto;width:260px;"><span class="search-icon" style="color:var(--primary)">⌕</span><input class="input" style="border-color:var(--primary);background:var(--card)" value="scr"></div></div>
+          <div class="ac" style="position:absolute;top:54px;right:24px;width:300px;">
+            <div class="ac-section">Items · 3</div>
+            <a class="ac-item" aria-selected="true" href="#"><span class="glyph ac-mini" style="border-left:2px solid var(--rarity-2)"></span><span class="ac-name"><b>Scr</b>ap Repeater</span><span class="ac-cat">Weapon</span></a>
+            <a class="ac-item" href="#"><span class="glyph ac-mini" style="border-left:2px solid var(--rarity-1)"></span><span class="ac-name"><b>Scr</b>ap Metal</span><span class="ac-cat">Resource</span></a>
+            <a class="ac-item" href="#"><span class="glyph ac-mini" style="border-left:2px solid var(--rarity-1)"></span><span class="ac-name"><b>Scr</b>ap Slug</span><span class="ac-cat">Ammo</span></a>
+            <div class="menu-sep"></div>
+            <a class="ac-item" href="#" style="grid-template-columns:1fr;"><span class="ac-name" style="color:var(--primary)">See all results for "scr" →</span></a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- hero variant -->
+    <div class="frame-block">
+      <div class="frame-label">Hero variant <span class="state">grouped results</span></div>
+      <div class="browser" style="width:560px;">
+        <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">sandwiki.gg</div></div>
+        <div class="browser-body sw">
+          <div class="hero" style="padding:30px 24px;">
+            <div class="hero-grid"></div>
+            <div style="position:relative;max-width:420px;margin:0 auto;">
+              <div class="search" style="margin-bottom:0;"><span class="search-icon" style="font-size:18px;color:var(--primary)">⌕</span><input class="input" style="padding:13px 13px 13px 38px;font-size:15px;border-color:var(--primary);background:var(--card)" value="rust"></div>
+              <div class="ac" style="margin-top:6px;">
+                <div class="ac-section">Items · 2</div>
+                <a class="ac-item" aria-selected="true" href="#"><span class="glyph ac-mini" style="border-left:2px solid var(--rarity-2)"></span><span class="ac-name"><b>Rust</b> Lance</span><span class="ac-cat">Weapon</span></a>
+                <a class="ac-item" href="#"><span class="glyph ac-mini" style="border-left:2px solid var(--rarity-1)"></span><span class="ac-name">Reclaimed <b>Rust</b>plate</span><span class="ac-cat">Gear</span></a>
+                <div class="ac-section">Environments · 1</div>
+                <a class="ac-item" href="#"><span class="glyph ac-mini" style="border-left:2px solid var(--destructive)"></span><span class="ac-name"><b>Rust</b>gut Canyon</span><span class="ac-cat">Canyon</span></a>
+                <div class="ac-section">Tramplers · 1</div>
+                <a class="ac-item" href="#"><span class="glyph ac-mini" style="border-left:2px solid var(--rarity-3)"></span><span class="ac-name">Iron<b>back</b></span><span class="ac-cat">Beast</span></a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- empty-query + no-results -->
+    <div class="frame-block">
+      <div class="state-stack">
+        <div>
+          <div class="device-tag">empty query — popular</div>
+          <div class="sw" style="width:300px;"><div class="ac">
+            <div class="ac-section">Popular now</div>
+            <a class="ac-item" href="#"><span class="glyph ac-mini" style="border-left:2px solid var(--rarity-2)"></span><span class="ac-name">Scrap Repeater</span><span class="ac-cat">Weapon</span></a>
+            <a class="ac-item" href="#"><span class="glyph ac-mini" style="border-left:2px solid var(--rarity-1)"></span><span class="ac-name">Fuel Cell</span><span class="ac-cat">Resource</span></a>
+            <a class="ac-item" href="#"><span class="glyph ac-mini" style="border-left:2px solid var(--rarity-3)"></span><span class="ac-name">Husk Strider</span><span class="ac-cat">Trampler</span></a>
+          </div></div>
+        </div>
+        <div>
+          <div class="device-tag">no results</div>
+          <div class="sw" style="width:300px;"><div class="ac" style="padding:22px;text-align:center;">
+            <div class="glyph" style="width:40px;height:40px;font-size:18px;margin:0 auto 10px;color:var(--border-strong)"></div>
+            <div style="font-family:var(--font-display);text-transform:uppercase;letter-spacing:.04em;font-size:14px;color:var(--foreground)">No matches</div>
+            <div style="font-size:12px;color:var(--dim);margin-top:4px;">Nothing matches "xqv". Check spelling or browse by category.</div>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     7 · CONTRIBUTE / EDIT / ADMIN
+     ============================================================ -->
+<section class="showcase" id="contribute">
+  <div class="sc-head">
+    <div class="sc-num">SCREEN · 07</div>
+    <h2>Contribute · edit · admin</h2>
+    <p>All editorial surfaces share one form system — squared inputs, uppercase Oswald labels, primary CTA, destructive secondary. Shown: the propose-an-item form (with a validation-error state), the recipe ingredient editor with enum/filter selects, and the admin proposals queue with status tags and approve / reject actions.</p>
+  </div>
+
+  <div class="frames-row">
+    <!-- proposal form -->
+    <div class="frame-block">
+      <div class="frame-label">Propose an item <span class="state">desktop · one field invalid</span></div>
+      <div class="browser" style="width:560px;">
+        <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">sandwiki.gg / contribute / new</div></div>
+        <div class="browser-body sw">
+          <div class="appbar"><div class="brand"><span class="brand-mark">S</span><span class="brand-name">SAND<span class="sub">·</span>WIKI</span></div><div class="avatar" style="margin-left:auto">RX</div></div>
+          <div style="padding:22px;">
+            <h2 class="display" style="font-size:24px;text-transform:uppercase;margin-bottom:4px;">Propose an item</h2>
+            <p style="color:var(--dim);font-size:13px;margin-bottom:20px;">Submissions enter the moderation queue. You'll be credited on approval.</p>
+            <div style="display:flex;flex-direction:column;gap:16px;">
+              <div class="field"><label class="label">Name</label><input class="input" value="Cinder Bow"></div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+                <div class="field"><label class="label">Category</label><select class="select"><option>Weapon</option><option>Gear</option><option>Resource</option></select></div>
+                <div class="field"><label class="label">Rarity</label><select class="select"><option>5 · Legendary</option><option>4 · Epic</option><option>6 · Relic</option></select></div>
+              </div>
+              <div class="field"><label class="label">Damage</label><input class="input input-invalid" value="-12"><span class="field-error">Damage must be a positive number.</span></div>
+              <div class="field"><label class="label">Description</label><textarea class="textarea" placeholder="What is it, where is it found, how does it play…">A recurve bow strung with heated filament — arrows ignite on draw.</textarea><span class="field-hint">Markdown supported. Keep it factual, no lore speculation.</span></div>
+              <div style="display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:16px;"><button class="btn btn-ghost">Cancel</button><button class="btn btn-primary">Submit proposal</button></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- recipe editor + admin queue -->
+    <div class="frame-block">
+      <div class="state-stack">
+        <!-- recipe edit -->
+        <div>
+          <div class="frame-label">Recipe editor <span class="state">enum selects + ingredient rows</span></div>
+          <div class="browser" style="width:520px;">
+            <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">…/scrap-repeater/recipe/edit</div></div>
+            <div class="browser-body sw" style="padding:20px;">
+              <h3 class="display" style="font-size:18px;text-transform:uppercase;margin-bottom:14px;">Edit recipe — Scrap Repeater</h3>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px;">
+                <div class="field"><label class="label">Bench</label><select class="select"><option>Gunsmith II</option><option>Workbench</option></select></div>
+                <div class="field"><label class="label">Craft time</label><input class="input" value="45s"></div>
+              </div>
+              <label class="label" style="display:block;margin-bottom:8px;">Ingredients</label>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <div style="display:grid;grid-template-columns:1fr 70px 32px;gap:8px;align-items:center;"><select class="select"><option>Scrap Metal</option></select><input class="input" value="18" style="text-align:center"><button class="btn btn-ghost btn-icon" style="padding:8px 0;">✕</button></div>
+                <div style="display:grid;grid-template-columns:1fr 70px 32px;gap:8px;align-items:center;"><select class="select"><option>Copper Wire</option></select><input class="input" value="6" style="text-align:center"><button class="btn btn-ghost btn-icon" style="padding:8px 0;">✕</button></div>
+                <div style="display:grid;grid-template-columns:1fr 70px 32px;gap:8px;align-items:center;"><select class="select"><option>Pneumatic Coil</option></select><input class="input" value="2" style="text-align:center"><button class="btn btn-ghost btn-icon" style="padding:8px 0;">✕</button></div>
+              </div>
+              <button class="btn btn-secondary btn-sm" style="margin-top:10px;">+ Add ingredient</button>
+              <div style="display:flex;gap:8px;justify-content:flex-end;border-top:1px solid var(--border);padding-top:14px;margin-top:16px;"><button class="btn btn-ghost btn-sm">Discard</button><button class="btn btn-primary btn-sm">Save changes</button></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- admin queue -->
+        <div>
+          <div class="frame-label">Admin · proposals queue <span class="state">moderation</span></div>
+          <div class="browser" style="width:520px;">
+            <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">sandwiki.gg / admin / proposals</div></div>
+            <div class="browser-body sw" style="padding:18px;">
+              <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:12px;"><h3 class="display" style="font-size:18px;text-transform:uppercase;">Proposals queue</h3><span class="tag tag-warning"><span class="tag-dot" style="background:var(--warning)"></span>7 pending</span></div>
+              <table class="dtable">
+                <thead><tr><th>Entity</th><th>By</th><th>Status</th><th class="num">Action</th></tr></thead>
+                <tbody>
+                  <tr><td><span class="cell-name"><span class="glyph mini-glyph" style="border-left:2px solid var(--rarity-5)"></span>Cinder Bow</span></td><td style="color:var(--muted-foreground)">Raider_X</td><td><span class="tag tag-warning">Pending</span></td><td class="num"><div style="display:inline-flex;gap:6px;"><button class="btn btn-secondary btn-sm" style="padding:4px 8px;color:var(--success);border-color:var(--success)">✓</button><button class="btn btn-ghost btn-sm" style="padding:4px 8px;color:var(--destructive);border-color:var(--destructive)">✕</button></div></td></tr>
+                  <tr><td><span class="cell-name"><span class="glyph mini-glyph" style="border-left:2px solid var(--rarity-2)"></span>Antidust Tonic</span></td><td style="color:var(--muted-foreground)">Dustwitch</td><td><span class="tag tag-warning">Pending</span></td><td class="num"><div style="display:inline-flex;gap:6px;"><button class="btn btn-secondary btn-sm" style="padding:4px 8px;color:var(--success);border-color:var(--success)">✓</button><button class="btn btn-ghost btn-sm" style="padding:4px 8px;color:var(--destructive);border-color:var(--destructive)">✕</button></div></td></tr>
+                  <tr><td><span class="cell-name"><span class="glyph mini-glyph" style="border-left:2px solid var(--rarity-3)"></span>Glasscutter SMG · edit</span></td><td style="color:var(--muted-foreground)">Nomad7</td><td><span class="tag tag-success">Approved</span></td><td class="num"><span class="mono" style="color:var(--dim);font-size:11px">1h ago</span></td></tr>
+                  <tr><td><span class="cell-name"><span class="glyph mini-glyph" style="border-left:2px solid var(--rarity-1)"></span>Bonemeal · stats</span></td><td style="color:var(--muted-foreground)">anon</td><td><span class="tag tag-destructive">Rejected</span></td><td class="num"><span class="mono" style="color:var(--dim);font-size:11px">spam</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- mobile form -->
+    <div class="frame-block">
+      <div class="frame-label">Mobile <span class="state">form</span></div>
+      <div class="phone">
+        <div class="phone-notch"></div>
+        <div class="phone-body sw">
+          <div class="appbar" style="padding:0 14px;gap:12px;"><button class="hamburger"><span></span><span></span><span></span></button><div class="brand"><span class="brand-mark">S</span><span class="brand-name" style="font-size:16px">SAND<span class="sub">·</span>WIKI</span></div></div>
+          <div style="padding:16px 14px;display:flex;flex-direction:column;gap:14px;">
+            <h2 class="display" style="font-size:20px;text-transform:uppercase;">Propose an item</h2>
+            <div class="field"><label class="label">Name</label><input class="input" placeholder="e.g. Cinder Bow"></div>
+            <div class="field"><label class="label">Category</label><select class="select"><option>Weapon</option><option>Gear</option></select></div>
+            <div class="field"><label class="label">Rarity</label><select class="select"><option>Choose rarity…</option></select></div>
+            <div class="field"><label class="label">Description</label><textarea class="textarea" placeholder="What is it…"></textarea></div>
+            <button class="btn btn-primary" style="justify-content:center;">Submit proposal</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============================================================
+     8 · ABOUT + AUTH
+     ============================================================ -->
+<section class="showcase" id="about">
+  <div class="sc-head">
+    <div class="sc-num">SCREEN · 08</div>
+    <h2>About + auth menu</h2>
+    <p>The About page states what the wiki is, who maintains it, and the license — using the same hero treatment and stat grid as the rest of the system, no new patterns. The auth menu is shown in both states: signed-out (sign in / register CTA) and signed-in (the editor menu from Screen 1).</p>
+  </div>
+
+  <div class="frames-row">
+    <!-- about desktop -->
+    <div class="frame-block">
+      <div class="frame-label">About <span class="state">desktop</span></div>
+      <div class="browser" style="width:760px;">
+        <div class="browser-bar"><div class="browser-dots"><i></i><i></i><i></i></div><div class="browser-url">sandwiki.gg / about</div></div>
+        <div class="browser-body sw">
+          <div class="appbar"><div class="brand"><span class="brand-mark">S</span><span class="brand-name">SAND<span class="sub">·</span>WIKI</span></div><nav class="nav"><a class="nav-item" href="#">Items</a><a class="nav-item" href="#">Tramplers</a><a class="nav-item" aria-current="page" href="#">About</a></nav><button class="btn btn-ghost btn-sm" style="margin-left:auto">Sign in</button></div>
+          <div class="hero" style="padding:40px 28px;">
+            <div class="hero-grid"></div>
+            <div style="position:relative;max-width:560px;">
+              <span class="eyebrow">About</span>
+              <h1 class="display" style="font-size:36px;font-weight:700;line-height:1;margin:10px 0 14px;">A wiki for the wastes</h1>
+              <p style="color:var(--muted-foreground);font-size:15px;line-height:1.65;">SAND Wiki is a community-maintained reference for <b style="color:var(--foreground)">SAND: Raiders of Sophie</b> — every item, trampler, environment and recipe, kept current by players. It is not affiliated with or endorsed by the developers.</p>
+            </div>
+          </div>
+          <div style="padding:24px 28px;">
+            <div class="stat-grid" style="grid-template-columns:repeat(4,1fr);margin-bottom:24px;">
+              <div class="stat"><span class="stat-label">Entries</span><span class="stat-value">401</span></div>
+              <div class="stat"><span class="stat-label">Recipes</span><span class="stat-value">240</span></div>
+              <div class="stat"><span class="stat-label">Editors</span><span class="stat-value">63</span></div>
+              <div class="stat"><span class="stat-label">Edits / wk</span><span class="stat-value">~190</span></div>
+            </div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;">
+              <div><div class="side-title" style="padding:0 0 8px;">How to help</div><p style="color:var(--muted-foreground);font-size:13px;line-height:1.6;">Spot a wrong stat or a missing item? Propose an edit — every change is reviewed by a moderator before it goes live. New editors are credited on their first approval.</p><button class="btn btn-primary btn-sm" style="margin-top:12px;">Start contributing</button></div>
+              <div><div class="side-title" style="padding:0 0 8px;">License &amp; data</div><p style="color:var(--muted-foreground);font-size:13px;line-height:1.6;">Text content is CC-BY-SA 4.0. Game names, stats and sprites are property of the developers, used for reference. Data current to <span class="mono" style="color:var(--accent)">Patch 0.42 · "Glass Flats"</span>.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- auth states -->
+    <div class="frame-block">
+      <div class="state-stack">
+        <div>
+          <div class="device-tag">auth menu — signed out</div>
+          <div class="sw" style="width:280px;"><div class="menu">
+            <div style="padding:10px 11px 14px;text-align:center;border-bottom:1px solid var(--border);margin-bottom:6px;">
+              <div style="font-family:var(--font-display);text-transform:uppercase;letter-spacing:.04em;font-size:14px;color:var(--foreground);margin-bottom:3px;">Join the editors</div>
+              <div style="font-size:12px;color:var(--dim)">Sign in to propose items &amp; track edits.</div>
+            </div>
+            <div style="padding:4px 4px 6px;display:flex;flex-direction:column;gap:8px;">
+              <button class="btn btn-primary" style="justify-content:center;">Sign in</button>
+              <button class="btn btn-ghost" style="justify-content:center;">Create account</button>
+            </div>
+            <div class="menu-sep"></div>
+            <a class="menu-item" href="#"><span class="mi-icon">◑</span>Continue with Discord</a>
+          </div></div>
+        </div>
+        <div>
+          <div class="device-tag">auth menu — signed in</div>
+          <div class="sw" style="width:280px;"><div class="menu">
+            <div style="display:flex;align-items:center;gap:11px;padding:8px 11px 12px;border-bottom:1px solid var(--border);margin-bottom:5px;">
+              <div class="avatar" style="width:38px;height:38px;font-size:15px;">RX</div>
+              <div><div style="font-size:14px;color:var(--foreground);font-weight:600;">Raider_X</div><div class="mono" style="font-size:11px;color:var(--dim)">Editor · 214 edits</div></div>
+            </div>
+            <a class="menu-item" href="#"><span class="mi-icon">◳</span>My contributions</a>
+            <a class="menu-item" href="#"><span class="mi-icon">✎</span>Drafts <span class="tag tag-warning" style="margin-left:auto;padding:1px 6px;">3</span></a>
+            <a class="menu-item" href="#"><span class="mi-icon">⚑</span>Watchlist</a>
+            <div class="menu-sep"></div>
+            <a class="menu-item" href="#" style="color:var(--destructive)"><span class="mi-icon" style="color:var(--destructive)">⏻</span>Sign out</a>
+          </div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <p style="margin-top:40px;color:var(--rv-dim);font-size:12px;font-family:ui-monospace,monospace;max-width:760px;">Ambiguities flagged for engineering · (1) The spec's component map references <code>polished-v2.html</code> which does not exist on disk — direction here is synthesized from the brainstorm rounds. (2) Tramplers' canonical stat set wasn't defined; speed / cargo / health is assumed. (3) Environment "threat" levels aren't in <code>rarity.ts</code> — mapped to state colors (success→destructive) as a placeholder scale. See README for the full list.</p>
+</section>
+
+</body>
+</html>

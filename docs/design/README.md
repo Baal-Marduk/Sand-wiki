@@ -2,7 +2,7 @@
 
 High-fidelity, framework-free HTML/CSS mockups for the redesign of the **Unofficial SAND Wiki** ("SAND: Raiders of Sophie"). These are the approved visual reference that the engineering phase will rebuild as themed **shadcn/ui** React components. They are *not* production React and import no framework.
 
-> **Note on location.** The brief asked for these to live at `sand-wiki/.superpowers/design/`. The `sand-wiki` repo was not imported into this workspace, so the files are written here under `design/` — move the folder into the repo at that path as-is.
+> **Status (2026-06-19).** Approved visual reference for the now-completed shadcn/ui redesign — historical/reference, consolidated here under `docs/design/` (tracked). The live design system of record is `apps/wiki/src/app/globals.css` + `apps/wiki/src/lib/rarity.ts`; where this README disagrees (e.g. stale Epic/Legendary/Relic rarity names), those files win. See `apps/wiki/instructions.md` § Design system.
 
 ## Files
 
@@ -10,7 +10,6 @@ High-fidelity, framework-free HTML/CSS mockups for the redesign of the **Unoffic
 |---|---|
 | `index.html` | The full reference — one scrollable page, one anchored section per screen, each shown at **desktop + mobile** width with its **key states** (hover, active filter, empty, loading skeleton, validation error). Sticky section nav at top. |
 | `sand-wiki.css` | The unified design system: all tokens, type ramp, and every component class (`.ec` EntityCard, `.chip`, `.rarity-badge`, `.stat-grid`, `.tabs`, `.dtable`, `.appbar`, `.drawer`, `.ac` autocomplete, form controls, skeletons, empty states). This is the single source the React rebuild should mirror. |
-| `tech-tree.html` + `tech-tree.js` + `tech-tree-data.js` | Interactive **Tech Tree** app screen (all 3 faction lines × 4 tiers, transcribed from the in-game tree). Hover any tech for full details + path cost; click to plan a path (prerequisites light up, combined cost in the planner); tick a card's ring to mark it already unlocked. Unlock progress persists in `localStorage`, and path cost counts **only un-unlocked prerequisites** — i.e. the price from your last unlocked tech. `tech-tree-data.js` holds the node/cost/prereq graph; flag any cost or edge that needs correcting against the live game. |
 
 `index.html` references `sand-wiki.css` relatively — open `index.html` in any browser, no server needed. (Minor deviation from "inline CSS": kept as one stylesheet so the system is legible as a token reference rather than buried in markup. Inline if a single-file artifact is required.)
 

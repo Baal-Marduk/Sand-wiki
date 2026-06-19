@@ -199,7 +199,7 @@ Imports copy what exists and link back via `sourceUrl`.
 ## Design system (locked — follow for all new UI)
 
 The single source is `src/app/globals.css` (the shadcn token layer) + `src/lib/rarity.ts` (rarity
-scale). The framework-free mockups in `.superpowers/design/` are the **approved visual reference**
+scale). The framework-free mockups in `docs/design/` (repo root) are the **approved visual reference**
 the React UI mirrors — but where they disagree with these files, **globals.css / rarity.ts win**
 (the README's stale Epic/Legendary/Relic names + slightly-off hexes are superseded).
 
