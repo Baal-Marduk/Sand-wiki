@@ -198,3 +198,23 @@
 .tg-perm .row { display: flex; gap: 9px; align-items: flex-start; font-size: 12.5px; color: var(--muted-foreground); line-height: 1.45; }
 .tg-perm .row .ck { color: var(--success); flex: none; font-weight: 700; }
 .tg-modal-f { display: flex; justify-content: flex-end; gap: 8px; padding: 13px 16px; border-top: 1px solid var(--border); }
+
+/* ============================================================
+   MOBILE  (≤ 640px) — single column, wrapping toolbars
+   ============================================================ */
+@media (max-width: 640px) {
+  /* The top app bar and sub toolbar are single-row flex on desktop; let them
+     wrap and tighten padding so they fit a phone instead of overflowing. */
+  .tg-appbar { height: auto; min-height: 56px; flex-wrap: wrap; gap: 10px; padding: 10px 14px; }
+  .tg-appbar .spacer { display: none; }
+
+  .tg-toolbar { flex-wrap: wrap; gap: 12px; padding: 12px 14px; }
+  .tg-toolbar .spacer { display: none; }
+  .tg-sortwrap { margin-left: auto; }
+  .tg-select { width: 150px; }
+
+  /* One readable column; minmax(0,1fr) drops the 304px floor so cards never
+     overflow a ~390px viewport. */
+  .tg-scroll { padding: 14px; }
+  .tg-grid { grid-template-columns: minmax(0, 1fr); gap: 14px; }
+}
