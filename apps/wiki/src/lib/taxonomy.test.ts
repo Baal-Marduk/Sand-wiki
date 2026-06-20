@@ -10,9 +10,9 @@ import {
 } from "./taxonomy";
 
 describe("taxonomy", () => {
-  it("exposes the five top-level sections in order", () => {
+  it("exposes the top-level sections in order", () => {
     expect(SECTIONS.map((s) => s.slug)).toEqual([
-      "items", "environment", "tramplers", "tech", "tools",
+      "items", "environment", "tramplers", "tech", "builder", "gallery", "tools",
     ]);
   });
 
@@ -228,5 +228,21 @@ describe("factions", () => {
   it("isFaction guards unknown keys", () => {
     expect(isFaction("godlewski")).toBe(true);
     expect(isFaction("nope")).toBe(false);
+  });
+});
+
+describe("gallery nav section", () => {
+  it("is registered as a link section pointing at /gallery", () => {
+    const gallery = getSection("gallery");
+    expect(gallery).toBeDefined();
+    expect(gallery?.kind).toBe("link");
+    expect(gallery?.href ?? "/gallery").toBe("/gallery");
+    expect(gallery?.categories).toEqual([]);
+  });
+
+  it("orders gallery alongside the other tool links (after builder)", () => {
+    const slugs = SECTIONS.map((s) => s.slug);
+    expect(slugs).toContain("gallery");
+    expect(slugs.indexOf("gallery")).toBeGreaterThan(slugs.indexOf("builder"));
   });
 });

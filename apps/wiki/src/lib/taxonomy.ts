@@ -53,6 +53,7 @@ export const SECTIONS: Section[] = [
   { slug: "tramplers", label: "Tramplers", kind: "data", categories: tramplerCategories },
   { slug: "tech", label: "Tech Tree", kind: "link", categories: [] },
   { slug: "builder", label: "Builder", kind: "link", categories: [] },
+  { slug: "gallery", label: "Gallery", kind: "link", categories: [] },
   { slug: "tools", label: "Tools", kind: "placeholder", categories: [] },
 ];
 
