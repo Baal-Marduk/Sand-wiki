@@ -1,6 +1,7 @@
 'use client'
 // Builder V2: identical in-game builder rebuild.
 // Truth source: the game's CompartmentsDatabase (cells/sockets/limits), real meshes.
+import './builder.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import BuilderScene from './BuilderScene.jsx'
 import thumbsV2 from './data/part_thumbs_v2.json'
