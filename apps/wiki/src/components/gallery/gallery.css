@@ -12,8 +12,10 @@
       ported here under `tg-`-prefixed names so the gallery is actually styled. */
 
 .tg-app {
-  /* Font fallbacks for the mockup's var(--font-*) references (see note 1). */
-  --font-body: var(--font-oswald), ui-sans-serif, system-ui, sans-serif;
+  /* Body text is the app's sans (NOT Oswald — that's --font-display, used only by
+     headings/nav below). Keeping body on the sans stack matches the builder/tech
+     tools, so shared chrome like the Steam sign-in renders identically. */
+  --font-body: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
   --font-mono: ui-monospace, "SFMono-Regular", "Menlo", "Consolas", monospace;
   font-family: var(--font-body);
   display: flex;
@@ -21,8 +23,8 @@
   height: 100vh;
 }
 
-/* ---- top app bar ---- */
-.tg-appbar { height: 52px; flex: none; display: flex; align-items: center; gap: 16px; padding: 0 18px; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--background) 86%, transparent); backdrop-filter: blur(10px); z-index: 60; }
+/* ---- top app bar (height/padding kept identical to .tb-appbar / .tt-appbar) ---- */
+.tg-appbar { height: 56px; flex: none; display: flex; align-items: center; gap: 16px; padding: 0 18px; border-bottom: 1px solid var(--border); background: color-mix(in srgb, var(--background) 86%, transparent); backdrop-filter: blur(10px); z-index: 60; }
 .tg-brand { display: flex; align-items: center; gap: 9px; }
 .tg-brand-mark { width: 26px; height: 26px; display: grid; place-items: center; background: var(--primary); color: #1a0f04; font-family: var(--font-display); font-weight: 700; font-size: 16px; }
 .tg-brand-name { font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: .04em; text-transform: uppercase; }

@@ -224,6 +224,21 @@ export function GalleryClient({
 
       {/* ===== grid ===== */}
       <div className="tg-scroll">
+        {page.items.length === 0 && !showDraft ? (
+          // Empty state lives OUTSIDE the max-width grid so it centers across the
+          // full scroll width rather than within the left-aligned grid track.
+          <div className="tg-empty">
+            <span className="eg">▦</span>
+            <span className="et">
+              {view === "mine" ? "No designs yet" : "No published rigs yet"}
+            </span>
+            <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>
+              {view === "mine"
+                ? "Build a rig and publish it to see it here."
+                : "Be the first to publish a trampler to the community gallery."}
+            </p>
+          </div>
+        ) : (
         <div className="tg-grid">
           {/* Local draft card (mine view only) — the builder's working build. */}
           {showDraft && localDraft && (
@@ -322,20 +337,8 @@ export function GalleryClient({
             );
           })}
 
-          {page.items.length === 0 && !showDraft && (
-            <div className="tg-empty">
-              <span className="eg">▦</span>
-              <span className="et">
-                {view === "mine" ? "No designs yet" : "No published rigs yet"}
-              </span>
-              <p style={{ color: "var(--muted-foreground)", fontSize: 13 }}>
-                {view === "mine"
-                  ? "Build a rig and publish it to see it here."
-                  : "Be the first to publish a trampler to the community gallery."}
-              </p>
-            </div>
-          )}
         </div>
+        )}
 
         {page.nextCursor && (
           <div style={{ display: "grid", placeItems: "center", padding: 24 }}>
