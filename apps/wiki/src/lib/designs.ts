@@ -233,21 +233,6 @@ export async function unlikeDesign(slug: string, userId: string): Promise<number
   });
 }
 
-export async function reportDesign(
-  slug: string,
-  reporterId: string,
-  reason?: string,
-): Promise<void> {
-  const d = await prisma.design.findUnique({
-    where: { slug },
-    select: { id: true },
-  });
-  if (!d) throw new Error("not found");
-  await prisma.designReport.create({
-    data: { designId: d.id, reporterId, reason: reason?.slice(0, 500) },
-  });
-}
-
 export async function setDesignStatus(
   slug: string,
   status: "published" | "hidden",
