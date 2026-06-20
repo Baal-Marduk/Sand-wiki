@@ -20,7 +20,10 @@
   .tt-legend .hint { margin-left: auto; font-family: var(--font-body); text-transform: none; letter-spacing: 0; color: var(--dim); font-size: 12px; }
 
   /* ---- scroll viewport ---- */
-  .tt-viewport { position: relative; flex: 1; overflow: auto; }
+  /* touch-action: none hands all touch gestures to our pointer handlers (drag-pan +
+     two-finger pinch-zoom) instead of letting the browser claim them for native
+     scroll / page pinch-zoom, which would fire pointercancel and kill the pinch. */
+  .tt-viewport { position: relative; flex: 1; overflow: auto; touch-action: none; }
   #tt-tierbar { position: sticky; top: 0; height: 38px; z-index: 30; background: color-mix(in srgb, var(--background) 92%, transparent); backdrop-filter: blur(6px); border-bottom: 1px solid var(--border); }
   .tt-tier-label { position: absolute; top: 0; height: 38px; display: flex; align-items: center; justify-content: center; gap: 9px; font-family: var(--font-display); text-transform: uppercase; letter-spacing: .14em; font-size: 12px; font-weight: 600; color: var(--muted-foreground); border-left: 1px solid var(--border); }
   .tt-tier-roman { font-size: 13px; color: var(--primary); border: 1px solid var(--border-strong); width: 22px; height: 22px; display: grid; place-items: center; letter-spacing: 0; }
