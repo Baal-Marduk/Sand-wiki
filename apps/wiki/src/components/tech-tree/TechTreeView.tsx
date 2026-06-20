@@ -20,7 +20,6 @@ const useIsoLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : use
 const ZOOM_MIN = 0.4;
 const ZOOM_MAX = 1.5;
 const ZOOM_STEP = 1.1; // multiplicative per wheel notch / button press
-const clampZoom = (z: number) => Math.min(ZOOM_MAX, Math.max(ZOOM_MIN, z));
 
 function Glyph({ icon, alt }: { icon: string | null; alt: string }) {
   // eslint-disable-next-line @next/next/no-img-element
@@ -44,6 +43,25 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [hover, setHover] = useState<{ slug: string; rect: DOMRect } | null>(null);
   const viewportRef = useRef<HTMLDivElement>(null);
+
+  // The zoom that fits the whole canvas in the current viewport. Used both for
+  // "Fit" and as the dynamic lower bound on zoom: on a phone the tree may need a
+  // zoom below ZOOM_MIN to fit, and pinch/buttons must be allowed down to it too
+  // (otherwise the first interaction snaps back up).
+  const fitRatio = useCallback(() => {
+    const vp = viewportRef.current;
+    if (!vp) return ZOOM_MIN;
+    return Math.min(vp.clientWidth / layout.canvasW, vp.clientHeight / layout.canvasH);
+  }, [layout.canvasW, layout.canvasH]);
+
+  const clamp = useCallback(
+    (z: number) => {
+      const floor = Math.min(ZOOM_MIN, fitRatio());
+      return Math.min(ZOOM_MAX, Math.max(floor, z));
+    },
+    [fitRatio],
+  );
+
   const [resetOpen, setResetOpen] = useState(false);
   const [zoom, setZoom] = useState(1);
   const zoomRef = useRef(1);
@@ -123,32 +141,10 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     setSelected((prev) => { const n = new Set(prev); if (n.has(slug)) n.delete(slug); else n.add(slug); return n; });
   }, []);
 
-  const pan = useRef<{ x: number; y: number; left: number; top: number; active: boolean } | null>(null);
-  const panned = useRef(false);
-  const onPanDown = useCallback((e: React.PointerEvent) => {
-    if ((e.target as HTMLElement).closest(".tnode-status")) return; // let the ring handle its own clicks
-    const vp = viewportRef.current; if (!vp) return;
-    pan.current = { x: e.clientX, y: e.clientY, left: vp.scrollLeft, top: vp.scrollTop, active: false };
-  }, []);
-  const onPanMove = useCallback((e: React.PointerEvent) => {
-    const p = pan.current, vp = viewportRef.current; if (!p || !vp) return;
-    const dx = e.clientX - p.x, dy = e.clientY - p.y;
-    if (!p.active && Math.hypot(dx, dy) < 4) return; // movement threshold → still a click
-    if (!p.active) { p.active = true; vp.setPointerCapture(e.pointerId); vp.classList.add("is-panning"); }
-    vp.scrollLeft = p.left - dx;
-    vp.scrollTop = p.top - dy;
-  }, []);
-  const endPan = useCallback((e: React.PointerEvent) => {
-    const vp = viewportRef.current;
-    if (pan.current?.active) panned.current = true;
-    if (vp) { vp.classList.remove("is-panning"); if (vp.hasPointerCapture?.(e.pointerId)) vp.releasePointerCapture(e.pointerId); }
-    pan.current = null;
-  }, []);
-
   const zoomTo = useCallback((factor: number, anchorX?: number, anchorY?: number) => {
     const vp = viewportRef.current; if (!vp) return;
     const prev = zoomRef.current;
-    const z = clampZoom(prev * factor);
+    const z = clamp(prev * factor);
     if (z === prev) return;
     // Defer the scroll re-anchor to the layout effect below: it must run AFTER the canvas
     // transform + sizer have resized, otherwise the browser clamps scrollLeft/Top against the
@@ -156,6 +152,68 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     pendingAnchor.current = { ax: anchorX ?? vp.clientWidth / 2, ay: anchorY ?? vp.clientHeight / 2 };
     zoomRef.current = z;
     setZoom(z);
+  }, [clamp]);
+
+  const pan = useRef<{ x: number; y: number; left: number; top: number; active: boolean } | null>(null);
+  const panned = useRef(false);
+  // Active touch/pointer points by id, for two-finger pinch detection.
+  const pointers = useRef<Map<number, { x: number; y: number }>>(new Map());
+  const pinchDist = useRef<number | null>(null);
+  const dist = (a: { x: number; y: number }, b: { x: number; y: number }) =>
+    Math.hypot(a.x - b.x, a.y - b.y);
+
+  const onPanDown = useCallback((e: React.PointerEvent) => {
+    if ((e.target as HTMLElement).closest(".tnode-status")) return; // let the ring handle its own clicks
+    const vp = viewportRef.current; if (!vp) return;
+    pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    if (pointers.current.size === 2) {
+      // Two fingers down → start a pinch; abandon any single-finger pan.
+      const pts = [...pointers.current.values()];
+      pinchDist.current = dist(pts[0], pts[1]);
+      for (const id of pointers.current.keys()) {
+        try { vp.setPointerCapture(id); } catch { /* pointer already gone */ }
+      }
+      pan.current = null;
+      panned.current = true; // swallow the trailing click so no node toggles
+      return;
+    }
+    pan.current = { x: e.clientX, y: e.clientY, left: vp.scrollLeft, top: vp.scrollTop, active: false };
+  }, []);
+
+  const onPanMove = useCallback((e: React.PointerEvent) => {
+    const vp = viewportRef.current; if (!vp) return;
+    if (pointers.current.has(e.pointerId)) {
+      pointers.current.set(e.pointerId, { x: e.clientX, y: e.clientY });
+    }
+    // Two-finger pinch: zoom by the change in finger distance, anchored at the midpoint.
+    if (pointers.current.size === 2 && pinchDist.current != null) {
+      const pts = [...pointers.current.values()];
+      const nd = dist(pts[0], pts[1]);
+      if (pinchDist.current > 0 && nd > 0) {
+        const r = vp.getBoundingClientRect();
+        const cx = (pts[0].x + pts[1].x) / 2 - r.left;
+        const cy = (pts[0].y + pts[1].y) / 2 - r.top;
+        zoomTo(nd / pinchDist.current, cx, cy);
+      }
+      pinchDist.current = nd;
+      return;
+    }
+    // Single-finger / mouse pan.
+    const p = pan.current; if (!p) return;
+    const dx = e.clientX - p.x, dy = e.clientY - p.y;
+    if (!p.active && Math.hypot(dx, dy) < 4) return; // movement threshold → still a click
+    if (!p.active) { p.active = true; vp.setPointerCapture(e.pointerId); vp.classList.add("is-panning"); }
+    vp.scrollLeft = p.left - dx;
+    vp.scrollTop = p.top - dy;
+  }, [zoomTo]);
+
+  const endPan = useCallback((e: React.PointerEvent) => {
+    const vp = viewportRef.current;
+    pointers.current.delete(e.pointerId);
+    if (pointers.current.size < 2) pinchDist.current = null;
+    if (pan.current?.active) panned.current = true;
+    if (vp) { vp.classList.remove("is-panning"); if (vp.hasPointerCapture?.(e.pointerId)) vp.releasePointerCapture(e.pointerId); }
+    pan.current = null;
   }, []);
 
   // After the new zoom has been committed to the DOM (sizer resized, canvas scaled), re-anchor
@@ -168,8 +226,12 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
     const p = pendingAnchor.current; pendingAnchor.current = null;
     if (!p || from === zoom) return;
     const ratio = zoom / from;
-    vp.scrollLeft = (vp.scrollLeft + p.ax) * ratio - p.ax;
-    vp.scrollTop = (vp.scrollTop + p.ay) * ratio - p.ay;
+    // Clamp to the (post-resize) scroll range. Without this, zooming out drives
+    // the computed offset negative / past the end and the view teleports.
+    const maxLeft = Math.max(0, vp.scrollWidth - vp.clientWidth);
+    const maxTop = Math.max(0, vp.scrollHeight - vp.clientHeight);
+    vp.scrollLeft = Math.min(maxLeft, Math.max(0, (vp.scrollLeft + p.ax) * ratio - p.ax));
+    vp.scrollTop = Math.min(maxTop, Math.max(0, (vp.scrollTop + p.ay) * ratio - p.ay));
   }, [zoom]);
 
   useEffect(() => {
@@ -188,11 +250,22 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
 
   const fitToScreen = useCallback(() => {
     const vp = viewportRef.current; if (!vp) return;
-    const z = clampZoom(Math.min(vp.clientWidth / layout.canvasW, vp.clientHeight / layout.canvasH));
+    const z = clamp(fitRatio());
     zoomRef.current = z;
     setZoom(z);
     vp.scrollTo({ left: 0, top: 0, behavior: "smooth" });
-  }, [layout.canvasW, layout.canvasH]);
+  }, [clamp, fitRatio]);
+
+  const didInitZoom = useRef(false);
+  useEffect(() => {
+    if (didInitZoom.current) return;
+    didInitZoom.current = true;
+    // Don't override an explicit deep-link target (?select=...).
+    if (new URLSearchParams(window.location.search).get("select")) return;
+    // On phones/tablets start fit-to-screen so the tree isn't opened mid-zoom
+    // with most of it off-screen. Desktop keeps its 100% default.
+    if (window.innerWidth < 1024) fitToScreen();
+  }, [fitToScreen]);
 
   const cost = useMemo(() => pathCost(tree.nodes, [...selected], unlocked), [tree.nodes, selected, unlocked]);
 
