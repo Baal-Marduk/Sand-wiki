@@ -292,6 +292,11 @@
   padding-left: 16px; border-left: 1px solid var(--border);
 }
 .bld-body { flex: 1; min-height: 0; position: relative; }
+/* Right-aligned toolbar in the app bar (Clear, etc.), like the tech tree's. */
+.bld-toolbar { margin-left: auto; display: flex; align-items: center; gap: 10px; }
+.bld-loading { height: 100vh; display: flex; align-items: center; justify-content: center;
+  background: var(--background); color: var(--muted-foreground);
+  font-family: var(--font-display); letter-spacing: .08em; text-transform: uppercase; font-size: 14px; }
 
 /* Build-cost panel: icon + total + label per resource, dimmed when zero. */
 .bv2-cost { display: flex; flex-direction: column; gap: 5px; }

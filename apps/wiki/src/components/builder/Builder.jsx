@@ -3,6 +3,8 @@
 // Truth source: the game's CompartmentsDatabase (cells/sockets/limits), real meshes.
 import './builder.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
+import { actionButtonClass } from '@/components/ui/button'
 import BuilderScene from './BuilderScene.jsx'
 import thumbsV2 from './data/part_thumbs_v2.json'
 import partCosts from './data/part_costs.json'
@@ -220,6 +222,12 @@ export default function BuilderV2() {
     flash('copied — click a cell to place')
   }
 
+  // Clear the build (keeps the chosen chassis), wired from the top-bar toolbar.
+  function doClear() {
+    setState((s) => ({ ...DEFAULT_STATE, chassisId: s.chassisId }))
+    setSelectedId(null)
+  }
+
   function toggleSocket(plId, key) {
     setState((s) => ({
       ...s,
@@ -337,6 +345,23 @@ export default function BuilderV2() {
   }
 
   return (
+    <div className="bld-app">
+      <header className="bld-appbar">
+        <Link
+          href="/"
+          aria-label="SAND HELP — home"
+          className="group font-display text-xl font-bold tracking-wide text-foreground transition-colors hover:text-primary focus-visible:text-primary"
+        >
+          SAND
+          <span aria-hidden="true" className="mx-0.5 text-primary transition-colors group-hover:text-foreground group-focus-visible:text-foreground">·</span>
+          HELP
+        </Link>
+        <span className="bld-page-title">Trampler Builder</span>
+        <div className="bld-toolbar">
+          <button type="button" className={actionButtonClass} onClick={doClear}>Clear</button>
+        </div>
+      </header>
+      <div className="bld-body">
     <div className="bv2">
       {/* ---- locker ---- */}
       <aside className="bv2-locker">
@@ -502,15 +527,6 @@ export default function BuilderV2() {
           <div className="bv2-share-btns">
             <button onClick={doExport}>SHARE CODE</button>
             <button onClick={() => { setShareText(''); setShareOpen(true) }}>IMPORT</button>
-            <button
-              className="danger"
-              onClick={() => {
-                setState((s) => ({ ...DEFAULT_STATE, chassisId: s.chassisId }))
-                setSelectedId(null)
-              }}
-            >
-              CLEAR
-            </button>
           </div>
           <label className="bv2-wbt-btn">
             ⬆ LOAD IN-GAME SAVE (.wbt)
@@ -561,6 +577,8 @@ export default function BuilderV2() {
           )}
         </div>
       </aside>
+        </div>
+      </div>
     </div>
   )
 }
