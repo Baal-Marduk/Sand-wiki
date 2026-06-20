@@ -48,6 +48,7 @@ export function validateBuildCode(buildCode: string) {
 
 export type DesignListItem = {
   slug: string;
+  buildCode: string;
   name: string;
   authorName: string | null;
   chassisId: string;
@@ -123,11 +124,14 @@ export async function listDesigns(opts: {
     orderBy,
     take: PAGE + 1,
     ...(opts.cursor ? { cursor: { id: opts.cursor }, skip: 1 } : {}),
-    // Explicit select — never pull the `thumbnail` bytes (or buildCode) into a
-    // list query; the grid only needs the thumbPath URL.
+    // Explicit select — never pull the (large) `thumbnail` bytes into a list
+    // query. `buildCode` IS pulled now: the gallery cards compute the full build
+    // cost from it and hand it off to the builder ("open design"). Build codes
+    // are a few KB each, so a page of 24 stays small.
     select: {
       id: true,
       slug: true,
+      buildCode: true,
       name: true,
       chassisId: true,
       partCount: true,
@@ -143,6 +147,7 @@ export async function listDesigns(opts: {
   const nextCursor = rows.length > PAGE ? rows[PAGE].id : null;
   const items: DesignListItem[] = rows.slice(0, PAGE).map((d) => ({
     slug: d.slug,
+    buildCode: d.buildCode,
     name: d.name,
     authorName: d.author?.personaName ?? null,
     chassisId: d.chassisId,
@@ -225,21 +230,6 @@ export async function unlikeDesign(slug: string, userId: string): Promise<number
       select: { likeCount: true },
     });
     return updated.likeCount;
-  });
-}
-
-export async function reportDesign(
-  slug: string,
-  reporterId: string,
-  reason?: string,
-): Promise<void> {
-  const d = await prisma.design.findUnique({
-    where: { slug },
-    select: { id: true },
-  });
-  if (!d) throw new Error("not found");
-  await prisma.designReport.create({
-    data: { designId: d.id, reporterId, reason: reason?.slice(0, 500) },
   });
 }
 

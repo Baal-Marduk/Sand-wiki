@@ -6,9 +6,12 @@ import { ToolNav } from "@/components/ToolNav";
 import { AuthMenuClient } from "@/components/AuthMenuClient";
 import { SteamGateModal } from "@/components/SteamGateModal";
 import { Button } from "@/components/ui/button";
+import { AdminHideButton } from "@/components/gallery/AdminHideButton";
+import { costBreakdown, COST_ROWS, decodeShare } from "@/components/builder/builderCore.js";
 
 type Item = {
   slug: string;
+  buildCode: string;
   name: string;
   authorName: string | null;
   chassisId: string;
@@ -39,10 +42,12 @@ function ThumbPlaceholder() {
 export function GalleryClient({
   initial,
   signedIn,
+  admin = false,
   initialView = "community",
 }: {
   initial: Page;
   signedIn: boolean;
+  admin?: boolean;
   initialView?: View;
 }) {
   const [view, setView] = useState<View>(initialView);
@@ -175,6 +180,33 @@ export function GalleryClient({
     }
   }
 
+  // "Open design" hands the build off to the builder via the localStorage key the
+  // builder reads on mount (sand_load_code). The <Link href="/builder"> then does
+  // the client navigation. Set synchronously in the click handler before nav.
+  function loadInBuilder(buildCode: string) {
+    try {
+      localStorage.setItem("sand_load_code", buildCode);
+    } catch {
+      /* ignore storage failures — the builder just starts empty */
+    }
+  }
+
+  // Admin hide: drop the card from the current page immediately (the server has
+  // already set status="hidden"); a reload would have dropped it from the list too.
+  function hideFromList(slug: string) {
+    setPage((p) => ({ ...p, items: p.items.filter((it) => it.slug !== slug) }));
+  }
+
+  // Full per-card cost, computed from the build code. Falls back to the stored
+  // crowns total if a code somehow fails to decode.
+  function cardCost(d: Item): Record<string, number> {
+    try {
+      return costBreakdown(decodeShare(d.buildCode));
+    } catch {
+      return { crowns: d.crowns, mechanical: 0, pneumatic: 0, computing: 0 };
+    }
+  }
+
   const showDraft = view === "mine" && !!localDraft;
 
   return (
@@ -182,7 +214,7 @@ export function GalleryClient({
       {/* ===== top bar ===== */}
       <header className="tg-appbar">
         <div className="flex items-center gap-4">
-          <ToolNavBrand title="Gallery" />
+          <ToolNavBrand title="Trampler Builder" />
           <ToolNav active="gallery" />
         </div>
         <span className="spacer" style={{ marginLeft: "auto" }} />
@@ -277,11 +309,14 @@ export function GalleryClient({
 
           {page.items.map((d) => {
             const isLiked = liked.has(d.slug);
+            const cost = cardCost(d);
             return (
               <div className="tg-card" key={d.slug}>
                 <Link
-                  href={`/gallery/${d.slug}`}
+                  href="/builder"
+                  onClick={() => loadInBuilder(d.buildCode)}
                   className="tg-thumb"
+                  title="Open in builder"
                   style={{ "--thumb": THUMB } as React.CSSProperties}
                 >
                   {d.thumbPath ? (
@@ -297,7 +332,11 @@ export function GalleryClient({
                   <span className="tg-hull-badge">Hull {d.hull}</span>
                 </Link>
                 <div className="tg-body">
-                  <Link href={`/gallery/${d.slug}`} className="tg-name">
+                  <Link
+                    href="/builder"
+                    onClick={() => loadInBuilder(d.buildCode)}
+                    className="tg-name"
+                  >
                     {d.name}
                   </Link>
                   <div className="tg-sub">{d.authorName ?? "Unknown"}</div>
@@ -305,10 +344,22 @@ export function GalleryClient({
                     <span className="m">
                       <b>{d.partCount}</b> parts
                     </span>
-                    <span className="m">
-                      <span className="scrap" />
-                      <b>{d.crowns.toLocaleString()}</b>
-                    </span>
+                    {COST_ROWS.map(([key, label, icon]) => (
+                      <span className="m" key={key} title={label}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={icon}
+                          alt=""
+                          width={14}
+                          height={14}
+                          style={{ objectFit: "contain" }}
+                          onError={(e) => {
+                            e.currentTarget.style.visibility = "hidden";
+                          }}
+                        />
+                        <b>{(cost[key] ?? 0).toLocaleString()}</b>
+                      </span>
+                    ))}
                   </div>
                 </div>
                 <div className="tg-foot">
@@ -325,12 +376,16 @@ export function GalleryClient({
                     </span>
                     <span className="score">{d.likeCount.toLocaleString()}</span>
                   </button>
-                  <div className="right">
+                  <div className="right" style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                    {admin && (
+                      <AdminHideButton slug={d.slug} onHidden={() => hideFromList(d.slug)} />
+                    )}
                     <Link
-                      href={`/gallery/${d.slug}`}
+                      href="/builder"
+                      onClick={() => loadInBuilder(d.buildCode)}
                       className="tg-icon-btn"
-                      title="Open design"
-                      aria-label={`Open ${d.name}`}
+                      title="Open in builder"
+                      aria-label={`Open ${d.name} in the builder`}
                     >
                       ↗
                     </Link>

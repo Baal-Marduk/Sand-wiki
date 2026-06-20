@@ -11,14 +11,14 @@ import { ConfirmDialog } from '@/components/ConfirmDialog'
 import { SteamGateModal } from '@/components/SteamGateModal'
 import BuilderScene from './BuilderScene.jsx'
 import thumbsV2 from './data/part_thumbs_v2.json'
-import partCosts from './data/part_costs.json'
 import partTech from './data/part_tech.json'
 import partIcons from './data/part_icons.json'
 import { asset } from './data.js'
 import {
-  PARTS, ALL_PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
+  PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
   CAT_COLOR, CATEGORY_ORDER, buildOccupancy, validate, manifest,
-  encodeShare, decodeShare, editableSockets, checkPaths, buildSummary,
+  encodeShare, decodeShare, editableSockets, checkPaths,
+  costBreakdown, COST_ROWS,
 } from './builderCore.js'
 import { decodeWbt, wbtToState } from './wbtImport.js'
 import { submitBuild } from './galleryApi.js'
@@ -27,10 +27,9 @@ const STORE_KEY = 'sand_blueprint_v2'
 // The /tech page persists the user's unlocked nodes here (JSON array of node slugs).
 const TECH_KEY = 'sand_techtree_unlocked_v1'
 const chassisList = PARTS.filter((p) => p.category === 'Chassis')
-// Locker lists every part incl. game-disabled ones (shown marked), enabled first.
-const lockerParts = ALL_PARTS
+// Locker lists only parts enabled in the game (chassis + mirror variants excluded).
+const lockerParts = PARTS
   .filter((p) => p.category !== 'Chassis' && !p.id.endsWith('_mirror'))
-  .sort((a, b) => (a.enabled === b.enabled ? 0 : a.enabled ? -1 : 1))
 
 const DEFAULT_STATE = {
   v: 2,
@@ -44,13 +43,6 @@ const LEVEL_LABELS = ['HULL', 'DECK 2', 'DECK 3', 'DECK 4', 'DECK 5', 'DECK 6']
 // Windows default location for in-game .wbt trampler saves (shown in the Load modal).
 const SAVE_PATH = '%AppData%\\..\\LocalLow\\Hologryph\\Sand\\Data\\Walkers\\'
 
-// Build-cost rows, in wiki order. Icons are served same-origin from /icons.
-const COST_ROWS = [
-  ['crowns', 'Crowns', '/icons/icon_item_coinCrown.png'],
-  ['mechanical', 'Mechanical Parts', '/icons/icon_item_resourceMetal_t1.png'],
-  ['pneumatic', 'Pneumatic Parts', '/icons/icon_item_resourceMetal_t2.png'],
-  ['computing', 'Computing Module', '/icons/icon_item_resourceMetal_t3.png'],
-]
 
 function thumbOf(partId) {
   const t = thumbsV2[partId]
@@ -173,20 +165,9 @@ export default function BuilderV2() {
   const occ = useMemo(() => buildOccupancy(state), [state])
   const man = useMemo(() => manifest(state), [state])
   const paths = useMemo(() => checkPaths(state), [state])
-  // Total build cost: the chassis plus each placed part's wiki cost (crowns + resources).
-  const cost = useMemo(() => {
-    const t = { crowns: 0, mechanical: 0, pneumatic: 0, computing: 0 }
-    const add = (id, n) => {
-      const c = partCosts[id]
-      if (c) for (const k in t) if (c[k]) t[k] += c[k] * n
-    }
-    add(state.chassisId, 1)
-    for (const r of man.rows) add(r.part.id, r.n)
-    // Source crowns from the shared helper so gallery cards and the cost panel
-    // can never drift; resource rows stay computed here.
-    t.crowns = buildSummary(state).crowns
-    return t
-  }, [man, state])
+  // Total build cost (crowns + the three resources), via the shared helper so
+  // the gallery cards and this panel can never drift.
+  const cost = useMemo(() => costBreakdown(state), [state])
 
   // ---------- actions ----------
   function flash(msg) {
@@ -498,21 +479,16 @@ export default function BuilderV2() {
                         <div key={p.id} className="tb-part-row">
                           <button
                             type="button"
-                            className={`tb-part ${activePart === p.id ? 'active' : ''} ${p.enabled === false ? 'disabled' : ''}`}
+                            className={`tb-part ${activePart === p.id ? 'active' : ''}`}
                             onClick={() => {
                               setActivePart(activePart === p.id ? null : p.id)
                               setActiveRot(0)
                               setSelectedId(null)
                             }}
-                            title={p.enabled === false
-                              ? `${p.name} — not yet enabled in the game\n\n${p.desc ?? ''}`
-                              : (p.desc ? `${p.name}\n\n${p.desc}` : p.id)}
+                            title={p.desc ? `${p.name}\n\n${p.desc}` : p.id}
                           >
                             <span className="tb-part-icon"><Thumb partId={p.id} /></span>
-                            <span className="tb-part-name">
-                              {p.name}
-                              {p.enabled === false && <span className="tb-part-tag">NOT IN GAME</span>}
-                            </span>
+                            <span className="tb-part-name">{p.name}</span>
                             <span className="tb-part-size">
                               {p.bounds[0]}×{p.bounds[2]}{p.bounds[1] > 1 ? `·${p.bounds[1]}h` : ''}
                               {p.mirror ? ' ⇋' : ''}

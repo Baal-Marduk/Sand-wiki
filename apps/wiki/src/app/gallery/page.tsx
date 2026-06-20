@@ -1,5 +1,5 @@
 import { listDesigns } from "@/lib/designs";
-import { getSession } from "@/lib/auth";
+import { getSession, sessionIsAdmin } from "@/lib/auth";
 import { GalleryClient } from "@/components/gallery/GalleryClient";
 import "@/components/gallery/gallery.css";
 
@@ -20,6 +20,7 @@ export default async function GalleryPage({
   const raw = Array.isArray(sp.view) ? sp.view[0] : sp.view;
   const session = await getSession();
   const signedIn = !!session;
+  const admin = await sessionIsAdmin();
   // ?view=mine deep-link selects the "My designs" tab (only honoured when signed in).
   const initialView = raw === "mine" && signedIn ? "mine" : "community";
   const initial = await listDesigns({
@@ -32,6 +33,7 @@ export default async function GalleryPage({
     <GalleryClient
       initial={initial}
       signedIn={signedIn}
+      admin={admin}
       initialView={initialView}
     />
   );
