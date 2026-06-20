@@ -54,7 +54,8 @@ docker-compose.override.yml
 /directus/uploads
 
 # gallery thumbnail uploads (dev default THUMBS_DIR; written at publish)
-uploads/
+# anchored so it only ignores apps/wiki/uploads/, not src/app/api/uploads/ route source
+/uploads/
 
 # datamine loot chain: game files + intermediate extracts are large/local-only
 /datamine/gamefiles/
