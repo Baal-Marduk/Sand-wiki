@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/db";
 import { decodeShare, buildSummary } from "@/components/builder/builderCore.js";
-import { writeThumb, thumbFileName, deleteThumb } from "@/lib/thumbs";
+import { dataUrlToWebpBuffer } from "@/lib/thumbs";
 
 const SUFFIX = "abcdefghjkmnpqrstuvwxyz23456789"; // no ambiguous chars (0 o 1 l i)
 
@@ -71,10 +71,18 @@ export async function createDesign(opts: {
   const { state, summary } = validateBuildCode(opts.buildCode);
   const name = (opts.name || "Untitled Rig").slice(0, 80);
   const slug = makeSlug(name);
-  // Write the thumbnail BEFORE create so a write failure aborts the publish.
+  // Decode the thumbnail to bytes (throws on bad input, aborting the publish).
+  // Stored in-DB; thumbPath is the public serve URL the gallery <img> points at.
+  let thumbnail: Uint8Array<ArrayBuffer> | null = null;
   let thumbPath: string | null = null;
   if (opts.thumbnailDataUrl) {
-    thumbPath = await writeThumb(slug, opts.thumbnailDataUrl);
+    // Prisma's Bytes input wants Uint8Array<ArrayBuffer>; a Node Buffer is backed
+    // by ArrayBufferLike, so copy into a fresh plain-ArrayBuffer-backed array.
+    const buf = dataUrlToWebpBuffer(opts.thumbnailDataUrl);
+    const bytes = new Uint8Array(buf.byteLength);
+    bytes.set(buf);
+    thumbnail = bytes;
+    thumbPath = `/api/designs/${slug}/thumb`;
   }
   return prisma.design.create({
     data: {
@@ -87,6 +95,7 @@ export async function createDesign(opts: {
       crowns: summary.crowns,
       hull: summary.hull,
       thumbPath,
+      thumbnail,
       status: "published",
       likeCount: 0,
     },
@@ -114,7 +123,22 @@ export async function listDesigns(opts: {
     orderBy,
     take: PAGE + 1,
     ...(opts.cursor ? { cursor: { id: opts.cursor }, skip: 1 } : {}),
-    include: { author: { select: { personaName: true } } },
+    // Explicit select — never pull the `thumbnail` bytes (or buildCode) into a
+    // list query; the grid only needs the thumbPath URL.
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      chassisId: true,
+      partCount: true,
+      crowns: true,
+      hull: true,
+      thumbPath: true,
+      likeCount: true,
+      createdAt: true,
+      status: true,
+      author: { select: { personaName: true } },
+    },
   });
   const nextCursor = rows.length > PAGE ? rows[PAGE].id : null;
   const items: DesignListItem[] = rows.slice(0, PAGE).map((d) => ({
@@ -134,9 +158,25 @@ export async function listDesigns(opts: {
 }
 
 export async function getDesign(slug: string) {
+  // Explicit select so the (large) `thumbnail` bytes are never loaded for the
+  // detail page / ownership checks — the thumbnail is served by its own route.
   return prisma.design.findUnique({
     where: { slug },
-    include: {
+    select: {
+      id: true,
+      slug: true,
+      name: true,
+      buildCode: true,
+      chassisId: true,
+      partCount: true,
+      crowns: true,
+      hull: true,
+      thumbPath: true,
+      status: true,
+      likeCount: true,
+      createdAt: true,
+      updatedAt: true,
+      authorId: true,
       author: { select: { steamId: true, personaName: true, avatar: true } },
     },
   });
@@ -211,14 +251,10 @@ export async function setDesignStatus(
 }
 
 export async function deleteDesign(slug: string): Promise<void> {
-  const d = await prisma.design.findUnique({
-    where: { slug },
-    select: { thumbPath: true },
-  });
+  const d = await prisma.design.findUnique({ where: { slug }, select: { id: true } });
   if (!d) return; // already gone — no-op rather than throwing P2025
+  // Deleting the row drops the in-DB thumbnail bytes with it; no file cleanup needed.
   await prisma.design.delete({ where: { slug } });
-  // Best-effort thumbnail cleanup (deleteThumb swallows missing files / unsafe names).
-  if (d?.thumbPath) await deleteThumb(thumbFileName(slug));
 }
 
 export async function hasLiked(slug: string, userId: string): Promise<boolean> {

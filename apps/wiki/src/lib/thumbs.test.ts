@@ -1,20 +1,8 @@
 import { describe, it, expect } from "vitest";
-import { thumbFileName, isSafeThumbName, dataUrlToWebpBuffer } from "@/lib/thumbs";
+import { dataUrlToWebpBuffer } from "@/lib/thumbs";
 
-describe("thumbs helpers", () => {
-  it("builds a .webp filename from a slug", () => {
-    expect(thumbFileName("dustline-hauler-a1b2")).toBe("dustline-hauler-a1b2.webp");
-  });
-
-  it("accepts only safe webp filenames", () => {
-    expect(isSafeThumbName("abc-123.webp")).toBe(true);
-    expect(isSafeThumbName("../../etc/passwd")).toBe(false);
-    expect(isSafeThumbName("a/b.webp")).toBe(false);
-    expect(isSafeThumbName("a.png")).toBe(false);
-  });
-
+describe("dataUrlToWebpBuffer", () => {
   it("decodes a webp data URL to a Buffer", () => {
-    // 1x1 webp is fine; just assert it round-trips the base64 payload.
     const b64 = Buffer.from("hello").toString("base64");
     const buf = dataUrlToWebpBuffer(`data:image/webp;base64,${b64}`);
     expect(buf.toString()).toBe("hello");
@@ -22,5 +10,11 @@ describe("thumbs helpers", () => {
 
   it("rejects non-webp data URLs", () => {
     expect(() => dataUrlToWebpBuffer("data:image/png;base64,AAAA")).toThrow();
+  });
+
+  it("rejects oversized thumbnails", () => {
+    // 500KB of base64 'A' decodes to ~375KB... build one safely over the 400KB cap.
+    const big = "A".repeat(600_000); // ~450KB decoded, over the 400KB cap
+    expect(() => dataUrlToWebpBuffer(`data:image/webp;base64,${big}`)).toThrow(/too large/);
   });
 });
