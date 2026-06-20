@@ -13,8 +13,8 @@ export async function POST(_req: NextRequest, { params }: Ctx) {
   try {
     const likeCount = await likeDesign(slug, session.steamId);
     return NextResponse.json({ liked: true, likeCount });
-  } catch {
-    return NextResponse.json({ error: "not found" }, { status: 404 });
+  } catch (e) {
+    return errorResponse(e);
   }
 }
 
@@ -25,7 +25,15 @@ export async function DELETE(_req: NextRequest, { params }: Ctx) {
   try {
     const likeCount = await unlikeDesign(slug, session.steamId);
     return NextResponse.json({ liked: false, likeCount });
-  } catch {
-    return NextResponse.json({ error: "not found" }, { status: 404 });
+  } catch (e) {
+    return errorResponse(e);
   }
+}
+
+// "not found" is the only client-facing error the design lib throws; anything
+// else (DB/transaction failure) is a genuine 500 and must not masquerade as 404.
+function errorResponse(e: unknown) {
+  const msg = e instanceof Error ? e.message : "";
+  if (msg === "not found") return NextResponse.json({ error: "not found" }, { status: 404 });
+  return NextResponse.json({ error: "server error" }, { status: 500 });
 }

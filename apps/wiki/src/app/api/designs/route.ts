@@ -39,6 +39,14 @@ export async function POST(req: NextRequest) {
     });
     return NextResponse.json({ slug: design.slug }, { status: 201 });
   } catch (e) {
-    return NextResponse.json({ error: e instanceof Error ? e.message : "publish failed" }, { status: 400 });
+    const msg = e instanceof Error ? e.message : "publish failed";
+    // Client errors (bad build code / bad thumbnail) → 400; everything else
+    // (fs/DB failure) is a server error → 500, so ops can see real failures.
+    const isClientError =
+      msg.includes("SANDBP2") ||
+      msg.includes("placements") ||
+      msg.includes("base64") ||
+      msg.includes("thumbnail");
+    return NextResponse.json({ error: msg }, { status: isClientError ? 400 : 500 });
   }
 }

@@ -19,7 +19,9 @@ export async function PATCH(req: NextRequest, { params }: Ctx) {
   const session = await getSession();
   if (!session) return NextResponse.json({ error: "auth required" }, { status: 401 });
   const d = await getDesign(slug);
-  if (!d) return NextResponse.json({ error: "not found" }, { status: 404 });
+  // Hidden designs are treated as gone for everyone (matches GET) — an owner
+  // can't rename a design an admin has taken down.
+  if (!d || d.status === "hidden") return NextResponse.json({ error: "not found" }, { status: 404 });
   if (d.author.steamId !== session.steamId) return NextResponse.json({ error: "forbidden" }, { status: 403 });
   const body = (await req.json().catch(() => ({}))) as { name?: string };
   if (body.name) await prisma.design.update({ where: { slug }, data: { name: body.name.slice(0, 80) } });

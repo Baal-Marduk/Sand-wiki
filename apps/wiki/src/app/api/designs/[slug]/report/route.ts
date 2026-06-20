@@ -14,7 +14,10 @@ export async function POST(req: NextRequest, { params }: Ctx) {
   try {
     await reportDesign(slug, session.steamId, body.reason);
     return NextResponse.json({ ok: true });
-  } catch {
-    return NextResponse.json({ error: "not found" }, { status: 404 });
+  } catch (e) {
+    // Only a missing design is a 404; DB failures are genuine 500s.
+    const msg = e instanceof Error ? e.message : "";
+    if (msg === "not found") return NextResponse.json({ error: "not found" }, { status: 404 });
+    return NextResponse.json({ error: "server error" }, { status: 500 });
   }
 }

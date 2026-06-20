@@ -2,6 +2,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { readThumb } from "@/lib/thumbs";
 
+export const dynamic = "force-dynamic"; // filesystem-served; never statically analysed/exported
 type Ctx = { params: Promise<{ file: string }> };
 
 export async function GET(_req: NextRequest, { params }: Ctx) {
