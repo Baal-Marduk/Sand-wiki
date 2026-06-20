@@ -138,8 +138,8 @@ export function SearchBox({ variant }: { variant: "navbar" | "hero" }) {
   }));
 
   const inputCls = isHero
-    ? "peer w-full border border-border-strong bg-background py-3 pl-10 pr-3 text-[15px] text-foreground placeholder:text-dim transition-colors hover:border-primary focus:border-primary focus:bg-card focus:outline-none"
-    : "peer w-44 border border-border-strong bg-background py-1.5 pl-9 pr-3 text-sm text-foreground placeholder:text-dim transition-colors hover:border-primary focus:border-primary focus:bg-card focus:outline-none sm:w-56";
+    ? "peer w-full border border-border-strong bg-background py-3 pl-10 pr-3 text-[15px] text-foreground placeholder:text-dim transition-[color,background-color,border-color] duration-200 ease-out hover:border-primary focus:border-primary focus:bg-card focus:outline-none"
+    : "peer w-44 border border-border-strong bg-background py-1.5 pl-9 pr-3 text-sm text-foreground placeholder:text-dim transition-[color,background-color,border-color] duration-200 ease-out hover:border-primary focus:border-primary focus:bg-card focus:outline-none sm:w-56";
 
   const panelCls = `absolute top-full z-30 mt-1.5 min-w-[18rem] border border-border-strong bg-card-elevated p-1.5 shadow-[0_16px_40px_-10px_rgba(0,0,0,0.7)] ${
     isHero ? "left-0 w-full" : "right-0"
@@ -164,7 +164,7 @@ export function SearchBox({ variant }: { variant: "navbar" | "hero" }) {
       />
       <span
         aria-hidden="true"
-        className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-dim peer-focus:text-primary ${
+        className={`pointer-events-none absolute top-1/2 -translate-y-1/2 text-dim transition-colors duration-200 ease-out peer-focus:text-primary ${
           isHero ? "left-3.5 text-lg" : "left-3 text-sm"
         }`}
       >

@@ -25,6 +25,8 @@ interface Tool {
   cta: string;
   /** Tailwind text color class for the kicker dot, glyph stroke and CTA. */
   accent: string;
+  /** Tailwind hover box-shadow class — a soft accent-tinted halo on lift. */
+  halo: string;
   glyph: React.ReactNode;
   stats: { value: string; label: string }[];
 }
@@ -33,7 +35,7 @@ function ToolCard({ tool }: { tool: Tool }) {
   return (
     <Link
       href={tool.href}
-      className="group relative flex flex-col overflow-hidden border border-border p-7 transition-[border-color,transform] duration-150 hover:-translate-y-0.5 hover:border-primary"
+      className={`group relative flex flex-col overflow-hidden border border-border p-7 transition-[border-color,transform,box-shadow] duration-200 ease-out hover:-translate-y-0.5 hover:border-primary ${tool.halo}`}
       style={{ background: cardBackground }}
     >
       <div aria-hidden className="pointer-events-none absolute inset-0 opacity-50" style={cardGrid} />
@@ -86,6 +88,7 @@ export function HomeToolsCallout({ techNodes, factions, tramplerParts }: HomeToo
       desc: "Explore every research node, trace prerequisites and unlocks, and track your progress across factions.",
       cta: "Open tech tree",
       accent: "text-primary",
+      halo: "hover:shadow-[0_16px_44px_-20px_rgba(232,137,59,0.55)]",
       stats: [
         { value: String(techNodes), label: "nodes" },
         { value: String(factions), label: "factions" },
@@ -109,6 +112,7 @@ export function HomeToolsCallout({ techNodes, factions, tramplerParts }: HomeToo
       desc: "Assemble your trampler from datamined parts, weigh stats and energy, and preview the loadout before you commit.",
       cta: "Open builder",
       accent: "text-accent",
+      halo: "hover:shadow-[0_16px_44px_-20px_rgba(201,162,75,0.5)]",
       stats: [
         { value: String(tramplerParts), label: "parts" },
         { value: "Live", label: "stats" },

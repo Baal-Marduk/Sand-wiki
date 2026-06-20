@@ -111,12 +111,16 @@
 }
 
 /* ── App-wide hover/focus affordances ────────────────────────────────────────
- * Consistent, motion-free treatment (color / background / brightness only) for
- * the interactive surfaces that rely on a shared rule rather than per-element
- * Tailwind hover classes. Every :hover pairs with :focus-visible for keyboard
- * parity. Colors come from the shadcn token layer above. */
-a, .nav-link, .row-link, .item-sprite {
-  transition: color 0.12s, background-color 0.12s, border-color 0.12s, filter 0.12s, opacity 0.12s;
+ * Consistent, eased treatment for the interactive surfaces that rely on a shared
+ * rule rather than per-element Tailwind hover classes. The shared transition also
+ * covers transform / box-shadow so lifts and accent halos (e.g. the home tool
+ * cards) ease in smoothly instead of snapping. Every :hover pairs with
+ * :focus-visible for keyboard parity. Colors come from the shadcn token layer. */
+a, button, input, select, textarea, summary,
+[role="button"], [role="option"], [role="tab"],
+.nav-link, .row-link, .item-sprite {
+  transition: color 0.2s ease-out, background-color 0.2s ease-out, border-color 0.2s ease-out,
+    filter 0.2s ease-out, opacity 0.2s ease-out, transform 0.2s ease-out, box-shadow 0.2s ease-out;
 }
 .nav-link:hover, .nav-link:focus-visible { color: var(--primary); }
 .row-link:hover, .row-link:focus-visible { background-color: var(--card-elevated); }
