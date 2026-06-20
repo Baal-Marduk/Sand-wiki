@@ -15,7 +15,7 @@ import partTech from './data/part_tech.json'
 import partIcons from './data/part_icons.json'
 import { asset } from './data.js'
 import {
-  PARTS, ALL_PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
+  PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
   CAT_COLOR, CATEGORY_ORDER, buildOccupancy, validate, manifest,
   encodeShare, decodeShare, editableSockets, checkPaths,
   costBreakdown, COST_ROWS,
@@ -27,10 +27,9 @@ const STORE_KEY = 'sand_blueprint_v2'
 // The /tech page persists the user's unlocked nodes here (JSON array of node slugs).
 const TECH_KEY = 'sand_techtree_unlocked_v1'
 const chassisList = PARTS.filter((p) => p.category === 'Chassis')
-// Locker lists every part incl. game-disabled ones (shown marked), enabled first.
-const lockerParts = ALL_PARTS
+// Locker lists only parts enabled in the game (chassis + mirror variants excluded).
+const lockerParts = PARTS
   .filter((p) => p.category !== 'Chassis' && !p.id.endsWith('_mirror'))
-  .sort((a, b) => (a.enabled === b.enabled ? 0 : a.enabled ? -1 : 1))
 
 const DEFAULT_STATE = {
   v: 2,
@@ -480,21 +479,16 @@ export default function BuilderV2() {
                         <div key={p.id} className="tb-part-row">
                           <button
                             type="button"
-                            className={`tb-part ${activePart === p.id ? 'active' : ''} ${p.enabled === false ? 'disabled' : ''}`}
+                            className={`tb-part ${activePart === p.id ? 'active' : ''}`}
                             onClick={() => {
                               setActivePart(activePart === p.id ? null : p.id)
                               setActiveRot(0)
                               setSelectedId(null)
                             }}
-                            title={p.enabled === false
-                              ? `${p.name} — not yet enabled in the game\n\n${p.desc ?? ''}`
-                              : (p.desc ? `${p.name}\n\n${p.desc}` : p.id)}
+                            title={p.desc ? `${p.name}\n\n${p.desc}` : p.id}
                           >
                             <span className="tb-part-icon"><Thumb partId={p.id} /></span>
-                            <span className="tb-part-name">
-                              {p.name}
-                              {p.enabled === false && <span className="tb-part-tag">NOT IN GAME</span>}
-                            </span>
+                            <span className="tb-part-name">{p.name}</span>
                             <span className="tb-part-size">
                               {p.bounds[0]}×{p.bounds[2]}{p.bounds[1] > 1 ? `·${p.bounds[1]}h` : ''}
                               {p.mirror ? ' ⇋' : ''}
