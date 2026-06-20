@@ -28,6 +28,11 @@ export async function AuthMenu() {
         </summary>
         <ul className="absolute right-0 z-30 mt-2 min-w-40 border border-border-strong bg-card-elevated p-1.5 shadow-[0_12px_32px_-8px_rgba(0,0,0,0.6)]">
           <li>
+            <a href="/gallery?view=mine" className="flex w-full items-center gap-2 px-3 py-2 text-left text-sm text-foreground transition-colors hover:bg-card hover:text-primary-hover">
+              My designs
+            </a>
+          </li>
+          <li>
             <form action="/api/auth/steam/logout" method="post">
               <button
                 type="submit"

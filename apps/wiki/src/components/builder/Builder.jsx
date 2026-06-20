@@ -4,8 +4,11 @@
 import './builder.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ToolNavBrand } from '@/components/ToolNavBrand'
+import { AuthMenuClient } from '@/components/AuthMenuClient'
+import { ToolNav } from '@/components/ToolNav'
 import { Button, actionButtonClass } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { SteamGateModal } from '@/components/SteamGateModal'
 import BuilderScene from './BuilderScene.jsx'
 import thumbsV2 from './data/part_thumbs_v2.json'
 import partCosts from './data/part_costs.json'
@@ -15,7 +18,7 @@ import { asset } from './data.js'
 import {
   PARTS, ALL_PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
   CAT_COLOR, CATEGORY_ORDER, buildOccupancy, validate, manifest,
-  encodeShare, decodeShare, editableSockets, checkPaths,
+  encodeShare, decodeShare, editableSockets, checkPaths, buildSummary,
 } from './builderCore.js'
 import { decodeWbt, wbtToState } from './wbtImport.js'
 import { submitBuild } from './galleryApi.js'
@@ -110,19 +113,34 @@ export default function BuilderV2() {
   const [shareText, setShareText] = useState('')
   const [pubOpen, setPubOpen] = useState(false)
   const [clearOpen, setClearOpen] = useState(false)
-  const [pub, setPub] = useState({ name: '', author: '', description: '' })
+  const [pub, setPub] = useState({ name: '' })
+  const [pubThumb, setPubThumb] = useState(null)
   const [pubBusy, setPubBusy] = useState(false)
+  const [signedIn, setSignedIn] = useState(false)
+  const [gateOpen, setGateOpen] = useState(false)
   const idRef = useRef(Date.now() % 1e7)
   const moveBackup = useRef(null)
+  const captureRef = useRef(null)
 
   useEffect(() => {
     localStorage.setItem(STORE_KEY, JSON.stringify(state))
   }, [state])
 
+  // Auth state for gating the Publish flow behind Steam sign-in (same source as
+  // AuthMenuClient). Signed-out users get the SteamGateModal instead of the dialog.
+  useEffect(() => {
+    let alive = true
+    fetch('/api/auth/me', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((d) => { if (alive) setSignedIn(!!d.user) })
+      .catch(() => {})
+    return () => { alive = false }
+  }, [])
+
   // Close any open modal on Escape (UI only — placement Esc is handled separately).
   useEffect(() => {
     function onKey(e) {
-      if (e.key === 'Escape') { setShareOpen(false); setImportOpen(false); setLoadOpen(false); setPubOpen(false) }
+      if (e.key === 'Escape') { setShareOpen(false); setImportOpen(false); setLoadOpen(false); setPubOpen(false); setPubThumb(null) }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -164,8 +182,11 @@ export default function BuilderV2() {
     }
     add(state.chassisId, 1)
     for (const r of man.rows) add(r.part.id, r.n)
+    // Source crowns from the shared helper so gallery cards and the cost panel
+    // can never drift; resource rows stay computed here.
+    t.crowns = buildSummary(state).crowns
     return t
-  }, [man, state.chassisId])
+  }, [man, state])
 
   // ---------- actions ----------
   function flash(msg) {
@@ -371,7 +392,7 @@ export default function BuilderV2() {
       flash('not a valid SANDBP2 code')
     }
   }
-  // publish current build to the community gallery (lands pending moderation)
+  // publish current build to the community gallery (goes live immediately; reportable)
   async function doPublish() {
     const name = (pub.name || state.name || '').trim()
     if (!name) { flash('give your build a name first'); return }
@@ -379,15 +400,13 @@ export default function BuilderV2() {
     try {
       await submitBuild({
         name,
-        author: pub.author,
-        description: pub.description,
-        shareCode: encodeShare(state),
-        chassisId: state.chassisId,
-        partCount: state.placements.length,
+        buildCode: encodeShare(state),
+        thumbnail: pubThumb ?? undefined,
       })
       setPubOpen(false)
-      setPub({ name: '', author: '', description: '' })
-      flash('submitted! it’ll appear in the gallery once approved')
+      setPub({ name: '' })
+      setPubThumb(null)
+      flash('Published — view it in the gallery')
     } catch (e) {
       flash(`publish failed — ${e.message || 'try again'}`)
     } finally {
@@ -419,6 +438,7 @@ export default function BuilderV2() {
       {/* ===== top bar ===== */}
       <header className="tb-appbar">
         <ToolNavBrand title="Trampler Builder" />
+        <ToolNav active="builder" />
         <span className="spacer" />
         <button type="button" className={actionButtonClass} onClick={doExport}>Share code</button>
         <button type="button" className={actionButtonClass} onClick={() => { setShareText(''); setImportOpen(true) }}>Import</button>
@@ -427,6 +447,7 @@ export default function BuilderV2() {
         </button>
         <span className="divider" />
         <button type="button" className={actionButtonClass} onClick={() => setClearOpen(true)}>✕ Clear</button>
+        <AuthMenuClient />
       </header>
 
       <div className="tb-body">
@@ -531,6 +552,7 @@ export default function BuilderV2() {
             onMove={movePlacement}
             onHoverInfo={setHoverInfo}
             onSocketToggle={toggleSocket}
+            captureRef={captureRef}
           />
 
           {/* hull level rail */}
@@ -653,7 +675,12 @@ export default function BuilderV2() {
               <Button
                 size="sm"
                 className="tb-publish"
-                onClick={() => { setPub((p) => ({ ...p, name: p.name || state.name })); setPubOpen(true) }}
+                onClick={() => {
+                  if (!signedIn) { setGateOpen(true); return }
+                  setPub((p) => ({ ...p, name: p.name || state.name }))
+                  setPubThumb(captureRef.current ? captureRef.current() : null)
+                  setPubOpen(true)
+                }}
               >
                 ★ Publish to gallery
               </Button>
@@ -735,23 +762,29 @@ export default function BuilderV2() {
 
       {pubOpen && (
         <Modal
-          title="Publish to gallery" icon="★" onClose={() => setPubOpen(false)}
+          title="Publish to gallery" icon="★" onClose={() => { setPubOpen(false); setPubThumb(null) }}
           footer={<>
-            <Button variant="ghost" size="sm" onClick={() => setPubOpen(false)}>Cancel</Button>
+            <Button variant="ghost" size="sm" onClick={() => { setPubOpen(false); setPubThumb(null) }}>Cancel</Button>
             <Button size="sm" disabled={pubBusy} onClick={doPublish}>{pubBusy ? 'Submitting…' : 'Submit'}</Button>
           </>}
         >
-          <p>Share your build with the community. Submissions are reviewed before appearing in the gallery.</p>
+          <p>Share your build with the community. It goes live in the gallery right away — you can edit or remove it any time.</p>
+          {pubThumb && (
+            <img
+              src={pubThumb}
+              alt="Build preview"
+              className="tb-pub-thumb"
+              style={{ width: '100%', maxHeight: 200, objectFit: 'contain', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm, 4px)' }}
+            />
+          )}
           <div className="tb-pub-fields">
             <input className="tb-input" placeholder="build name" value={pub.name}
               onChange={(e) => setPub({ ...pub, name: e.target.value })} />
-            <input className="tb-input" placeholder="your name (optional)" value={pub.author}
-              onChange={(e) => setPub({ ...pub, author: e.target.value })} />
-            <textarea className="tb-input" placeholder="description (optional)" rows={3} value={pub.description}
-              onChange={(e) => setPub({ ...pub, description: e.target.value })} />
           </div>
         </Modal>
       )}
+
+      <SteamGateModal open={gateOpen} onClose={() => setGateOpen(false)} returnTo="/builder" />
 
       <ConfirmDialog
         open={clearOpen}

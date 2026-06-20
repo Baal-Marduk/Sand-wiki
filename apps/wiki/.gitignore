@@ -53,6 +53,10 @@ docker-compose.override.yml
 # Directus runtime uploads (mirrored sprites; recreated by prisma/sync-directus-icons.mjs)
 /directus/uploads
 
+# gallery thumbnail uploads (dev default THUMBS_DIR; written at publish)
+# anchored so it only ignores apps/wiki/uploads/, not src/app/api/uploads/ route source
+/uploads/
+
 # datamine loot chain: game files + intermediate extracts are large/local-only
 /datamine/gamefiles/
 /datamine/extracted/*
