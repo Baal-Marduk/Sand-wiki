@@ -302,3 +302,28 @@ export function buildSummary(state) {
 
   return { chassisLabel, partCount: man.total, crowns, hull, crew: man.crew }
 }
+
+// ---- full build cost (shared by the builder cost panel and gallery cards) ----
+// Chassis + every placed part's wiki cost, summed per resource. Pure: derived
+// only from the build state so it can run on the server or in the gallery client.
+export function costBreakdown(state) {
+  const man = manifest(state)
+  const t = { crowns: 0, mechanical: 0, pneumatic: 0, computing: 0 }
+  const add = (partId, n) => {
+    const c = partCosts[partId]
+    if (c) for (const k in t) if (typeof c[k] === 'number') t[k] += c[k] * n
+  }
+  add(state.chassisId, 1)
+  for (const row of man.rows) add(row.part.id, row.n)
+  return t
+}
+
+// Build-cost rows in wiki order: [key, label, iconPath]. Icons are served
+// same-origin from /icons. Shared so the builder panel and gallery cards
+// can never drift in which resources they show or which icon represents each.
+export const COST_ROWS = [
+  ['crowns', 'Crowns', '/icons/icon_item_coinCrown.png'],
+  ['mechanical', 'Mechanical Parts', '/icons/icon_item_resourceMetal_t1.png'],
+  ['pneumatic', 'Pneumatic Parts', '/icons/icon_item_resourceMetal_t2.png'],
+  ['computing', 'Computing Module', '/icons/icon_item_resourceMetal_t3.png'],
+]
