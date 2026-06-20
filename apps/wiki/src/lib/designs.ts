@@ -2,7 +2,7 @@ import { prisma } from "@/lib/db";
 import { decodeShare, buildSummary } from "@/components/builder/builderCore.js";
 import { writeThumb, thumbFileName, deleteThumb } from "@/lib/thumbs";
 
-const SUFFIX = "abcdefghijkmnpqrstuvwxyz23456789"; // no ambiguous chars (0/o, 1/l/i)
+const SUFFIX = "abcdefghjkmnpqrstuvwxyz23456789"; // no ambiguous chars (0 o 1 l i)
 
 export function slugifyName(name: string): string {
   const s = name
@@ -201,6 +201,7 @@ export async function deleteDesign(slug: string): Promise<void> {
     where: { slug },
     select: { thumbPath: true },
   });
+  if (!d) return; // already gone — no-op rather than throwing P2025
   await prisma.design.delete({ where: { slug } });
   // Best-effort thumbnail cleanup (deleteThumb swallows missing files / unsafe names).
   if (d?.thumbPath) await deleteThumb(thumbFileName(slug));
