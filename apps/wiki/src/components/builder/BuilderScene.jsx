@@ -40,11 +40,16 @@ function loadGeometry(partId, onReady) {
     .then((r) => r.arrayBuffer())
     .then((buf) => {
       const t = meta.t
+      // Build typed arrays from sliced copies, not views over `buf`. A Float32Array
+      // view needs a 4-byte-aligned byte offset, but the UV block starts at t*45,
+      // which is only aligned when t % 4 === 0 — otherwise the view throws and the
+      // part falls back to a grey box (this silently broke ~60 of 126 parts). Slicing
+      // copies into a fresh, aligned buffer so every part parses.
       let off = 0
-      const pos = new Float32Array(buf, off, t * 9); off += t * 36
-      const nrmQ = new Int8Array(buf, off, t * 9); off += t * 9
-      const uv = new Float32Array(buf, off, t * 6); off += t * 24
-      const slot = new Uint8Array(buf, off, t); off += t
+      const pos = new Float32Array(buf.slice(off, off + t * 36)); off += t * 36
+      const nrmQ = new Int8Array(buf.slice(off, off + t * 9)); off += t * 9
+      const uv = new Float32Array(buf.slice(off, off + t * 24)); off += t * 24
+      const slot = new Uint8Array(buf.slice(off, off + t)); off += t
       const nrm = new Float32Array(t * 9)
       for (let i = 0; i < t * 9; i++) nrm[i] = nrmQ[i] / 127
 
@@ -366,6 +371,40 @@ export default function BuilderScene({
     el.addEventListener('wheel', onWheel, { passive: false })
     el.addEventListener('contextmenu', (e) => e.preventDefault())
 
+    // ---- WASD / arrow-key camera panning (smooth while held) ----
+    // Pans st.target across the ground plane, same basis as the RMB drag-pan.
+    const PAN_KEYS = {
+      w: [0, 1], s: [0, -1], a: [-1, 0], d: [1, 0],
+      arrowup: [0, 1], arrowdown: [0, -1], arrowleft: [-1, 0], arrowright: [1, 0],
+    }
+    const moveKeys = new Set()
+    const panStep = () => {
+      st.panRaf = 0
+      let mx = 0, mz = 0
+      for (const k of moveKeys) { const v = PAN_KEYS[k]; if (v) { mx += v[0]; mz += v[1] } }
+      if (!mx && !mz) return
+      const k = st.dist * 0.02
+      const fwd = new THREE.Vector3().subVectors(st.target, camera.position).setY(0).normalize()
+      const right = new THREE.Vector3(-fwd.z, 0, fwd.x)
+      st.target.addScaledVector(right, mx * k)
+      st.target.addScaledVector(fwd, mz * k)
+      render()
+      st.panRaf = requestAnimationFrame(panStep)
+    }
+    const onPanKeyDown = (e) => {
+      if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+      const k = e.key.toLowerCase()
+      if (!(k in PAN_KEYS)) return
+      e.preventDefault() // arrows would otherwise scroll the page
+      if (!moveKeys.has(k)) {
+        moveKeys.add(k)
+        if (!st.panRaf) st.panRaf = requestAnimationFrame(panStep)
+      }
+    }
+    const onPanKeyUp = (e) => { moveKeys.delete(e.key.toLowerCase()) }
+    window.addEventListener('keydown', onPanKeyDown)
+    window.addEventListener('keyup', onPanKeyUp)
+
     const onResize = () => {
       const w = mount.clientWidth
       const h = mount.clientHeight
@@ -417,6 +456,9 @@ export default function BuilderScene({
       window.removeEventListener('pointerup', onUp)
       el.removeEventListener('wheel', onWheel)
       window.removeEventListener('resize', onResize)
+      window.removeEventListener('keydown', onPanKeyDown)
+      window.removeEventListener('keyup', onPanKeyUp)
+      if (st.panRaf) cancelAnimationFrame(st.panRaf)
       renderer.dispose()
       mount.removeChild(el)
     }
@@ -554,7 +596,7 @@ export default function BuilderScene({
   return (
     <div ref={mountRef} className="bv2-canvas">
       <div className="bv2-hud">
-        LMB drag = orbit · RMB = pan · scroll = zoom · click part = select · R = rotate · Del = remove
+        LMB drag = orbit · RMB / WASD / arrows = move · scroll = zoom · click = select · R = rotate · C = copy · X / Del = remove
       </div>
     </div>
   )

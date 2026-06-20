@@ -3,20 +3,26 @@
 // Truth source: the game's CompartmentsDatabase (cells/sockets/limits), real meshes.
 import './builder.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
+import Link from 'next/link'
+import { actionButtonClass } from '@/components/ui/button'
 import BuilderScene from './BuilderScene.jsx'
 import thumbsV2 from './data/part_thumbs_v2.json'
+import partCosts from './data/part_costs.json'
 import { asset } from './data.js'
 import {
-  PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
+  PARTS, ALL_PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
   CAT_COLOR, CATEGORY_ORDER, buildOccupancy, validate, manifest,
-  encodeShare, decodeShare, editableSockets,
+  encodeShare, decodeShare, editableSockets, checkPaths,
 } from './builderCore.js'
 import { decodeWbt, wbtToState } from './wbtImport.js'
 import { submitBuild } from './galleryApi.js'
 
 const STORE_KEY = 'sand_blueprint_v2'
 const chassisList = PARTS.filter((p) => p.category === 'Chassis')
-const lockerParts = PARTS.filter((p) => p.category !== 'Chassis' && !p.id.endsWith('_mirror'))
+// Locker lists every part incl. game-disabled ones (shown marked), enabled first.
+const lockerParts = ALL_PARTS
+  .filter((p) => p.category !== 'Chassis' && !p.id.endsWith('_mirror'))
+  .sort((a, b) => (a.enabled === b.enabled ? 0 : a.enabled ? -1 : 1))
 
 const DEFAULT_STATE = {
   v: 2,
@@ -26,6 +32,14 @@ const DEFAULT_STATE = {
 }
 
 const LEVEL_LABELS = ['HULL', 'DECK 2', 'DECK 3', 'DECK 4', 'DECK 5', 'DECK 6']
+
+// Build-cost rows, in wiki order. Icons are served same-origin from /icons.
+const COST_ROWS = [
+  ['crowns', 'Crowns', '/icons/icon_item_coinCrown.png'],
+  ['mechanical', 'Mechanical Parts', '/icons/icon_item_resourceMetal_t1.png'],
+  ['pneumatic', 'Pneumatic Parts', '/icons/icon_item_resourceMetal_t2.png'],
+  ['computing', 'Computing Module', '/icons/icon_item_resourceMetal_t3.png'],
+]
 
 function thumbOf(partId) {
   const t = thumbsV2[partId]
@@ -80,6 +94,18 @@ export default function BuilderV2() {
 
   const occ = useMemo(() => buildOccupancy(state), [state])
   const man = useMemo(() => manifest(state), [state])
+  const paths = useMemo(() => checkPaths(state), [state])
+  // Total build cost: the chassis plus each placed part's wiki cost (crowns + resources).
+  const cost = useMemo(() => {
+    const t = { crowns: 0, mechanical: 0, pneumatic: 0, computing: 0 }
+    const add = (id, n) => {
+      const c = partCosts[id]
+      if (c) for (const k in t) if (c[k]) t[k] += c[k] * n
+    }
+    add(state.chassisId, 1)
+    for (const r of man.rows) add(r.part.id, r.n)
+    return t
+  }, [man, state.chassisId])
 
   // ---------- actions ----------
   function flash(msg) {
@@ -188,6 +214,24 @@ export default function BuilderV2() {
     setSelectedId(null)
   }
 
+  // Copy = pick up a fresh copy of the selected part to place again (matches the
+  // in-game builder's C shortcut), reusing the normal place flow.
+  function copySelected() {
+    if (!selectedId) return
+    const pl = state.placements.find((p) => p.id === selectedId)
+    if (!pl) return
+    setActivePart(pl.partId)
+    setActiveRot(pl.rot)
+    setSelectedId(null)
+    flash('copied — click a cell to place')
+  }
+
+  // Clear the build (keeps the chosen chassis), wired from the top-bar toolbar.
+  function doClear() {
+    setState((s) => ({ ...DEFAULT_STATE, chassisId: s.chassisId }))
+    setSelectedId(null)
+  }
+
   function toggleSocket(plId, key) {
     setState((s) => ({
       ...s,
@@ -210,7 +254,8 @@ export default function BuilderV2() {
       keysDown.current.add(e.key)
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
       if (e.key === 'r' || e.key === 'R') rotate()
-      if (e.key === 'Delete' || e.key === 'Backspace') removeSelected()
+      if (e.key === 'Delete' || e.key === 'Backspace' || e.key === 'x' || e.key === 'X') removeSelected()
+      if (e.key === 'c' || e.key === 'C') copySelected()
       if (e.key === 'Escape') {
         setActivePart(null)
         setSelectedId(null)
@@ -304,6 +349,23 @@ export default function BuilderV2() {
   }
 
   return (
+    <div className="bld-app">
+      <header className="bld-appbar">
+        <Link
+          href="/"
+          aria-label="SAND HELP — home"
+          className="group font-display text-xl font-bold tracking-wide text-foreground transition-colors hover:text-primary focus-visible:text-primary"
+        >
+          SAND
+          <span aria-hidden="true" className="mx-0.5 text-primary transition-colors group-hover:text-foreground group-focus-visible:text-foreground">·</span>
+          HELP
+        </Link>
+        <span className="bld-page-title">Trampler Builder</span>
+        <div className="bld-toolbar">
+          <button type="button" className={actionButtonClass} onClick={doClear}>Clear</button>
+        </div>
+      </header>
+      <div className="bld-body">
     <div className="bv2">
       {/* ---- locker ---- */}
       <aside className="bv2-locker">
@@ -331,16 +393,21 @@ export default function BuilderV2() {
                   {items.map((p) => (
                     <button
                       key={p.id}
-                      className={`bv2-part ${activePart === p.id ? 'active' : ''}`}
+                      className={`bv2-part ${activePart === p.id ? 'active' : ''} ${p.enabled === false ? 'disabled' : ''}`}
                       onClick={() => {
                         setActivePart(activePart === p.id ? null : p.id)
                         setActiveRot(0)
                         setSelectedId(null)
                       }}
-                      title={p.desc ? `${p.name}\n\n${p.desc}` : p.id}
+                      title={p.enabled === false
+                        ? `${p.name} — not yet enabled in the game\n\n${p.desc ?? ''}`
+                        : (p.desc ? `${p.name}\n\n${p.desc}` : p.id)}
                     >
                       <Thumb partId={p.id} />
-                      <span className="bv2-part-name">{p.name}</span>
+                      <span className="bv2-part-name">
+                        {p.name}
+                        {p.enabled === false && <span className="bv2-part-tag">NOT IN GAME</span>}
+                      </span>
                       <span className="bv2-part-meta">
                         {p.bounds[0]}×{p.bounds[2]}{p.bounds[1] > 1 ? `·${p.bounds[1]}h` : ''}
                         {p.mirror ? ' ⇋' : ''}
@@ -433,8 +500,27 @@ export default function BuilderV2() {
           <div className={`bv2-req ${man.crew <= MEMBER_LIMIT ? 'ok' : 'bad'}`}>
             <span>{man.crew <= MEMBER_LIMIT ? '✓' : '!'}</span> Crew quarters {man.crew}/{MEMBER_LIMIT}
           </div>
+          <div className={`bv2-req ${paths.ok ? 'ok' : 'bad'}`}>
+            <span>{paths.ok ? '✓' : '!'}</span> Walking paths
+            {paths.unreachable.length > 0 && (
+              <em> — can't reach {paths.unreachable.map((g) => g.toLowerCase()).join(', ')}</em>
+            )}
+          </div>
           <div className="bv2-req dim">
             <span>?</span> Weight — server-side data, not in game files
+          </div>
+        </div>
+
+        <div className="bv2-block">
+          <div className="bv2-block-title">BUILD COST</div>
+          <div className="bv2-cost">
+            {COST_ROWS.map(([key, label, icon]) => (
+              <div key={key} className={`bv2-cost-row ${cost[key] ? '' : 'dim'}`}>
+                <img src={icon} alt="" onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} />
+                <span className="bv2-cost-n">{cost[key].toLocaleString()}</span>
+                <span className="bv2-cost-label">{label}</span>
+              </div>
+            ))}
           </div>
         </div>
 
@@ -456,15 +542,6 @@ export default function BuilderV2() {
           <div className="bv2-share-btns">
             <button onClick={doExport}>SHARE CODE</button>
             <button onClick={() => { setShareText(''); setShareOpen(true) }}>IMPORT</button>
-            <button
-              className="danger"
-              onClick={() => {
-                setState((s) => ({ ...DEFAULT_STATE, chassisId: s.chassisId }))
-                setSelectedId(null)
-              }}
-            >
-              CLEAR
-            </button>
           </div>
           <label className="bv2-wbt-btn">
             ⬆ LOAD IN-GAME SAVE (.wbt)
@@ -515,6 +592,8 @@ export default function BuilderV2() {
           )}
         </div>
       </aside>
+        </div>
+      </div>
     </div>
   )
 }
