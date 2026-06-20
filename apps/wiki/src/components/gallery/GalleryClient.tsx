@@ -66,6 +66,8 @@ export function GalleryClient({
   }, []);
 
   useEffect(() => {
+    // Client-only hydration from localStorage; runs once after mount.
+    /* eslint-disable react-hooks/set-state-in-effect */
     try {
       const raw = localStorage.getItem("sand_blueprint_v2");
       if (raw) {
@@ -75,6 +77,7 @@ export function GalleryClient({
     } catch {
       /* ignore malformed/absent local draft */
     }
+    /* eslint-enable react-hooks/set-state-in-effect */
   }, []);
 
   async function load(nextView: View, nextSort: Sort, cursor?: string | null) {
@@ -194,14 +197,14 @@ export function GalleryClient({
         <div className="tg-seg">
           <button
             type="button"
-            aria-selected={view === "community"}
+            aria-pressed={view === "community"}
             onClick={() => switchView("community")}
           >
             Community
           </button>
           <button
             type="button"
-            aria-selected={view === "mine"}
+            aria-pressed={view === "mine"}
             onClick={() => switchView("mine")}
           >
             My designs

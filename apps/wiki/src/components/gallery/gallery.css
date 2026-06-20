@@ -46,9 +46,9 @@
 .tg-seg button { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .05em; font-size: 13px; font-weight: 600; color: var(--muted-foreground); padding: 8px 16px; display: inline-flex; align-items: center; gap: 8px; transition: background-color .12s, color .12s; cursor: pointer; }
 .tg-seg button + button { border-left: 1px solid var(--border-strong); }
 .tg-seg button:hover { color: var(--foreground); }
-.tg-seg button[aria-selected="true"] { background: var(--primary); color: #1a0f04; }
+.tg-seg button[aria-pressed="true"] { background: var(--primary); color: #1a0f04; }
 .tg-seg .seg-count { font-family: var(--font-mono); font-size: 11px; opacity: .7; font-weight: 500; }
-.tg-seg button[aria-selected="true"] .seg-count { opacity: .85; }
+.tg-seg button[aria-pressed="true"] .seg-count { opacity: .85; }
 
 .tg-toolbar .spacer { margin-left: auto; }
 .tg-sortwrap { display: flex; align-items: center; gap: 8px; }
