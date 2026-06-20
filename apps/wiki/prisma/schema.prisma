@@ -164,12 +164,15 @@ model RecipeOutput {
 }
 
 model SteamUser {
-  steamId     String     @id
-  personaName String?
-  avatar      String?
-  createdAt   DateTime   @default(now())
-  lastSeenAt  DateTime   @default(now())
-  proposals   Proposal[]
+  steamId       String         @id
+  personaName   String?
+  avatar        String?
+  createdAt     DateTime       @default(now())
+  lastSeenAt    DateTime       @default(now())
+  proposals     Proposal[]
+  designs       Design[]
+  designLikes   DesignLike[]
+  designReports DesignReport[]
 }
 
 model Proposal {
@@ -191,4 +194,52 @@ model Proposal {
   @@index([status])
   @@index([targetType, targetSlug])
   @@index([proposerId])
+}
+
+model Design {
+  id        String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  slug      String    @unique
+  name      String
+  authorId  String
+  author    SteamUser @relation(fields: [authorId], references: [steamId], onDelete: Cascade)
+  buildCode String // SANDBP2.<base64> — source of truth
+  chassisId String
+  partCount Int
+  crowns    Int
+  hull      Int
+  thumbPath String?
+  status    String    @default("published") // "published" | "hidden"
+  likeCount Int       @default(0)
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  likes   DesignLike[]
+  reports DesignReport[]
+
+  @@index([status, likeCount])
+  @@index([status, createdAt])
+  @@index([authorId])
+}
+
+model DesignLike {
+  designId  String
+  userId    String
+  design    Design    @relation(fields: [designId], references: [id], onDelete: Cascade)
+  user      SteamUser @relation(fields: [userId], references: [steamId], onDelete: Cascade)
+  createdAt DateTime  @default(now())
+
+  @@id([designId, userId])
+  @@index([userId])
+}
+
+model DesignReport {
+  id         String    @id @default(dbgenerated("(gen_random_uuid())::text"))
+  designId   String
+  design     Design    @relation(fields: [designId], references: [id], onDelete: Cascade)
+  reporterId String
+  reporter   SteamUser @relation(fields: [reporterId], references: [steamId], onDelete: Cascade)
+  reason     String?
+  createdAt  DateTime  @default(now())
+
+  @@index([designId])
 }
