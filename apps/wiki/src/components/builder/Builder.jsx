@@ -8,6 +8,7 @@ import { AuthMenuClient } from '@/components/AuthMenuClient'
 import { ToolNav } from '@/components/ToolNav'
 import { Button, actionButtonClass } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
+import { SteamGateModal } from '@/components/SteamGateModal'
 import BuilderScene from './BuilderScene.jsx'
 import thumbsV2 from './data/part_thumbs_v2.json'
 import partCosts from './data/part_costs.json'
@@ -114,12 +115,26 @@ export default function BuilderV2() {
   const [clearOpen, setClearOpen] = useState(false)
   const [pub, setPub] = useState({ name: '', author: '', description: '' })
   const [pubBusy, setPubBusy] = useState(false)
+  const [signedIn, setSignedIn] = useState(false)
+  const [gateOpen, setGateOpen] = useState(false)
   const idRef = useRef(Date.now() % 1e7)
   const moveBackup = useRef(null)
+  const captureRef = useRef(null)
 
   useEffect(() => {
     localStorage.setItem(STORE_KEY, JSON.stringify(state))
   }, [state])
+
+  // Auth state for gating the Publish flow behind Steam sign-in (same source as
+  // AuthMenuClient). Signed-out users get the SteamGateModal instead of the dialog.
+  useEffect(() => {
+    let alive = true
+    fetch('/api/auth/me', { cache: 'no-store' })
+      .then((r) => r.json())
+      .then((d) => { if (alive) setSignedIn(!!d.user) })
+      .catch(() => {})
+    return () => { alive = false }
+  }, [])
 
   // Close any open modal on Escape (UI only — placement Esc is handled separately).
   useEffect(() => {
@@ -382,17 +397,15 @@ export default function BuilderV2() {
     if (!name) { flash('give your build a name first'); return }
     setPubBusy(true)
     try {
+      const thumbnail = captureRef.current ? captureRef.current() : undefined
       await submitBuild({
         name,
-        author: pub.author,
-        description: pub.description,
-        shareCode: encodeShare(state),
-        chassisId: state.chassisId,
-        partCount: state.placements.length,
+        buildCode: encodeShare(state),
+        thumbnail,
       })
       setPubOpen(false)
       setPub({ name: '', author: '', description: '' })
-      flash('submitted! it’ll appear in the gallery once approved')
+      flash('Published — view it in the gallery')
     } catch (e) {
       flash(`publish failed — ${e.message || 'try again'}`)
     } finally {
@@ -538,6 +551,7 @@ export default function BuilderV2() {
             onMove={movePlacement}
             onHoverInfo={setHoverInfo}
             onSocketToggle={toggleSocket}
+            captureRef={captureRef}
           />
 
           {/* hull level rail */}
@@ -660,7 +674,11 @@ export default function BuilderV2() {
               <Button
                 size="sm"
                 className="tb-publish"
-                onClick={() => { setPub((p) => ({ ...p, name: p.name || state.name })); setPubOpen(true) }}
+                onClick={() => {
+                  if (!signedIn) { setGateOpen(true); return }
+                  setPub((p) => ({ ...p, name: p.name || state.name }))
+                  setPubOpen(true)
+                }}
               >
                 ★ Publish to gallery
               </Button>
@@ -759,6 +777,8 @@ export default function BuilderV2() {
           </div>
         </Modal>
       )}
+
+      <SteamGateModal open={gateOpen} onClose={() => setGateOpen(false)} returnTo="/builder" />
 
       <ConfirmDialog
         open={clearOpen}
