@@ -4,7 +4,6 @@ import { useRouter } from 'next/navigation'
 import { ToolNavBrand } from '@/components/ToolNavBrand'
 import { ToolNav } from '@/components/ToolNav'
 import { AuthMenuClient } from '@/components/AuthMenuClient'
-import { SteamGateModal } from '@/components/SteamGateModal'
 import { actionButtonClass } from '@/components/ui/button'
 import { UpvoteButton } from '@/components/gallery/UpvoteButton'
 import { DeleteDesignButton } from '@/components/gallery/DeleteDesignButton'
@@ -19,7 +18,6 @@ export default function BuilderView({
   buildCode, name, authorName, slug, likeCount, initialLiked, signedIn, canDelete,
 }) {
   const router = useRouter()
-  const [gateOpen, setGateOpen] = useState(false)
   const [flash, setFlash] = useState('')
 
   // Decode once. A malformed code yields null → friendly fallback.
@@ -37,9 +35,10 @@ export default function BuilderView({
     note._t = window.setTimeout(() => setFlash(''), 2000)
   }
 
-  // Edit = clone: hand the build to the editor (login required), then open it.
+  // Edit = clone into the builder's working draft, then open the editor. No login
+  // needed — the builder is open to everyone; only publishing requires a Steam
+  // account (and that gate lives in the editor's publish flow).
   function edit() {
-    if (!signedIn) { setGateOpen(true); return }
     try { localStorage.setItem('sand_load_code', buildCode) } catch { /* ignore */ }
     router.push('/builder')
   }
@@ -121,8 +120,6 @@ export default function BuilderView({
           )}
         </aside>
       </div>
-
-      <SteamGateModal open={gateOpen} onClose={() => setGateOpen(false)} returnTo={`/builder/${slug}`} />
     </div>
   )
 }
