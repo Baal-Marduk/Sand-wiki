@@ -4,6 +4,8 @@
 import './builder.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { ToolNavBrand } from '@/components/ToolNavBrand'
+import { AuthMenuClient } from '@/components/AuthMenuClient'
+import { ToolNav } from '@/components/ToolNav'
 import { Button, actionButtonClass } from '@/components/ui/button'
 import { ConfirmDialog } from '@/components/ConfirmDialog'
 import BuilderScene from './BuilderScene.jsx'
@@ -419,6 +421,7 @@ export default function BuilderV2() {
       {/* ===== top bar ===== */}
       <header className="tb-appbar">
         <ToolNavBrand title="Trampler Builder" />
+        <ToolNav active="builder" />
         <span className="spacer" />
         <button type="button" className={actionButtonClass} onClick={doExport}>Share code</button>
         <button type="button" className={actionButtonClass} onClick={() => { setShareText(''); setImportOpen(true) }}>Import</button>
@@ -427,6 +430,7 @@ export default function BuilderV2() {
         </button>
         <span className="divider" />
         <button type="button" className={actionButtonClass} onClick={() => setClearOpen(true)}>✕ Clear</button>
+        <AuthMenuClient />
       </header>
 
       <div className="tb-body">

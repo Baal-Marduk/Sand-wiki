@@ -8,6 +8,7 @@ import { LAYOUT, computeLayout, ancestors, pathCost } from "@/lib/tech-tree/layo
 import { actionButtonClass } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 import { ToolNavBrand } from "@/components/ToolNavBrand";
+import { AuthMenuClient } from "@/components/AuthMenuClient";
 
 const STORE_KEY = "sand_techtree_unlocked_v1";
 const fmt = (n: number) => n.toLocaleString("en-US");
@@ -210,6 +211,8 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
           <button type="button" className={actionButtonClass} onClick={() => setSelected(new Set())}>Clear selection</button>
           <button type="button" className={actionButtonClass} onClick={() => setResetOpen(true)}>Reset progress</button>
         </div>
+        <span style={{ marginLeft: "auto" }} />
+        <AuthMenuClient />
       </header>
 
       <div className="tt-legend">
