@@ -145,7 +145,7 @@ function placeMesh(mesh, partId, px, py, pz, rot) {
 }
 
 export default function BuilderScene({
-  state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle,
+  state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle, captureRef,
 }) {
   const mountRef = useRef(null)
   const stRef = useRef(null)
@@ -158,7 +158,7 @@ export default function BuilderScene({
     const mount = mountRef.current
     const W = mount.clientWidth
     const H = mount.clientHeight
-    const renderer = new THREE.WebGLRenderer({ antialias: true })
+    const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true })
     renderer.setSize(W, H)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
     renderer.setClearColor(0x0d1320)
@@ -450,6 +450,44 @@ export default function BuilderScene({
     }
     st.updateGhost = updateGhost
 
+    // ---- fixed-angle thumbnail capture (parent triggers via captureRef) ----
+    // Renders one frame from a canonical isometric direction (identical for every
+    // rig, so gallery thumbnails are consistent), reads the pixels back, then
+    // restores the user's camera. preserveDrawingBuffer makes the readback valid.
+    if (captureRef) {
+      captureRef.current = () => {
+        const savedPos = camera.position.clone()
+        const savedTarget = st.target.clone()
+        // frame the rig bounds
+        const box = new THREE.Box3().setFromObject(rigGroup)
+        const center = box.isEmpty() ? new THREE.Vector3(0, 4, 0) : box.getCenter(new THREE.Vector3())
+        const size = box.isEmpty() ? 20 : box.getSize(new THREE.Vector3()).length()
+        const dist = Math.max(24, size * 1.25)
+        const dir = new THREE.Vector3(1, 0.8, 1).normalize() // identical for every rig
+        camera.position.copy(center).addScaledVector(dir, dist)
+        camera.lookAt(center)
+        renderer.render(scene, camera) // one frame at the canonical pose
+        // downscale onto a fixed 600x360 canvas (cover-fit) so the stored webp
+        // stays well under the server's 400KB cap regardless of viewport size.
+        const src = renderer.domElement
+        const TW = 600, TH = 360
+        const tmp = document.createElement('canvas')
+        tmp.width = TW
+        tmp.height = TH
+        const ctx = tmp.getContext('2d')
+        const scale = Math.max(TW / src.width, TH / src.height)
+        const dw = src.width * scale
+        const dh = src.height * scale
+        ctx.drawImage(src, (TW - dw) / 2, (TH - dh) / 2, dw, dh)
+        const url = tmp.toDataURL('image/webp', 0.85)
+        // restore the user's camera and re-render
+        camera.position.copy(savedPos)
+        camera.lookAt(savedTarget)
+        renderer.render(scene, camera)
+        return url
+      }
+    }
+
     return () => {
       el.removeEventListener('pointerdown', onDown)
       window.removeEventListener('pointermove', onMove)
@@ -459,6 +497,7 @@ export default function BuilderScene({
       window.removeEventListener('keydown', onPanKeyDown)
       window.removeEventListener('keyup', onPanKeyUp)
       if (st.panRaf) cancelAnimationFrame(st.panRaf)
+      if (captureRef) captureRef.current = null
       renderer.dispose()
       mount.removeChild(el)
     }
