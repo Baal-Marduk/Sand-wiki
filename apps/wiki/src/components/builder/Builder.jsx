@@ -188,6 +188,18 @@ export default function BuilderV2() {
     setSelectedId(null)
   }
 
+  // Copy = pick up a fresh copy of the selected part to place again (matches the
+  // in-game builder's C shortcut), reusing the normal place flow.
+  function copySelected() {
+    if (!selectedId) return
+    const pl = state.placements.find((p) => p.id === selectedId)
+    if (!pl) return
+    setActivePart(pl.partId)
+    setActiveRot(pl.rot)
+    setSelectedId(null)
+    flash('copied — click a cell to place')
+  }
+
   function toggleSocket(plId, key) {
     setState((s) => ({
       ...s,
@@ -210,7 +222,8 @@ export default function BuilderV2() {
       keysDown.current.add(e.key)
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
       if (e.key === 'r' || e.key === 'R') rotate()
-      if (e.key === 'Delete' || e.key === 'Backspace') removeSelected()
+      if (e.key === 'Delete' || e.key === 'Backspace' || e.key === 'x' || e.key === 'X') removeSelected()
+      if (e.key === 'c' || e.key === 'C') copySelected()
       if (e.key === 'Escape') {
         setActivePart(null)
         setSelectedId(null)
