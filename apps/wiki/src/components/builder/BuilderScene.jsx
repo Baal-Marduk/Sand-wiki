@@ -40,11 +40,16 @@ function loadGeometry(partId, onReady) {
     .then((r) => r.arrayBuffer())
     .then((buf) => {
       const t = meta.t
+      // Build typed arrays from sliced copies, not views over `buf`. A Float32Array
+      // view needs a 4-byte-aligned byte offset, but the UV block starts at t*45,
+      // which is only aligned when t % 4 === 0 — otherwise the view throws and the
+      // part falls back to a grey box (this silently broke ~60 of 126 parts). Slicing
+      // copies into a fresh, aligned buffer so every part parses.
       let off = 0
-      const pos = new Float32Array(buf, off, t * 9); off += t * 36
-      const nrmQ = new Int8Array(buf, off, t * 9); off += t * 9
-      const uv = new Float32Array(buf, off, t * 6); off += t * 24
-      const slot = new Uint8Array(buf, off, t); off += t
+      const pos = new Float32Array(buf.slice(off, off + t * 36)); off += t * 36
+      const nrmQ = new Int8Array(buf.slice(off, off + t * 9)); off += t * 9
+      const uv = new Float32Array(buf.slice(off, off + t * 24)); off += t * 24
+      const slot = new Uint8Array(buf.slice(off, off + t)); off += t
       const nrm = new Float32Array(t * 9)
       for (let i = 0; i < t * 9; i++) nrm[i] = nrmQ[i] / 127
 
