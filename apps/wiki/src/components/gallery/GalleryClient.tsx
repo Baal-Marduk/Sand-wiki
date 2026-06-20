@@ -67,7 +67,7 @@ export function GalleryClient({
   // If we mounted directly into the "mine" view (?view=mine deep-link) and the
   // server only fetched the community first page, pull the viewer's designs.
   useEffect(() => {
-    if (initialView === "mine" && signedIn) load("mine", "top", null);
+    if (initialView === "mine") load("mine", "top", null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -113,10 +113,8 @@ export function GalleryClient({
 
   function switchView(v: View) {
     if (v === view) return;
-    if (v === "mine" && !signedIn) {
-      setGateOpen(true);
-      return;
-    }
+    // "My designs" is open to everyone: signed out it shows the local draft
+    // (the published list just comes back empty without an account).
     setView(v);
     // Fresh list — drop optimistic liked state so it doesn't leak across lists.
     setLiked(new Set());
