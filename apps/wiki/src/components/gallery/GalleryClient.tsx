@@ -200,16 +200,13 @@ export function GalleryClient({
 
   // Copy a design's share link to the clipboard; flash a per-card "copied" tick.
   const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
-  function copyShare(slug: string) {
+  async function copyShare(slug: string) {
     try {
-      navigator.clipboard.writeText(designShareUrl(slug, window.location.origin));
+      await navigator.clipboard.writeText(designShareUrl(slug, window.location.origin));
       setCopiedSlug(slug);
-      window.setTimeout(
-        () => setCopiedSlug((c) => (c === slug ? null : c)),
-        1500,
-      );
+      setTimeout(() => setCopiedSlug((c) => (c === slug ? null : c)), 1500);
     } catch {
-      /* clipboard unavailable — no-op */
+      /* clipboard unavailable / write rejected — no-op */
     }
   }
 

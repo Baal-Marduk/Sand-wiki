@@ -23,6 +23,7 @@ export function DeleteDesignButton({
     try {
       const res = await fetch(`/api/designs/${slug}`, { method: "DELETE" });
       if (res.ok) {
+        setBusy(false);
         if (onDeleted) onDeleted();
         else location.assign("/gallery");
       } else {
