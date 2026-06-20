@@ -5,6 +5,7 @@ import './builder.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import BuilderScene from './BuilderScene.jsx'
 import thumbsV2 from './data/part_thumbs_v2.json'
+import partCosts from './data/part_costs.json'
 import { asset } from './data.js'
 import {
   PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
@@ -26,6 +27,14 @@ const DEFAULT_STATE = {
 }
 
 const LEVEL_LABELS = ['HULL', 'DECK 2', 'DECK 3', 'DECK 4', 'DECK 5', 'DECK 6']
+
+// Build-cost rows, in wiki order. Icons are served same-origin from /icons.
+const COST_ROWS = [
+  ['crowns', 'Crowns', '/icons/icon_item_coinCrown.png'],
+  ['mechanical', 'Mechanical Parts', '/icons/icon_item_resourceMetal_t1.png'],
+  ['pneumatic', 'Pneumatic Parts', '/icons/icon_item_resourceMetal_t2.png'],
+  ['computing', 'Computing Module', '/icons/icon_item_resourceMetal_t3.png'],
+]
 
 function thumbOf(partId) {
   const t = thumbsV2[partId]
@@ -80,6 +89,17 @@ export default function BuilderV2() {
 
   const occ = useMemo(() => buildOccupancy(state), [state])
   const man = useMemo(() => manifest(state), [state])
+  // Total build cost: the chassis plus each placed part's wiki cost (crowns + resources).
+  const cost = useMemo(() => {
+    const t = { crowns: 0, mechanical: 0, pneumatic: 0, computing: 0 }
+    const add = (id, n) => {
+      const c = partCosts[id]
+      if (c) for (const k in t) if (c[k]) t[k] += c[k] * n
+    }
+    add(state.chassisId, 1)
+    for (const r of man.rows) add(r.part.id, r.n)
+    return t
+  }, [man, state.chassisId])
 
   // ---------- actions ----------
   function flash(msg) {
@@ -448,6 +468,19 @@ export default function BuilderV2() {
           </div>
           <div className="bv2-req dim">
             <span>?</span> Weight — server-side data, not in game files
+          </div>
+        </div>
+
+        <div className="bv2-block">
+          <div className="bv2-block-title">BUILD COST</div>
+          <div className="bv2-cost">
+            {COST_ROWS.map(([key, label, icon]) => (
+              <div key={key} className={`bv2-cost-row ${cost[key] ? '' : 'dim'}`}>
+                <img src={icon} alt="" onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} />
+                <span className="bv2-cost-n">{cost[key].toLocaleString()}</span>
+                <span className="bv2-cost-label">{label}</span>
+              </div>
+            ))}
           </div>
         </div>
 

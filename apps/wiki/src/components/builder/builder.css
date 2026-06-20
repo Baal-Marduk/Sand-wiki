@@ -292,3 +292,11 @@
   padding-left: 16px; border-left: 1px solid var(--border);
 }
 .bld-body { flex: 1; min-height: 0; position: relative; }
+
+/* Build-cost panel: icon + total + label per resource, dimmed when zero. */
+.bv2-cost { display: flex; flex-direction: column; gap: 5px; }
+.bv2-cost-row { display: grid; grid-template-columns: 22px 52px 1fr; align-items: center; gap: 9px; font-size: 12.5px; }
+.bv2-cost-row img { width: 22px; height: 22px; object-fit: contain; }
+.bv2-cost-n { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 14px; color: #ffd166; text-align: right; }
+.bv2-cost-label { color: #9fb0c4; }
+.bv2-cost-row.dim { opacity: 0.3; }
