@@ -32,6 +32,15 @@ function thumbOf(partId) {
   return t ? asset(t.replace(/^\//, '')) : null
 }
 
+// Thumbnail with a graceful fallback: if the image is missing (e.g. the asset
+// host isn't configured yet), show the ghost glyph instead of a broken-image icon.
+function Thumb({ partId }) {
+  const [broken, setBroken] = useState(false)
+  const src = thumbOf(partId)
+  if (!src || broken) return <span className="bv2-ghosticon">▦</span>
+  return <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} />
+}
+
 export default function BuilderV2() {
   const [state, setState] = useState(() => {
     try {
@@ -330,9 +339,7 @@ export default function BuilderV2() {
                       }}
                       title={p.desc ? `${p.name}\n\n${p.desc}` : p.id}
                     >
-                      {thumbOf(p.id)
-                        ? <img src={thumbOf(p.id)} alt="" loading="lazy" />
-                        : <span className="bv2-ghosticon">▦</span>}
+                      <Thumb partId={p.id} />
                       <span className="bv2-part-name">{p.name}</span>
                       <span className="bv2-part-meta">
                         {p.bounds[0]}×{p.bounds[2]}{p.bounds[1] > 1 ? `·${p.bounds[1]}h` : ''}
@@ -437,7 +444,7 @@ export default function BuilderV2() {
             {man.rows.length === 0 && <div className="bv2-hint">click a part in the locker, then click the grid</div>}
             {man.rows.map((r) => (
               <div key={r.part.id} className="bv2-man-row">
-                {thumbOf(r.part.id) && <img src={thumbOf(r.part.id)} alt="" />}
+                {thumbOf(r.part.id) && <img src={thumbOf(r.part.id)} alt="" onError={(e) => { e.currentTarget.style.display = 'none' }} />}
                 <span className="bv2-man-name" style={{ color: CAT_COLOR[r.part.category] }}>{r.part.name}</span>
                 <span className="bv2-man-n">×{r.n}</span>
               </div>

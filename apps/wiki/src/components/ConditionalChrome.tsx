@@ -11,7 +11,11 @@ export function ConditionalChrome({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const fullBleed = pathname === "/tech" || pathname.startsWith("/tech/");
+  const fullBleed =
+    pathname === "/tech" ||
+    pathname.startsWith("/tech/") ||
+    pathname === "/builder" ||
+    pathname.startsWith("/builder/");
   if (fullBleed) return <>{children}</>;
   return (
     <>
