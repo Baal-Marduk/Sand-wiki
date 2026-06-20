@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { FaSteam } from "react-icons/fa";
 
 type Me = { steamId: string; personaName: string | null; avatar: string | null };
@@ -10,6 +10,7 @@ export function AuthMenuClient() {
   const [user, setUser] = useState<Me | null>(null);
   const [ready, setReady] = useState(false);
   const [open, setOpen] = useState(false);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let alive = true;
@@ -20,9 +21,29 @@ export function AuthMenuClient() {
     return () => { alive = false; };
   }, []);
 
+  useEffect(() => {
+    if (!open) return;
+    const handler = (e: MouseEvent | KeyboardEvent) => {
+      if (e instanceof KeyboardEvent) {
+        if (e.key === "Escape") setOpen(false);
+        return;
+      }
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handler);
+    document.addEventListener("keydown", handler);
+    return () => {
+      document.removeEventListener("mousedown", handler);
+      document.removeEventListener("keydown", handler);
+    };
+  }, [open]);
+
   if (!ready) return <span className="w-20" aria-hidden="true" />;
 
-  const returnTo = typeof window !== "undefined" ? window.location.pathname + window.location.search : "/";
+  // Client-only: this line is always reached after the `ready` flag (set by useEffect) resolves, so window is guaranteed to exist.
+  const returnTo = window.location.pathname + window.location.search;
 
   if (!user) {
     return (
@@ -37,7 +58,7 @@ export function AuthMenuClient() {
   }
 
   return (
-    <div className="relative">
+    <div className="relative" ref={wrapperRef}>
       <button
         type="button"
         onClick={() => setOpen((o) => !o)}
