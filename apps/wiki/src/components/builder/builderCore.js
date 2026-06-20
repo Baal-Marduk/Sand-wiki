@@ -3,6 +3,7 @@
 // groups, limits) extracted verbatim. No name-parsing anywhere.
 import partsV2 from './data/parts_v2.json'
 import meshIndex from './data/mesh_index_v3.json' // v3 = real UVs + albedo textures
+import partCosts from './data/part_costs.json' // wiki build cost per part id (crowns + resources)
 
 export const GROUP_LIMITS = partsV2.groupLimits // { REACTOR:1, STEERING:1, CAPTAIN:1 }
 export const SOCKET_STATES = partsV2.socketStates // slotType -> state -> spawned entity
@@ -275,3 +276,29 @@ export const CATEGORY_ORDER = [
   'Cargo', 'Crew', 'CaptainCrew', 'Corridor', 'Crafting', 'Medical', 'Balcony', 'Deck',
   'Armor', 'Reactor', 'Steering', 'Engine', 'Weapon', 'Special', 'Structure', 'Cruise', 'Other',
 ]
+
+// ---- gallery summary (shared by the builder UI and the publish/server path) ----
+// Single source of truth for the numbers shown on gallery cards. Derived purely
+// from the build state so the server can recompute (and reject spoofed) stats.
+export function buildSummary(state) {
+  const man = manifest(state)
+
+  // crowns: chassis + every placed part's wiki cost (mirrors Builder.jsx cost memo)
+  let crowns = 0
+  const add = (partId, n) => {
+    const c = partCosts[partId]
+    if (c && typeof c.crowns === 'number') crowns += c.crowns * n
+  }
+  add(state.chassisId, 1)
+  for (const row of man.rows) add(row.part.id, row.n)
+
+  // hull: distinct vertical floors occupied (the chassis floor counts as 1).
+  // y is the grid level axis in this builder (see DEFAULT_STATE: "y = grid level").
+  const floors = new Set((state.placements ?? []).map((p) => p.y ?? 0))
+  const hull = Math.max(1, floors.size)
+
+  const chassis = PART_BY_ID[state.chassisId]
+  const chassisLabel = chassis ? chassis.name : state.chassisId
+
+  return { chassisLabel, partCount: man.total, crowns, hull, crew: man.crew }
+}

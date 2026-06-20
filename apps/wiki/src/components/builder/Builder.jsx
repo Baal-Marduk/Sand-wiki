@@ -17,7 +17,7 @@ import { asset } from './data.js'
 import {
   PARTS, ALL_PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
   CAT_COLOR, CATEGORY_ORDER, buildOccupancy, validate, manifest,
-  encodeShare, decodeShare, editableSockets, checkPaths,
+  encodeShare, decodeShare, editableSockets, checkPaths, buildSummary,
 } from './builderCore.js'
 import { decodeWbt, wbtToState } from './wbtImport.js'
 import { submitBuild } from './galleryApi.js'
@@ -166,8 +166,11 @@ export default function BuilderV2() {
     }
     add(state.chassisId, 1)
     for (const r of man.rows) add(r.part.id, r.n)
+    // Source crowns from the shared helper so gallery cards and the cost panel
+    // can never drift; resource rows stay computed here.
+    t.crowns = buildSummary(state).crowns
     return t
-  }, [man, state.chassisId])
+  }, [man, state])
 
   // ---------- actions ----------
   function flash(msg) {
