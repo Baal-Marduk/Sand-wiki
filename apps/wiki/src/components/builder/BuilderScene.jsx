@@ -145,13 +145,13 @@ function placeMesh(mesh, partId, px, py, pz, rot) {
 }
 
 export default function BuilderScene({
-  state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle, captureRef,
+  state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle, captureRef, readOnly,
 }) {
   const mountRef = useRef(null)
   const stRef = useRef(null)
   const propsRef = useRef({})
   const [tick, setTick] = useState(0)
-  propsRef.current = { state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle }
+  propsRef.current = { state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle, readOnly }
 
   // ---------- init ----------
   useEffect(() => {
@@ -272,6 +272,11 @@ export default function BuilderScene({
       const P = propsRef.current
       if (e.button === 2 || e.button === 1) {
         st.drag = { mode: 'pan', sx: e.clientX, sy: e.clientY }
+        return
+      }
+      if (P.readOnly) {
+        // View mode: left-drag orbits; no placement/select/move/socket editing.
+        st.drag = { mode: 'orbit', sx: e.clientX, sy: e.clientY, sx0: e.clientX, sy0: e.clientY }
         return
       }
       if (P.activePart) {
