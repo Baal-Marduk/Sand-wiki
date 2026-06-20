@@ -4,6 +4,7 @@ import AxeBuilder from "@axe-core/playwright";
 const pages = [
   "/", "/items", "/items/sniper-rifle-silencer", "/items/c4-dynamite", "/items/pistol-ammo",
   "/tech", "/tools", "/about", "/environment", "/environment/weapon-crate", "/tramplers",
+  "/gallery",
 ];
 
 for (const path of pages) {
