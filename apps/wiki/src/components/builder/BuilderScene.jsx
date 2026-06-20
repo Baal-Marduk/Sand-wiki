@@ -463,7 +463,9 @@ export default function BuilderScene({
         const center = box.isEmpty() ? new THREE.Vector3(0, 4, 0) : box.getCenter(new THREE.Vector3())
         const size = box.isEmpty() ? 20 : box.getSize(new THREE.Vector3()).length()
         const dist = Math.max(24, size * 1.25)
-        const dir = new THREE.Vector3(1, 0.8, 1).normalize() // identical for every rig
+        // Side-biased isometric: mostly the rig's side face with a slight top/front
+        // tilt for depth. Identical for every rig so gallery thumbnails stay consistent.
+        const dir = new THREE.Vector3(1.4, 0.5, 0.6).normalize()
         camera.position.copy(center).addScaledVector(dir, dist)
         camera.lookAt(center)
         renderer.render(scene, camera) // one frame at the canonical pose
