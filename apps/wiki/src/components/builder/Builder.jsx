@@ -392,7 +392,7 @@ export default function BuilderV2() {
       flash('not a valid SANDBP2 code')
     }
   }
-  // publish current build to the community gallery (lands pending moderation)
+  // publish current build to the community gallery (goes live immediately; reportable)
   async function doPublish() {
     const name = (pub.name || state.name || '').trim()
     if (!name) { flash('give your build a name first'); return }
@@ -768,7 +768,7 @@ export default function BuilderV2() {
             <Button size="sm" disabled={pubBusy} onClick={doPublish}>{pubBusy ? 'Submitting…' : 'Submit'}</Button>
           </>}
         >
-          <p>Share your build with the community. Submissions are reviewed before appearing in the gallery.</p>
+          <p>Share your build with the community. It goes live in the gallery right away — you can edit or remove it any time.</p>
           {pubThumb && (
             <img
               src={pubThumb}
