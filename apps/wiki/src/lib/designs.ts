@@ -58,7 +58,7 @@ export type DesignListItem = {
   thumbPath: string | null;
   likeCount: number;
   createdAt: Date;
-  status: string;
+  isMine: boolean;
 };
 
 const PAGE = 24;
@@ -97,7 +97,6 @@ export async function createDesign(opts: {
       hull: summary.hull,
       thumbPath,
       thumbnail,
-      status: "published",
       likeCount: 0,
     },
   });
@@ -109,12 +108,10 @@ export async function listDesigns(opts: {
   cursor?: string | null;
   viewerId?: string | null;
 }): Promise<{ items: DesignListItem[]; nextCursor: string | null }> {
-  // "mine" shows the viewer's own designs (incl. admin-hidden ones so they know);
-  // "community" shows only published designs.
   const where =
     opts.view === "mine"
       ? { authorId: opts.viewerId ?? "__none__" }
-      : { status: "published" };
+      : {};
   const orderBy =
     opts.sort === "new"
       ? [{ createdAt: "desc" as const }, { id: "desc" as const }]
@@ -133,6 +130,7 @@ export async function listDesigns(opts: {
       slug: true,
       buildCode: true,
       name: true,
+      authorId: true,
       chassisId: true,
       partCount: true,
       crowns: true,
@@ -140,7 +138,6 @@ export async function listDesigns(opts: {
       thumbPath: true,
       likeCount: true,
       createdAt: true,
-      status: true,
       author: { select: { personaName: true } },
     },
   });
@@ -157,7 +154,7 @@ export async function listDesigns(opts: {
     thumbPath: d.thumbPath,
     likeCount: d.likeCount,
     createdAt: d.createdAt,
-    status: d.status,
+    isMine: !!opts.viewerId && d.authorId === opts.viewerId,
   }));
   return { items, nextCursor };
 }
@@ -177,7 +174,6 @@ export async function getDesign(slug: string) {
       crowns: true,
       hull: true,
       thumbPath: true,
-      status: true,
       likeCount: true,
       createdAt: true,
       updatedAt: true,
@@ -231,13 +227,6 @@ export async function unlikeDesign(slug: string, userId: string): Promise<number
     });
     return updated.likeCount;
   });
-}
-
-export async function setDesignStatus(
-  slug: string,
-  status: "published" | "hidden",
-): Promise<void> {
-  await prisma.design.update({ where: { slug }, data: { status } });
 }
 
 export async function deleteDesign(slug: string): Promise<void> {
