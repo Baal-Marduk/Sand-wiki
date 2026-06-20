@@ -177,7 +177,11 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
       panned.current = true; // swallow the trailing click so no node toggles
       return;
     }
-    pan.current = { x: e.clientX, y: e.clientY, left: vp.scrollLeft, top: vp.scrollTop, active: false };
+    // Only arm a single-finger pan when exactly one pointer is down. A 3rd finger
+    // landing mid-pinch must not seed a stale pan that jumps when fingers lift.
+    if (pointers.current.size === 1) {
+      pan.current = { x: e.clientX, y: e.clientY, left: vp.scrollLeft, top: vp.scrollTop, active: false };
+    }
   }, []);
 
   const onPanMove = useCallback((e: React.PointerEvent) => {
