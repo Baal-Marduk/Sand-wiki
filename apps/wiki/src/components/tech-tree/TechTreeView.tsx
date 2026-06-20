@@ -211,7 +211,6 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
           <button type="button" className={actionButtonClass} onClick={() => setSelected(new Set())}>Clear selection</button>
           <button type="button" className={actionButtonClass} onClick={() => setResetOpen(true)}>Reset progress</button>
         </div>
-        <span style={{ marginLeft: "auto" }} />
         <AuthMenuClient />
       </header>
 
