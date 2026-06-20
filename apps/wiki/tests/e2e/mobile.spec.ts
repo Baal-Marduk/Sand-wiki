@@ -3,7 +3,8 @@ import { test, expect, devices } from "@playwright/test";
 // Spread only the context-level fields from iPhone 13 so Chromium (the only
 // installed browser) handles the tests. `defaultBrowserType` is a device
 // metadata key — including it causes Playwright to launch WebKit instead.
-const { defaultBrowserType: _ignored, ...iphone13 } = devices["iPhone 13"];
+// eslint-disable-next-line @typescript-eslint/no-unused-vars -- omit defaultBrowserType so it doesn't override the chromium project to webkit
+const { defaultBrowserType, ...iphone13 } = devices["iPhone 13"];
 test.use(iphone13); // ~390px viewport + touch UA
 
 test("builder shows the desktop-only gate on a phone", async ({ page }) => {
