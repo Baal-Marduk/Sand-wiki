@@ -1,11 +1,12 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { getDesign } from "@/lib/designs";
-import { getSession } from "@/lib/auth";
+import { getSession, sessionIsAdmin } from "@/lib/auth";
 import { ToolNavBrand } from "@/components/ToolNavBrand";
 import { ToolNav } from "@/components/ToolNav";
 import { AuthMenuClient } from "@/components/AuthMenuClient";
 import { DesignActions } from "@/components/gallery/DesignActions";
+import { AdminHideButton } from "@/components/gallery/AdminHideButton";
 import "@/components/gallery/gallery.css";
 
 export const dynamic = "force-dynamic";
@@ -18,6 +19,7 @@ export default async function DesignPage({ params }: Props) {
 
   const session = await getSession();
   const signedIn = !!session;
+  const admin = await sessionIsAdmin();
 
   return (
     <div className="tg-app" data-screen-label="Trampler Gallery">
@@ -83,6 +85,7 @@ export default async function DesignPage({ params }: Props) {
                 initialLikeCount={d.likeCount}
                 signedIn={signedIn}
               />
+              {admin && <AdminHideButton slug={d.slug} />}
             </div>
           </div>
         </div>
