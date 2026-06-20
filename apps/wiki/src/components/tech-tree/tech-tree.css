@@ -8,7 +8,7 @@
     background: color-mix(in srgb, var(--background) 86%, transparent);
     backdrop-filter: blur(10px); z-index: 60;
   }
-  .tt-page-title { font-family: var(--font-display); text-transform: uppercase; letter-spacing: .1em; font-size: 13px; color: var(--muted-foreground); padding-left: 16px; border-left: 1px solid var(--border); }
+  /* Back arrow + SAND·HELP brand + page title now come from the shared <ToolNavBrand>. */
   .tt-toolbar { margin-left: auto; display: flex; align-items: center; gap: 10px; }
   .tt-progress { font-family: var(--font-mono); font-size: 12px; color: var(--muted-foreground); padding: 5px 10px; border: 1px solid var(--border); }
   .tt-progress b { color: var(--accent); }

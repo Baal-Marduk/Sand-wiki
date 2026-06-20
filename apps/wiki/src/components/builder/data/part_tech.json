@@ -1,0 +1,334 @@
+{
+  "compArmor_Framed_Metal_1x1": {
+    "node": "tech-landwehr-t3a-armor-plate",
+    "name": "Armor Plate"
+  },
+  "compArmor_FramedReverse_Metal_1x1": {
+    "node": "tech-landwehr-t3a-armor-plate",
+    "name": "Armor Plate"
+  },
+  "compArmor_Spot_Metal_1x1": {
+    "node": "tech-landwehr-t2b-armor-plate",
+    "name": "Armor Plate"
+  },
+  "compBalcony_Left_Metal_2x1": {
+    "node": "tech-kaiser-t2a-armored-balconies-multiple",
+    "name": "Armored Balconies (multiple)"
+  },
+  "compBalcony_Left_Open_2x1": {
+    "node": "tech-kaiser-t1b-balconies-multiple",
+    "name": "Balconies (multiple)"
+  },
+  "compBalcony_Right_Open_2x1": {
+    "node": "tech-kaiser-t1b-balconies-multiple",
+    "name": "Balconies (multiple)"
+  },
+  "compBalcony_StairsLeft_Open_1x1": {
+    "node": "tech-godlewski-t1a-stairs-multiple",
+    "name": "Stairs (multiple)"
+  },
+  "compBalcony_StairsRight_Open_1x2": {
+    "node": "tech-godlewski-t1a-stairs-multiple",
+    "name": "Stairs (multiple)"
+  },
+  "compCaptainCrew_Metal_1x1": {
+    "node": "tech-godlewski-t2a-captain-s-cabin",
+    "name": "Captain's Cabin"
+  },
+  "compCargo_LargeL_Metal_1x2": {
+    "node": "tech-kaiser-t4a-cargo-bay-l-shape",
+    "name": "Cargo Bay (L-Shape)"
+  },
+  "compCargo_LargeL_Wood_1x2": {
+    "node": "tech-kaiser-t2c-cargo-bay-l-shape",
+    "name": "Cargo Bay (L-Shape)"
+  },
+  "compCargo_LargeP_Metal_1x2": {
+    "node": "tech-kaiser-t4a-cargo-bay-parallel",
+    "name": "Cargo Bay (Parallel)"
+  },
+  "compCargo_LargeP_Wood_1x2": {
+    "node": "tech-kaiser-t2c-cargo-bay-parallel",
+    "name": "Cargo Bay (Parallel)"
+  },
+  "compCargo_LargeU_Metal_1x2": {
+    "node": "tech-kaiser-t4a-cargo-bay-u-shape",
+    "name": "Cargo Bay (U-Shape)"
+  },
+  "compCargo_LargeU_Wood_1x2": {
+    "node": "tech-kaiser-t2c-cargo-bay-u-shape",
+    "name": "Cargo Bay (U-Shape)"
+  },
+  "compCargo_SmallL_Metal_1x1": {
+    "node": "tech-kaiser-t3a-cargo-compartment",
+    "name": "Cargo Compartment"
+  },
+  "compCargo_SmallL_Wood_1x1": {
+    "node": "tech-kaiser-t2a-cargo-hold",
+    "name": "Cargo Hold"
+  },
+  "compCargo_SmallM_Metal_1x1": {
+    "node": "tech-kaiser-t3b-cargo-hold",
+    "name": "Cargo Hold"
+  },
+  "compCargo_SmallM_Wood_1x1": {
+    "node": "tech-kaiser-t2b-cargo-hold",
+    "name": "Cargo Hold"
+  },
+  "compCargo_SmallP_Frame_1x1": {
+    "node": "tech-kaiser-t1a-cargo-deck",
+    "name": "Cargo Deck"
+  },
+  "compCargo_SmallP_Metal_1x1": {
+    "node": "tech-kaiser-t3a-cargo-compartment",
+    "name": "Cargo Compartment"
+  },
+  "compCargo_SmallP_Wood_1x1": {
+    "node": "tech-kaiser-t2a-cargo-hold",
+    "name": "Cargo Hold"
+  },
+  "compCargo_SmallSingle_Frame_1x1": {
+    "node": "tech-kaiser-t1a-cargo-deck",
+    "name": "Cargo Deck"
+  },
+  "compChassis_Large6_Metal_5x5": {
+    "node": "tech-godlewski-t4a-royal-chassis",
+    "name": "Royal Chassis"
+  },
+  "compChassis_Large6_MetalHole_5x5": {
+    "node": "tech-kaiser-t4a-royal-chassis",
+    "name": "Royal Chassis"
+  },
+  "compChassis_Long4_Metal_3x4": {
+    "node": "tech-godlewski-t2a-middling-chassis-83u-l",
+    "name": "Middling Chassis (83U-L)"
+  },
+  "compChassis_Long4_MetalHole_3x4": {
+    "node": "tech-kaiser-t2b-middling-chassis-kf-l-hole",
+    "name": "Middling Chassis (KF-L Hole)"
+  },
+  "compChassis_Long6_Metal_3x5": {
+    "node": "tech-kaiser-t3c-great-chassis-kf-l-trench",
+    "name": "Great Chassis (KF-L Trench)"
+  },
+  "compChassis_Long6_MetalHole_3x5": {
+    "node": "tech-godlewski-t3b-great-chassis-79h-l",
+    "name": "Great Chassis (79H-L)"
+  },
+  "compChassis_Long8_Metal_4x6": {
+    "node": "tech-godlewski-t4b-royal-chassis",
+    "name": "Royal Chassis"
+  },
+  "compChassis_Long8_MetalHole_4x6": {
+    "node": "tech-kaiser-t4b-royal-chassis",
+    "name": "Royal Chassis"
+  },
+  "compChassis_Medium4_Metal_4x4": {
+    "node": "tech-kaiser-t3b-great-chassis",
+    "name": "Great Chassis"
+  },
+  "compChassis_Medium4_MetalHole_4x4": {
+    "node": "tech-godlewski-t3a-great-chassis",
+    "name": "Great Chassis"
+  },
+  "compChassis_Small4_Metal_3x3": {
+    "node": "tech-godlewski-t1a-small-chassis",
+    "name": "Small Chassis"
+  },
+  "compChassis_Small4_MetalHole_3x3": {
+    "node": "tech-kaiser-t1b-small-chassis",
+    "name": "Small Chassis"
+  },
+  "compChassis_Wide4_Metal_4x3": {
+    "node": "tech-godlewski-t2a-middling-chassis-83u-b",
+    "name": "Middling Chassis (83U-B)"
+  },
+  "compChassis_Wide4_Metal_5x3": {
+    "node": "tech-kaiser-t3c-great-chassis-kf-b-trench",
+    "name": "Great Chassis (KF-B Trench)"
+  },
+  "compChassis_Wide4_MetalHole_4x3": {
+    "node": "tech-kaiser-t2b-middling-chassis-kf-b-hole",
+    "name": "Middling Chassis (KF-B Hole)"
+  },
+  "compChassis_Wide4_MetalHole_5x3": {
+    "node": "tech-godlewski-t3b-great-chassis-79h-b",
+    "name": "Great Chassis (79H-B)"
+  },
+  "compCorridor_Small_Metal_1x1": {
+    "node": "tech-godlewski-t3a-metal-corridor",
+    "name": "Metal Corridor"
+  },
+  "compCorridor_Small_Wood_1x1": {
+    "node": "tech-godlewski-t2a-wooden-corridor",
+    "name": "Wooden Corridor"
+  },
+  "compCrafting_Small_Wood_1x1": {
+    "node": "tech-landwehr-t1a-small-armament-workshop",
+    "name": "Small Armament Workshop"
+  },
+  "compCrafting_Wood_2x1": {
+    "node": "tech-landwehr-t2a-large-armament-workshop",
+    "name": "Large Armament Workshop"
+  },
+  "compCrew_Large_Metal_2x2": {
+    "node": "tech-godlewski-t2c-crew-room-mb77e",
+    "name": "Crew Room (MB77e)"
+  },
+  "compCrew_Large_Wood_2x2": {
+    "node": "tech-godlewski-t1a-crew-room",
+    "name": "Crew Room"
+  },
+  "compCrew_Medium_Metal_1x2": {
+    "node": "tech-godlewski-t2c-crew-room-k81v",
+    "name": "Crew Room (K81v)"
+  },
+  "compCrew_Small_Metal_1x1": {
+    "node": "tech-godlewski-t2b-crew-room",
+    "name": "Crew Room"
+  },
+  "compDeck_BeveledRound_Open_2x1": {
+    "node": "tech-kaiser-t1a-wooden-decks-multiple",
+    "name": "Wooden Decks (multiple)"
+  },
+  "compDeck_BeveledStraight_Open_1x1": {
+    "node": "tech-kaiser-t1a-wooden-decks-multiple",
+    "name": "Wooden Decks (multiple)"
+  },
+  "compDeck_BeveledStraight_Open_1x2": {
+    "node": "tech-kaiser-t1a-wooden-decks-multiple",
+    "name": "Wooden Decks (multiple)"
+  },
+  "compDeck_Round_Open_1x1": {
+    "node": "tech-kaiser-t1a-wooden-decks-multiple",
+    "name": "Wooden Decks (multiple)"
+  },
+  "compDeck_Round_Open_2x1": {
+    "node": "tech-kaiser-t1a-wooden-decks-multiple",
+    "name": "Wooden Decks (multiple)"
+  },
+  "compDeck_Square_Canopy_1x1": {
+    "node": "tech-kaiser-t1a-wooden-decks-multiple",
+    "name": "Wooden Decks (multiple)"
+  },
+  "compDeck_Square_FrameArmored_1x1": {
+    "node": "tech-kaiser-t3a-armored-deck",
+    "name": "Armored Deck"
+  },
+  "compDeck_Square_FrameStairs_1x1": {
+    "node": "tech-godlewski-t1b-framed-stairs",
+    "name": "Framed Stairs"
+  },
+  "compDeck_Square_OpenNoRailings_1x1": {
+    "node": "tech-kaiser-t1a-wooden-decks-multiple",
+    "name": "Wooden Decks (multiple)"
+  },
+  "compDeck_TurretSlot_FrameCMetal_1x1": {
+    "node": "tech-landwehr-t3a-framed-armored-artillery-deck",
+    "name": "Framed Armored Artillery Deck"
+  },
+  "compEngine_Medium_Metal_1x2": {
+    "node": "tech-godlewski-t3a-medium-engine",
+    "name": "Medium Engine"
+  },
+  "compEngine_Small_Metal_1x1": {
+    "node": "tech-godlewski-t2c-small-engine",
+    "name": "Small Engine"
+  },
+  "compReactor_Long_Framed_1x3": {
+    "node": "tech-godlewski-t1b-motor-reactor",
+    "name": "Motor-Reactor"
+  },
+  "compReactor_Long_Metal_1x3": {
+    "node": "tech-godlewski-t3b-motor-reactor",
+    "name": "Motor-Reactor"
+  },
+  "compReactor_Long_Open_1x3": {
+    "node": "tech-godlewski-t1a-motor-reactor",
+    "name": "Motor-Reactor"
+  },
+  "compReactor_Long_Wood_1x3": {
+    "node": "tech-godlewski-t2b-motor-reactor",
+    "name": "Motor-Reactor"
+  },
+  "compReactor_Round_Metal_2x1": {
+    "node": "tech-godlewski-t3a-motor-reactor",
+    "name": "Motor-Reactor"
+  },
+  "compReactor_Round_Wood_2x1": {
+    "node": "tech-godlewski-t2a-motor-reactor",
+    "name": "Motor-Reactor"
+  },
+  "compSpecial_Embrasure_Metal_1x1": {
+    "node": "tech-landwehr-t3b-embrasure",
+    "name": "Embrasure"
+  },
+  "compSpecial_Entry_Metal_1x1": {
+    "node": "tech-landwehr-t3a-armored-vestibule",
+    "name": "Armored Vestibule"
+  },
+  "compSpecial_Entry_Wood_1x1": {
+    "node": "tech-landwehr-t1a-wooden-vestibule",
+    "name": "Wooden Vestibule"
+  },
+  "compSteering_Long_Framed_1x2": {
+    "node": "tech-landwehr-t1c-large-framed-steering-multiple",
+    "name": "Large Framed Steering (multiple)"
+  },
+  "compSteering_Long_Metal_1x2": {
+    "node": "tech-landwehr-t3a-steering",
+    "name": "Steering"
+  },
+  "compSteering_Long_Open_1x2": {
+    "node": "tech-landwehr-t1b-large-open-steering-multiple",
+    "name": "Large Open Steering (multiple)"
+  },
+  "compSteering_Long_Wood_1x2": {
+    "node": "tech-landwehr-t2a-steering",
+    "name": "Steering"
+  },
+  "compSteering_Round_Framed_2x1": {
+    "node": "tech-landwehr-t1c-large-framed-steering-multiple",
+    "name": "Large Framed Steering (multiple)"
+  },
+  "compSteering_Round_Metal_2x1": {
+    "node": "tech-landwehr-t3b-steering",
+    "name": "Steering"
+  },
+  "compSteering_Round_Open_2x1": {
+    "node": "tech-landwehr-t1b-large-open-steering-multiple",
+    "name": "Large Open Steering (multiple)"
+  },
+  "compSteering_Square_Framed_1x1": {
+    "node": "tech-landwehr-t1a-framed-steering",
+    "name": "Framed Steering"
+  },
+  "compWeapon_BattleRam_2x2": {
+    "node": "tech-landwehr-t2c-battering-ram",
+    "name": "Battering Ram"
+  },
+  "compWeapon_TurretSlot_Frame_1x1": {
+    "node": "tech-landwehr-t1b-framed-artillery-deck",
+    "name": "Framed Artillery Deck"
+  },
+  "compWeapon_TurretSlot_Metal_1x1": {
+    "node": "tech-landwehr-t2a-armored-artillery-compartment",
+    "name": "Armored Artillery Compartment"
+  },
+  "compWeapon_TurretSlot_MetalCorner_1x1": {
+    "node": "tech-landwehr-t2b-armored-artillery-decks-multiple",
+    "name": "Armored Artillery Decks (multiple)"
+  },
+  "compWeapon_TurretSlot_Open_2x1": {
+    "node": "tech-landwehr-t1a-artillery-decks-multiple",
+    "name": "Artillery Decks (multiple)"
+  },
+  "compWeapon_TurretSlot_OpenCorner_1x1": {
+    "node": "tech-landwehr-t1a-artillery-decks-multiple",
+    "name": "Artillery Decks (multiple)"
+  },
+  "compWeapon_TurretSlot_OpenMetal_2x1": {
+    "node": "tech-landwehr-t2b-armored-artillery-decks-multiple",
+    "name": "Armored Artillery Decks (multiple)"
+  }
+}

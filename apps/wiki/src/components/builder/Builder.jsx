@@ -3,11 +3,14 @@
 // Truth source: the game's CompartmentsDatabase (cells/sockets/limits), real meshes.
 import './builder.css'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import Link from 'next/link'
-import { actionButtonClass } from '@/components/ui/button'
+import { ToolNavBrand } from '@/components/ToolNavBrand'
+import { Button, actionButtonClass } from '@/components/ui/button'
+import { ConfirmDialog } from '@/components/ConfirmDialog'
 import BuilderScene from './BuilderScene.jsx'
 import thumbsV2 from './data/part_thumbs_v2.json'
 import partCosts from './data/part_costs.json'
+import partTech from './data/part_tech.json'
+import partIcons from './data/part_icons.json'
 import { asset } from './data.js'
 import {
   PARTS, ALL_PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
@@ -18,6 +21,8 @@ import { decodeWbt, wbtToState } from './wbtImport.js'
 import { submitBuild } from './galleryApi.js'
 
 const STORE_KEY = 'sand_blueprint_v2'
+// The /tech page persists the user's unlocked nodes here (JSON array of node slugs).
+const TECH_KEY = 'sand_techtree_unlocked_v1'
 const chassisList = PARTS.filter((p) => p.category === 'Chassis')
 // Locker lists every part incl. game-disabled ones (shown marked), enabled first.
 const lockerParts = ALL_PARTS
@@ -33,6 +38,9 @@ const DEFAULT_STATE = {
 
 const LEVEL_LABELS = ['HULL', 'DECK 2', 'DECK 3', 'DECK 4', 'DECK 5', 'DECK 6']
 
+// Windows default location for in-game .wbt trampler saves (shown in the Load modal).
+const SAVE_PATH = '%AppData%\\..\\LocalLow\\Hologryph\\Sand\\Data\\Walkers\\'
+
 // Build-cost rows, in wiki order. Icons are served same-origin from /icons.
 const COST_ROWS = [
   ['crowns', 'Crowns', '/icons/icon_item_coinCrown.png'],
@@ -46,13 +54,34 @@ function thumbOf(partId) {
   return t ? asset(t.replace(/^\//, '')) : null
 }
 
-// Thumbnail with a graceful fallback: if the image is missing (e.g. the asset
-// host isn't configured yet), show the ghost glyph instead of a broken-image icon.
+// Part thumbnail. Prefers the wiki's 2D game icon (same-origin /tramplers/…), falling
+// back to the 3D render, then a ghost glyph — so a missing image never shows broken.
 function Thumb({ partId }) {
-  const [broken, setBroken] = useState(false)
-  const src = thumbOf(partId)
-  if (!src || broken) return <span className="bv2-ghosticon">▦</span>
-  return <img src={src} alt="" loading="lazy" onError={() => setBroken(true)} />
+  const candidates = [partIcons[partId], thumbOf(partId)].filter(Boolean)
+  const [idx, setIdx] = useState(0)
+  if (idx >= candidates.length) return <span className="bv2-ghosticon">▦</span>
+  return <img src={candidates[idx]} alt="" loading="lazy" onError={() => setIdx((i) => i + 1)} />
+}
+
+// Lightweight modal shell for the Share / Import / Load / Publish dialogs.
+// Module-level (stable identity) so the inputs inside don't remount on every keystroke.
+function Modal({ title, icon, onClose, children, footer }) {
+  return (
+    <div
+      className="tb-modal-scrim"
+      onMouseDown={(e) => { if (e.target === e.currentTarget) onClose() }}
+    >
+      <div className="tb-modal" role="dialog" aria-modal="true">
+        <div className="tb-modal-h">
+          {icon && <span className="ic">{icon}</span>}
+          <span>{title}</span>
+          <button type="button" className="tb-modal-x" onClick={onClose} aria-label="Close">✕</button>
+        </div>
+        <div className="tb-modal-b">{children}</div>
+        {footer && <div className="tb-modal-f">{footer}</div>}
+      </div>
+    </div>
+  )
 }
 
 export default function BuilderV2() {
@@ -69,11 +98,18 @@ export default function BuilderV2() {
   const [selectedId, setSelectedId] = useState(null)
   const [openCat, setOpenCat] = useState('Cargo')
   const [q, setQ] = useState('')
+  // "Match my tech tree": when on, parts gated behind a not-yet-unlocked tech node
+  // are shown locked (greyed, non-placeable). unlockedNodes mirrors the /tech planner.
+  const [matchTech, setMatchTech] = useState(false)
+  const [unlockedNodes, setUnlockedNodes] = useState(() => new Set())
   const [notice, setNotice] = useState('')
   const [hoverInfo, setHoverInfo] = useState('')
   const [shareOpen, setShareOpen] = useState(false)
+  const [importOpen, setImportOpen] = useState(false)
+  const [loadOpen, setLoadOpen] = useState(false)
   const [shareText, setShareText] = useState('')
   const [pubOpen, setPubOpen] = useState(false)
+  const [clearOpen, setClearOpen] = useState(false)
   const [pub, setPub] = useState({ name: '', author: '', description: '' })
   const [pubBusy, setPubBusy] = useState(false)
   const idRef = useRef(Date.now() % 1e7)
@@ -82,6 +118,30 @@ export default function BuilderV2() {
   useEffect(() => {
     localStorage.setItem(STORE_KEY, JSON.stringify(state))
   }, [state])
+
+  // Close any open modal on Escape (UI only — placement Esc is handled separately).
+  useEffect(() => {
+    function onKey(e) {
+      if (e.key === 'Escape') { setShareOpen(false); setImportOpen(false); setLoadOpen(false); setPubOpen(false) }
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+
+  // Mirror the tech-tree planner's unlocked set (read on mount + when it changes,
+  // incl. edits made in the /tech tab in another window via the storage event).
+  useEffect(() => {
+    function read() {
+      try {
+        const raw = localStorage.getItem(TECH_KEY)
+        setUnlockedNodes(new Set(raw ? JSON.parse(raw) : []))
+      } catch { setUnlockedNodes(new Set()) }
+    }
+    read()
+    function onStorage(e) { if (e.key === TECH_KEY) read() }
+    window.addEventListener('storage', onStorage)
+    return () => window.removeEventListener('storage', onStorage)
+  }, [])
 
   // handoff: "Open in builder" from the Gallery drops a code in localStorage
   useEffect(() => {
@@ -278,6 +338,11 @@ export default function BuilderV2() {
     const byCat = new Map()
     for (const p of lockerParts) {
       if (q && !p.name.toLowerCase().includes(q.toLowerCase()) && !p.id.toLowerCase().includes(q.toLowerCase())) continue
+      // "Match my tech tree": hide parts gated behind a not-yet-unlocked node.
+      if (matchTech) {
+        const t = partTech[p.id]
+        if (t && !unlockedNodes.has(t.node)) continue
+      }
       if (!byCat.has(p.category)) byCat.set(p.category, [])
       byCat.get(p.category).push(p)
     }
@@ -285,7 +350,7 @@ export default function BuilderV2() {
       (a, b) => (CATEGORY_ORDER.indexOf(a[0]) + 99) - (CATEGORY_ORDER.indexOf(b[0]) + 99) ||
         a[0].localeCompare(b[0]),
     )
-  }, [q])
+  }, [q, matchTech, unlockedNodes])
 
   const essentialsState = ESSENTIALS.map((e) => ({ ...e, ok: man.groups.has(e.group) }))
   const selectedPl = state.placements.find((p) => p.id === selectedId)
@@ -300,7 +365,7 @@ export default function BuilderV2() {
     try {
       const st = decodeShare(shareText)
       setState({ ...DEFAULT_STATE, ...st })
-      setShareOpen(false)
+      setImportOpen(false)
       flash('blueprint imported')
     } catch {
       flash('not a valid SANDBP2 code')
@@ -337,7 +402,8 @@ export default function BuilderV2() {
       const doc = await decodeWbt(await file.arrayBuffer())
       const { state: st, stats } = wbtToState(doc, PART_BY_ID, () => String(idRef.current++))
       setState({ ...DEFAULT_STATE, ...st })
-      setShareOpen(false)
+      setImportOpen(false)
+      setLoadOpen(false)
       flash(
         stats.skipped
           ? `imported ${stats.total} parts (${stats.skipped} skipped — old game version)`
@@ -349,251 +415,354 @@ export default function BuilderV2() {
   }
 
   return (
-    <div className="bld-app">
-      <header className="bld-appbar">
-        <Link
-          href="/"
-          aria-label="SAND HELP — home"
-          className="group font-display text-xl font-bold tracking-wide text-foreground transition-colors hover:text-primary focus-visible:text-primary"
-        >
-          SAND
-          <span aria-hidden="true" className="mx-0.5 text-primary transition-colors group-hover:text-foreground group-focus-visible:text-foreground">·</span>
-          HELP
-        </Link>
-        <span className="bld-page-title">Trampler Builder</span>
-        <div className="bld-toolbar">
-          <button type="button" className={actionButtonClass} onClick={doClear}>Clear</button>
-        </div>
+    <div className="tb-app" data-screen-label="Trampler Builder">
+      {/* ===== top bar ===== */}
+      <header className="tb-appbar">
+        <ToolNavBrand title="Trampler Builder" />
+        <span className="spacer" />
+        <button type="button" className={actionButtonClass} onClick={doExport}>Share code</button>
+        <button type="button" className={actionButtonClass} onClick={() => { setShareText(''); setImportOpen(true) }}>Import</button>
+        <button type="button" className={actionButtonClass} onClick={() => setLoadOpen(true)}>
+          <span style={{ color: 'var(--info)' }}>⭱</span>&nbsp;Load .wbt save
+        </button>
+        <span className="divider" />
+        <button type="button" className={actionButtonClass} onClick={() => setClearOpen(true)}>✕ Clear</button>
       </header>
-      <div className="bld-body">
-    <div className="bv2">
-      {/* ---- locker ---- */}
-      <aside className="bv2-locker">
-        <div className="bv2-locker-head">
-          <div className="bv2-title">PARTS LOCKER</div>
-          <input
-            className="bv2-search" placeholder="search…" value={q}
-            onChange={(e) => setQ(e.target.value)}
+
+      <div className="tb-body">
+
+        {/* ===================== LEFT — PARTS LOCKER ===================== */}
+        <aside className="tb-panel left">
+          <div className="tb-panel-head">Parts Locker</div>
+          <div className="tb-search">
+            <div className="tb-searchbox">
+              <span className="tb-searchbox-icon">⌕</span>
+              <input
+                className="tb-input" placeholder="Search parts…" value={q}
+                onChange={(e) => setQ(e.target.value)}
+              />
+            </div>
+            <button
+              type="button"
+              role="switch"
+              aria-checked={matchTech}
+              className={`tb-switch ${matchTech ? 'on' : ''}`}
+              onClick={() => setMatchTech((v) => !v)}
+              title="When on, parts you haven't unlocked in the tech tree are shown locked"
+            >
+              <span className="tb-switch-track"><span className="tb-switch-thumb" /></span>
+              <span className="tb-switch-label">Match my tech tree</span>
+            </button>
+          </div>
+          <div className="tb-scroll">
+            {cats.map(([cat, items]) => {
+              const open = openCat === cat || !!q
+              return (
+                <div key={cat} className={`tb-cat ${open ? 'open' : ''}`}>
+                  <button
+                    type="button"
+                    className="tb-cat-head"
+                    onClick={() => setOpenCat(openCat === cat ? null : cat)}
+                  >
+                    <span className="tb-cat-caret">▶</span>
+                    <span className="tb-cat-dot" style={{ '--cat': CAT_COLOR[cat] ?? 'var(--primary)' }} />
+                    {cat}
+                    <span className="tb-cat-count">{items.length}</span>
+                  </button>
+                  {open && (
+                    <div className="tb-cat-body">
+                      {items.map((p) => {
+                        const tech = partTech[p.id]
+                        return (
+                        <div key={p.id} className="tb-part-row">
+                          <button
+                            type="button"
+                            className={`tb-part ${activePart === p.id ? 'active' : ''} ${p.enabled === false ? 'disabled' : ''}`}
+                            onClick={() => {
+                              setActivePart(activePart === p.id ? null : p.id)
+                              setActiveRot(0)
+                              setSelectedId(null)
+                            }}
+                            title={p.enabled === false
+                              ? `${p.name} — not yet enabled in the game\n\n${p.desc ?? ''}`
+                              : (p.desc ? `${p.name}\n\n${p.desc}` : p.id)}
+                          >
+                            <span className="tb-part-icon"><Thumb partId={p.id} /></span>
+                            <span className="tb-part-name">
+                              {p.name}
+                              {p.enabled === false && <span className="tb-part-tag">NOT IN GAME</span>}
+                            </span>
+                            <span className="tb-part-size">
+                              {p.bounds[0]}×{p.bounds[2]}{p.bounds[1] > 1 ? `·${p.bounds[1]}h` : ''}
+                              {p.mirror ? ' ⇋' : ''}
+                            </span>
+                          </button>
+                          {tech && (
+                            <a
+                              className="tb-part-tech"
+                              href={`/tech?select=${encodeURIComponent(tech.node)}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title={`Unlocked by "${tech.name ?? 'tech node'}" — open in the tech tree`}
+                              aria-label={`Show ${p.name} in the tech tree`}
+                            >⌖</a>
+                          )}
+                        </div>
+                        )
+                      })}
+                    </div>
+                  )}
+                </div>
+              )
+            })}
+          </div>
+        </aside>
+
+        {/* ===================== CENTER — VIEWPORT ===================== */}
+        <section className="tb-viewport">
+          <BuilderScene
+            state={state}
+            level={level}
+            activePart={activePart}
+            activeRot={activeRot}
+            selectedId={selectedId}
+            onPlace={place}
+            onSelect={setSelectedId}
+            onMove={movePlacement}
+            onHoverInfo={setHoverInfo}
+            onSocketToggle={toggleSocket}
           />
-        </div>
-        <div className="bv2-cats">
-          {cats.map(([cat, items]) => (
-            <div key={cat} className={`bv2-cat ${openCat === cat || q ? 'open' : ''}`}>
-              <button
-                className="bv2-cat-head"
-                style={{ '--cat': CAT_COLOR[cat] ?? '#7f96ad' }}
-                onClick={() => setOpenCat(openCat === cat ? null : cat)}
+
+          {/* hull level rail */}
+          <div className="tb-hull">
+            <button type="button" className="tb-hull-btn" title="up a level" onClick={() => setLevel((l) => Math.min(LEVEL_LABELS.length, l + 1))}>▲</button>
+            <div className="tb-hull-label" title={LEVEL_LABELS[level - 1] ?? `Level ${level}`}>
+              <span className="txt">Level</span>
+              <span className="lvl">{level}</span>
+            </div>
+            <button type="button" className="tb-hull-btn" title="down a level" onClick={() => setLevel((l) => Math.max(1, l - 1))}>▼</button>
+          </div>
+
+          {/* bottom toolbar */}
+          <div className="tb-toolbar">
+            <button type="button" className="tb-tool" onClick={rotate} title="rotate (R)"><span className="ic">⟳</span>Rotate</button>
+            <button type="button" className="tb-tool" onClick={mirrorSelected} disabled={!selectedPart?.mirror && !PART_BY_ID[`${selectedPl?.partId}_mirror`]} title="mirror (M)"><span className="ic">⇄</span>Mirror</button>
+            <button type="button" className="tb-tool danger" onClick={removeSelected} disabled={!selectedId} title="remove (Del)"><span className="ic">✕</span>Remove</button>
+          </div>
+
+          {/* contextual messages */}
+          {activePart && (
+            <div className="tb-placing">
+              placing <b>{PART_BY_ID[activePart]?.name}</b> on {LEVEL_LABELS[level - 1]} — click to place, R rotate, hold Shift to keep placing, Esc to cancel
+              {hoverInfo && <span className="tb-placing-err"> · {hoverInfo}</span>}
+            </div>
+          )}
+          {selectedPl && !activePart && (
+            <div className="tb-placing">
+              <b>{selectedPart?.name}</b> selected — drag to move, R rotate, M mirror, Del remove · spheres = convertible sockets (click: wall → door → open)
+            </div>
+          )}
+        </section>
+
+        {/* ===================== RIGHT — INSPECTOR ===================== */}
+        <aside className="tb-panel right">
+            {/* rig name */}
+            <div className="tb-rig-name">
+              <input
+                value={state.name}
+                spellCheck={false}
+                onChange={(e) => setState((s) => ({ ...s, name: e.target.value.toUpperCase().slice(0, 28) }))}
+              />
+              <span className="edit-ic">✎</span>
+            </div>
+
+            {/* chassis */}
+            <div className="tb-section">
+              <div className="tb-section-h">Chassis</div>
+              <select
+                className="tb-select"
+                value={state.chassisId}
+                onChange={(e) => setState((s) => ({ ...s, chassisId: e.target.value, placements: [] }))}
               >
-                <span className="bv2-cat-dot" />
-                {cat}
-                <span className="bv2-cat-n">{items.length}</span>
-              </button>
-              {(openCat === cat || q) && (
-                <div className="bv2-cat-items">
-                  {items.map((p) => (
-                    <button
-                      key={p.id}
-                      className={`bv2-part ${activePart === p.id ? 'active' : ''} ${p.enabled === false ? 'disabled' : ''}`}
-                      onClick={() => {
-                        setActivePart(activePart === p.id ? null : p.id)
-                        setActiveRot(0)
-                        setSelectedId(null)
-                      }}
-                      title={p.enabled === false
-                        ? `${p.name} — not yet enabled in the game\n\n${p.desc ?? ''}`
-                        : (p.desc ? `${p.name}\n\n${p.desc}` : p.id)}
-                    >
-                      <Thumb partId={p.id} />
-                      <span className="bv2-part-name">
-                        {p.name}
-                        {p.enabled === false && <span className="bv2-part-tag">NOT IN GAME</span>}
-                      </span>
-                      <span className="bv2-part-meta">
-                        {p.bounds[0]}×{p.bounds[2]}{p.bounds[1] > 1 ? `·${p.bounds[1]}h` : ''}
-                        {p.mirror ? ' ⇋' : ''}
-                      </span>
-                    </button>
+                {chassisList.map((c) => (
+                  <option key={c.id} value={c.id}>{c.label ?? c.name}</option>
+                ))}
+              </select>
+              <div className="tb-hint-sm">Changing chassis clears the build.</div>
+            </div>
+
+            {/* manifest */}
+            <div className="tb-section tb-section-grow">
+              <div className="tb-section-h">Manifest <span className="n">{man.total} parts</span></div>
+              {man.rows.length === 0 && <div className="tb-hint-sm">Click a part in the locker, then click the grid.</div>}
+              {man.rows.length > 0 && (
+                <div className="tb-manifest tb-scroll">
+                  {man.rows.map((r) => (
+                    <div key={r.part.id} className="tb-mani-row">
+                      <span className="tb-mani-icon"><Thumb partId={r.part.id} /></span>
+                      <span className="tb-mani-name">{r.part.name}</span>
+                      <span className="tb-mani-qty">×{r.n}</span>
+                    </div>
                   ))}
                 </div>
               )}
             </div>
-          ))}
-        </div>
-      </aside>
 
-      {/* ---- viewport ---- */}
-      <div className="bv2-stage">
-        <BuilderScene
-          state={state}
-          level={level}
-          activePart={activePart}
-          activeRot={activeRot}
-          selectedId={selectedId}
-          onPlace={place}
-          onSelect={setSelectedId}
-          onMove={movePlacement}
-          onHoverInfo={setHoverInfo}
-          onSocketToggle={toggleSocket}
-        />
+            {/* build cost */}
+            <div className="tb-section">
+              <div className="tb-section-h">Build Cost</div>
+              <div className="tb-cost">
+                {COST_ROWS.map(([key, label, icon]) => (
+                  <div key={key} className={`tb-cost-row ${cost[key] ? '' : 'zero'}`}>
+                    <img className="tb-cost-ic" src={icon} alt="" onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} />
+                    <span className="tb-cost-val">{cost[key].toLocaleString()}</span>
+                    <span className="tb-cost-label">{label}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
 
-        {/* level switcher */}
-        <div className="bv2-levels">
-          <button onClick={() => setLevel((l) => Math.min(LEVEL_LABELS.length, l + 1))}>▲</button>
-          <div className="bv2-level-label">{LEVEL_LABELS[level - 1] ?? `LV ${level}`}</div>
-          <button onClick={() => setLevel((l) => Math.max(1, l - 1))}>▼</button>
-        </div>
+            {/* requirements */}
+            <div className="tb-section">
+              <div className="tb-section-h">Build Requirements</div>
+              <div className="tb-req">
+                {essentialsState.map((e) => (
+                  <div key={e.group} className={`tb-req-row ${e.ok ? 'met' : 'unmet'}`}>
+                    <span className="tb-req-mark" />
+                    <span className="tb-req-label">{e.label}</span>
+                    {GROUP_LIMITS[e.group] ? <span className="tb-req-meta">max {GROUP_LIMITS[e.group]}</span> : null}
+                  </div>
+                ))}
+                <div className={`tb-req-row ${man.crew <= MEMBER_LIMIT ? 'met' : 'bad'}`}>
+                  <span className="tb-req-mark" />
+                  <span className="tb-req-label">Crew quarters</span>
+                  <span className="tb-req-meta">{man.crew} / {MEMBER_LIMIT}</span>
+                </div>
+                <div className={`tb-req-row ${paths.ok ? 'met' : 'bad'}`}>
+                  <span className="tb-req-mark" />
+                  <span className="tb-req-label">
+                    Walking paths
+                    {paths.unreachable.length > 0 && <> — can&apos;t reach {paths.unreachable.map((g) => g.toLowerCase()).join(', ')}</>}
+                  </span>
+                </div>
+              </div>
+            </div>
 
-        {/* toolbar */}
-        <div className="bv2-toolbar">
-          <button onClick={rotate} title="rotate (R)">⟳ ROTATE</button>
-          <button onClick={mirrorSelected} disabled={!selectedPart?.mirror && !PART_BY_ID[`${selectedPl?.partId}_mirror`]} title="mirror (M)">⇋ MIRROR</button>
-          <button onClick={removeSelected} disabled={!selectedId} title="remove (Del)">✕ REMOVE</button>
-        </div>
-
-        {activePart && (
-          <div className="bv2-placing">
-            placing <b>{PART_BY_ID[activePart]?.name}</b> on {LEVEL_LABELS[level - 1]} — click to place,
-            R rotate, hold Shift to keep placing, Esc to cancel
-            {hoverInfo && <span className="bv2-placing-err"> · {hoverInfo}</span>}
-          </div>
-        )}
-        {selectedPl && !activePart && (
-          <div className="bv2-placing">
-            <b>{selectedPart?.name}</b> selected — drag to move, R rotate, M mirror, Del remove ·
-            spheres = convertible sockets (click: wall → door → open)
-          </div>
-        )}
-        {notice && <div className="bv2-notice">{notice}</div>}
+            {/* actions */}
+            <div className="tb-actions">
+              <Button
+                size="sm"
+                className="tb-publish"
+                onClick={() => { setPub((p) => ({ ...p, name: p.name || state.name })); setPubOpen(true) }}
+              >
+                ★ Publish to gallery
+              </Button>
+            </div>
+        </aside>
       </div>
 
-      {/* ---- manifest ---- */}
-      <aside className="bv2-manifest">
-        <input
-          className="bv2-name"
-          value={state.name}
-          onChange={(e) => setState((s) => ({ ...s, name: e.target.value.toUpperCase().slice(0, 28) }))}
-        />
+      {/* Transient toast — rendered at the app root so it sits above the modals. */}
+      {notice && <div className="tb-notice">{notice}</div>}
 
-        <div className="bv2-block">
-          <div className="bv2-block-title">CHASSIS</div>
-          <select
-            value={state.chassisId}
-            onChange={(e) => setState((s) => ({ ...s, chassisId: e.target.value, placements: [] }))}
-          >
-            {chassisList.map((c) => (
-              <option key={c.id} value={c.id}>
-                {c.label ?? c.name}
-              </option>
-            ))}
-          </select>
-          <div className="bv2-hint">changing chassis clears the build</div>
-        </div>
-
-        <div className="bv2-block">
-          <div className="bv2-block-title">BUILD REQUIREMENTS</div>
-          {essentialsState.map((e) => (
-            <div key={e.group} className={`bv2-req ${e.ok ? 'ok' : ''}`}>
-              <span>{e.ok ? '✓' : '○'}</span> {e.label}
-              {GROUP_LIMITS[e.group] ? <em> (max {GROUP_LIMITS[e.group]})</em> : null}
+      {/* ===================== MODALS ===================== */}
+      {shareOpen && (
+        <Modal
+          title="Share this rig" icon="⤴" onClose={() => setShareOpen(false)}
+          footer={<Button variant="ghost" size="sm" onClick={() => setShareOpen(false)}>Close</Button>}
+        >
+          <p>Copy this code and send it to anyone — they paste it into <b>Import</b> to load your exact build. The code holds the chassis and every placed part.</p>
+          <div className="tb-modal-block">
+            <span className="blk-h">Share code</span>
+            <div className="tb-code-box">
+              <input className="code" value={shareText} readOnly />
+              <Button size="sm" onClick={() => { flash('copied'); try { navigator.clipboard?.writeText(shareText) } catch { /* clipboard blocked */ } }}>Copy</Button>
             </div>
-          ))}
-          <div className={`bv2-req ${man.crew <= MEMBER_LIMIT ? 'ok' : 'bad'}`}>
-            <span>{man.crew <= MEMBER_LIMIT ? '✓' : '!'}</span> Crew quarters {man.crew}/{MEMBER_LIMIT}
+            <span className="tb-note">Codes are version-tagged — a code from an older patch may skip parts that no longer exist.</span>
           </div>
-          <div className={`bv2-req ${paths.ok ? 'ok' : 'bad'}`}>
-            <span>{paths.ok ? '✓' : '!'}</span> Walking paths
-            {paths.unreachable.length > 0 && (
-              <em> — can't reach {paths.unreachable.map((g) => g.toLowerCase()).join(', ')}</em>
-            )}
-          </div>
-          <div className="bv2-req dim">
-            <span>?</span> Weight — server-side data, not in game files
-          </div>
-        </div>
+        </Modal>
+      )}
 
-        <div className="bv2-block">
-          <div className="bv2-block-title">BUILD COST</div>
-          <div className="bv2-cost">
-            {COST_ROWS.map(([key, label, icon]) => (
-              <div key={key} className={`bv2-cost-row ${cost[key] ? '' : 'dim'}`}>
-                <img src={icon} alt="" onError={(e) => { e.currentTarget.style.visibility = 'hidden' }} />
-                <span className="bv2-cost-n">{cost[key].toLocaleString()}</span>
-                <span className="bv2-cost-label">{label}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bv2-block bv2-grow">
-          <div className="bv2-block-title">MANIFEST · {man.total} parts</div>
-          <div className="bv2-man-list">
-            {man.rows.length === 0 && <div className="bv2-hint">click a part in the locker, then click the grid</div>}
-            {man.rows.map((r) => (
-              <div key={r.part.id} className="bv2-man-row">
-                {thumbOf(r.part.id) && <img src={thumbOf(r.part.id)} alt="" onError={(e) => { e.currentTarget.style.display = 'none' }} />}
-                <span className="bv2-man-name" style={{ color: CAT_COLOR[r.part.category] }}>{r.part.name}</span>
-                <span className="bv2-man-n">×{r.n}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        <div className="bv2-block">
-          <div className="bv2-share-btns">
-            <button onClick={doExport}>SHARE CODE</button>
-            <button onClick={() => { setShareText(''); setShareOpen(true) }}>IMPORT</button>
-          </div>
-          <label className="bv2-wbt-btn">
-            ⬆ LOAD IN-GAME SAVE (.wbt)
-            <input
-              type="file"
-              accept=".wbt,.wbtb"
-              style={{ display: 'none' }}
-              onChange={(e) => { doImportWbt(e.target.files[0]); e.target.value = '' }}
-            />
-          </label>
-          <p className="bv2-wbt-hint">
-            From <code>…/AppData/LocalLow/Hologryph/Sand/Data/Walkers/</code>. Read in your
-            browser — nothing is uploaded.
-          </p>
-
-          <button className="bv2-publish-btn" onClick={() => { setPub((p) => ({ ...p, name: p.name || state.name })); setPubOpen((o) => !o) }}>
-            ★ PUBLISH TO GALLERY
-          </button>
-          {pubOpen && (
-            <div className="bv2-share" style={{ marginTop: 8 }}>
-              <input className="bv2-search" placeholder="build name" value={pub.name}
-                onChange={(e) => setPub({ ...pub, name: e.target.value })} />
-              <input className="bv2-search" placeholder="your name (optional)" value={pub.author}
-                onChange={(e) => setPub({ ...pub, author: e.target.value })} style={{ marginTop: 6 }} />
-              <textarea className="bv2-share-text" placeholder="description (optional)" value={pub.description}
-                onChange={(e) => setPub({ ...pub, description: e.target.value })} style={{ marginTop: 6 }} rows={3} />
-              <div className="bv2-share-btns" style={{ marginTop: 6 }}>
-                <button onClick={doPublish} disabled={pubBusy}>{pubBusy ? 'SUBMITTING…' : 'SUBMIT'}</button>
-                <button onClick={() => setPubOpen(false)}>CANCEL</button>
-              </div>
-              <p className="bv2-wbt-hint">Submissions are reviewed before appearing in the gallery.</p>
-            </div>
-          )}
-          {shareOpen && (
-            <div className="bv2-share">
+      {importOpen && (
+        <Modal
+          title="Import a build" icon="⤓" onClose={() => setImportOpen(false)}
+          footer={<Button variant="ghost" size="sm" onClick={() => setImportOpen(false)}>Cancel</Button>}
+        >
+          <div className="tb-modal-block">
+            <span className="blk-h">Paste a share code</span>
+            <div className="tb-code-box">
               <textarea
+                className="code" placeholder="SANDBP2.…" rows={3}
+                style={{ color: 'var(--foreground)' }}
                 value={shareText}
                 onChange={(e) => setShareText(e.target.value)}
-                placeholder="SANDBP2.…"
-                rows={4}
               />
-              <div className="bv2-share-btns">
-                <button onClick={() => { navigator.clipboard?.writeText(shareText); flash('copied') }}>COPY</button>
-                <button onClick={doImport}>LOAD</button>
-                <button onClick={() => setShareOpen(false)}>CLOSE</button>
-              </div>
+              <Button size="sm" onClick={doImport}>Load</Button>
             </div>
-          )}
-        </div>
-      </aside>
-        </div>
-      </div>
+            <span className="tb-note">Pasting replaces your current build. Save or share it first if you want to keep it. To load an in-game <b>.wbt</b> save instead, use <b>Load .wbt save</b>.</span>
+          </div>
+        </Modal>
+      )}
+
+      {loadOpen && (
+        <Modal
+          title="Load in-game save" icon={<span style={{ color: 'var(--info)' }}>⭱</span>} onClose={() => setLoadOpen(false)}
+          footer={<Button variant="ghost" size="sm" onClick={() => setLoadOpen(false)}>Cancel</Button>}
+        >
+          <p>SAND stores each saved trampler as a <b>.wbt</b> file on your machine. Find it, then drop it below — it&apos;s read in your browser and <b>nothing is uploaded</b>.</p>
+          <div className="tb-modal-block">
+            <span className="blk-h">Where to find your saves</span>
+            <ol className="tb-steps">
+              <li><span className="sn">1</span>Open your file explorer and paste the path below into the address bar.</li>
+              <li><span className="sn">2</span>Pick the rig you want — files are named after the in-game rig.</li>
+              <li><span className="sn">3</span>Drop it on the box below (or browse to it).</li>
+            </ol>
+            <div className="tb-path">
+              <code>{SAVE_PATH}</code>
+              <Button variant="ghost" size="sm" className="copy" onClick={() => { flash('copied'); try { navigator.clipboard?.writeText(SAVE_PATH) } catch { /* clipboard blocked */ } }}>Copy</Button>
+            </div>
+            <span className="tb-note">Windows default. On other platforms look under your Sand user-data folder → <b>Data/Walkers</b>.</span>
+          </div>
+          <div className="tb-modal-block">
+            <span className="blk-h">Load the file</span>
+            <label className="tb-drop">
+              <span className="dz-glyph">⭱</span>
+              <span>Drop a <b>.wbt</b> save here, or click to browse</span>
+              <input type="file" accept=".wbt,.wbtb" hidden onChange={(e) => { doImportWbt(e.target.files[0]); e.target.value = '' }} />
+            </label>
+          </div>
+        </Modal>
+      )}
+
+      {pubOpen && (
+        <Modal
+          title="Publish to gallery" icon="★" onClose={() => setPubOpen(false)}
+          footer={<>
+            <Button variant="ghost" size="sm" onClick={() => setPubOpen(false)}>Cancel</Button>
+            <Button size="sm" disabled={pubBusy} onClick={doPublish}>{pubBusy ? 'Submitting…' : 'Submit'}</Button>
+          </>}
+        >
+          <p>Share your build with the community. Submissions are reviewed before appearing in the gallery.</p>
+          <div className="tb-pub-fields">
+            <input className="tb-input" placeholder="build name" value={pub.name}
+              onChange={(e) => setPub({ ...pub, name: e.target.value })} />
+            <input className="tb-input" placeholder="your name (optional)" value={pub.author}
+              onChange={(e) => setPub({ ...pub, author: e.target.value })} />
+            <textarea className="tb-input" placeholder="description (optional)" rows={3} value={pub.description}
+              onChange={(e) => setPub({ ...pub, description: e.target.value })} />
+          </div>
+        </Modal>
+      )}
+
+      <ConfirmDialog
+        open={clearOpen}
+        onOpenChange={setClearOpen}
+        title="Clear this build?"
+        description="This removes every placed part. The chassis is kept. This can't be undone."
+        confirmLabel="Clear build"
+        cancelLabel="Cancel"
+        destructive
+        onConfirm={doClear}
+      />
     </div>
   )
 }

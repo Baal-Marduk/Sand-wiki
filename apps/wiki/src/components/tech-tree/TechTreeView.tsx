@@ -7,6 +7,7 @@ import type { TechTree, TechNode } from "@/lib/tech-tree/types";
 import { LAYOUT, computeLayout, ancestors, pathCost } from "@/lib/tech-tree/layout";
 import { actionButtonClass } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
+import { ToolNavBrand } from "@/components/ToolNavBrand";
 
 const STORE_KEY = "sand_techtree_unlocked_v1";
 const fmt = (n: number) => n.toLocaleString("en-US");
@@ -197,13 +198,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
   return (
     <div className="tt-app">
       <header className="tt-appbar">
-        <Link href="/" aria-label="SAND HELP — home"
-          className="group font-display text-xl font-bold tracking-wide text-foreground transition-colors hover:text-primary focus-visible:text-primary">
-          SAND
-          <span aria-hidden="true" className="mx-0.5 text-primary transition-colors group-hover:text-foreground group-focus-visible:text-foreground">·</span>
-          HELP
-        </Link>
-        <span className="tt-page-title">Tech Tree</span>
+        <ToolNavBrand title="Tech Tree" />
         <div className="tt-toolbar">
           <span className="tt-progress">{unlocked.size} / {tree.nodes.length} unlocked</span>
           <div className="tt-zoom">

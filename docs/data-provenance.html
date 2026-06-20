@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SandLabs — Data Provenance & Datamining Gaps</title>
+<style>
+  :root{
+    --bg:#0f1216; --panel:#171b21; --panel2:#1d222a; --bd:#2a313b; --tx:#e6e9ee; --mut:#9aa4b2;
+    --green:#46c97e; --yellow:#e0b341; --orange:#e08a3c; --red:#e0594f; --blue:#5aa9e6;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--tx);font:15px/1.55 -apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:32px 20px 80px}
+  .wrap{max-width:1040px;margin:0 auto}
+  h1{font-size:26px;margin:0 0 6px;letter-spacing:-.02em}
+  h2{font-size:18px;margin:38px 0 12px;letter-spacing:-.01em;border-bottom:1px solid var(--bd);padding-bottom:8px}
+  .sub{color:var(--mut);margin:0 0 24px}
+  .lead{background:var(--panel);border:1px solid var(--bd);border-left:3px solid var(--blue);border-radius:8px;padding:16px 18px;margin:0 0 8px}
+  .lead b{color:#fff}
+  code{background:#0c0f13;border:1px solid var(--bd);border-radius:4px;padding:1px 5px;font:12.5px ui-monospace,Menlo,Consolas,monospace;color:#cdd6e2}
+  .legend{display:flex;flex-wrap:wrap;gap:10px;margin:14px 0 6px}
+  .lg{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--bd);border-radius:20px;padding:6px 12px;font-size:13px}
+  .dot{width:11px;height:11px;border-radius:50%;flex:none}
+  .g{background:var(--green)}.y{background:var(--yellow)}.o{background:var(--orange)}.r{background:var(--red)}
+  .scroll{overflow-x:auto;border:1px solid var(--bd);border-radius:8px;margin:4px 0}
+  table{border-collapse:collapse;width:100%;min-width:640px;font-size:13.5px}
+  th,td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--bd);vertical-align:top}
+  th{background:var(--panel2);color:var(--mut);font-weight:600;font-size:12px;text-transform:uppercase;letter-spacing:.04em}
+  tr:last-child td{border-bottom:none}
+  td.k{white-space:nowrap;font-weight:600}
+  .tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 7px;border-radius:5px;white-space:nowrap}
+  .tg{background:rgba(70,201,126,.16);color:var(--green)}
+  .ty{background:rgba(224,179,65,.16);color:var(--yellow)}
+  .to{background:rgba(224,138,60,.16);color:var(--orange)}
+  .tr{background:rgba(224,89,79,.16);color:var(--red)}
+  .num{color:var(--mut);font-variant-numeric:tabular-nums}
+  .note{color:var(--mut);font-size:13px}
+  .cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin:6px 0}
+  .card{background:var(--panel);border:1px solid var(--bd);border-radius:8px;padding:14px 16px}
+  .card .n{font-size:24px;font-weight:700}
+  .card .l{color:var(--mut);font-size:12.5px;margin-top:2px}
+  .gap{background:var(--panel);border:1px solid var(--bd);border-radius:8px;padding:14px 16px;margin:10px 0}
+  .gap h3{margin:0 0 4px;font-size:15px}
+  .gap p{margin:4px 0 0;color:var(--mut);font-size:13.5px}
+  .pill{font-size:11px;font-weight:700;padding:2px 8px;border-radius:5px;margin-left:8px}
+  .warn{background:rgba(224,89,79,.10);border:1px solid rgba(224,89,79,.4);border-left:3px solid var(--red);border-radius:8px;padding:14px 18px;margin:16px 0}
+  .ok{color:var(--green)} .no{color:var(--red)} .part{color:var(--yellow)}
+  ul{margin:8px 0;padding-left:20px} li{margin:3px 0}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <h1>SandLabs — Data Provenance &amp; Datamining Gaps</h1>
+  <p class="sub">Where every piece of the served data actually comes from, and exactly what the new file-datamining approach does <i>not</i> cover. As of 2026-06-18, branch <code>feat/monorepo-static-foundation</code>.</p>
+
+  <div class="lead">
+    <b>Two different questions, don't conflate them:</b><br>
+    <b>(1) Is it from game files?</b> — Most of it <i>is</i> game-scraped in origin: item <b>names</b>, <b>combat stats</b>, <b>recipes</b>, <b>loot caps</b> all came out of the files (via the Python extractors) and were baked into the baseline.<br>
+    <b>(2) Does the current TS transform re-derive it each run?</b> — Only a thin slice: item rarity/icon/description, trampler <b>health</b>, and <b>loot</b> links. The transform consumes just <b>4 of the 15</b> datamine datasets, so everything else <i>rides the baseline</i> and won't auto-update per patch until it's wired in. <span class="part">That "wired in" gap — not "is it from game files" — is the real story.</span>
+  </div>
+
+  <h2>The three layers</h2>
+  <div class="scroll"><table>
+    <tr><th>Layer</th><th>What it is</th><th>Status</th></tr>
+    <tr><td class="k">Database <span class="note">(Neon/Postgres)</span></td>
+      <td>The legacy source of truth — full unified entity model (items, parts, tech, locations, links). Exported to the baseline JSON at Foundation. <b>The app no longer reads it.</b></td>
+      <td>Frozen at Foundation. Never reseeded (hard rule). Now <b>diverges</b> from the served data by every datamine merge since.</td></tr>
+    <tr><td class="k">Scraped <span class="note">(sek-out/*.json)</span></td>
+      <td>15 datasets extracted from game files by the Python scripts.</td>
+      <td><b>Mostly playtest-era</b> — only <code>compartment_stats.json</code> was regenerated from the release build this session.</td></tr>
+    <tr><td class="k">Baseline <span class="note">(packages/data/generated/*.json)</span></td>
+      <td>What the wiki actually serves. = DB export <b>+</b> accumulated datamine merges. The transform reads it, refreshes a subset, writes it back.</td>
+      <td>Live. 378 entities · 39 recipes · 1080 links.</td></tr>
+  </table></div>
+  <p class="note"><b>DB vs baseline difference</b> = exactly the datamine merges committed since Foundation: item rarity/icon/description refreshes, the localization enumeration matches (missing-items 48→1), trampler-part <b>health</b> corrections (13 parts), loot-link re-derivation, the disabled Ironclad cargo box, and the renamed radio-beacon boxes. The DB has none of these.</p>
+
+  <h2>Provenance legend</h2>
+  <div class="legend">
+    <span class="lg"><span class="dot g"></span><b>Live datamine</b> — re-derived from game files every transform run</span>
+    <span class="lg"><span class="dot y"></span><b>Game-origin, not wired</b> — extractor exists, but the transform doesn't use it → won't auto-update</span>
+    <span class="lg"><span class="dot o"></span><b>Community / hand</b> — sandgame.wiki, sand-help.com, transcription, curation</span>
+    <span class="lg"><span class="dot r"></span><b>Not in files</b> — server-side or code-side; not extractable from the files</span>
+  </div>
+
+  <h2>Entities — field-by-field source</h2>
+  <div class="scroll"><table>
+    <tr><th>Kind</th><th>Field</th><th>Source</th><th>Detail</th></tr>
+
+    <tr><td class="k" rowspan="6">item<br><span class="num">136</span></td>
+      <td>name</td><td><span class="tag ty">game-origin</span></td><td><b>In the game files</b> — 121/136 item names appear verbatim in <code>localization.json</code>. The baseline value came from the original wiki seed but is fully re-derivable from localization; the transform just doesn't refresh names yet.</td></tr>
+    <tr><td>rarity</td><td><span class="tag tg">live</span><span class="tag to">hand</span></td><td>Refreshed from <code>items.json</code> for the ~76 SEK-covered items; the rest stay baseline. <b>Not</b> in the full item asset (<code>CheatItemDefinitions</code> has no rarity).</td></tr>
+    <tr><td>icon</td><td><span class="tag tg">live</span></td><td>From <code>items.json</code> sprite-match + 4 override fixes. 135/136 filled.</td></tr>
+    <tr><td>description</td><td><span class="tag tg">live</span><span class="tag to">hand</span></td><td>From <code>items.json</code> (localization) for covered items; rest baseline.</td></tr>
+    <tr><td>category</td><td><span class="tag ty">not wired</span></td><td>Authoritative <code>Type</code> exists in <code>item_defs.json</code> (117 items, extracted this session) but is <b>not yet wired</b> into <code>build_site_data</code>/transform. Currently baseline.</td></tr>
+    <tr><td>itemStats <span class="note">(combat: dmg/range/reload/armor/ammo)</span></td><td><span class="tag ty">not wired</span></td><td>135/136 filled. Game-origin via <code>extract_weapon_stats</code>/<code>turret_stats</code> → <code>weapon_stats.json</code>/<code>turret_stats.json</code> <b>exist</b> but the TS transform never reads them. Baked into baseline.</td></tr>
+
+    <tr><td class="k" rowspan="4">trampler-part<br><span class="num">120</span></td>
+      <td>tramplerStats.health</td><td><span class="tag tg">live</span></td><td>Re-derived from <code>compartment_stats.json</code> (epb prefab <code>HealthDataComponent</code>). Fresh from the release build; corrected 13 stale values.</td></tr>
+    <tr><td>weight / energy / ratedPower / crewSlots / itemSlots / weightCapacity</td><td><span class="tag tr">not in files</span><span class="tag to">hand</span></td><td>Confirmed absent from all static assets (prefabs, config, UI). Code/runtime-side. Stay on the sand-help baseline.</td></tr>
+    <tr><td>researchNode / researchName / researchTier</td><td><span class="tag to">hand</span></td><td>From the tech-tree transcription (sand-help).</td></tr>
+    <tr><td>name / description / geometry</td><td><span class="tag to">hand</span><span class="tag ty">not wired</span></td><td>Names/desc baseline (localization compartments available but not wired). Cell/socket geometry exists in <code>parts_v2.json</code> but isn't in the entity model (reserved for the future builder).</td></tr>
+
+    <tr><td class="k" rowspan="2">tech-node<br><span class="num">95</span></td>
+      <td>name / description</td><td><span class="tag to">hand</span><span class="tag ty">files=WIP</span></td><td>The file catalog (<code>ProgressionTreeDescriptions</code>) is placeholder/test text on this build — not display-ready. Baseline (transcribed) is used.</td></tr>
+    <tr><td>techNodeStats <span class="note">(faction/tier)</span></td><td><span class="tag tr">not in files</span><span class="tag to">hand</span></td><td>Tree structure is server-side (<code>GetResearchTree</code> over WSS). Transcribed from screenshots + sand-help. Capture addon exists but is <b>disabled</b>.</td></tr>
+
+    <tr><td class="k" rowspan="2">environment<br><span class="note">(locations) </span><span class="num">27</span></td>
+      <td>name / category / loot-caps / contents</td><td><span class="tag ty">not wired</span></td><td>Game-origin via <code>lootsets</code>/<code>locations.json</code>/<code>location_contents.json</code> — these <b>exist</b> but the transform doesn't consume them. Baseline.</td></tr>
+    <tr><td>description / icon</td><td><span class="tag to">hand</span></td><td>Descriptions hand-written (11/27). No location icons exist in the game files.</td></tr>
+  </table></div>
+
+  <h2>EntityLinks — source by role</h2>
+  <div class="scroll"><table>
+    <tr><th>Role</th><th class="num">Count</th><th>Source</th><th>Detail</th></tr>
+    <tr><td class="k">loot</td><td class="num">189</td><td><span class="tag tg">live</span></td><td>Deep-derived from <code>container_loot.json</code> (12 covered containers). The one link type the transform fully owns — but the input is playtest-era until a pipeline re-run.</td></tr>
+    <tr><td class="k">tech-unlock-cost</td><td class="num">333</td><td><span class="tag tr">not in files</span></td><td>Server-side tree. Transcribed.</td></tr>
+    <tr><td class="k">tech-unlocks</td><td class="num">121</td><td><span class="tag tr">not in files</span></td><td>Server-side tree.</td></tr>
+    <tr><td class="k">tech-prereq</td><td class="num">82</td><td><span class="tag tr">not in files</span></td><td>Server-side tree (edges).</td></tr>
+    <tr><td class="k">cost</td><td class="num">233</td><td><span class="tag ty">not wired</span></td><td>Craft/build costs. <code>recipes.json</code> is produced by <code>build_site_data</code> from <code>craftingrecipes.json</code> (game files) but the transform passes baseline recipes/costs through untouched.</td></tr>
+    <tr><td class="k">buy-cost / buy-unlock / buy-yield</td><td class="num">113</td><td><span class="tag to">hand</span><span class="tag ty">?</span></td><td>Vendor/shop data from the earlier SEK import. No dedicated shop-config extractor is wired; provenance to re-verify.</td></tr>
+    <tr><td class="k">requires-key / rewards-key</td><td class="num">9</td><td><span class="tag to">hand</span></td><td>Curated for the key-progression feature.</td></tr>
+  </table></div>
+  <p class="note">Recipes (39) themselves: game-origin (<code>craftingrecipes.json</code>) baked into baseline; the transform does not re-derive them.</p>
+
+  <h2>What the transform actually consumes</h2>
+  <div class="cards">
+    <div class="card"><div class="n ok">4</div><div class="l">datasets wired into the TS transform: <code>items</code>, <code>localization</code>, <code>container_loot</code>, <code>compartment_stats</code></div></div>
+    <div class="card"><div class="n no">11</div><div class="l">datamine datasets that exist but are <b>not</b> consumed: weapon_stats, turret_stats, recipes, locations, location_contents, loot_sources, loot_tables, parts_v2, research_nodes, research_tree, chassis_cells</div></div>
+    <div class="card"><div class="n part">1</div><div class="l">of the 15 inputs regenerated from the <b>release</b> build (<code>compartment_stats</code>); the rest are playtest-era</div></div>
+  </div>
+
+  <div class="warn">
+    <b>Staleness caveat.</b> Even the “live” fields above are only as fresh as their <code>sek-out/</code> input. Right now those inputs are mostly <b>playtest-era</b> — only <code>compartment_stats.json</code> (trampler health) was regenerated from the current release files. A full per-patch refresh requires re-running the Python pipeline (<code>build_localization</code> → <code>build_site_data</code> → <code>build_container_loot</code> → …) on the release build, then the transform.
+  </div>
+
+  <h2>The gap — what we’re missing</h2>
+
+  <div class="gap"><h3>Re-derivable from files, just not wired <span class="pill ty">fixable in transform</span></h3>
+  <p>Extractors already produce these from game files; wiring them into the TS transform would make them auto-update per patch instead of riding the baseline:</p>
+  <ul>
+    <li><b>Item combat stats</b> (<code>itemStats</code>) — <code>weapon_stats.json</code> + <code>turret_stats.json</code> → ~135 items.</li>
+    <li><b>Authoritative item category/type</b> — <code>item_defs.json</code> (117, extracted this session).</li>
+    <li><b>Recipes &amp; craft/build costs</b> (the <code>cost</code> role, 233 links) — <code>recipes.json</code>.</li>
+    <li><b>Location loot caps &amp; contents</b> — <code>locations.json</code> + <code>location_contents.json</code> (27 environments).</li>
+    <li><b>Item rarity/icon/desc for the ~48 baseline-only items</b> — needs <code>item_defs</code> wired + a fresh <code>items.json</code> rebuild.</li>
+  </ul></div>
+
+  <div class="gap"><h3>Genuinely not in the game files <span class="pill tr">needs other sources</span></h3>
+  <ul>
+    <li><b>Tech tree</b> (techNodeStats + the 536 tech-* links) — server-side (<code>GetResearchTree</code> over WSS). Only the disabled WS-capture addon could get it; currently transcribed.</li>
+    <li><b>Trampler weight / energy / crew / power</b> — code/runtime-side; stays sand-help baseline.</li>
+    <li><b>Item &amp; part display names</b> — game uses internal ids; the curated names stay baseline.</li>
+    <li><b>Translations (i18n)</b> — only EN extracted; needs a multi-locale localization run.</li>
+    <li><b>Vendor/shop links</b> (buy-*) — no wired extractor; provenance to confirm.</li>
+  </ul></div>
+
+  <p class="note" style="margin-top:24px">Bottom line: the new approach reliably auto-updates <b>trampler health</b>, <b>loot tables</b>, and <b>item rarity/icon/description</b> (for SEK-covered items) — everything else is either baseline-baked game data waiting to be wired in, or genuinely unobtainable from the files.</p>
+</div>
+</body>
+</html>
