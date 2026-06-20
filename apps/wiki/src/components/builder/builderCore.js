@@ -93,7 +93,9 @@ export function validate(state, occ, partId, px, py, pz, rot, ignoreId = null) {
 
   for (const c of cells) {
     if (Math.abs(c.x) > GRID.x || c.z < GRID.zMin || c.z > GRID.zMax || c.y < 0 || c.y > GRID.yMax) {
-      if (!c.vol && c.y > GRID.yMax) continue // tall clearance may poke out the top
+      // Non-solid clearance may poke out the top OR hang below the floor — e.g. an
+      // entrance's ladder clearance runs down the outside of the hull (y < 0).
+      if (!c.vol && (c.y > GRID.yMax || c.y < 0)) continue
       return { ok: false, reason: 'outside build grid' }
     }
     const own = occ.get(cellKey(c.x, c.y, c.z))
