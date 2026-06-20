@@ -1,5 +1,6 @@
 "use client";
 import { FaSteam } from "react-icons/fa";
+import { Button } from "@/components/ui/button";
 
 export function SteamGateModal({ open, onClose, returnTo }: { open: boolean; onClose: () => void; returnTo: string }) {
   if (!open) return null;
@@ -27,10 +28,13 @@ export function SteamGateModal({ open, onClose, returnTo }: { open: boolean; onC
           <p className="text-[11.5px] text-dim">We never receive your password or game library. Sign out any time.</p>
         </div>
         <div className="flex justify-end gap-2 border-t border-border px-4 py-3">
-          <button type="button" onClick={onClose} className="btn btn-ghost btn-sm">Cancel</button>
-          <a href={`/api/auth/steam/login?returnTo=${encodeURIComponent(returnTo)}`} className="btn btn-sm inline-flex items-center gap-2 border border-info bg-info/15 text-info hover:bg-info/25">
-            <FaSteam className="size-4" aria-hidden="true" />Continue to Steam
-          </a>
+          <Button type="button" variant="ghost" size="sm" onClick={onClose}>Cancel</Button>
+          {/* asChild keeps the real Steam login link; info-tinted CTA via --info token. */}
+          <Button asChild size="sm" className="border border-info bg-info/15 text-info hover:bg-info/25">
+            <a href={`/api/auth/steam/login?returnTo=${encodeURIComponent(returnTo)}`}>
+              <FaSteam className="size-4" aria-hidden="true" />Continue to Steam
+            </a>
+          </Button>
         </div>
       </div>
     </div>

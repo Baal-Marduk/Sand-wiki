@@ -1,5 +1,5 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { ToolNavBrand } from "@/components/ToolNavBrand";
 import { ToolNav } from "@/components/ToolNav";
@@ -54,6 +54,9 @@ export function GalleryClient({
   const [liked, setLiked] = useState<Set<string>>(new Set());
   // The builder's local working build (drafts never hit the DB). Shown only in "mine".
   const [localDraft, setLocalDraft] = useState<{ name: string } | null>(null);
+  // Monotonic request id: a fast view/sort switch can let a stale fetch settle
+  // after a newer one — we ignore any response that isn't the latest request.
+  const reqIdRef = useRef(0);
 
   // If we mounted directly into the "mine" view (?view=mine deep-link) and the
   // server only fetched the community first page, pull the viewer's designs.
@@ -75,19 +78,27 @@ export function GalleryClient({
   }, []);
 
   async function load(nextView: View, nextSort: Sort, cursor?: string | null) {
+    const myReq = ++reqIdRef.current;
     setLoading(true);
     try {
       const qs = new URLSearchParams({ view: nextView, sort: nextSort });
       if (cursor) qs.set("cursor", cursor);
       const res = await fetch(`/api/designs?${qs}`, { cache: "no-store" });
+      // Bail on a non-OK response: leave the current page intact rather than
+      // spreading an undefined/error body.
+      if (!res.ok) return;
       const data: Page = await res.json();
+      // Ignore stale settles — only the latest request may mutate the page.
+      if (reqIdRef.current !== myReq) return;
       setPage((prev) =>
         cursor
           ? { items: [...prev.items, ...data.items], nextCursor: data.nextCursor }
           : data,
       );
     } finally {
-      setLoading(false);
+      // Only the latest request should clear the spinner; a stale finally must
+      // not flip loading off while a newer request is still in flight.
+      if (reqIdRef.current === myReq) setLoading(false);
     }
   }
 
@@ -98,11 +109,15 @@ export function GalleryClient({
       return;
     }
     setView(v);
+    // Fresh list — drop optimistic liked state so it doesn't leak across lists.
+    setLiked(new Set());
     load(v, sort, null);
   }
 
   function switchSort(s: Sort) {
     setSort(s);
+    // Fresh list — drop optimistic liked state so it doesn't leak across lists.
+    setLiked(new Set());
     load(view, s, null);
   }
 
@@ -284,6 +299,7 @@ export function GalleryClient({
                     className={`tg-vote${isLiked ? " liked" : ""}${signedIn ? "" : " locked"}`}
                     onClick={() => like(d.slug)}
                     title={signedIn ? "Like" : "Sign in with Steam to like"}
+                    aria-label={isLiked ? "Unlike" : "Like"}
                     aria-pressed={isLiked}
                   >
                     <span className="up" aria-hidden="true">

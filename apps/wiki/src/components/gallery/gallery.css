@@ -115,6 +115,9 @@
 .tg-vote.liked .up { color: var(--primary); }
 .tg-vote.liked .score { color: var(--primary); }
 
+/* Base .fbtn so it's styled even outside a .tg-foot (e.g. the detail-page Back link). */
+.fbtn { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 12px; color: var(--muted-foreground); padding: 5px 8px; transition: color .12s; cursor: pointer; }
+.fbtn:hover { color: var(--primary-hover); }
 .tg-foot .fbtn { display: inline-flex; align-items: center; gap: 6px; font-family: var(--font-mono); font-size: 12px; color: var(--muted-foreground); padding: 5px 8px; transition: color .12s; cursor: pointer; }
 .tg-foot .fbtn:hover { color: var(--primary-hover); }
 .tg-foot .right { margin-left: auto; display: flex; align-items: center; gap: 4px; }

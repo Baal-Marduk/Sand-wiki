@@ -75,9 +75,6 @@ export default async function DesignPage({ params }: Props) {
                   <span className="scrap" />
                   <b>{d.crowns.toLocaleString()}</b> crowns
                 </span>
-                <span className="m">
-                  <b>{d.likeCount}</b> likes
-                </span>
               </div>
             </div>
             <div className="tg-foot">

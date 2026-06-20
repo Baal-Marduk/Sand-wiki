@@ -17,6 +17,7 @@ export function DesignActions({
 }) {
   const [likeCount, setLikeCount] = useState(initialLikeCount);
   const [liked, setLiked] = useState(false);
+  const [liking, setLiking] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
   const [reported, setReported] = useState(false);
   const [reporting, setReporting] = useState(false);
@@ -26,6 +27,9 @@ export function DesignActions({
       setGateOpen(true);
       return;
     }
+    // Guard against re-entry while a like/unlike is in flight.
+    if (liking) return;
+    setLiking(true);
     const wasLiked = liked;
     const method = wasLiked ? "DELETE" : "POST";
     // Optimistic toggle, reconciled with the server's authoritative count.
@@ -43,6 +47,8 @@ export function DesignActions({
     } catch {
       setLiked(wasLiked);
       setLikeCount((n) => Math.max(0, n + (wasLiked ? 1 : -1)));
+    } finally {
+      setLiking(false);
     }
   }
 
@@ -68,6 +74,7 @@ export function DesignActions({
         className={`tg-vote${liked ? " liked" : ""}${signedIn ? "" : " locked"}`}
         onClick={like}
         title={signedIn ? "Like" : "Sign in with Steam to like"}
+        aria-label={liked ? "Unlike" : "Like"}
         aria-pressed={liked}
       >
         <span className="up" aria-hidden="true">
