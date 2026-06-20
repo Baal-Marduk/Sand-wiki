@@ -12,7 +12,7 @@ import { asset } from './data.js'
 import {
   PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
   CAT_COLOR, CATEGORY_ORDER, buildOccupancy, validate, manifest,
-  encodeShare, decodeShare, editableSockets,
+  encodeShare, decodeShare, editableSockets, checkPaths,
 } from './builderCore.js'
 import { decodeWbt, wbtToState } from './wbtImport.js'
 import { submitBuild } from './galleryApi.js'
@@ -91,6 +91,7 @@ export default function BuilderV2() {
 
   const occ = useMemo(() => buildOccupancy(state), [state])
   const man = useMemo(() => manifest(state), [state])
+  const paths = useMemo(() => checkPaths(state), [state])
   // Total build cost: the chassis plus each placed part's wiki cost (crowns + resources).
   const cost = useMemo(() => {
     const t = { crowns: 0, mechanical: 0, pneumatic: 0, computing: 0 }
@@ -490,6 +491,12 @@ export default function BuilderV2() {
           ))}
           <div className={`bv2-req ${man.crew <= MEMBER_LIMIT ? 'ok' : 'bad'}`}>
             <span>{man.crew <= MEMBER_LIMIT ? '✓' : '!'}</span> Crew quarters {man.crew}/{MEMBER_LIMIT}
+          </div>
+          <div className={`bv2-req ${paths.ok ? 'ok' : 'bad'}`}>
+            <span>{paths.ok ? '✓' : '!'}</span> Walking paths
+            {paths.unreachable.length > 0 && (
+              <em> — can't reach {paths.unreachable.map((g) => g.toLowerCase()).join(', ')}</em>
+            )}
           </div>
           <div className="bv2-req dim">
             <span>?</span> Weight — server-side data, not in game files

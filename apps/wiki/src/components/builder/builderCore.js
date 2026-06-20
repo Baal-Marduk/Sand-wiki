@@ -135,6 +135,63 @@ export function validate(state, occ, partId, px, py, pz, rot, ignoreId = null) {
   return { ok: true, reason: '' }
 }
 
+// Crew walkability (game's pathfinding rule). BFS over pathfinding-active cells;
+// crew pass between adjacent cells of the same part, or through a shared face that
+// has a walkable socket (door / deck / hatch). Returns which mandatory stations the
+// crew can reach from each other. First pass — to be verified against in-game pathing.
+const WALKABLE_SOCKET = new Set(['DOOR', 'DECK', 'HATCH'])
+const MANDATORY_GROUPS = ['REACTOR', 'STEERING', 'CAPTAIN', 'ENTRANCE']
+
+function facesWalk(a, b) {
+  if (!a || !b) return false
+  const at = new Set(a.map((s) => s.t))
+  for (const s of b) if (WALKABLE_SOCKET.has(s.t) && at.has(s.t)) return true
+  return false
+}
+
+export function checkPaths(state) {
+  const cells = new Map() // key -> {plId, sockets}
+  const add = (part, plId, px, py, pz, rot) => {
+    if (!part || part.pf === false) return
+    for (const c of worldCells(part, px, py, pz, rot)) {
+      if (c.vol) cells.set(cellKey(c.x, c.y, c.z), { plId, sockets: c.sockets })
+    }
+  }
+  for (const pl of state.placements) add(PART_BY_ID[pl.partId], pl.id, pl.x, pl.y, pl.z, pl.rot)
+
+  // first placement carrying each mandatory group that's actually present
+  const mandPl = {}
+  for (const pl of state.placements) {
+    for (const g of PART_BY_ID[pl.partId]?.groups ?? []) {
+      if (MANDATORY_GROUPS.includes(g) && !mandPl[g]) mandPl[g] = pl.id
+    }
+  }
+  const present = Object.keys(mandPl)
+  if (present.length < 2) return { ok: true, reachable: present, unreachable: [] }
+
+  const startKey = [...cells].find(([, v]) => v.plId === mandPl[present[0]])?.[0]
+  if (!startKey) return { ok: true, reachable: [], unreachable: present }
+  const seen = new Set([startKey]); const q = [startKey]
+  while (q.length) {
+    const k = q.pop()
+    const [x, y, z] = k.split(',').map(Number)
+    const cell = cells.get(k)
+    for (const [dir, vec] of Object.entries(DIRS)) {
+      const nk = cellKey(x + vec[0], y + vec[1], z + vec[2])
+      if (seen.has(nk)) continue
+      const ncell = cells.get(nk)
+      if (!ncell) continue
+      if (ncell.plId === cell.plId || facesWalk(cell.sockets[dir], ncell.sockets?.[OPP[dir]])) {
+        seen.add(nk); q.push(nk)
+      }
+    }
+  }
+  const reachedPl = new Set([...seen].map((k) => cells.get(k).plId))
+  const reachable = [], unreachable = []
+  for (const g of present) (reachedPl.has(mandPl[g]) ? reachable : unreachable).push(g)
+  return { ok: unreachable.length === 0, reachable, unreachable }
+}
+
 // Editable sockets of a placement (world-space) for door/hatch toggles.
 // -> [{key, x,y,z, dir, type, states:[...] }]
 export function editableSockets(part, pl) {
