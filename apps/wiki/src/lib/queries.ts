@@ -136,6 +136,14 @@ export async function itemCategoryCounts(): Promise<Record<string, number>> {
   return data.categoryCounts("item");
 }
 
+/** Counts for the home "Plan your run" tools box: enabled tech nodes and the
+ *  distinct factions they span. */
+export async function techToolStats(): Promise<{ nodes: number; factions: number }> {
+  const nodes = data.listByKind("tech-node").filter((e) => !e.disabled);
+  const factions = new Set(nodes.map((e) => e.techNodeStats?.faction).filter(Boolean));
+  return { nodes: nodes.length, factions: factions.size };
+}
+
 /** Environment entities (loot containers, etc.), optionally filtered by category. */
 export async function listEnvEntities(category?: string, isAdmin = false) {
   const rows = category

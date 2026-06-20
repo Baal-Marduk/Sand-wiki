@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hero Box Preview — Tools CTA</title>
+<style>
+  :root{
+    --background:#0d0a06;
+    --foreground:#ece0cb;
+    --card:#15100a;
+    --card-elevated:#1d160d;
+    --primary:#e8893b;
+    --primary-hover:#f29b52;
+    --secondary:#b5532a;
+    --accent:#c9a24b;
+    --muted-foreground:#9a8f7c;
+    --border:#2a2012;
+    --info:#6aa9c9;
+    --success:#7fb069;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  /* Oswald is unavailable here (CSP blocks font CDNs); approximating the condensed display
+     feel with a narrow system stack. The real site keeps using --font-oswald. */
+  body{
+    background:var(--background);
+    color:var(--foreground);
+    font-family:"Segoe UI",Roboto,Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased;
+    padding:0 0 80px;
+  }
+  .display{font-family:"Oswald","Arial Narrow",Impact,"Segoe UI",sans-serif;letter-spacing:.02em}
+
+  /* ---- page chrome to give the box context ---- */
+  .page-note{
+    max-width:1120px;margin:0 auto;padding:28px 24px 6px;
+    font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--muted-foreground);
+  }
+  .fake-hero{
+    max-width:1120px;margin:0 auto;padding:40px 24px 30px;text-align:center;
+    border-bottom:1px solid var(--border);position:relative;overflow:hidden;
+  }
+  .fake-hero .eyebrow{font-size:11px;letter-spacing:.18em;text-transform:uppercase;color:var(--primary)}
+  .fake-hero h1{font-size:clamp(30px,5vw,48px);text-transform:uppercase;margin:10px 0 8px;font-weight:700}
+  .fake-hero p{color:var(--muted-foreground);font-size:14px;max-width:440px;margin:0 auto 18px}
+  .fake-search{
+    max-width:480px;margin:0 auto;height:46px;border:1px solid var(--input,#3a2c18);
+    background:var(--card);display:flex;align-items:center;padding:0 16px;color:var(--muted-foreground);font-size:14px;
+  }
+
+  /* ================= THE HERO BOX ================= */
+  .tools{
+    max-width:1120px;margin:48px auto 0;padding:0 24px;
+  }
+  .tools-head{
+    display:flex;align-items:flex-end;justify-content:space-between;gap:16px;margin-bottom:18px;
+  }
+  .tools-head .label{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--primary)}
+  .tools-head h2{font-size:clamp(22px,3vw,30px);text-transform:uppercase;font-weight:700;margin-top:6px}
+  .tools-head .sub{font-size:13px;color:var(--muted-foreground);max-width:340px;text-align:right}
+
+  .grid{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+  @media(max-width:720px){.grid{grid-template-columns:1fr}.tools-head{flex-direction:column;align-items:flex-start}.tools-head .sub{text-align:left}}
+
+  .tool-card{
+    position:relative;overflow:hidden;border:1px solid var(--border);
+    background:
+      radial-gradient(120% 120% at 0% 0%, rgba(181,83,42,.16), transparent 55%),
+      linear-gradient(160deg,var(--card-elevated),var(--card));
+    padding:30px 28px 26px;min-height:210px;display:flex;flex-direction:column;
+    text-decoration:none;color:inherit;cursor:pointer;
+    transition:border-color .18s ease,transform .18s ease,box-shadow .18s ease;
+  }
+  .tool-card:hover{
+    border-color:var(--primary);transform:translateY(-3px);
+    box-shadow:0 18px 40px -22px rgba(232,137,59,.55);
+  }
+  /* blueprint grid overlay */
+  .tool-card::before{
+    content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;
+    background-image:linear-gradient(rgba(236,224,203,.05) 1px,transparent 1px),
+                     linear-gradient(90deg,rgba(236,224,203,.05) 1px,transparent 1px);
+    background-size:38px 38px;
+    -webkit-mask-image:radial-gradient(120% 90% at 85% 0%,#000,transparent 72%);
+            mask-image:radial-gradient(120% 90% at 85% 0%,#000,transparent 72%);
+  }
+  .tool-card > *{position:relative;z-index:1}
+
+  .tool-index{
+    font-size:12px;letter-spacing:.22em;color:var(--muted-foreground);text-transform:uppercase;
+    display:flex;align-items:center;gap:10px;
+  }
+  .tool-index .dot{width:6px;height:6px;background:var(--accent);display:inline-block}
+  .tool-card.alt .tool-index .dot{background:var(--info)}
+
+  .tool-glyph{
+    position:absolute;top:18px;right:22px;width:64px;height:64px;opacity:.85;z-index:1;
+  }
+  .tool-glyph svg{width:100%;height:100%}
+
+  .tool-title{font-size:30px;text-transform:uppercase;font-weight:700;margin:auto 0 6px;line-height:1}
+  .tool-desc{font-size:13.5px;color:var(--muted-foreground);max-width:320px;line-height:1.5}
+
+  .tool-cta{
+    margin-top:18px;display:inline-flex;align-items:center;gap:9px;
+    font-size:12px;letter-spacing:.16em;text-transform:uppercase;font-weight:600;color:var(--primary);
+    transition:gap .18s ease;
+  }
+  .tool-card:hover .tool-cta{gap:15px}
+  .tool-card.alt .tool-cta{color:var(--accent)}
+  .tool-cta .arrow{transition:transform .18s ease}
+  .tool-card:hover .tool-cta .arrow{transform:translateX(2px)}
+
+  .stat-strip{
+    display:flex;gap:18px;margin-top:16px;border-top:1px solid var(--border);padding-top:14px;
+    font-size:11px;letter-spacing:.06em;color:var(--muted-foreground);
+  }
+  .stat-strip b{color:var(--foreground);font-weight:600}
+</style>
+</head>
+<body>
+
+  <div class="page-note">Preview — sits below the existing search hero on the home page</div>
+
+  <!-- existing hero (faded reference, not the new work) -->
+  <section class="fake-hero">
+    <div class="eyebrow">Unofficial database</div>
+    <h1 class="display">Everything in the Wastes</h1>
+    <p>Items, trampler parts, environments — all datamined and cross-linked.</p>
+    <div class="fake-search">Search the wastes…</div>
+  </section>
+
+  <!-- ============ NEW HERO BOX ============ -->
+  <section class="tools">
+    <div class="tools-head">
+      <div>
+        <div class="label">Interactive tools</div>
+        <h2 class="display">Plan your run</h2>
+      </div>
+      <div class="sub">Two ways to go deeper than the database — chart the research path, then bolt the machine together.</div>
+    </div>
+
+    <div class="grid">
+
+      <!-- Tech Tree -->
+      <a class="tool-card" href="/tech">
+        <div class="tool-glyph">
+          <svg viewBox="0 0 64 64" fill="none" stroke="#e8893b" stroke-width="2.2" stroke-linecap="round">
+            <circle cx="32" cy="10" r="5"/>
+            <circle cx="14" cy="40" r="5"/>
+            <circle cx="32" cy="40" r="5"/>
+            <circle cx="50" cy="40" r="5"/>
+            <circle cx="32" cy="56" r="4"/>
+            <path d="M32 15v9M32 24l-16 11M32 24l16 11M32 24v11M32 45v7"/>
+          </svg>
+        </div>
+        <div class="tool-index"><span class="dot"></span>Research</div>
+        <div class="tool-title display">Tech Tree</div>
+        <div class="tool-desc">Explore all 95 research nodes, trace prerequisites and unlocks, and track your progress across factions.</div>
+        <span class="tool-cta">Open tech tree <span class="arrow">→</span></span>
+        <div class="stat-strip"><span><b>95</b> nodes</span><span><b>4</b> factions</span><span><b>Saved</b> progress</span></div>
+      </a>
+
+      <!-- Trampler Builder -->
+      <a class="tool-card alt" href="/builder">
+        <div class="tool-glyph">
+          <svg viewBox="0 0 64 64" fill="none" stroke="#c9a24b" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="18" y="20" width="28" height="18"/>
+            <path d="M18 29h28"/>
+            <circle cx="22" cy="48" r="6"/>
+            <circle cx="42" cy="48" r="6"/>
+            <path d="M28 48h8M24 20l4-8h8l4 8M50 24l6 4-6 4"/>
+          </svg>
+        </div>
+        <div class="tool-index"><span class="dot"></span>Fabrication</div>
+        <div class="tool-title display">Trampler Builder</div>
+        <div class="tool-desc">Assemble your trampler from datamined parts, weigh stats and energy, and preview the loadout before you commit.</div>
+        <span class="tool-cta">Open builder <span class="arrow">→</span></span>
+        <div class="stat-strip"><span><b>Live</b> stats</span><span><b>Modular</b> parts</span><span><b>Loadout</b> preview</span></div>
+      </a>
+
+    </div>
+  </section>
+
+</body>
+</html>

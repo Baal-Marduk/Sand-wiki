@@ -1,7 +1,8 @@
 import { ITEM_CATEGORIES } from "@/lib/taxonomy";
 import { SearchBox } from "@/components/SearchBox";
 import { CategoryEntryCard, type CategoryEntry } from "@/components/CategoryEntryCard";
-import { itemCategoryCounts, envCategoryCounts, tramplerCategoryCounts } from "@/lib/queries";
+import { itemCategoryCounts, envCategoryCounts, tramplerCategoryCounts, techToolStats } from "@/lib/queries";
+import { HomeToolsCallout } from "@/components/HomeToolsCallout";
 
 // Desert-glow + faint blueprint grid. The home hero is the only screen that uses
 // the radial glow; every other surface stays flat. Values mirror the approved
@@ -20,10 +21,11 @@ const gridStyle: React.CSSProperties = {
 const plural = (n: number, one: string, many: string) => `${n} ${n === 1 ? one : many}`;
 
 export default async function HomePage() {
-  const [itemCounts, envCounts, tramplerCounts] = await Promise.all([
+  const [itemCounts, envCounts, tramplerCounts, techStats] = await Promise.all([
     itemCategoryCounts(),
     envCategoryCounts(),
     tramplerCategoryCounts(),
+    techToolStats(),
   ]);
 
   const sum = (r: Record<string, number>) => Object.values(r).reduce((a, b) => a + b, 0);
@@ -72,6 +74,13 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* Plan your run — interactive-tool CTAs (tech tree + trampler builder) */}
+      <HomeToolsCallout
+        techNodes={techStats.nodes}
+        factions={techStats.factions}
+        tramplerParts={tramplerTotal}
+      />
 
       {/* Browse by category */}
       <section className="mx-auto w-full max-w-6xl px-6 py-8">
