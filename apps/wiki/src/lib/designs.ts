@@ -22,9 +22,23 @@ export function makeSlug(name: string): string {
   return `${slugifyName(name)}-${suffix}`;
 }
 
-/** Decodes and re-derives stats; throws on malformed codes. Never trusts client stats. */
+// A generous ceiling for a serialized build (SANDBP2.<base64-json>). Real builds
+// are a few KB; this just stops an authenticated client from forcing a multi-MB
+// base64 decode + JSON parse + row write. All "build code" errors are client 4xx.
+const MAX_BUILD_CODE_LENGTH = 100_000;
+
+/** Decodes and re-derives stats; throws a tagged "build code" error on any malformed
+ *  input (so the API maps it to 400, not 500). Never trusts client stats. */
 export function validateBuildCode(buildCode: string) {
-  const state = decodeShare(buildCode); // throws if not a SANDBP2 code
+  if (typeof buildCode !== "string" || buildCode.length > MAX_BUILD_CODE_LENGTH) {
+    throw new Error("build code too large");
+  }
+  let state;
+  try {
+    state = decodeShare(buildCode); // throws if not a SANDBP2 code / bad base64 / bad JSON
+  } catch {
+    throw new Error("invalid build code");
+  }
   if (!state || typeof state !== "object" || !Array.isArray(state.placements)) {
     throw new Error("build code has no placements");
   }

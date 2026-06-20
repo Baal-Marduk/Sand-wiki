@@ -42,11 +42,10 @@ export async function POST(req: NextRequest) {
     const msg = e instanceof Error ? e.message : "publish failed";
     // Client errors (bad build code / bad thumbnail) → 400; everything else
     // (fs/DB failure) is a server error → 500, so ops can see real failures.
+    // validateBuildCode tags all malformed-input cases with "build code"; the
+    // thumbnail decoder's messages contain "thumbnail"/"base64".
     const isClientError =
-      msg.includes("SANDBP2") ||
-      msg.includes("placements") ||
-      msg.includes("base64") ||
-      msg.includes("thumbnail");
+      msg.includes("build code") || msg.includes("thumbnail") || msg.includes("base64");
     return NextResponse.json({ error: msg }, { status: isClientError ? 400 : 500 });
   }
 }
