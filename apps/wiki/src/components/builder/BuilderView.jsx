@@ -62,7 +62,10 @@ export default function BuilderView({
         <AuthMenuClient />
       </header>
 
-      <div className="tb-body">
+      {/* The editor's .tb-body is a 3-col grid (locker | viewport | panel). The
+          view has no locker, so override to 2 cols: viewport gets the space, the
+          stats panel keeps the editor's 324px width. */}
+      <div className="tb-body" style={{ gridTemplateColumns: '1fr 324px' }}>
         <section className="tb-viewport">
           {state ? (
             <BuilderScene
