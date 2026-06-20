@@ -3,9 +3,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 
-// Admin-only button to hide a reported design. Calls DELETE /api/designs/[slug]
-// which, for a non-owner admin, sets status="hidden" rather than hard-deleting.
-// On success the design drops out of public lists and 404s on the detail page.
+// Admin-only button to hide a design from the gallery grid. Calls DELETE
+// /api/designs/[slug] which, for a non-owner admin, sets status="hidden" rather
+// than hard-deleting. On success the design drops out of all public lists; in the
+// grid we remove the card in place via the onHidden callback.
 export function AdminHideButton({
   slug,
   onHidden,
