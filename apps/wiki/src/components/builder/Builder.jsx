@@ -113,7 +113,8 @@ export default function BuilderV2() {
   const [shareText, setShareText] = useState('')
   const [pubOpen, setPubOpen] = useState(false)
   const [clearOpen, setClearOpen] = useState(false)
-  const [pub, setPub] = useState({ name: '', author: '', description: '' })
+  const [pub, setPub] = useState({ name: '' })
+  const [pubThumb, setPubThumb] = useState(null)
   const [pubBusy, setPubBusy] = useState(false)
   const [signedIn, setSignedIn] = useState(false)
   const [gateOpen, setGateOpen] = useState(false)
@@ -139,7 +140,7 @@ export default function BuilderV2() {
   // Close any open modal on Escape (UI only — placement Esc is handled separately).
   useEffect(() => {
     function onKey(e) {
-      if (e.key === 'Escape') { setShareOpen(false); setImportOpen(false); setLoadOpen(false); setPubOpen(false) }
+      if (e.key === 'Escape') { setShareOpen(false); setImportOpen(false); setLoadOpen(false); setPubOpen(false); setPubThumb(null) }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -397,14 +398,14 @@ export default function BuilderV2() {
     if (!name) { flash('give your build a name first'); return }
     setPubBusy(true)
     try {
-      const thumbnail = captureRef.current ? captureRef.current() : undefined
       await submitBuild({
         name,
         buildCode: encodeShare(state),
-        thumbnail,
+        thumbnail: pubThumb ?? undefined,
       })
       setPubOpen(false)
-      setPub({ name: '', author: '', description: '' })
+      setPub({ name: '' })
+      setPubThumb(null)
       flash('Published — view it in the gallery')
     } catch (e) {
       flash(`publish failed — ${e.message || 'try again'}`)
@@ -677,6 +678,7 @@ export default function BuilderV2() {
                 onClick={() => {
                   if (!signedIn) { setGateOpen(true); return }
                   setPub((p) => ({ ...p, name: p.name || state.name }))
+                  setPubThumb(captureRef.current ? captureRef.current() : null)
                   setPubOpen(true)
                 }}
               >
@@ -760,20 +762,24 @@ export default function BuilderV2() {
 
       {pubOpen && (
         <Modal
-          title="Publish to gallery" icon="★" onClose={() => setPubOpen(false)}
+          title="Publish to gallery" icon="★" onClose={() => { setPubOpen(false); setPubThumb(null) }}
           footer={<>
-            <Button variant="ghost" size="sm" onClick={() => setPubOpen(false)}>Cancel</Button>
+            <Button variant="ghost" size="sm" onClick={() => { setPubOpen(false); setPubThumb(null) }}>Cancel</Button>
             <Button size="sm" disabled={pubBusy} onClick={doPublish}>{pubBusy ? 'Submitting…' : 'Submit'}</Button>
           </>}
         >
           <p>Share your build with the community. Submissions are reviewed before appearing in the gallery.</p>
+          {pubThumb && (
+            <img
+              src={pubThumb}
+              alt="Build preview"
+              className="tb-pub-thumb"
+              style={{ width: '100%', maxHeight: 200, objectFit: 'contain', border: '1px solid var(--border)', borderRadius: 'var(--radius-sm, 4px)' }}
+            />
+          )}
           <div className="tb-pub-fields">
             <input className="tb-input" placeholder="build name" value={pub.name}
               onChange={(e) => setPub({ ...pub, name: e.target.value })} />
-            <input className="tb-input" placeholder="your name (optional)" value={pub.author}
-              onChange={(e) => setPub({ ...pub, author: e.target.value })} />
-            <textarea className="tb-input" placeholder="description (optional)" rows={3} value={pub.description}
-              onChange={(e) => setPub({ ...pub, description: e.target.value })} />
           </div>
         </Modal>
       )}
