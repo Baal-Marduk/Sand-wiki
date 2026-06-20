@@ -182,7 +182,7 @@ export function GalleryClient({
       {/* ===== top bar ===== */}
       <header className="tg-appbar">
         <div className="flex items-center gap-4">
-          <ToolNavBrand title="Gallery" />
+          <ToolNavBrand title="Trampler Builder" />
           <ToolNav active="gallery" />
         </div>
         <span className="spacer" style={{ marginLeft: "auto" }} />
