@@ -10,7 +10,7 @@ import thumbsV2 from './data/part_thumbs_v2.json'
 import partCosts from './data/part_costs.json'
 import { asset } from './data.js'
 import {
-  PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
+  PARTS, ALL_PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
   CAT_COLOR, CATEGORY_ORDER, buildOccupancy, validate, manifest,
   encodeShare, decodeShare, editableSockets, checkPaths,
 } from './builderCore.js'
@@ -19,7 +19,10 @@ import { submitBuild } from './galleryApi.js'
 
 const STORE_KEY = 'sand_blueprint_v2'
 const chassisList = PARTS.filter((p) => p.category === 'Chassis')
-const lockerParts = PARTS.filter((p) => p.category !== 'Chassis' && !p.id.endsWith('_mirror'))
+// Locker lists every part incl. game-disabled ones (shown marked), enabled first.
+const lockerParts = ALL_PARTS
+  .filter((p) => p.category !== 'Chassis' && !p.id.endsWith('_mirror'))
+  .sort((a, b) => (a.enabled === b.enabled ? 0 : a.enabled ? -1 : 1))
 
 const DEFAULT_STATE = {
   v: 2,
@@ -390,16 +393,21 @@ export default function BuilderV2() {
                   {items.map((p) => (
                     <button
                       key={p.id}
-                      className={`bv2-part ${activePart === p.id ? 'active' : ''}`}
+                      className={`bv2-part ${activePart === p.id ? 'active' : ''} ${p.enabled === false ? 'disabled' : ''}`}
                       onClick={() => {
                         setActivePart(activePart === p.id ? null : p.id)
                         setActiveRot(0)
                         setSelectedId(null)
                       }}
-                      title={p.desc ? `${p.name}\n\n${p.desc}` : p.id}
+                      title={p.enabled === false
+                        ? `${p.name} — not yet enabled in the game\n\n${p.desc ?? ''}`
+                        : (p.desc ? `${p.name}\n\n${p.desc}` : p.id)}
                     >
                       <Thumb partId={p.id} />
-                      <span className="bv2-part-name">{p.name}</span>
+                      <span className="bv2-part-name">
+                        {p.name}
+                        {p.enabled === false && <span className="bv2-part-tag">NOT IN GAME</span>}
+                      </span>
                       <span className="bv2-part-meta">
                         {p.bounds[0]}×{p.bounds[2]}{p.bounds[1] > 1 ? `·${p.bounds[1]}h` : ''}
                         {p.mirror ? ' ⇋' : ''}

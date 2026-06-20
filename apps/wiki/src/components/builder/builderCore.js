@@ -7,6 +7,9 @@ import meshIndex from './data/mesh_index_v3.json' // v3 = real UVs + albedo text
 export const GROUP_LIMITS = partsV2.groupLimits // { REACTOR:1, STEERING:1, CAPTAIN:1 }
 export const SOCKET_STATES = partsV2.socketStates // slotType -> state -> spawned entity
 export const PARTS = partsV2.parts.filter((p) => p.enabled)
+// All parts incl. ones the game currently has disabled (not yet enabled). The locker
+// shows these too, marked, so the catalogue is complete; validation/essentials use PARTS.
+export const ALL_PARTS = partsV2.parts
 export const PART_BY_ID = Object.fromEntries(partsV2.parts.map((p) => [p.id, p]))
 export const MESH_INDEX = meshIndex
 

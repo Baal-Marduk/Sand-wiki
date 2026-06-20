@@ -305,3 +305,13 @@
 .bv2-cost-n { font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 14px; color: #ffd166; text-align: right; }
 .bv2-cost-label { color: #a89c84; }
 .bv2-cost-row.dim { opacity: 0.3; }
+
+/* Game-disabled parts ("not yet enabled") shown in the locker, dimmed + tagged. */
+.bv2-part.disabled { opacity: 0.55; }
+.bv2-part-tag {
+  display: inline-block; margin-left: 6px; vertical-align: middle;
+  font-family: 'Rajdhani', sans-serif; font-weight: 700; font-size: 8.5px;
+  letter-spacing: 0.04em; text-transform: uppercase; color: #e0a341;
+  background: rgba(224, 163, 65, 0.15); border: 1px solid rgba(224, 163, 65, 0.4);
+  border-radius: 3px; padding: 0 4px;
+}
