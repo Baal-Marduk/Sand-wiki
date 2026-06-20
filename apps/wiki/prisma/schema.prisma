@@ -207,7 +207,8 @@ model Design {
   partCount Int
   crowns    Int
   hull      Int
-  thumbPath String?
+  thumbPath String? // public URL of the thumbnail (/api/designs/<slug>/thumb), null if none
+  thumbnail Bytes? // the webp bytes themselves; stored in-DB so it works on read-only/serverless FS
   status    String    @default("published") // "published" | "hidden"
   likeCount Int       @default(0)
   createdAt DateTime  @default(now())
