@@ -27,9 +27,12 @@ export function dataUrlToWebpBuffer(dataUrl: string): Buffer {
 
 export async function writeThumb(slug: string, dataUrl: string): Promise<string> {
   const buf = dataUrlToWebpBuffer(dataUrl);
+  const name = thumbFileName(slug);
+  // Defense-in-depth: never write a path that could escape thumbsDir, even if a
+  // caller passes an unvalidated slug. Mirrors the read/delete guards.
+  if (!isSafeThumbName(name)) throw new Error("unsafe thumbnail name");
   const dir = thumbsDir();
   await fs.mkdir(dir, { recursive: true });
-  const name = thumbFileName(slug);
   await fs.writeFile(path.join(dir, name), buf);
   return `/api/uploads/thumbs/${name}`; // value stored in Design.thumbPath
 }
