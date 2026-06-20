@@ -11,11 +11,10 @@ export async function GET(_req: NextRequest, { params }: Ctx) {
   const { slug } = await params;
   const d = await prisma.design.findUnique({
     where: { slug },
-    select: { thumbnail: true, status: true },
+    select: { thumbnail: true },
   });
-  // Hidden designs (and missing/thumbnail-less ones) 404 — consistent with the
-  // detail page treating hidden as gone.
-  if (!d || !d.thumbnail || d.status === "hidden") {
+  // Missing design or no stored thumbnail → 404.
+  if (!d || !d.thumbnail) {
     return new NextResponse("not found", { status: 404 });
   }
   return new NextResponse(new Uint8Array(d.thumbnail), {

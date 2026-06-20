@@ -1,10 +1,16 @@
 "use client";
+import { createPortal } from "react-dom";
 import { FaSteam } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 
 export function SteamGateModal({ open, onClose, returnTo }: { open: boolean; onClose: () => void; returnTo: string }) {
   if (!open) return null;
-  return (
+  // Portal to <body> so the fixed full-screen scrim can't be trapped by an
+  // ancestor that establishes a containing block for fixed descendants (e.g. the
+  // builder app-bar's `backdrop-filter`, which would otherwise clip this overlay
+  // to the bar instead of the viewport).
+  if (typeof document === "undefined") return null;
+  return createPortal(
     <div
       className="fixed inset-0 z-[200] grid place-items-center bg-black/60 backdrop-blur-sm"
       onClick={(e) => { if (e.target === e.currentTarget) onClose(); }}
@@ -37,6 +43,7 @@ export function SteamGateModal({ open, onClose, returnTo }: { open: boolean; onC
           </Button>
         </div>
       </div>
-    </div>
+    </div>,
+    document.body,
   );
 }

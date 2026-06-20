@@ -6,7 +6,8 @@ import { ToolNav } from "@/components/ToolNav";
 import { AuthMenuClient } from "@/components/AuthMenuClient";
 import { SteamGateModal } from "@/components/SteamGateModal";
 import { Button } from "@/components/ui/button";
-import { AdminHideButton } from "@/components/gallery/AdminHideButton";
+import { DeleteDesignButton } from "@/components/gallery/DeleteDesignButton";
+import { designShareUrl } from "@/lib/share";
 import { costBreakdown, COST_ROWS, decodeShare } from "@/components/builder/builderCore.js";
 
 type Item = {
@@ -20,7 +21,7 @@ type Item = {
   hull: number;
   thumbPath: string | null;
   likeCount: number;
-  status?: string;
+  isMine: boolean;
 };
 type Page = { items: Item[]; nextCursor: string | null };
 type View = "community" | "mine";
@@ -66,7 +67,7 @@ export function GalleryClient({
   // If we mounted directly into the "mine" view (?view=mine deep-link) and the
   // server only fetched the community first page, pull the viewer's designs.
   useEffect(() => {
-    if (initialView === "mine" && signedIn) load("mine", "top", null);
+    if (initialView === "mine") load("mine", "top", null);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -112,10 +113,8 @@ export function GalleryClient({
 
   function switchView(v: View) {
     if (v === view) return;
-    if (v === "mine" && !signedIn) {
-      setGateOpen(true);
-      return;
-    }
+    // "My designs" is open to everyone: signed out it shows the local draft
+    // (the published list just comes back empty without an account).
     setView(v);
     // Fresh list — drop optimistic liked state so it doesn't leak across lists.
     setLiked(new Set());
@@ -191,10 +190,22 @@ export function GalleryClient({
     }
   }
 
-  // Admin hide: drop the card from the current page immediately (the server has
-  // already set status="hidden"); a reload would have dropped it from the list too.
-  function hideFromList(slug: string) {
+  // Delete: drop the card from the current page immediately (the server has
+  // hard-deleted it); a reload would have dropped it from the list too.
+  function removeFromList(slug: string) {
     setPage((p) => ({ ...p, items: p.items.filter((it) => it.slug !== slug) }));
+  }
+
+  // Copy a design's share link to the clipboard; flash a per-card "copied" tick.
+  const [copiedSlug, setCopiedSlug] = useState<string | null>(null);
+  async function copyShare(slug: string) {
+    try {
+      await navigator.clipboard.writeText(designShareUrl(slug, window.location.origin));
+      setCopiedSlug(slug);
+      setTimeout(() => setCopiedSlug((c) => (c === slug ? null : c)), 1500);
+    } catch {
+      /* clipboard unavailable / write rejected — no-op */
+    }
   }
 
   // Full per-card cost, computed from the build code. Falls back to the stored
@@ -377,9 +388,18 @@ export function GalleryClient({
                     <span className="score">{d.likeCount.toLocaleString()}</span>
                   </button>
                   <div className="right" style={{ display: "flex", alignItems: "center", gap: 8 }}>
-                    {admin && (
-                      <AdminHideButton slug={d.slug} onHidden={() => hideFromList(d.slug)} />
+                    {(admin || d.isMine) && (
+                      <DeleteDesignButton slug={d.slug} onDeleted={() => removeFromList(d.slug)} />
                     )}
+                    <button
+                      type="button"
+                      className="tg-icon-btn"
+                      title={copiedSlug === d.slug ? "Link copied!" : "Copy share link"}
+                      aria-label={`Copy share link for ${d.name}`}
+                      onClick={() => copyShare(d.slug)}
+                    >
+                      {copiedSlug === d.slug ? "✓" : "🔗"}
+                    </button>
                     <Link
                       href="/builder"
                       onClick={() => loadInBuilder(d.buildCode)}

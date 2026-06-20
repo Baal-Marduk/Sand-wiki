@@ -209,7 +209,6 @@ model Design {
   hull      Int
   thumbPath String? // public URL of the thumbnail (/api/designs/<slug>/thumb), null if none
   thumbnail Bytes? // the webp bytes themselves; stored in-DB so it works on read-only/serverless FS
-  status    String    @default("published") // "published" | "hidden"
   likeCount Int       @default(0)
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -217,8 +216,8 @@ model Design {
   likes   DesignLike[]
   reports DesignReport[]
 
-  @@index([status, likeCount])
-  @@index([status, createdAt])
+  @@index([likeCount])
+  @@index([createdAt])
   @@index([authorId])
 }
 

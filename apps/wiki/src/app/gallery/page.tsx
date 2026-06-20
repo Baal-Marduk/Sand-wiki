@@ -21,8 +21,9 @@ export default async function GalleryPage({
   const session = await getSession();
   const signedIn = !!session;
   const admin = await sessionIsAdmin();
-  // ?view=mine deep-link selects the "My designs" tab (only honoured when signed in).
-  const initialView = raw === "mine" && signedIn ? "mine" : "community";
+  // ?view=mine deep-link selects the "My designs" tab. Open to everyone — signed
+  // out it shows the local draft; the published list is empty without an account.
+  const initialView = raw === "mine" ? "mine" : "community";
   const initial = await listDesigns({
     view: initialView,
     sort: "top",

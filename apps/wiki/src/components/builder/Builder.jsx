@@ -22,6 +22,7 @@ import {
 } from './builderCore.js'
 import { decodeWbt, wbtToState } from './wbtImport.js'
 import { submitBuild } from './galleryApi.js'
+import { designShareUrl } from '@/lib/share'
 
 const STORE_KEY = 'sand_blueprint_v2'
 // The /tech page persists the user's unlocked nodes here (JSON array of node slugs).
@@ -379,7 +380,7 @@ export default function BuilderV2() {
     if (!name) { flash('give your build a name first'); return }
     setPubBusy(true)
     try {
-      await submitBuild({
+      const { slug } = await submitBuild({
         name,
         buildCode: encodeShare(state),
         thumbnail: pubThumb ?? undefined,
@@ -387,7 +388,12 @@ export default function BuilderV2() {
       setPubOpen(false)
       setPub({ name: '' })
       setPubThumb(null)
-      flash('Published — view it in the gallery')
+      try {
+        await navigator.clipboard.writeText(designShareUrl(slug, window.location.origin))
+        flash('Published — share link copied to clipboard')
+      } catch {
+        flash('Published — view it in the gallery')
+      }
     } catch (e) {
       flash(`publish failed — ${e.message || 'try again'}`)
     } finally {

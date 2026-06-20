@@ -10,12 +10,13 @@ export async function GET(req: NextRequest) {
   const view = sp.get("view") === "mine" ? "mine" : "community";
   const sort = sp.get("sort") === "new" ? "new" : "top";
   const cursor = sp.get("cursor");
-  let viewerId: string | null = null;
-  if (view === "mine") {
-    const session = await getSession();
-    if (!session) return NextResponse.json({ items: [], nextCursor: null });
-    viewerId = session.steamId;
+  const session = await getSession();
+  // "mine" requires a session; both views pass viewerId so each item's `isMine`
+  // (owner-only delete control) can be computed.
+  if (view === "mine" && !session) {
+    return NextResponse.json({ items: [], nextCursor: null });
   }
+  const viewerId = session?.steamId ?? null;
   const data = await listDesigns({ view, sort, cursor, viewerId });
   return NextResponse.json(data);
 }

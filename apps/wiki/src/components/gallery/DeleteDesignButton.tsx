@@ -3,16 +3,15 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { ConfirmDialog } from "@/components/ConfirmDialog";
 
-// Admin-only button to hide a design from the gallery grid. Calls DELETE
-// /api/designs/[slug] which, for a non-owner admin, sets status="hidden" rather
-// than hard-deleting. On success the design drops out of all public lists; in the
-// grid we remove the card in place via the onHidden callback.
-export function AdminHideButton({
+// Delete a design (owner or admin). Calls DELETE /api/designs/[slug], which
+// hard-deletes for an owner or admin. On the gallery grid we drop the card in
+// place via onDeleted; standalone (no callback) navigates to the gallery.
+export function DeleteDesignButton({
   slug,
-  onHidden,
+  onDeleted,
 }: {
   slug: string;
-  onHidden?: () => void;
+  onDeleted?: () => void;
 }) {
   const [open, setOpen] = useState(false);
   const [busy, setBusy] = useState(false);
@@ -24,17 +23,16 @@ export function AdminHideButton({
     try {
       const res = await fetch(`/api/designs/${slug}`, { method: "DELETE" });
       if (res.ok) {
-        // On the gallery grid we drop the card in place via the callback; the
-        // standalone use (no callback) falls back to a full navigation.
-        if (onHidden) onHidden();
+        setBusy(false);
+        if (onDeleted) onDeleted();
         else location.assign("/gallery");
       } else {
         const data = await res.json().catch(() => ({}));
-        setError(`Failed to hide design: ${data.error ?? res.status}`);
+        setError(`Failed to delete: ${data.error ?? res.status}`);
         setBusy(false);
       }
     } catch {
-      setError("Network error — could not hide design.");
+      setError("Network error — could not delete.");
       setBusy(false);
     }
   }
@@ -46,17 +44,17 @@ export function AdminHideButton({
         size="sm"
         onClick={() => setOpen(true)}
         disabled={busy}
-        aria-label="Hide this design (admin action)"
+        aria-label="Delete this design"
       >
-        {busy ? "Hiding…" : "Hide design"}
+        {busy ? "Deleting…" : "Delete"}
       </Button>
       {error && <p className="text-destructive text-sm">{error}</p>}
       <ConfirmDialog
         open={open}
         onOpenChange={setOpen}
-        title="Hide this design?"
-        description="It will be removed from public listings."
-        confirmLabel="Hide"
+        title="Delete this design?"
+        description="This permanently removes it from the gallery. This can't be undone."
+        confirmLabel="Delete"
         destructive
         onConfirm={handleConfirm}
       />
