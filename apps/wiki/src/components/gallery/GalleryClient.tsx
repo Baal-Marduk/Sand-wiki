@@ -8,7 +8,7 @@ import { SteamGateModal } from "@/components/SteamGateModal";
 import { Button } from "@/components/ui/button";
 import { DeleteDesignButton } from "@/components/gallery/DeleteDesignButton";
 import { designShareUrl } from "@/lib/share";
-import { costBreakdown, COST_ROWS, decodeShare } from "@/components/builder/builderCore.js";
+import { costBreakdown, COST_ROWS, decodeShare, buildSummary } from "@/components/builder/builderCore.js";
 
 type Item = {
   slug: string;
@@ -218,6 +218,18 @@ export function GalleryClient({
     }
   }
 
+  // Crew compartments + turret-slot ("cannon") count, recomputed from the build code
+  // (same source of truth the builder uses), so existing designs get them with no
+  // schema change or backfill.
+  function cardStats(d: Item): { crew: number; cannons: number } {
+    try {
+      const s = buildSummary(decodeShare(d.buildCode));
+      return { crew: s.crew ?? 0, cannons: s.cannons ?? 0 };
+    } catch {
+      return { crew: 0, cannons: 0 };
+    }
+  }
+
   const showDraft = view === "mine" && !!localDraft;
 
   return (
@@ -321,13 +333,19 @@ export function GalleryClient({
           {page.items.map((d) => {
             const isLiked = liked.has(d.slug);
             const cost = cardCost(d);
+            const stats = cardStats(d);
+            // Others' designs open the read-only view page; your own open straight
+            // in the editor for quick tweaking. (The draft card above always edits.)
+            const openProps = d.isMine
+              ? { href: "/builder", onClick: () => loadInBuilder(d.buildCode) }
+              : { href: `/builder/${d.slug}` };
+            const openTitle = d.isMine ? "Open in builder" : "View design";
             return (
               <div className="tg-card" key={d.slug}>
                 <Link
-                  href="/builder"
-                  onClick={() => loadInBuilder(d.buildCode)}
+                  {...openProps}
                   className="tg-thumb"
-                  title="Open in builder"
+                  title={openTitle}
                   style={{ "--thumb": THUMB } as React.CSSProperties}
                 >
                   {d.thumbPath ? (
@@ -343,17 +361,19 @@ export function GalleryClient({
                   <span className="tg-hull-badge">Hull {d.hull}</span>
                 </Link>
                 <div className="tg-body">
-                  <Link
-                    href="/builder"
-                    onClick={() => loadInBuilder(d.buildCode)}
-                    className="tg-name"
-                  >
+                  <Link {...openProps} className="tg-name">
                     {d.name}
                   </Link>
                   <div className="tg-sub">{d.authorName ?? "Unknown"}</div>
                   <div className="tg-meta">
                     <span className="m">
                       <b>{d.partCount}</b> parts
+                    </span>
+                    <span className="m">
+                      <b>{stats.crew}</b> crew
+                    </span>
+                    <span className="m">
+                      <b>{stats.cannons}</b> cannons
                     </span>
                     {COST_ROWS.map(([key, label, icon]) => (
                       <span className="m" key={key} title={label}>
@@ -401,11 +421,10 @@ export function GalleryClient({
                       {copiedSlug === d.slug ? "✓" : "🔗"}
                     </button>
                     <Link
-                      href="/builder"
-                      onClick={() => loadInBuilder(d.buildCode)}
+                      {...openProps}
                       className="tg-icon-btn"
-                      title="Open in builder"
-                      aria-label={`Open ${d.name} in the builder`}
+                      title={openTitle}
+                      aria-label={d.isMine ? `Open ${d.name} in the builder` : `View ${d.name}`}
                     >
                       ↗
                     </Link>

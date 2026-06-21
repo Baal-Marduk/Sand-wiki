@@ -404,7 +404,14 @@ export function buildSummary(state) {
   const chassis = PART_BY_ID[state.chassisId]
   const chassisLabel = chassis ? chassis.name : state.chassisId
 
-  return { chassisLabel, partCount: man.total, crowns, hull, crew: man.crew }
+  // cannons: turret slots (the Weapon-category mounts a cannon sits on). Excludes the
+  // battering ram, which is also category Weapon but isn't a turret mount.
+  const cannons = (state.placements ?? []).filter((pl) => {
+    const p = PART_BY_ID[pl.partId]
+    return p && p.category === 'Weapon' && p.id.includes('TurretSlot')
+  }).length
+
+  return { chassisLabel, partCount: man.total, crowns, hull, crew: man.crew, cannons }
 }
 
 // ---- full build cost (shared by the builder cost panel and gallery cards) ----
