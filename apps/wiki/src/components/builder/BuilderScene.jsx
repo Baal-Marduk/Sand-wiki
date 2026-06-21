@@ -249,18 +249,25 @@ function placeMesh(mesh, partId, px, py, pz, rot) {
   const cx = ((minX + maxX) / 2) * CELL_XZ
   const cz = ((minZ + maxZ) / 2) * CELL_XZ
   const b = meta.b
+  // The v3 export REFLECTS every mesh across Z (Unity LH → three RH), but the grid /
+  // cells / sockets all live in unflipped game-Z space. A reflection can't be undone by
+  // a translation, so we mirror the mesh back into the grid frame with scale.z = -1.
+  // Once mirrored, the mesh shares the grid's frame and all offsets below are computed
+  // in plain game space (no Z negation). DoubleSide materials keep lighting correct
+  // under the negative scale. (Symmetric parts looked fine before; asymmetric ones —
+  // railings, balconies, stairs, L/R corners, steering helms — were mirror-flipped.)
+  mesh.scale.z = -1
   // Footprint centre in mesh space via the game's own GetPosition(cell, cellSize,
   // pivotOffset): cell positions = avgCell*cellSize - pivotOffset. The old AABB centre
   // ((b[0]+b[3])/2 …) breaks for parts whose mesh isn't centred on its footprint (e.g.
-  // steering helms sit at one end → landed "between two blocks"). cellSize ≈ CELL_XZ;
-  // the v3 export flips Z, so the Z term is negated relative to game space.
+  // steering helms sit at one end → landed "between two blocks"). cellSize ≈ CELL_XZ.
   const po = part.pivotOffset || [0, 0, 0]
   const vol = part.cells.filter((c) => !c.noVol)
   const cl = vol.length ? vol : part.cells
   let sx = 0, sz = 0
   for (const c of cl) { sx += c.p[0]; sz += c.p[2] }
   const mcx = (sx / cl.length) * CELL_XZ - po[0]
-  const mcz = -((sz / cl.length) * CELL_XZ - po[2])
+  const mcz = (sz / cl.length) * CELL_XZ - po[2]
   const a = (((rot % 4) + 4) % 4) * (Math.PI / 2)
   mesh.rotation.y = a
   const offX = mcx * Math.cos(a) + mcz * Math.sin(a)
@@ -408,7 +415,9 @@ export default function BuilderScene({
       st.raycaster.setFromCamera(st.pointer, camera)
       const sprites = st.raycaster.intersectObjects(st.socketSprites, false)
       if (sprites.length) return { socket: sprites[0].object.userData }
-      const hits = st.raycaster.intersectObjects([...st.placedMeshes.values()], false)
+      // skip parts on floors above the active level — they're faded and not editable
+      const pickable = [...st.placedMeshes.values()].filter((m) => !m.userData.noPick)
+      const hits = st.raycaster.intersectObjects(pickable, false)
       if (hits.length) return { plId: hits[0].object.userData.plId }
       return null
     }
@@ -652,14 +661,32 @@ export default function BuilderScene({
       captureRef.current = () => {
         const savedPos = camera.position.clone()
         const savedTarget = st.target.clone()
+        // Publish view: a clean, solid rig with no editor chrome. Hide the helper layer
+        // (blue grid + front/rear markers + socket badges) and the ghost, and force every
+        // placed part fully opaque — upper floors are faded while editing, but the
+        // thumbnail should show the whole trampler at 100%.
+        const helperVis = helperGroup.visible, ghostVis = ghostGroup.visible
+        helperGroup.visible = false
+        ghostGroup.visible = false
+        const matBak = []
+        rigGroup.traverse((o) => {
+          if (!o.isMesh) return
+          const mats = Array.isArray(o.material) ? o.material : [o.material]
+          for (const m of mats) {
+            matBak.push([m, m.transparent, m.opacity])
+            m.transparent = false
+            m.opacity = 1
+          }
+        })
         // frame the rig bounds
         const box = new THREE.Box3().setFromObject(rigGroup)
         const center = box.isEmpty() ? new THREE.Vector3(0, 4, 0) : box.getCenter(new THREE.Vector3())
         const size = box.isEmpty() ? 20 : box.getSize(new THREE.Vector3()).length()
         const dist = Math.max(24, size * 1.25)
-        // Side-biased isometric: mostly the rig's side face with a slight top/front
-        // tilt for depth. Identical for every rig so gallery thumbnails stay consistent.
-        const dir = new THREE.Vector3(1.4, 0.5, 0.6).normalize()
+        // Front-biased 3/4 view: camera on the +Z (front) side so the thumbnail faces the
+        // trampler's front, with a slight side + top tilt for depth. Identical for every
+        // rig so gallery thumbnails stay consistent.
+        const dir = new THREE.Vector3(0.45, 0.5, 1.25).normalize()
         camera.position.copy(center).addScaledVector(dir, dist)
         camera.lookAt(center)
         renderer.render(scene, camera) // one frame at the canonical pose
@@ -676,7 +703,10 @@ export default function BuilderScene({
         const dh = src.height * scale
         ctx.drawImage(src, (TW - dw) / 2, (TH - dh) / 2, dw, dh)
         const url = tmp.toDataURL('image/webp', 0.85)
-        // restore the user's camera and re-render
+        // restore editor state: material opacity, helper visibility, user camera
+        for (const [m, t, o] of matBak) { m.transparent = t; m.opacity = o }
+        helperGroup.visible = helperVis
+        ghostGroup.visible = ghostVis
         camera.position.copy(savedPos)
         camera.lookAt(savedTarget)
         renderer.render(scene, camera)
@@ -731,11 +761,15 @@ export default function BuilderScene({
         const b = meta.b
         // Centre the deck on its CELL footprint (not the mesh bbox), so the deck lines
         // up with the grid + placed parts, which are all positioned in cell space.
+        // scale.z = -1 mirrors the export's Z-flip back into the grid frame (same fix as
+        // placeMesh); under it the bbox Z range becomes [-b[5], -b[2]], so the Z-centering
+        // term flips sign.
+        m.scale.z = -1
         const fcells = worldCells(ch, 0, 0, 0, 0)
         const fxs = fcells.map((c) => c.x), fzs = fcells.map((c) => c.z)
         const fcx = ((Math.min(...fxs) + Math.max(...fxs)) / 2) * CELL_XZ
         const fcz = ((Math.min(...fzs) + Math.max(...fzs)) / 2) * CELL_XZ
-        m.position.set(fcx - (b[0] + b[3]) / 2, -b[4], fcz - (b[2] + b[5]) / 2)
+        m.position.set(fcx - (b[0] + b[3]) / 2, -b[4], fcz + (b[2] + b[5]) / 2)
         rigGroup.add(m)
         // re-centre the camera on the build when the chassis changes (not every edit)
         if (st.lastChassis !== state.chassisId) {
@@ -773,21 +807,26 @@ export default function BuilderScene({
     }
 
     // placements
+    // Floor visibility: the active floor and every floor BELOW it render fully opaque and
+    // stay selectable; floors ABOVE the active level fade to a faint ghost and can't be
+    // picked, so you always edit a clean, solid cross-section. On the top floor nothing is
+    // above, so the whole rig is opaque.
     for (const pl of state.placements) {
       const part = PART_BY_ID[pl.partId]
       if (!part) continue
       const isSel = pl.id === selectedId
-      const onLevel = pl.y === level
+      const above = pl.y > level
       const g = loadGeometry(pl.partId, bump)
       if (g) {
         const mats = partMaterials(g, {
-          transparent: !onLevel && !isSel, opacity: onLevel || isSel ? 1 : 0.35, selected: isSel,
+          transparent: above, opacity: above ? 0.14 : 1, selected: isSel && !above,
         })
         const m = new THREE.Mesh(g, mats)
-        m.castShadow = true
+        m.castShadow = !above
         m.receiveShadow = true
         placeMesh(m, pl.partId, pl.x, pl.y, pl.z, pl.rot)
         m.userData.plId = pl.id
+        m.userData.noPick = above
         rigGroup.add(m)
         st.placedMeshes.set(pl.id, m)
       } else {
@@ -796,11 +835,12 @@ export default function BuilderScene({
         for (const c of cells) {
           const bx = new THREE.Mesh(
             new THREE.BoxGeometry(CELL_XZ * 0.92, CELL_Y * 0.9, CELL_XZ * 0.92),
-            new THREE.MeshStandardMaterial({ color: 0x44566b, transparent: true, opacity: 0.5 }),
+            new THREE.MeshStandardMaterial({ color: 0x44566b, transparent: true, opacity: above ? 0.14 : 0.5 }),
           )
           bx.position.set(c.x * CELL_XZ, (c.y - 1) * CELL_Y + CELL_Y / 2, c.z * CELL_XZ)
-          bx.castShadow = true
+          bx.castShadow = !above
           bx.userData.plId = pl.id
+          bx.userData.noPick = above
           rigGroup.add(bx)
           st.placedMeshes.set(pl.id, bx)
         }
@@ -827,21 +867,26 @@ export default function BuilderScene({
     }
     helperGroup.add(new THREE.LineSegments(new THREE.BufferGeometry().setFromPoints(pts), gridMat))
 
-    // FRONT arrow (in-game: -Z = front)
+    // FRONT arrow — marks the trampler's front, reversed to the +Z end (what used to be
+    // the back) and centred on the deck's width so it tracks the rig rather than world 0.
+    // The small rear marker sits at the opposite (-Z) end.
+    const chCells = ch ? worldCells(ch, 0, 0, 0, 0) : []
+    const chXs = chCells.length ? chCells.map((c) => c.x) : [0]
+    const centerX = ((Math.min(...chXs) + Math.max(...chXs)) / 2) * CELL_XZ
+    const chMinZ = chCells.length ? Math.min(...chCells.map((c) => c.z)) : -3
+    const chMaxZ = chCells.length ? Math.max(...chCells.map((c) => c.z)) : 3
     const arrow = new THREE.Mesh(
       new THREE.ConeGeometry(1.1, 2.6, 4),
       new THREE.MeshStandardMaterial({ color: 0xffd166, emissive: 0x664d12 }),
     )
-    arrow.rotation.x = -Math.PI / 2
-    const chMinZ = ch ? Math.min(...worldCells(ch, 0, 0, 0, 0).map((c) => c.z)) : -3
-    arrow.position.set(0, 0.6, (chMinZ - 1.2) * CELL_XZ)
+    arrow.rotation.x = Math.PI / 2 // point +Z (front)
+    arrow.position.set(centerX, 0.6, (chMaxZ + 1.2) * CELL_XZ)
     helperGroup.add(arrow)
     const rear = new THREE.Mesh(
       new THREE.BoxGeometry(1.6, 0.3, 0.3),
       new THREE.MeshStandardMaterial({ color: 0x5aa9e6 }),
     )
-    const chMaxZ = ch ? Math.max(...worldCells(ch, 0, 0, 0, 0).map((c) => c.z)) : 3
-    rear.position.set(0, 0.6, (chMaxZ + 1.2) * CELL_XZ)
+    rear.position.set(centerX, 0.6, (chMinZ - 1.2) * CELL_XZ)
     helperGroup.add(rear)
 
     // ---- entrance legal-spot pads: when placing an entrance, light up every cell on
@@ -875,10 +920,11 @@ export default function BuilderScene({
             new THREE.MeshBasicMaterial({ color: colByState[stateNow] ?? 0x9aa7b8 }),
           )
           const v = DIRS[s.dir]
-          // socket offset in the mesh's export-local frame (cell*cellSize - pivot,
-          // Z flipped to match the geometry), then placed via the mesh's transform.
+          // socket offset in the mesh's local frame (cell*cellSize - pivot), then placed
+          // via the mesh's transform. Now that placeMesh un-mirrors the mesh into the
+          // grid frame (scale.z = -1), this offset is plain game space — no Z negation.
           const xl = s.cell[0] * CELL_XZ - po[0] + v[0] * 0.5 * CELL_XZ
-          const zl = -(s.cell[2] * CELL_XZ - po[2]) - v[2] * 0.5 * CELL_XZ
+          const zl = s.cell[2] * CELL_XZ - po[2] + v[2] * 0.5 * CELL_XZ
           sp.position.set(
             mesh.position.x + xl * ca + zl * sa,
             (pl.y + s.cell[1] - 1) * CELL_Y + (v[1] === 0 ? CELL_Y * 0.45 : (v[1] > 0 ? CELL_Y : 0)),
