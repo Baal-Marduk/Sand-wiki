@@ -1,0 +1,237 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Leg Lab — Sand</title>
+<style>
+  html,body{margin:0;height:100%;background:#cdb892;overflow:hidden;font:13px/1.4 monospace;color:#1c140a}
+  #c{position:fixed;inset:0}
+  #hud{position:fixed;top:10px;left:10px;background:rgba(20,12,4,.8);color:#f0e3c8;
+       padding:10px 12px;border-radius:8px;max-width:330px;white-space:pre-wrap;z-index:5}
+  #hud b{color:#e8a85a}
+  #panel{position:fixed;top:10px;right:10px;width:320px;background:rgba(20,12,4,.82);color:#f0e3c8;
+       padding:10px 12px;border-radius:8px;max-height:92vh;overflow:auto;z-index:5;font-size:12px}
+  .joint{margin:8px 0;padding-top:6px;border-top:1px solid #4a3618}
+  .joint .name{color:#e8a85a;font-weight:bold;margin-bottom:3px}
+  .joint label{display:flex;align-items:center;gap:6px;margin:2px 0}
+  .joint .ax{width:14px;color:#bba}
+  .joint input[type=range]{flex:1}
+  .joint .v{width:38px;text-align:right;color:#fff}
+  .bar{display:flex;gap:6px;margin:8px 0}
+  button{font:inherit;background:#3a2a14;color:#f0e3c8;border:1px solid #6a4f28;border-radius:5px;padding:4px 9px;cursor:pointer}
+  button:hover{background:#4d381c}
+  #out{white-space:pre-wrap;font-size:11px;color:#bce0b0;background:#0d1408;padding:6px;border-radius:5px;margin-top:6px;display:none}
+</style>
+<script type="importmap">
+{ "imports": {
+  "three": "https://unpkg.com/three@0.184.0/build/three.module.js",
+  "three/addons/": "https://unpkg.com/three@0.184.0/examples/jsm/"
+}}
+</script>
+</head>
+<body>
+<div id="c"></div>
+<div id="hud">loading…</div>
+<div id="panel">
+  <div style="color:#e8a85a;font-weight:bold">LEG POSER</div>
+  <div style="font-size:11px;opacity:.85">Pose the leg to match the in-game stance — foot flat on the ground, hip up top. Then hit Export and send me the JSON.</div>
+  <div class="bar">
+    <button id="reset">reset</button>
+    <button id="export">export pose</button>
+    <button id="ground">drop to ground</button>
+  </div>
+  <div id="out"></div>
+  <div id="joints"></div>
+</div>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const hud = document.getElementById('hud');
+const jointsDiv = document.getElementById('joints');
+const out = document.getElementById('out');
+
+const renderer = new THREE.WebGLRenderer({ antialias:true });
+renderer.setPixelRatio(Math.min(devicePixelRatio,2));
+renderer.setSize(innerWidth, innerHeight);
+renderer.shadowMap.enabled = true; renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+document.getElementById('c').appendChild(renderer.domElement);
+
+const scene = new THREE.Scene();
+scene.background = new THREE.Color(0xcdb892);
+const cam = new THREE.PerspectiveCamera(45, innerWidth/innerHeight, 0.05, 500);
+cam.position.set(0.5, 5, 16);
+const controls = new OrbitControls(cam, renderer.domElement);
+controls.enableDamping = true;
+
+scene.add(new THREE.HemisphereLight(0xfff2d8, 0x6b5836, 1.05));
+const sun = new THREE.DirectionalLight(0xffffff, 1.7);
+sun.position.set(7, 16, 9); sun.castShadow = true;
+sun.shadow.mapSize.set(2048,2048);
+Object.assign(sun.shadow.camera, {left:-14,right:14,top:14,bottom:-14});
+scene.add(sun);
+
+const ground = new THREE.Mesh(new THREE.PlaneGeometry(80,80),
+  new THREE.MeshStandardMaterial({ color:0xc2a877, roughness:1 }));
+ground.rotation.x = -Math.PI/2; ground.receiveShadow = true; scene.add(ground);
+const grid = new THREE.GridHelper(80, 80, 0x8a7045, 0x9c8456);
+grid.position.y = 0.01; scene.add(grid);
+
+// solid hull slab — the leg's hip mounts up under it (positioned in connectHull())
+const hull = new THREE.Mesh(new THREE.BoxGeometry(20, 2.2, 12),
+  new THREE.MeshStandardMaterial({ color:0x6b5a44, roughness:0.85, metalness:0.2 }));
+hull.castShadow = true; hull.receiveShadow = true; scene.add(hull);
+// edge outline so the hull reads clearly
+const hullEdge = new THREE.LineSegments(
+  new THREE.EdgesGeometry(hull.geometry),
+  new THREE.LineBasicMaterial({ color:0x14b8a6 }));
+hull.add(hullEdge);
+
+// the owner's posed stance (default so it persists across reloads)
+const DEFAULT_POSE = {
+  walker_hip_grp:[-2,2,-11],
+  walker_thigh_pivot_vertical_grp:[0,0,7],
+  walker_thigh_pivot_horizontal_grp:[1,1,-44],
+  walker_leg:[1,-2,50],
+  footBall_grp:[0,0,9],
+};
+
+function connectHull(){
+  // drop leg so foot sits on ground, then mount the hull underside at the hip top
+  const b1 = new THREE.Box3().setFromObject(legRoot);
+  legRoot.position.y -= b1.min.y;                 // foot -> y=0
+  const b = new THREE.Box3().setFromObject(legRoot);
+  const c = new THREE.Vector3(); b.getCenter(c);
+  // hull underside meets the hip top (slight overlap), leg sits near the hull's +x edge
+  hull.position.set(c.x - 6, b.max.y - 0.3 + 1.1, c.z);
+}
+
+// joints we expose for posing (exact node names) + friendly labels
+const JOINTS = [
+  ['walker_hip_grp', 'whole leg (hip root)'],
+  ['walker_thigh_pivot_vertical_grp', 'hip swivel'],
+  ['walker_thigh_pivot_horizontal_grp', 'hip pitch (thigh swing)'],
+  ['walker_leg', 'knee'],
+  ['walker_foot_grp', 'ankle'],
+  ['footBall_grp', 'foot roll'],
+];
+const state = {};      // name -> {node, rest:Quaternion, d:{x,y,z}}
+let legRoot = null;
+
+function applyJoint(name){
+  const s = state[name]; if (!s) return;
+  const e = new THREE.Euler(
+    THREE.MathUtils.degToRad(s.d.x),
+    THREE.MathUtils.degToRad(s.d.y),
+    THREE.MathUtils.degToRad(s.d.z), 'XYZ');
+  s.node.quaternion.copy(s.rest).multiply(new THREE.Quaternion().setFromEuler(e));
+}
+
+const loader = new GLTFLoader();
+loader.load('/sand-assets/leg/walker_leg.gltf', (g) => {
+  legRoot = g.scene;
+  legRoot.traverse(o => { if (o.isMesh){ o.castShadow = true; o.receiveShadow = true; } });
+  scene.add(legRoot);
+
+  const byName = {};
+  legRoot.traverse(o => { if (o.name && !(o.name in byName)) byName[o.name] = o; });
+
+  JOINTS.forEach(([name,label]) => {
+    const node = byName[name];
+    if (!node) return;
+    state[name] = { node, rest: node.quaternion.clone(), d:{x:0,y:0,z:0} };
+    const box = document.createElement('div'); box.className='joint';
+    box.innerHTML = `<div class="name">${label}<span style="opacity:.5;font-weight:normal"> · ${name}</span></div>`;
+    ['x','y','z'].forEach(ax => {
+      const row = document.createElement('label');
+      const a = document.createElement('span'); a.className='ax'; a.textContent=ax;
+      const r = document.createElement('input'); r.type='range'; r.min=-180; r.max=180; r.step=1; r.value=0;
+      const v = document.createElement('span'); v.className='v'; v.textContent='0°';
+      r.oninput = () => { state[name].d[ax] = +r.value; v.textContent = r.value+'°'; applyJoint(name); connectHull(); report(); };
+      r.dataset.j = name; r.dataset.ax = ax;
+      row.append(a, r, v); box.appendChild(row);
+    });
+    jointsDiv.appendChild(box);
+  });
+
+  // apply the owner's posed stance + sync sliders, then connect to the hull
+  Object.entries(DEFAULT_POSE).forEach(([n,arr]) => {
+    if (!state[n]) return;
+    state[n].d = { x:arr[0]||0, y:arr[1]||0, z:arr[2]||0 };
+    applyJoint(n);
+    jointsDiv.querySelectorAll(`input[data-j="${n}"]`).forEach(r=>{
+      r.value = state[n].d[r.dataset.ax]; r.nextSibling.textContent = r.value+'°';
+    });
+  });
+  connectHull();
+  // frame camera on hull + leg
+  const fb = new THREE.Box3().setFromObject(legRoot); fb.expandByObject(hull);
+  const fc = new THREE.Vector3(), fs = new THREE.Vector3(); fb.getCenter(fc); fb.getSize(fs);
+  controls.target.copy(fc);
+  cam.position.set(fc.x + fs.length()*0.55, fc.y + fs.length()*0.18, fc.z + fs.length()*0.7);
+  report();
+
+  // expose for live tweaks
+  window.LL = { THREE, scene, legRoot, hull, cam, controls, connectHull };
+
+  // debug hook: window.__pose({jointName:[xDeg,yDeg,zDeg], ...}) and sync sliders
+  window.__pose = (p) => {
+    Object.entries(p).forEach(([n,arr]) => {
+      if (!state[n]) return;
+      state[n].d = { x:arr[0]||0, y:arr[1]||0, z:arr[2]||0 };
+      applyJoint(n);
+      jointsDiv.querySelectorAll(`input[data-j="${n}"]`).forEach(r=>{
+        r.value = state[n].d[r.dataset.ax]; r.nextSibling.textContent = r.value+'°';
+      });
+    });
+    connectHull();
+    report();
+  };
+  window.__drop = () => document.getElementById('ground').click();
+  window.__bbox = () => { const b=bbox(); return {min:b.min.toArray().map(x=>+x.toFixed(2)), max:b.max.toArray().map(x=>+x.toFixed(2))}; };
+}, undefined, (err) => { hud.textContent = 'LOAD ERROR: '+err; console.error(err); });
+
+function bbox(){ return new THREE.Box3().setFromObject(legRoot); }
+function frame(){
+  const b = bbox(), c = new THREE.Vector3(), s = new THREE.Vector3();
+  b.getCenter(c); b.getSize(s);
+  controls.target.copy(c);
+}
+function report(){
+  const b = bbox(), s = new THREE.Vector3(); b.getSize(s);
+  hud.innerHTML = `<b>walker_leg</b>  articulated\n`+
+    `size  ${s.x.toFixed(2)} × ${s.y.toFixed(2)} × ${s.z.toFixed(2)}\n`+
+    `foot y (min): ${b.min.y.toFixed(2)}   top y: ${b.max.y.toFixed(2)}\n`+
+    `\ndrag = orbit · scroll = zoom\nteal slab = hull reference`;
+}
+
+document.getElementById('reset').onclick = () => {
+  Object.values(state).forEach(s => { s.d={x:0,y:0,z:0}; s.node.quaternion.copy(s.rest); });
+  jointsDiv.querySelectorAll('input[type=range]').forEach(r=>{ r.value=0; r.nextSibling.textContent='0°'; });
+  out.style.display='none'; report();
+};
+document.getElementById('export').onclick = () => {
+  const pose = {};
+  Object.entries(state).forEach(([n,s]) => {
+    if (s.d.x||s.d.y||s.d.z) pose[n] = [s.d.x, s.d.y, s.d.z];
+  });
+  const txt = JSON.stringify(pose);
+  out.style.display='block'; out.textContent = 'POSE (deg, XYZ delta):\n'+txt;
+  console.log('LEG POSE', txt);
+};
+document.getElementById('ground').onclick = () => {
+  const b = bbox();
+  legRoot.position.y -= b.min.y;   // drop so lowest point sits on y=0
+  report();
+};
+
+addEventListener('resize', () => {
+  cam.aspect = innerWidth/innerHeight; cam.updateProjectionMatrix();
+  renderer.setSize(innerWidth, innerHeight);
+});
+(function loop(){ requestAnimationFrame(loop); controls.update(); renderer.render(scene, cam); })();
+</script>
+</body>
+</html>

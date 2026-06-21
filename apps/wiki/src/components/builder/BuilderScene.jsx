@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import {
   PART_BY_ID, MESH_INDEX, CELL_XZ, CELL_Y, DIRS,
   worldCells, validate, buildOccupancy, editableSockets, cellKey,
@@ -90,6 +91,23 @@ function loadGeometry(partId, onReady) {
 }
 
 // build the material array for a geometry's groups (textured per slot + flat fallback)
+// ---- articulated walker leg (posed glTF: joint hierarchy + baked stance) ----
+let legProto = null, legProtoBox = null, legLoading = false
+function getLegProto(onReady) {
+  if (legProto) return legProto
+  if (!legLoading) {
+    legLoading = true
+    new GLTFLoader().load(asset('leg/walker_leg_posed.gltf'), (g) => {
+      const root = g.scene
+      root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true } })
+      legProtoBox = new THREE.Box3().setFromObject(root)
+      legProto = root
+      if (onReady) onReady()
+    }, undefined, (e) => { console.error('leg gltf load failed', e); legLoading = false })
+  }
+  return null
+}
+
 function partMaterials(geo, { transparent = false, opacity = 1, selected = false } = {}) {
   const { tex = [], col = [], flatIdx = 0 } = geo.userData || {}
   const mk = (opts) => {
@@ -215,7 +233,7 @@ export default function BuilderScene({
     scene.add(rigGroup, helperGroup, ghostGroup)
 
     const st = {
-      renderer, scene, camera, rigGroup, helperGroup, ghostGroup,
+      renderer, scene, camera, rigGroup, helperGroup, ghostGroup, ground,
       theta: Math.PI * 0.28, phi: 1.0, dist: 42,
       target: new THREE.Vector3(0, 4, 0),
       drag: null, // {mode:'orbit'|'pan'|'movePl', sx, sy, plId, moved}
@@ -515,7 +533,7 @@ export default function BuilderScene({
   useEffect(() => {
     const st = stRef.current
     if (!st) return
-    const { rigGroup, helperGroup } = st
+    const { rigGroup, helperGroup, ground } = st
     rigGroup.clear()
     helperGroup.clear()
     st.placedMeshes.clear()
@@ -538,39 +556,28 @@ export default function BuilderScene({
         rigGroup.add(m)
       }
 
-      // legs: instance the shared walker leg under the chassis, one per leg anchor.
-      // The mesh is a splayed leg whose foot sole is already flat; its natural hip→foot
-      // is HIPpt→FOOTpt. We pin the hip to the chassis' real underside (so the top seats
-      // against the hull, not floating) and tilt about Z only as much as needed to drop
-      // the foot to the sand — minimising how far the (flat) foot rotates off level.
-      const legGeo = loadGeometry('_leg', bump)
-      const legMeta = MESH_INDEX['_leg']
+      // legs: the articulated walker leg (posed glTF). Pin each leg's hip pivot
+      // (model local origin) to its hull anchor at the chassis underside, yaw it
+      // around the rig, and let the (already flat) foot hang to the sand below.
+      const legProto = getLegProto(bump)
       const chMeta = MESH_INDEX[state.chassisId]
-      if (legGeo && legMeta && chMeta) {
-        const GROUND = -7
+      if (legProto && chMeta) {
         const HULL_Y = chMeta.b[1] - chMeta.b[4] // chassis underside in world y
-        const HIPpt = new THREE.Vector3(-0.97, -2.09, 0) // measured from the baked mesh
-        const FOOTpt = new THREE.Vector3(4.67, -4.44, 0)
-        const legVec = FOOTpt.clone().sub(HIPpt)
-        const L = Math.hypot(legVec.x, legVec.y)
-        const naturalAngle = Math.atan2(legVec.y, legVec.x)
-        const drop = HULL_Y - GROUND // foot sits this far below the hip
-        const targetAngle = -Math.asin(Math.min(0.985, drop / L))
-        const TILT = targetAngle - naturalAngle // smallest tilt that reaches the ground
-        const rz = new THREE.Matrix4().makeRotationZ(TILT)
-        const hipAfter = HIPpt.clone().applyMatrix4(rz)
+        const footY = HULL_Y + (legProtoBox ? legProtoBox.min.y : 0)
+        const LEG_INSET = 3.0 + CELL_XZ * 0.5 // pull each leg in toward the hull centre
+        let placed = 0
         for (const leg of chassisLegs(ch)) {
-          const legGroup = new THREE.Group()
-          const lm = new THREE.Mesh(legGeo, partMaterials(legGeo))
-          lm.castShadow = true
-          lm.receiveShadow = true
-          lm.rotation.z = TILT
-          lm.position.set(-hipAfter.x, -hipAfter.y, -hipAfter.z) // pin hip to group origin
-          legGroup.add(lm)
-          legGroup.rotation.y = leg.yaw
-          legGroup.position.set(leg.x * CELL_XZ, HULL_Y, leg.z * CELL_XZ) // hip at the hull underside
-          rigGroup.add(legGroup)
+          const lc = legProto.clone(true)
+          // inset the anchor radially inward so the hip tucks under the hull
+          const rl = Math.hypot(leg.x, leg.z) || 1
+          const ix = (leg.x / rl) * LEG_INSET, iz = (leg.z / rl) * LEG_INSET
+          lc.position.set(leg.x * CELL_XZ - ix, HULL_Y, leg.z * CELL_XZ - iz)
+          lc.rotation.y = leg.yaw
+          rigGroup.add(lc)
+          placed++
         }
+        // drop the sand to meet the feet so the trampler reads as grounded
+        if (placed && ground) ground.position.y = footY - 0.05
       }
     }
 
