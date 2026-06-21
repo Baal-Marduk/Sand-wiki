@@ -53,6 +53,9 @@ export function GalleryClient({
 }) {
   const [view, setView] = useState<View>(initialView);
   const [sort, setSort] = useState<Sort>("top");
+  // Minimum crew filter (0 = any). Applied client-side to the loaded designs, since
+  // crew is derived from the build code rather than a queryable column.
+  const [minCrew, setMinCrew] = useState(0);
   const [page, setPage] = useState<Page>(initial);
   const [loading, setLoading] = useState(false);
   const [gateOpen, setGateOpen] = useState(false);
@@ -232,6 +235,15 @@ export function GalleryClient({
 
   const showDraft = view === "mine" && !!localDraft;
 
+  // Decode each loaded design once (cost + crew/cannons), then apply the crew filter.
+  const decorated = page.items.map((d) => ({
+    d,
+    cost: cardCost(d),
+    stats: cardStats(d),
+  }));
+  const visible =
+    minCrew > 0 ? decorated.filter((x) => x.stats.crew >= minCrew) : decorated;
+
   return (
     <div className="tg-app" data-screen-label="Trampler Gallery">
       {/* ===== top bar ===== */}
@@ -266,6 +278,22 @@ export function GalleryClient({
           </button>
         </div>
         <span className="spacer" style={{ marginLeft: "auto" }} />
+        <div className="tg-sortwrap">
+          <span className="label">Crew</span>
+          <select
+            className="tg-select"
+            value={minCrew}
+            onChange={(e) => setMinCrew(Number(e.target.value))}
+            aria-label="Filter by minimum crew"
+          >
+            <option value={0}>Any</option>
+            <option value={1}>1+</option>
+            <option value={2}>2+</option>
+            <option value={4}>4+</option>
+            <option value={8}>8+</option>
+            <option value={12}>12+</option>
+          </select>
+        </div>
         <div className="tg-sortwrap">
           <span className="label">Sort</span>
           <select
@@ -330,10 +358,19 @@ export function GalleryClient({
             </div>
           )}
 
-          {page.items.map((d) => {
+          {minCrew > 0 && visible.length === 0 && page.items.length > 0 && (
+            <p
+              style={{
+                gridColumn: "1 / -1",
+                color: "var(--muted-foreground)",
+                fontSize: 13,
+              }}
+            >
+              No loaded rigs have {minCrew}+ crew.
+            </p>
+          )}
+          {visible.map(({ d, cost, stats }) => {
             const isLiked = liked.has(d.slug);
-            const cost = cardCost(d);
-            const stats = cardStats(d);
             // Others' designs open the read-only view page; your own open straight
             // in the editor for quick tweaking. (The draft card above always edits.)
             const openProps = d.isMine
@@ -375,6 +412,8 @@ export function GalleryClient({
                     <span className="m">
                       <b>{stats.cannons}</b> cannons
                     </span>
+                  </div>
+                  <div className="tg-meta">
                     {COST_ROWS.map(([key, label, icon]) => (
                       <span className="m" key={key} title={label}>
                         {/* eslint-disable-next-line @next/next/no-img-element */}

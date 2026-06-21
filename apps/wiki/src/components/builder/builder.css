@@ -234,6 +234,12 @@
 .tb-mani-name { font-size: 12.5px; color: var(--foreground); min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .tb-mani-qty { font-family: var(--font-mono); font-size: 11px; color: var(--dim); }
 
+/* Read-only view panel: its rows have no leading 32px icon (unlike the editor's
+   manifest), so drop that column and let long part / author names wrap in full
+   instead of clipping to the icon slot. */
+.tb-view-panel .tb-mani-row { grid-template-columns: 1fr auto; }
+.tb-view-panel .tb-mani-name { white-space: normal; overflow: visible; text-overflow: clip; }
+
 /* action buttons */
 .tb-actions { padding: 14px 16px; display: flex; flex-direction: column; gap: 8px; }
 .tb-publish { width: 100%; }

@@ -404,14 +404,32 @@ export function buildSummary(state) {
   const chassis = PART_BY_ID[state.chassisId]
   const chassisLabel = chassis ? chassis.name : state.chassisId
 
-  // cannons: turret slots (the Weapon-category mounts a cannon sits on). Excludes the
-  // battering ram, which is also category Weapon but isn't a turret mount.
+  // crew: total beds, not compartment count. Crew cabins state their capacity in the
+  // name ("… , 4 People" / "… , Single"); the captain's cabin seats 1 (the captain).
+  let crew = 0
+  for (const pl of state.placements ?? []) {
+    crew += crewSeats(PART_BY_ID[pl.partId])
+  }
+
+  // cannons: every Weapon-category part is a gun mount EXCEPT the battering ram.
   const cannons = (state.placements ?? []).filter((pl) => {
     const p = PART_BY_ID[pl.partId]
-    return p && p.category === 'Weapon' && p.id.includes('TurretSlot')
+    return p && p.category === 'Weapon' && !p.id.includes('BattleRam')
   }).length
 
-  return { chassisLabel, partCount: man.total, crowns, hull, crew: man.crew, cannons }
+  return { chassisLabel, partCount: man.total, crowns, hull, crew, cannons }
+}
+
+// Crew capacity a single placed part contributes. Crew cabins encode it in their name
+// ("4 People" / "Single"); the captain's cabin seats the captain (1). Everything else 0.
+export function crewSeats(part) {
+  if (!part) return 0
+  const groups = part.groups || []
+  if (groups.includes('CAPTAIN')) return 1
+  if (!groups.includes('CREW')) return 0
+  if (/\bsingle\b/i.test(part.name)) return 1
+  const m = part.name.match(/(\d+)\s*People/i)
+  return m ? parseInt(m[1], 10) : 0
 }
 
 // ---- full build cost (shared by the builder cost panel and gallery cards) ----

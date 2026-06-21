@@ -81,7 +81,7 @@ export default function BuilderView({
           )}
         </section>
 
-        <aside className="tb-panel right">
+        <aside className="tb-panel right tb-view-panel">
           <div className="tb-panel-head">{name}</div>
           <div className="tb-section">
             <div className="tb-section-h">By</div>
@@ -94,6 +94,7 @@ export default function BuilderView({
               <div className="tb-mani-row"><span className="tb-mani-name">Parts</span><span className="tb-mani-qty">{summary.partCount}</span></div>
               <div className="tb-mani-row"><span className="tb-mani-name">Hull</span><span className="tb-mani-qty">{summary.hull}</span></div>
               <div className="tb-mani-row"><span className="tb-mani-name">Crew</span><span className="tb-mani-qty">{summary.crew}</span></div>
+              <div className="tb-mani-row"><span className="tb-mani-name">Cannons</span><span className="tb-mani-qty">{summary.cannons}</span></div>
             </div>
           )}
 
