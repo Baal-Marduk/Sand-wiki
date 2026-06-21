@@ -552,8 +552,19 @@ export default function BuilderScene({
         // chassis: align mesh TOP to deck-0 floor (plate hangs below, legs to ground)
         const meta = MESH_INDEX[state.chassisId]
         const b = meta.b
-        m.position.set(-(b[0] + b[3]) / 2, -b[4], -(b[2] + b[5]) / 2)
+        // Centre the deck on its CELL footprint (not the mesh bbox), so the deck lines
+        // up with the grid + placed parts, which are all positioned in cell space.
+        const fcells = worldCells(ch, 0, 0, 0, 0)
+        const fxs = fcells.map((c) => c.x), fzs = fcells.map((c) => c.z)
+        const fcx = ((Math.min(...fxs) + Math.max(...fxs)) / 2) * CELL_XZ
+        const fcz = ((Math.min(...fzs) + Math.max(...fzs)) / 2) * CELL_XZ
+        m.position.set(fcx - (b[0] + b[3]) / 2, -b[4], fcz - (b[2] + b[5]) / 2)
         rigGroup.add(m)
+        // re-centre the camera on the build when the chassis changes (not every edit)
+        if (st.lastChassis !== state.chassisId) {
+          st.lastChassis = state.chassisId
+          st.target.set(fcx, 4, fcz)
+        }
       }
 
       // legs: the articulated walker leg (posed glTF). Pin each leg's hip pivot
@@ -671,7 +682,11 @@ export default function BuilderScene({
     if (selectedId) {
       const pl = state.placements.find((p) => p.id === selectedId)
       const part = pl && PART_BY_ID[pl.partId]
-      if (part) {
+      const mesh = pl && st.placedMeshes.get(pl.id)
+      if (part && mesh) {
+        const po = part.pivotOffset || [0, 0, 0]
+        const a = (((pl.rot % 4) + 4) % 4) * (Math.PI / 2)
+        const ca = Math.cos(a), sa = Math.sin(a)
         for (const s of editableSockets(part, pl)) {
           const stateNow = pl.conns?.[s.key] ?? 'DEFAULT'
           const colByState = { DEFAULT: 0x9aa7b8, DOOR: 0x59c2ff, OPEN: 0x59ffa1 }
@@ -680,10 +695,14 @@ export default function BuilderScene({
             new THREE.MeshBasicMaterial({ color: colByState[stateNow] ?? 0x9aa7b8 }),
           )
           const v = DIRS[s.dir]
+          // socket offset in the mesh's export-local frame (cell*cellSize - pivot,
+          // Z flipped to match the geometry), then placed via the mesh's transform.
+          const xl = s.cell[0] * CELL_XZ - po[0] + v[0] * 0.5 * CELL_XZ
+          const zl = -(s.cell[2] * CELL_XZ - po[2]) - v[2] * 0.5 * CELL_XZ
           sp.position.set(
-            (s.x + v[0] * 0.5) * CELL_XZ,
-            (s.y - 1) * CELL_Y + (v[1] === 0 ? CELL_Y * 0.45 : (v[1] > 0 ? CELL_Y : 0)),
-            (s.z + v[2] * 0.5) * CELL_XZ,
+            mesh.position.x + xl * ca + zl * sa,
+            (pl.y + s.cell[1] - 1) * CELL_Y + (v[1] === 0 ? CELL_Y * 0.45 : (v[1] > 0 ? CELL_Y : 0)),
+            mesh.position.z - xl * sa + zl * ca,
           )
           sp.userData = { plId: pl.id, key: s.key, type: s.type }
           helperGroup.add(sp)
