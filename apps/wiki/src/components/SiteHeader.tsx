@@ -3,12 +3,8 @@ import { MainNav } from "@/components/MainNav";
 import { SearchBox } from "@/components/SearchBox";
 import { AuthMenu } from "@/components/AuthMenu";
 import { MobileNav } from "@/components/MobileNav";
-import { sessionIsAdmin } from "@/lib/auth";
 
 export async function SiteHeader() {
-  // Admin nav (→ /admin tools) shown only to admins. The /admin routes are each
-  // gated with requireAdmin() too, so hiding the link is convenience, not security.
-  const admin = await sessionIsAdmin();
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/75">
       {/* The single "Primary" navigation landmark. Search + About live inside
@@ -39,14 +35,6 @@ export async function SiteHeader() {
 
         <div className="hidden items-center gap-2 nav:flex">
           <SearchBox variant="navbar" />
-          {admin && (
-            <Link
-              href="/admin"
-              className="nav-link text-primary hover:text-primary-hover px-2 py-1 text-sm font-semibold rounded"
-            >
-              Admin
-            </Link>
-          )}
           <Link
             href="/about"
             className="nav-link text-foreground hover:text-primary px-2 py-1 text-sm font-semibold rounded"
@@ -56,7 +44,7 @@ export async function SiteHeader() {
           <AuthMenu />
         </div>
 
-        <MobileNav isAdmin={admin} />
+        <MobileNav />
       </nav>
     </header>
   );

@@ -54,7 +54,7 @@ export const SECTIONS: Section[] = [
   { slug: "tech", label: "Tech Tree", kind: "link", categories: [] },
   { slug: "builder", label: "Builder", kind: "link", categories: [] },
   { slug: "gallery", label: "Gallery", kind: "link", categories: [] },
-  { slug: "tools", label: "Tools", kind: "placeholder", categories: [] },
+  { slug: "admin", label: "Data", kind: "link", href: "/admin", categories: [] },
 ];
 
 export const ITEM_CATEGORIES = itemCategories;

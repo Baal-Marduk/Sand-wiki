@@ -13,9 +13,8 @@ import {
 import { Button } from "@/components/ui/button";
 import { SECTIONS } from "@/lib/taxonomy";
 
-// Browse = real data sections; Tools = the standalone tool pages (Tech Tree,
-// Builder, Gallery — all `link` kind). The "Tools" placeholder section is
-// intentionally excluded (it has no page yet).
+// Browse = real data sections; Tools = the standalone tool/link pages (Tech Tree,
+// Builder, Gallery, Data — all `link` kind).
 const BROWSE = SECTIONS.filter((s) => s.kind === "data");
 const TOOLS = SECTIONS.filter((s) => s.kind === "link");
 
@@ -31,7 +30,7 @@ function itemCls(active: boolean) {
   ].join(" ");
 }
 
-export function MobileNav({ isAdmin = false }: { isAdmin?: boolean }) {
+export function MobileNav() {
   const pathname = usePathname();
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
@@ -74,13 +73,6 @@ export function MobileNav({ isAdmin = false }: { isAdmin?: boolean }) {
 
           <div className={groupLabelCls}>Tools</div>
           {TOOLS.map((s) => renderLink(s.slug, s.label, s.href ?? `/${s.slug}`))}
-
-          {isAdmin && (
-            <>
-              <div className={groupLabelCls}>Admin</div>
-              {renderLink("admin", "Admin", "/admin")}
-            </>
-          )}
 
           <div className={groupLabelCls}>More</div>
           {renderLink("about", "About", "/about")}

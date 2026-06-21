@@ -17,7 +17,7 @@ export interface CraftRecipe {
   outputs: CraftLine[];
   inputs: CraftLine[];
   bench: string;
-  benchSlug: string | null;
+  benchHref: string | null;
   tier: number | null;
   time: number | null;
 }
@@ -114,8 +114,8 @@ export function CraftingBrowser({ recipes }: { recipes: CraftRecipe[] }) {
                       </div>
                     </td>
                     <td className="px-3 py-2">
-                      {r.benchSlug ? (
-                        <Link href={`/tramplers/${r.benchSlug}`} className="text-foreground hover:text-primary">
+                      {r.benchHref ? (
+                        <Link href={r.benchHref} className="text-foreground hover:text-primary">
                           {r.bench}
                         </Link>
                       ) : (

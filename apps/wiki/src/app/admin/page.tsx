@@ -1,14 +1,10 @@
 import Link from "next/link";
-import { requireAdmin } from "@/lib/auth";
 
 export const metadata = {
-  title: "Admin — Sand Help",
-  robots: { index: false, follow: false },
+  title: "Data — Sand Help",
 };
 
-// Restricted tools, surfaced only to admins. Each links to its own route, which is
-// independently gated with requireAdmin() — this landing is convenience, not the
-// security boundary.
+// Data tools — each links to its own route. Public landing hub.
 const TOOLS = [
   {
     href: "/ballistics",
@@ -27,13 +23,12 @@ const TOOLS = [
   },
 ];
 
-export default async function AdminPage() {
-  await requireAdmin();
+export default function AdminPage() {
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="font-display text-2xl font-bold uppercase tracking-wide text-primary">Admin</h1>
+      <h1 className="font-display text-2xl font-bold uppercase tracking-wide text-primary">Data</h1>
       <p className="mt-1 text-sm text-muted-foreground">
-        Restricted tools — visible only to you and Baal when signed in to Steam.
+        Datamined reference tables — ballistics, crafting recipes and contract rewards.
       </p>
 
       <div className="mt-6 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">

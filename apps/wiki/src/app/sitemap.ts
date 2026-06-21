@@ -10,7 +10,6 @@ const STATIC_PATHS: { path: string; priority: number }[] = [
   { path: "/environment", priority: 0.8 },
   { path: "/tramplers", priority: 0.8 },
   { path: "/tech", priority: 0.8 },
-  { path: "/tools", priority: 0.5 },
   { path: "/about", priority: 0.4 },
 ];
 

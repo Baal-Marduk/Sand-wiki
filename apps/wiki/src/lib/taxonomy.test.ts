@@ -12,7 +12,7 @@ import {
 describe("taxonomy", () => {
   it("exposes the top-level sections in order", () => {
     expect(SECTIONS.map((s) => s.slug)).toEqual([
-      "items", "environment", "tramplers", "tech", "builder", "gallery", "tools",
+      "items", "environment", "tramplers", "tech", "builder", "gallery", "admin",
     ]);
   });
 
@@ -201,7 +201,9 @@ describe("isWeaponClassCategory", () => {
 
 describe("WIP markers", () => {
   it("flags placeholder sections as WIP", () => {
-    expect(isWipSection(getSection("tools")!)).toBe(true);
+    expect(
+      isWipSection({ slug: "x", label: "X", kind: "placeholder", categories: [] }),
+    ).toBe(true);
   });
   it("does not flag data or link sections as WIP", () => {
     expect(isWipSection(getSection("items")!)).toBe(false);
