@@ -539,17 +539,26 @@ export default function BuilderScene({
       }
 
       // legs: instance the shared walker leg under the chassis, one per leg anchor.
-      // The leg is authored lying near-flat; tilt it about Z (pivot at the hip) into the
-      // bent "spider" stance so the foot plants on the sand, then yaw it to its face.
+      // The mesh is a splayed leg whose foot sole is already flat; its natural hip→foot
+      // is HIPpt→FOOTpt. We pin the hip to the chassis' real underside (so the top seats
+      // against the hull, not floating) and tilt about Z only as much as needed to drop
+      // the foot to the sand — minimising how far the (flat) foot rotates off level.
       const legGeo = loadGeometry('_leg', bump)
       const legMeta = MESH_INDEX['_leg']
-      if (legGeo && legMeta) {
-        const HIP = new THREE.Vector3(-0.8, -2.08, 0)
-        const TILT = -1.15 // ~12° authored splay -> ~78° (near vertical, slight outward kick)
-        const FOOT_DROP = 6.0 // vertical hip->foot after the tilt (m); foot meets the sand
+      const chMeta = MESH_INDEX[state.chassisId]
+      if (legGeo && legMeta && chMeta) {
         const GROUND = -7
+        const HULL_Y = chMeta.b[1] - chMeta.b[4] // chassis underside in world y
+        const HIPpt = new THREE.Vector3(-0.97, -2.09, 0) // measured from the baked mesh
+        const FOOTpt = new THREE.Vector3(4.67, -4.44, 0)
+        const legVec = FOOTpt.clone().sub(HIPpt)
+        const L = Math.hypot(legVec.x, legVec.y)
+        const naturalAngle = Math.atan2(legVec.y, legVec.x)
+        const drop = HULL_Y - GROUND // foot sits this far below the hip
+        const targetAngle = -Math.asin(Math.min(0.985, drop / L))
+        const TILT = targetAngle - naturalAngle // smallest tilt that reaches the ground
         const rz = new THREE.Matrix4().makeRotationZ(TILT)
-        const hipAfter = HIP.clone().applyMatrix4(rz)
+        const hipAfter = HIPpt.clone().applyMatrix4(rz)
         for (const leg of chassisLegs(ch)) {
           const legGroup = new THREE.Group()
           const lm = new THREE.Mesh(legGeo, partMaterials(legGeo))
@@ -559,7 +568,7 @@ export default function BuilderScene({
           lm.position.set(-hipAfter.x, -hipAfter.y, -hipAfter.z) // pin hip to group origin
           legGroup.add(lm)
           legGroup.rotation.y = leg.yaw
-          legGroup.position.set(leg.x * CELL_XZ, GROUND + FOOT_DROP, leg.z * CELL_XZ)
+          legGroup.position.set(leg.x * CELL_XZ, HULL_Y, leg.z * CELL_XZ) // hip at the hull underside
           rigGroup.add(legGroup)
         }
       }
