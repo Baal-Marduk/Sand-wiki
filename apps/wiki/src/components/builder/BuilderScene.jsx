@@ -83,7 +83,7 @@ function makeGroundDots() {
   geo.setAttribute('aAlpha', new THREE.Float32BufferAttribute(alpha, 1))
   const mat = new THREE.ShaderMaterial({
     transparent: true, depthWrite: false,
-    uniforms: { uColor: { value: new THREE.Color(0xffd081) }, uSize: { value: 1.3 }, uMax: { value: 4.5 } },
+    uniforms: { uColor: { value: new THREE.Color(0xa86f2c) }, uSize: { value: 1.3 }, uMax: { value: 4.5 } },
     vertexShader: `
       attribute float aAlpha;
       varying float vAlpha;
