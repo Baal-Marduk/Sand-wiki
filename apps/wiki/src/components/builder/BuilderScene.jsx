@@ -12,8 +12,15 @@ import {
 import { asset } from './data.js'
 
 // ---- desert-dusk scene palette ----
-const GROUND_RADIUS = 300     // ground disc radius (its edge fully fogs into the sky)
-const FOG_COLOR = 0xc07a4a    // warm dusk haze, matched to the sky's horizon glow
+// The ground disc is large enough that its rim always sits far beyond the fog far
+// plane, so it's fully faded to FOG_COLOR (== the sky's horizon glow) before the
+// edge — no visible disc rim, even fully zoomed out. The camera far plane is raised
+// to keep this big disc + sky dome inside the frustum.
+const GROUND_RADIUS = 1200
+const SKY_RADIUS = GROUND_RADIUS + 120
+const CAM_FAR = 3000
+const DOT_SPAN = 175          // world radius the ambient dots cover (anchored, not disc-sized)
+const FOG_COLOR = 0xd9854f    // warm dusk haze, matched to the sky's horizon glow
 
 // Sky dome: a vertical gradient baked to a tall canvas, mapped onto a back-faced
 // sphere. Image top → sphere apex (deep indigo); image middle → horizon (warm
@@ -28,9 +35,9 @@ function makeSkyTexture() {
   grd.addColorStop(0.00, '#13172c') // apex: deep indigo
   grd.addColorStop(0.34, '#2c2a4c') // upper dusk
   grd.addColorStop(0.46, '#7d5a6e') // mauve band approaching the horizon
-  grd.addColorStop(0.50, '#ec9559') // horizon glow (equator)
-  grd.addColorStop(0.56, '#c98a55') // just below the horizon
-  grd.addColorStop(1.00, '#7a5236') // bottom (under the ground)
+  grd.addColorStop(0.50, '#e88f56') // horizon glow (equator)
+  grd.addColorStop(0.54, '#d9854f') // horizon line — matches FOG_COLOR so the fogged
+  grd.addColorStop(1.00, '#9c6238') // ground rim dissolves into it seamlessly
   g.fillStyle = grd
   g.fillRect(0, 0, w, h)
   const tx = new THREE.CanvasTexture(c)
@@ -42,17 +49,21 @@ function makeSkyTexture() {
 // shadow toward the rim. Most of the variation is pushed into the inner region so
 // the area around the rig reads graded rather than flat.
 function makeGroundTexture() {
-  const s = 1024
+  const s = 2048
   const c = document.createElement('canvas')
   c.width = c.height = s
   const g = c.getContext('2d')
   const mid = s / 2
-  const grd = g.createRadialGradient(mid, mid, s * 0.01, mid, mid, s * 0.5)
-  grd.addColorStop(0.0, '#cb9856')   // lit sand under the rig
-  grd.addColorStop(0.14, '#b3823f')
-  grd.addColorStop(0.34, '#8a6437')
-  grd.addColorStop(0.7, '#5a4330')
-  grd.addColorStop(1.0, '#3a2c20')   // shadowed sand toward the rim
+  const grd = g.createRadialGradient(mid, mid, s * 0.005, mid, mid, s * 0.5)
+  // gradient stops anchored to world distances (texture radius == GROUND_RADIUS), so
+  // the sand variation stays in the inner region the player actually sees, regardless
+  // of the large disc size. Past ~220m the fog has taken over anyway.
+  const cs = (m) => Math.min(1, m / GROUND_RADIUS)
+  grd.addColorStop(0, '#cb9856')         // lit sand under the rig
+  grd.addColorStop(cs(60), '#b3823f')
+  grd.addColorStop(cs(120), '#8a6437')
+  grd.addColorStop(cs(220), '#574029')
+  grd.addColorStop(1.0, '#3a2c20')       // shadowed sand toward the rim
   g.fillStyle = grd
   g.fillRect(0, 0, s, s)
   const tx = new THREE.CanvasTexture(c)
@@ -65,7 +76,7 @@ function makeGroundTexture() {
 // small with a capped pixel size, warm gold, fading toward the rim. Lifted clear of
 // the ground so the billboards can't clip into half-domes against the sand.
 function makeGroundDots() {
-  const span = GROUND_RADIUS * 0.6 // dots cover the lit inner area, then fade out
+  const span = DOT_SPAN // dots cover the lit inner area, then fade out
   const n = Math.ceil(span / CELL_XZ)
   const pos = []
   const alpha = []
@@ -287,7 +298,7 @@ export default function BuilderScene({
 
     const scene = new THREE.Scene()
     scene.fog = new THREE.Fog(FOG_COLOR, 95, 260)
-    const camera = new THREE.PerspectiveCamera(46, W / H, 0.5, 400)
+    const camera = new THREE.PerspectiveCamera(46, W / H, 0.5, CAM_FAR)
 
     // image-based lighting: a neutral room env gives metal/brass something to
     // reflect (procedural, no asset needed) — biggest single quality win
@@ -316,7 +327,7 @@ export default function BuilderScene({
     // warm amber at the horizon). Unlit, tone-map-exempt, fog-exempt, depth-write
     // off so it always sits behind the rig.
     const sky = new THREE.Mesh(
-      new THREE.SphereGeometry(GROUND_RADIUS + 40, 32, 24),
+      new THREE.SphereGeometry(SKY_RADIUS, 32, 24),
       new THREE.MeshBasicMaterial({
         map: makeSkyTexture(), side: THREE.BackSide,
         depthWrite: false, fog: false, toneMapped: false,
