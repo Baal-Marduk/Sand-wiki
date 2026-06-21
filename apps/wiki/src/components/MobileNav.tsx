@@ -31,7 +31,7 @@ function itemCls(active: boolean) {
   ].join(" ");
 }
 
-export function MobileNav() {
+export function MobileNav({ isAdmin = false }: { isAdmin?: boolean }) {
   const pathname = usePathname();
   const isActive = (href: string) =>
     pathname === href || pathname.startsWith(`${href}/`);
@@ -74,6 +74,13 @@ export function MobileNav() {
 
           <div className={groupLabelCls}>Tools</div>
           {TOOLS.map((s) => renderLink(s.slug, s.label, s.href ?? `/${s.slug}`))}
+
+          {isAdmin && (
+            <>
+              <div className={groupLabelCls}>Admin</div>
+              {renderLink("admin", "Admin", "/admin")}
+            </>
+          )}
 
           <div className={groupLabelCls}>More</div>
           {renderLink("about", "About", "/about")}

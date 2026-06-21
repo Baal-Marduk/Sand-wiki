@@ -1,0 +1,121 @@
+[
+ {
+  "id": 1,
+  "name": "contract_fabric_scraps_250",
+  "requiredItem": "item_resourceFabricScraps",
+  "requiredCount": 250,
+  "rewardItem": "item_coinCrown",
+  "rewardCount": 1000,
+  "tierChances": {
+   "chanceS": 0,
+   "chanceA": 0,
+   "chanceB": 0,
+   "chanceC": 1,
+   "chanceD": 0
+  },
+  "timeoutMinutes": 0,
+  "extraTimeMinutes": 0
+ },
+ {
+  "id": 2,
+  "name": "",
+  "requiredItem": "item_resourceScrappedAmmo",
+  "requiredCount": 250,
+  "rewardItem": "item_coinCrown",
+  "rewardCount": 1000,
+  "tierChances": {
+   "chanceS": 0,
+   "chanceA": 0,
+   "chanceB": 0,
+   "chanceC": 1,
+   "chanceD": 0
+  },
+  "timeoutMinutes": 0,
+  "extraTimeMinutes": 0
+ },
+ {
+  "id": 3,
+  "name": "",
+  "requiredItem": "item_resourceCoralPiece",
+  "requiredCount": 50,
+  "rewardItem": "item_coinCrown",
+  "rewardCount": 1000,
+  "tierChances": {
+   "chanceS": 0,
+   "chanceA": 0,
+   "chanceB": 0,
+   "chanceC": 1,
+   "chanceD": 0
+  },
+  "timeoutMinutes": 0,
+  "extraTimeMinutes": 0
+ },
+ {
+  "id": 4,
+  "name": "",
+  "requiredItem": "item_resourceMetalParts",
+  "requiredCount": 250,
+  "rewardItem": "item_coinCrown",
+  "rewardCount": 1000,
+  "tierChances": {
+   "chanceS": 0,
+   "chanceA": 0,
+   "chanceB": 0,
+   "chanceC": 1,
+   "chanceD": 0
+  },
+  "timeoutMinutes": 0,
+  "extraTimeMinutes": 0
+ },
+ {
+  "id": 5,
+  "name": "",
+  "requiredItem": "item_resourceThreads",
+  "requiredCount": 250,
+  "rewardItem": "item_resourceMetal_t1",
+  "rewardCount": 1000,
+  "tierChances": {
+   "chanceS": 0,
+   "chanceA": 0,
+   "chanceB": 0,
+   "chanceC": 1,
+   "chanceD": 0
+  },
+  "timeoutMinutes": 0,
+  "extraTimeMinutes": 0
+ },
+ {
+  "id": 6,
+  "name": "",
+  "requiredItem": "item_resourceMetal_t1",
+  "requiredCount": 1000,
+  "rewardItem": "item_resourceMetal_t2",
+  "rewardCount": 200,
+  "tierChances": {
+   "chanceS": 0,
+   "chanceA": 0,
+   "chanceB": 0,
+   "chanceC": 1,
+   "chanceD": 0
+  },
+  "timeoutMinutes": 0,
+  "extraTimeMinutes": 0
+ },
+ {
+  "id": 7,
+  "name": "",
+  "requiredItem": "item_blackBox",
+  "requiredCount": 1,
+  "rewardItem": "item_coinCrown",
+  "rewardCount": 2000,
+  "tierChances": {
+   "chanceS": 0,
+   "chanceA": 0,
+   "chanceB": 0,
+   "chanceC": 0,
+   "chanceD": 1
+  },
+  "timeoutMinutes": 60,
+  "extraTimeMinutes": 90
+ }
+]
