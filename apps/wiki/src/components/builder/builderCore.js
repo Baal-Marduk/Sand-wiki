@@ -411,11 +411,12 @@ export function buildSummary(state) {
     crew += crewSeats(PART_BY_ID[pl.partId])
   }
 
-  // cannons: every Weapon-category part is a gun mount EXCEPT the battering ram.
-  const cannons = (state.placements ?? []).filter((pl) => {
-    const p = PART_BY_ID[pl.partId]
-    return p && p.category === 'Weapon' && !p.id.includes('BattleRam')
-  }).length
+  // cannons: turret-slot mounts (the gun sockets). Keyed off the id, not the category,
+  // because one turret deck (compDeck_TurretSlot_FrameCMetal_1x1) lives under "Deck"
+  // rather than "Weapon". This also naturally excludes the battering ram.
+  const cannons = (state.placements ?? []).filter((pl) =>
+    PART_BY_ID[pl.partId]?.id.includes('TurretSlot'),
+  ).length
 
   return { chassisLabel, partCount: man.total, crowns, hull, crew, cannons }
 }
