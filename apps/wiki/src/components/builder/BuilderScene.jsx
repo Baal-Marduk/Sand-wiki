@@ -3,9 +3,11 @@
 import { useEffect, useRef, useState } from 'react'
 import * as THREE from 'three'
 import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment.js'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import {
   PART_BY_ID, MESH_INDEX, CELL_XZ, CELL_Y, DIRS,
   worldCells, validate, buildOccupancy, editableSockets, cellKey,
+  chassisLegs, isEntrance, entranceLegalCells,
 } from './builderCore.js'
 import { asset } from './data.js'
 
@@ -89,6 +91,23 @@ function loadGeometry(partId, onReady) {
 }
 
 // build the material array for a geometry's groups (textured per slot + flat fallback)
+// ---- articulated walker leg (posed glTF: joint hierarchy + baked stance) ----
+let legProto = null, legProtoBox = null, legLoading = false
+function getLegProto(onReady) {
+  if (legProto) return legProto
+  if (!legLoading) {
+    legLoading = true
+    new GLTFLoader().load(asset('leg/walker_leg_posed.gltf'), (g) => {
+      const root = g.scene
+      root.traverse((o) => { if (o.isMesh) { o.castShadow = true; o.receiveShadow = true } })
+      legProtoBox = new THREE.Box3().setFromObject(root)
+      legProto = root
+      if (onReady) onReady()
+    }, undefined, (e) => { console.error('leg gltf load failed', e); legLoading = false })
+  }
+  return null
+}
+
 function partMaterials(geo, { transparent = false, opacity = 1, selected = false } = {}) {
   const { tex = [], col = [], flatIdx = 0 } = geo.userData || {}
   const mk = (opts) => {
@@ -214,7 +233,7 @@ export default function BuilderScene({
     scene.add(rigGroup, helperGroup, ghostGroup)
 
     const st = {
-      renderer, scene, camera, rigGroup, helperGroup, ghostGroup,
+      renderer, scene, camera, rigGroup, helperGroup, ghostGroup, ground,
       theta: Math.PI * 0.28, phi: 1.0, dist: 42,
       target: new THREE.Vector3(0, 4, 0),
       drag: null, // {mode:'orbit'|'pan'|'movePl', sx, sy, plId, moved}
@@ -514,7 +533,7 @@ export default function BuilderScene({
   useEffect(() => {
     const st = stRef.current
     if (!st) return
-    const { rigGroup, helperGroup } = st
+    const { rigGroup, helperGroup, ground } = st
     rigGroup.clear()
     helperGroup.clear()
     st.placedMeshes.clear()
@@ -535,6 +554,30 @@ export default function BuilderScene({
         const b = meta.b
         m.position.set(-(b[0] + b[3]) / 2, -b[4], -(b[2] + b[5]) / 2)
         rigGroup.add(m)
+      }
+
+      // legs: the articulated walker leg (posed glTF). Pin each leg's hip pivot
+      // (model local origin) to its hull anchor at the chassis underside, yaw it
+      // around the rig, and let the (already flat) foot hang to the sand below.
+      const legProto = getLegProto(bump)
+      const chMeta = MESH_INDEX[state.chassisId]
+      if (legProto && chMeta) {
+        const HULL_Y = chMeta.b[1] - chMeta.b[4] // chassis underside in world y
+        const footY = HULL_Y + (legProtoBox ? legProtoBox.min.y : 0)
+        const LEG_INSET = 3.0 + CELL_XZ * 0.5 // pull each leg in toward the hull centre
+        let placed = 0
+        for (const leg of chassisLegs(ch)) {
+          const lc = legProto.clone(true)
+          // inset the anchor radially inward so the hip tucks under the hull
+          const rl = Math.hypot(leg.x, leg.z) || 1
+          const ix = (leg.x / rl) * LEG_INSET, iz = (leg.z / rl) * LEG_INSET
+          lc.position.set(leg.x * CELL_XZ - ix, HULL_Y, leg.z * CELL_XZ - iz)
+          lc.rotation.y = leg.yaw
+          rigGroup.add(lc)
+          placed++
+        }
+        // drop the sand to meet the feet so the trampler reads as grounded
+        if (placed && ground) ground.position.y = footY - 0.05
       }
     }
 
@@ -609,6 +652,20 @@ export default function BuilderScene({
     const chMaxZ = ch ? Math.max(...worldCells(ch, 0, 0, 0, 0).map((c) => c.z)) : 3
     rear.position.set(0, 0.6, (chMaxZ + 1.2) * CELL_XZ)
     helperGroup.add(rear)
+
+    // ---- entrance legal-spot pads: when placing an entrance, light up every cell on
+    // this deck where its ladder can attach (clear column at the hull edge) ----
+    if (activePart && isEntrance(PART_BY_ID[activePart])) {
+      const padMat = new THREE.MeshBasicMaterial({
+        color: 0x59ffa1, transparent: true, opacity: 0.32, side: THREE.DoubleSide,
+      })
+      for (const cell of entranceLegalCells(state, activePart, level)) {
+        const q = new THREE.Mesh(new THREE.PlaneGeometry(CELL_XZ * 0.88, CELL_XZ * 0.88), padMat)
+        q.rotation.x = -Math.PI / 2
+        q.position.set(cell.x * CELL_XZ, (level - 1) * CELL_Y + 0.05, cell.z * CELL_XZ)
+        helperGroup.add(q)
+      }
+    }
 
     // ---- editable socket badges on the selected placement ----
     if (selectedId) {
