@@ -38,43 +38,72 @@ function makeSkyTexture() {
   return tx
 }
 
-// Sand ground baked once: a radial gradient (lit centre → shadowed rim) plus a
-// grid of small gold dots at every cell corner, fading out toward the rim. Baking
-// the dots into the albedo lays them flat on the ground (correct perspective,
-// lighting and shadow, no billboard clipping).
+// Sand ground baked once: a radial gradient, lit sand under the rig darkening to
+// shadow toward the rim. Most of the variation is pushed into the inner region so
+// the area around the rig reads graded rather than flat.
 function makeGroundTexture() {
-  const s = 2048
+  const s = 1024
   const c = document.createElement('canvas')
   c.width = c.height = s
   const g = c.getContext('2d')
   const mid = s / 2
-  const grd = g.createRadialGradient(mid, mid, s * 0.02, mid, mid, s * 0.5)
-  grd.addColorStop(0.0, '#c2904f')   // lit sand under the rig
-  grd.addColorStop(0.55, '#9a7142')
-  grd.addColorStop(1.0, '#4f3c2c')   // shadowed sand toward the rim
+  const grd = g.createRadialGradient(mid, mid, s * 0.01, mid, mid, s * 0.5)
+  grd.addColorStop(0.0, '#cb9856')   // lit sand under the rig
+  grd.addColorStop(0.14, '#b3823f')
+  grd.addColorStop(0.34, '#8a6437')
+  grd.addColorStop(0.7, '#5a4330')
+  grd.addColorStop(1.0, '#3a2c20')   // shadowed sand toward the rim
   g.fillStyle = grd
   g.fillRect(0, 0, s, s)
-
-  // dots at cell corners — world spacing CELL_XZ mapped into texture pixels
-  const step = (s * CELL_XZ) / (GROUND_RADIUS * 2)
-  const maxR = s * 0.5
-  const dotR = s * 0.0013 // ~2.7px at 2048
-  for (let px = step / 2; px < s; px += step) {
-    for (let py = step / 2; py < s; py += step) {
-      const r = Math.hypot(px - mid, py - mid)
-      if (r > maxR) continue
-      const a = Math.pow(Math.max(0, 1 - r / maxR), 1.5) * 0.8 // fade toward the rim
-      if (a < 0.03) continue
-      g.beginPath()
-      g.arc(px, py, dotR, 0, Math.PI * 2)
-      g.fillStyle = `rgba(255,224,158,${a.toFixed(3)})`
-      g.fill()
-    }
-  }
   const tx = new THREE.CanvasTexture(c)
   tx.colorSpace = THREE.SRGBColorSpace
   tx.anisotropy = 8
   return tx
+}
+
+// Ambient grid dots: camera-facing round points (always circular, never stretched),
+// small with a capped pixel size, warm gold, fading toward the rim. Lifted clear of
+// the ground so the billboards can't clip into half-domes against the sand.
+function makeGroundDots() {
+  const span = GROUND_RADIUS * 0.6 // dots cover the lit inner area, then fade out
+  const n = Math.ceil(span / CELL_XZ)
+  const pos = []
+  const alpha = []
+  for (let i = -n; i <= n; i++) {
+    for (let j = -n; j <= n; j++) {
+      const x = i * CELL_XZ, z = j * CELL_XZ
+      const r = Math.hypot(x, z)
+      if (r > span) continue
+      pos.push(x, 0, z)
+      alpha.push(Math.pow(1 - r / span, 1.6))
+    }
+  }
+  const geo = new THREE.BufferGeometry()
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
+  geo.setAttribute('aAlpha', new THREE.Float32BufferAttribute(alpha, 1))
+  const mat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false,
+    uniforms: { uColor: { value: new THREE.Color(0xffd081) }, uSize: { value: 1.3 }, uMax: { value: 4.5 } },
+    vertexShader: `
+      attribute float aAlpha;
+      varying float vAlpha;
+      uniform float uSize; uniform float uMax;
+      void main() {
+        vAlpha = aAlpha;
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = clamp(uSize * (300.0 / max(1.0, -mv.z)), 1.0, uMax);
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `
+      varying float vAlpha;
+      uniform vec3 uColor;
+      void main() {
+        float d = length(gl_PointCoord - vec2(0.5));
+        if (d > 0.5) discard;
+        gl_FragColor = vec4(uColor, vAlpha * 0.5 * smoothstep(0.5, 0.28, d));
+      }`,
+  })
+  return new THREE.Points(geo, mat)
 }
 
 // ---- shared albedo texture cache (v3) ----
@@ -306,13 +335,20 @@ export default function BuilderScene({
     ground.receiveShadow = true
     scene.add(ground)
 
+    // ambient cell-corner dots, lifted clear of the sand so the billboards render
+    // as full circles (no depth-clip against the ground plane)
+    const DOT_LIFT = 1.3
+    const dots = makeGroundDots()
+    dots.position.y = ground.position.y + DOT_LIFT
+    scene.add(dots)
+
     const rigGroup = new THREE.Group()
     const helperGroup = new THREE.Group()
     const ghostGroup = new THREE.Group()
     scene.add(rigGroup, helperGroup, ghostGroup)
 
     const st = {
-      renderer, scene, camera, rigGroup, helperGroup, ghostGroup, ground,
+      renderer, scene, camera, rigGroup, helperGroup, ghostGroup, ground, dots, dotLift: DOT_LIFT,
       theta: Math.PI * 0.28, phi: 1.0, dist: 42,
       target: new THREE.Vector3(0, 4, 0),
       drag: null, // {mode:'orbit'|'pan'|'movePl', sx, sy, plId, moved}
@@ -717,8 +753,11 @@ export default function BuilderScene({
           rigGroup.add(lc)
           placed++
         }
-        // drop the sand to meet the feet so the rig reads as grounded
-        if (placed && ground) ground.position.y = footY - 0.05
+        // drop the sand (and its dot grid) to meet the feet so the rig reads as grounded
+        if (placed && ground) {
+          ground.position.y = footY - 0.05
+          if (st.dots) st.dots.position.y = ground.position.y + st.dotLift
+        }
       }
     }
 
