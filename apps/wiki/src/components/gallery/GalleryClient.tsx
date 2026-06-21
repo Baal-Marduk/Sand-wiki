@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { DeleteDesignButton } from "@/components/gallery/DeleteDesignButton";
 import { designShareUrl } from "@/lib/share";
 import { costBreakdown, COST_ROWS, decodeShare, buildSummary } from "@/components/builder/builderCore.js";
+import { downloadWbt } from "@/components/builder/wbtExport.js";
 
 type Item = {
   slug: string;
@@ -218,6 +219,15 @@ export function GalleryClient({
       return costBreakdown(decodeShare(d.buildCode));
     } catch {
       return { crowns: d.crowns, mechanical: 0, pneumatic: 0, computing: 0 };
+    }
+  }
+
+  // Download a card's design as an in-game .wbt. Icon comes from its stored thumbnail.
+  async function downloadCard(d: Item) {
+    try {
+      await downloadWbt(decodeShare(d.buildCode), { iconSrc: d.thumbPath });
+    } catch {
+      /* malformed build code — nothing to download */
     }
   }
 
@@ -450,6 +460,15 @@ export function GalleryClient({
                     {(admin || d.isMine) && (
                       <DeleteDesignButton slug={d.slug} onDeleted={() => removeFromList(d.slug)} />
                     )}
+                    <button
+                      type="button"
+                      className="tg-icon-btn"
+                      title="Download .wbt (load in-game)"
+                      aria-label={`Download ${d.name} as a .wbt save`}
+                      onClick={() => downloadCard(d)}
+                    >
+                      ⭳
+                    </button>
                     <button
                       type="button"
                       className="tg-icon-btn"

@@ -9,6 +9,7 @@ import { UpvoteButton } from '@/components/gallery/UpvoteButton'
 import { DeleteDesignButton } from '@/components/gallery/DeleteDesignButton'
 import { designShareUrl } from '@/lib/share'
 import { decodeShare, manifest, buildSummary, costBreakdown, COST_ROWS } from './builderCore.js'
+import { downloadWbt } from './wbtExport.js'
 import BuilderScene from './BuilderScene'
 import '@/components/gallery/gallery.css' // for the .tg-vote upvote styling
 
@@ -49,6 +50,18 @@ export default function BuilderView({
       .catch(() => note('Copy failed'))
   }
 
+  // Download the published build as an in-game .wbt. The icon comes from the stored
+  // thumbnail (blank if the design has none); no live capture needed here.
+  async function download() {
+    if (!state) return
+    try {
+      await downloadWbt(state, { iconSrc: `/api/designs/${slug}/thumb` })
+      note('Downloaded .wbt')
+    } catch {
+      note('Download failed')
+    }
+  }
+
   return (
     <div className="tb-app" data-screen-label="Trampler Builder">
       <header className="tb-appbar">
@@ -57,6 +70,7 @@ export default function BuilderView({
         <span className="spacer" />
         <UpvoteButton slug={slug} initialLikeCount={likeCount} initialLiked={initialLiked} signedIn={signedIn} />
         <button type="button" className={actionButtonClass} onClick={edit}>✎ Edit</button>
+        <button type="button" className={actionButtonClass} onClick={download}>⭳ Download .wbt</button>
         <button type="button" className={actionButtonClass} onClick={share}>⤴ {flash || 'Share'}</button>
         {canDelete && <DeleteDesignButton slug={slug} />}
         <AuthMenuClient />

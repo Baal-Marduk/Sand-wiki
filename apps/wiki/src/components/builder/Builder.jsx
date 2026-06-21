@@ -21,6 +21,7 @@ import {
   costBreakdown, COST_ROWS,
 } from './builderCore.js'
 import { decodeWbt, wbtToState } from './wbtImport.js'
+import { downloadWbt } from './wbtExport.js'
 import { submitBuild } from './galleryApi.js'
 import { designShareUrl } from '@/lib/share'
 
@@ -441,6 +442,18 @@ export default function BuilderV2() {
     }
   }
 
+  // download the current build as an in-game .wbt save. The icon is the canonical
+  // capture frame (front-facing, opaque) rendered by the 3D scene.
+  async function doDownloadWbt() {
+    try {
+      const iconSrc = captureRef.current ? captureRef.current() : null
+      await downloadWbt(state, { iconSrc })
+      flash('downloaded .wbt')
+    } catch {
+      flash('couldn’t build .wbt')
+    }
+  }
+
   return (
     <div className="tb-app" data-screen-label="Trampler Builder">
       {/* ===== top bar ===== */}
@@ -452,6 +465,9 @@ export default function BuilderV2() {
         <button type="button" className={actionButtonClass} onClick={() => { setShareText(''); setImportOpen(true) }}>Import</button>
         <button type="button" className={actionButtonClass} onClick={() => setLoadOpen(true)}>
           <span style={{ color: 'var(--info)' }}>⭱</span>&nbsp;Load .wbt save
+        </button>
+        <button type="button" className={actionButtonClass} onClick={doDownloadWbt}>
+          <span style={{ color: 'var(--info)' }}>⭳</span>&nbsp;Download .wbt
         </button>
         <span className="divider" />
         <button type="button" className={actionButtonClass} onClick={() => setClearOpen(true)}>✕ Clear</button>
