@@ -6,6 +6,7 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 import {
   PART_BY_ID, MESH_INDEX, CELL_XZ, CELL_Y, DIRS,
   worldCells, validate, buildOccupancy, editableSockets, cellKey,
+  chassisLegs, isEntrance, entranceLegalCells,
 } from './builderCore.js'
 import { asset } from './data.js'
 
@@ -536,6 +537,32 @@ export default function BuilderScene({
         m.position.set(-(b[0] + b[3]) / 2, -b[4], -(b[2] + b[5]) / 2)
         rigGroup.add(m)
       }
+
+      // legs: instance the shared walker leg under the chassis, one per leg anchor.
+      // The leg is authored lying near-flat; tilt it about Z (pivot at the hip) into the
+      // bent "spider" stance so the foot plants on the sand, then yaw it to its face.
+      const legGeo = loadGeometry('_leg', bump)
+      const legMeta = MESH_INDEX['_leg']
+      if (legGeo && legMeta) {
+        const HIP = new THREE.Vector3(-0.8, -2.08, 0)
+        const TILT = -1.15 // ~12° authored splay -> ~78° (near vertical, slight outward kick)
+        const FOOT_DROP = 6.0 // vertical hip->foot after the tilt (m); foot meets the sand
+        const GROUND = -7
+        const rz = new THREE.Matrix4().makeRotationZ(TILT)
+        const hipAfter = HIP.clone().applyMatrix4(rz)
+        for (const leg of chassisLegs(ch)) {
+          const legGroup = new THREE.Group()
+          const lm = new THREE.Mesh(legGeo, partMaterials(legGeo))
+          lm.castShadow = true
+          lm.receiveShadow = true
+          lm.rotation.z = TILT
+          lm.position.set(-hipAfter.x, -hipAfter.y, -hipAfter.z) // pin hip to group origin
+          legGroup.add(lm)
+          legGroup.rotation.y = leg.yaw
+          legGroup.position.set(leg.x * CELL_XZ, GROUND + FOOT_DROP, leg.z * CELL_XZ)
+          rigGroup.add(legGroup)
+        }
+      }
     }
 
     // placements
@@ -609,6 +636,20 @@ export default function BuilderScene({
     const chMaxZ = ch ? Math.max(...worldCells(ch, 0, 0, 0, 0).map((c) => c.z)) : 3
     rear.position.set(0, 0.6, (chMaxZ + 1.2) * CELL_XZ)
     helperGroup.add(rear)
+
+    // ---- entrance legal-spot pads: when placing an entrance, light up every cell on
+    // this deck where its ladder can attach (clear column at the hull edge) ----
+    if (activePart && isEntrance(PART_BY_ID[activePart])) {
+      const padMat = new THREE.MeshBasicMaterial({
+        color: 0x59ffa1, transparent: true, opacity: 0.32, side: THREE.DoubleSide,
+      })
+      for (const cell of entranceLegalCells(state, activePart, level)) {
+        const q = new THREE.Mesh(new THREE.PlaneGeometry(CELL_XZ * 0.88, CELL_XZ * 0.88), padMat)
+        q.rotation.x = -Math.PI / 2
+        q.position.set(cell.x * CELL_XZ, (level - 1) * CELL_Y + 0.05, cell.z * CELL_XZ)
+        helperGroup.add(q)
+      }
+    }
 
     // ---- editable socket badges on the selected placement ----
     if (selectedId) {

@@ -63,6 +63,49 @@ export function worldCells(part, px, py, pz, rot) {
   })
 }
 
+// Leg anchors for a chassis. Legs are encoded as the ring of `noVol` cells around the
+// deck (`vol`) cells. Cluster them into connected groups (one per leg) → {x,z,dir,yaw}:
+//   dir = outward face the leg projects from; yaw aims the leg mesh's natural outward
+//   (+X) along dir (same handed convention as placeMesh: +X -> (cos a, -sin a)).
+export function chassisLegs(chassis) {
+  if (!chassis) return []
+  const noVol = chassis.cells.filter((c) => c.noVol).map((c) => [c.p[0], c.p[2]])
+  const vol = chassis.cells.filter((c) => !c.noVol).map((c) => [c.p[0], c.p[2]])
+  if (!noVol.length || !vol.length) return []
+  const dminX = Math.min(...vol.map((c) => c[0])), dmaxX = Math.max(...vol.map((c) => c[0]))
+  const dminZ = Math.min(...vol.map((c) => c[1])), dmaxZ = Math.max(...vol.map((c) => c[1]))
+  const k = (x, z) => `${x},${z}`
+  const set = new Map(noVol.map((c) => [k(c[0], c[1]), c]))
+  const seen = new Set()
+  const clusters = []
+  for (const c of noVol) {
+    if (seen.has(k(c[0], c[1]))) continue
+    const stack = [c]; seen.add(k(c[0], c[1])); const group = []
+    while (stack.length) {
+      const [x, z] = stack.pop(); group.push([x, z])
+      for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+        const nk = k(x + dx, z + dz)
+        if (set.has(nk) && !seen.has(nk)) { seen.add(nk); stack.push(set.get(nk)) }
+      }
+    }
+    clusters.push(group)
+  }
+  return clusters.map((g) => {
+    const cx = g.reduce((s, c) => s + c[0], 0) / g.length
+    const cz = g.reduce((s, c) => s + c[1], 0) / g.length
+    const outX = cx < dminX ? dminX - cx : cx > dmaxX ? cx - dmaxX : 0
+    const outZ = cz < dminZ ? dminZ - cz : cz > dmaxZ ? cz - dmaxZ : 0
+    let fx = 0, fz = 0
+    if (outX >= outZ) fx = cx < dminX ? -1 : 1
+    else fz = cz < dminZ ? -1 : 1
+    return {
+      x: cx, z: cz,
+      dir: fx ? (fx < 0 ? 'Left' : 'Right') : (fz < 0 ? 'Back' : 'Forward'),
+      yaw: Math.atan2(-fz, fx),
+    }
+  })
+}
+
 export function buildOccupancy(state) {
   const occ = new Map() // key -> {plId, vol, sockets}
   const ch = PART_BY_ID[state.chassisId]
@@ -139,6 +182,34 @@ export function validate(state, occ, partId, px, py, pz, rot, ignoreId = null) {
   if (!connected) return { ok: false, reason: 'no connection to the rig' }
   if (!supportOk) return { ok: false, reason: 'needs support underneath' }
   return { ok: true, reason: '' }
+}
+
+export const isEntrance = (part) => !!part?.groups?.includes('ENTRANCE')
+
+// Cells where the given entrance part would be a fully-valid placement at `level`.
+// Scans empty cells orthogonally adjacent to the rig (so it can connect) — cheap. The
+// existing validate() already enforces the rest (ladder column clear via occupancy of
+// the chassis footprint, connection to a compartment). Used to highlight where an
+// entrance/ladder can attach.
+export function entranceLegalCells(state, partId, level) {
+  const part = PART_BY_ID[partId]
+  if (!isEntrance(part)) return []
+  const occ = buildOccupancy(state)
+  const cand = new Set()
+  for (const key of occ.keys()) {
+    const [x, y, z] = key.split(',').map(Number)
+    if (y !== level) continue
+    for (const [dx, dz] of [[1, 0], [-1, 0], [0, 1], [0, -1]]) {
+      const nk = cellKey(x + dx, level, z + dz)
+      if (!occ.has(nk)) cand.add(`${x + dx},${z + dz}`)
+    }
+  }
+  const out = []
+  for (const c of cand) {
+    const [x, z] = c.split(',').map(Number)
+    if (validate(state, occ, partId, x, level, z, 0).ok) out.push({ x, z })
+  }
+  return out
 }
 
 // Crew walkability (game's pathfinding rule). BFS over pathfinding-active cells;
