@@ -12,72 +12,69 @@ import {
 import { asset } from './data.js'
 
 // ---- desert-dusk scene palette ----
-const SKY_TOP = 0x161a30      // deep indigo overhead
-const SKY_MID = 0x42385f      // dusk violet band
-const SKY_HORIZON = 0xe8915a  // warm amber glow at the horizon
-const GROUND_NEAR = '#b98854' // lit sand under the rig
-const GROUND_FAR = '#5b4636'  // shadowed sand toward the rim
-const DOT_COLOR = 0xffdd96    // warm gold grid dots (echoes the front-arrow accent)
-const FOG_COLOR = 0x4a3340    // warm dusk haze the rig fades into
+const GROUND_RADIUS = 300     // ground disc radius (its edge fully fogs into the sky)
+const FOG_COLOR = 0xc07a4a    // warm dusk haze, matched to the sky's horizon glow
 
-// radial sand gradient (bright centre → dark rim) baked to a canvas texture once
-function makeGroundTexture() {
-  const s = 512
+// Sky dome: a vertical gradient baked to a tall canvas, mapped onto a back-faced
+// sphere. Image top → sphere apex (deep indigo); image middle → horizon (warm
+// amber glow); below stays warm (hidden under the ground). Baked, not a shader, so
+// the orientation is deterministic.
+function makeSkyTexture() {
+  const w = 8, h = 512
   const c = document.createElement('canvas')
-  c.width = c.height = s
+  c.width = w; c.height = h
   const g = c.getContext('2d')
-  const grd = g.createRadialGradient(s / 2, s / 2, s * 0.04, s / 2, s / 2, s * 0.5)
-  grd.addColorStop(0, GROUND_NEAR)
-  grd.addColorStop(1, GROUND_FAR)
+  const grd = g.createLinearGradient(0, 0, 0, h)
+  grd.addColorStop(0.00, '#13172c') // apex: deep indigo
+  grd.addColorStop(0.34, '#2c2a4c') // upper dusk
+  grd.addColorStop(0.46, '#7d5a6e') // mauve band approaching the horizon
+  grd.addColorStop(0.50, '#ec9559') // horizon glow (equator)
+  grd.addColorStop(0.56, '#c98a55') // just below the horizon
+  grd.addColorStop(1.00, '#7a5236') // bottom (under the ground)
   g.fillStyle = grd
-  g.fillRect(0, 0, s, s)
+  g.fillRect(0, 0, w, h)
   const tx = new THREE.CanvasTexture(c)
   tx.colorSpace = THREE.SRGBColorSpace
   return tx
 }
 
-// THREE.Points cloud of round gold dots on a cell-corner grid, fading toward the
-// rim (per-vertex alpha) and with distance (size attenuation). Sits flat on y=0.
-function makeGroundDots() {
-  const SPAN = 116                  // world-unit radius the dots cover
-  const n = Math.ceil(SPAN / CELL_XZ)
-  const pos = []
-  const alpha = []
-  for (let i = -n; i <= n; i++) {
-    for (let j = -n; j <= n; j++) {
-      const x = i * CELL_XZ, z = j * CELL_XZ
-      const r = Math.hypot(x, z)
-      if (r > SPAN) continue
-      pos.push(x, 0, z)
-      alpha.push(Math.pow(1 - Math.min(1, r / SPAN), 1.5)) // fade out toward the rim
+// Sand ground baked once: a radial gradient (lit centre → shadowed rim) plus a
+// grid of small gold dots at every cell corner, fading out toward the rim. Baking
+// the dots into the albedo lays them flat on the ground (correct perspective,
+// lighting and shadow, no billboard clipping).
+function makeGroundTexture() {
+  const s = 2048
+  const c = document.createElement('canvas')
+  c.width = c.height = s
+  const g = c.getContext('2d')
+  const mid = s / 2
+  const grd = g.createRadialGradient(mid, mid, s * 0.02, mid, mid, s * 0.5)
+  grd.addColorStop(0.0, '#c2904f')   // lit sand under the rig
+  grd.addColorStop(0.55, '#9a7142')
+  grd.addColorStop(1.0, '#4f3c2c')   // shadowed sand toward the rim
+  g.fillStyle = grd
+  g.fillRect(0, 0, s, s)
+
+  // dots at cell corners — world spacing CELL_XZ mapped into texture pixels
+  const step = (s * CELL_XZ) / (GROUND_RADIUS * 2)
+  const maxR = s * 0.5
+  const dotR = s * 0.0013 // ~2.7px at 2048
+  for (let px = step / 2; px < s; px += step) {
+    for (let py = step / 2; py < s; py += step) {
+      const r = Math.hypot(px - mid, py - mid)
+      if (r > maxR) continue
+      const a = Math.pow(Math.max(0, 1 - r / maxR), 1.5) * 0.8 // fade toward the rim
+      if (a < 0.03) continue
+      g.beginPath()
+      g.arc(px, py, dotR, 0, Math.PI * 2)
+      g.fillStyle = `rgba(255,224,158,${a.toFixed(3)})`
+      g.fill()
     }
   }
-  const geo = new THREE.BufferGeometry()
-  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
-  geo.setAttribute('aAlpha', new THREE.Float32BufferAttribute(alpha, 1))
-  const mat = new THREE.ShaderMaterial({
-    transparent: true, depthWrite: false,
-    uniforms: { uColor: { value: new THREE.Color(DOT_COLOR) }, uSize: { value: 5.5 } },
-    vertexShader: `
-      attribute float aAlpha;
-      varying float vAlpha;
-      uniform float uSize;
-      void main() {
-        vAlpha = aAlpha;
-        vec4 mv = modelViewMatrix * vec4(position, 1.0);
-        gl_PointSize = uSize * (300.0 / max(1.0, -mv.z));
-        gl_Position = projectionMatrix * mv;
-      }`,
-    fragmentShader: `
-      varying float vAlpha;
-      uniform vec3 uColor;
-      void main() {
-        float d = length(gl_PointCoord - vec2(0.5));
-        if (d > 0.5) discard;
-        gl_FragColor = vec4(uColor, vAlpha * smoothstep(0.5, 0.32, d));
-      }`,
-  })
-  return new THREE.Points(geo, mat)
+  const tx = new THREE.CanvasTexture(c)
+  tx.colorSpace = THREE.SRGBColorSpace
+  tx.anisotropy = 8
+  return tx
 }
 
 // ---- shared albedo texture cache (v3) ----
@@ -249,7 +246,7 @@ export default function BuilderScene({
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true })
     renderer.setSize(W, H)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.setClearColor(SKY_HORIZON) // fallback; the gradient sky dome covers it
+    renderer.setClearColor(FOG_COLOR) // fallback; the gradient sky dome covers it
     // filmic tone mapping + correct colour management for a "rendered" look
     renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.toneMapping = THREE.ACESFilmicToneMapping
@@ -286,41 +283,22 @@ export default function BuilderScene({
     dir2.position.set(-30, 20, -40)
     scene.add(dir2)
 
-    // ---- desert-dusk sky: a large back-faced dome with a vertical gradient
-    // (deep indigo overhead → warm amber at the horizon). Unlit, fog-exempt, and
-    // depth-write-off so it always sits behind the rig.
+    // ---- desert-dusk sky: a back-faced gradient dome (deep indigo overhead →
+    // warm amber at the horizon). Unlit, tone-map-exempt, fog-exempt, depth-write
+    // off so it always sits behind the rig.
     const sky = new THREE.Mesh(
-      new THREE.SphereGeometry(320, 32, 16),
-      new THREE.ShaderMaterial({
-        side: THREE.BackSide, depthWrite: false, fog: false,
-        uniforms: {
-          top: { value: new THREE.Color(SKY_TOP) },
-          mid: { value: new THREE.Color(SKY_MID) },
-          horizon: { value: new THREE.Color(SKY_HORIZON) },
-        },
-        vertexShader: `
-          varying vec3 vDir;
-          void main() {
-            vDir = normalize((modelMatrix * vec4(position, 1.0)).xyz);
-            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
-          }`,
-        fragmentShader: `
-          varying vec3 vDir;
-          uniform vec3 top; uniform vec3 mid; uniform vec3 horizon;
-          void main() {
-            float h = clamp(vDir.y, 0.0, 1.0);
-            vec3 col = mix(horizon, mid, smoothstep(0.0, 0.32, h));
-            col = mix(col, top, smoothstep(0.28, 0.85, h));
-            gl_FragColor = vec4(col, 1.0);
-          }`,
+      new THREE.SphereGeometry(GROUND_RADIUS + 40, 32, 24),
+      new THREE.MeshBasicMaterial({
+        map: makeSkyTexture(), side: THREE.BackSide,
+        depthWrite: false, fog: false, toneMapped: false,
       }),
     )
     scene.add(sky)
 
-    // ---- sand ground: a disc with a radial gradient (lit sand under the rig →
-    // shadowed sand toward the rim), generated once as a canvas texture.
+    // ---- sand ground: a disc with a baked radial gradient + cell-corner dot grid.
+    // The disc edge sits past the fog far plane so it dissolves into the horizon.
     const ground = new THREE.Mesh(
-      new THREE.CircleGeometry(180, 64),
+      new THREE.CircleGeometry(GROUND_RADIUS, 96),
       new THREE.MeshStandardMaterial({ map: makeGroundTexture(), roughness: 1, metalness: 0 }),
     )
     ground.rotation.x = -Math.PI / 2
@@ -328,20 +306,13 @@ export default function BuilderScene({
     ground.receiveShadow = true
     scene.add(ground)
 
-    // ---- ambient grid dots at every cell corner across the ground, fading out
-    // toward the rim and with distance. Atmospheric — distinct from the functional
-    // blue chassis cell-outline grid drawn per active level.
-    const dots = makeGroundDots()
-    dots.position.y = ground.position.y + 0.06
-    scene.add(dots)
-
     const rigGroup = new THREE.Group()
     const helperGroup = new THREE.Group()
     const ghostGroup = new THREE.Group()
     scene.add(rigGroup, helperGroup, ghostGroup)
 
     const st = {
-      renderer, scene, camera, rigGroup, helperGroup, ghostGroup, ground, dots,
+      renderer, scene, camera, rigGroup, helperGroup, ghostGroup, ground,
       theta: Math.PI * 0.28, phi: 1.0, dist: 42,
       target: new THREE.Vector3(0, 4, 0),
       drag: null, // {mode:'orbit'|'pan'|'movePl', sx, sy, plId, moved}
@@ -746,11 +717,8 @@ export default function BuilderScene({
           rigGroup.add(lc)
           placed++
         }
-        // drop the sand (and its dot grid) to meet the feet so the rig reads as grounded
-        if (placed && ground) {
-          ground.position.y = footY - 0.05
-          if (st.dots) st.dots.position.y = ground.position.y + 0.06
-        }
+        // drop the sand to meet the feet so the rig reads as grounded
+        if (placed && ground) ground.position.y = footY - 0.05
       }
     }
 
