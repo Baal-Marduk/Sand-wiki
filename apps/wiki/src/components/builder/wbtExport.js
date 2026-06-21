@@ -194,6 +194,10 @@ export function wbtFilename(name) {
 }
 
 // build + trigger a browser download. src = image source for the icon (optional).
+/**
+ * @param {{ chassisId: string, placements?: Array<object>, name?: string }} state
+ * @param {{ iconSrc?: string | null }} [opts]
+ */
 export async function downloadWbt(state, { iconSrc = null } = {}) {
   const icon = await iconRgbaFromSrc(iconSrc)
   const bytes = await stateToWbt(state, { icon })
