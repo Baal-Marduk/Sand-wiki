@@ -11,6 +11,75 @@ import {
 } from './builderCore.js'
 import { asset } from './data.js'
 
+// ---- desert-dusk scene palette ----
+const SKY_TOP = 0x161a30      // deep indigo overhead
+const SKY_MID = 0x42385f      // dusk violet band
+const SKY_HORIZON = 0xe8915a  // warm amber glow at the horizon
+const GROUND_NEAR = '#b98854' // lit sand under the rig
+const GROUND_FAR = '#5b4636'  // shadowed sand toward the rim
+const DOT_COLOR = 0xffdd96    // warm gold grid dots (echoes the front-arrow accent)
+const FOG_COLOR = 0x4a3340    // warm dusk haze the rig fades into
+
+// radial sand gradient (bright centre → dark rim) baked to a canvas texture once
+function makeGroundTexture() {
+  const s = 512
+  const c = document.createElement('canvas')
+  c.width = c.height = s
+  const g = c.getContext('2d')
+  const grd = g.createRadialGradient(s / 2, s / 2, s * 0.04, s / 2, s / 2, s * 0.5)
+  grd.addColorStop(0, GROUND_NEAR)
+  grd.addColorStop(1, GROUND_FAR)
+  g.fillStyle = grd
+  g.fillRect(0, 0, s, s)
+  const tx = new THREE.CanvasTexture(c)
+  tx.colorSpace = THREE.SRGBColorSpace
+  return tx
+}
+
+// THREE.Points cloud of round gold dots on a cell-corner grid, fading toward the
+// rim (per-vertex alpha) and with distance (size attenuation). Sits flat on y=0.
+function makeGroundDots() {
+  const SPAN = 116                  // world-unit radius the dots cover
+  const n = Math.ceil(SPAN / CELL_XZ)
+  const pos = []
+  const alpha = []
+  for (let i = -n; i <= n; i++) {
+    for (let j = -n; j <= n; j++) {
+      const x = i * CELL_XZ, z = j * CELL_XZ
+      const r = Math.hypot(x, z)
+      if (r > SPAN) continue
+      pos.push(x, 0, z)
+      alpha.push(Math.pow(1 - Math.min(1, r / SPAN), 1.5)) // fade out toward the rim
+    }
+  }
+  const geo = new THREE.BufferGeometry()
+  geo.setAttribute('position', new THREE.Float32BufferAttribute(pos, 3))
+  geo.setAttribute('aAlpha', new THREE.Float32BufferAttribute(alpha, 1))
+  const mat = new THREE.ShaderMaterial({
+    transparent: true, depthWrite: false,
+    uniforms: { uColor: { value: new THREE.Color(DOT_COLOR) }, uSize: { value: 5.5 } },
+    vertexShader: `
+      attribute float aAlpha;
+      varying float vAlpha;
+      uniform float uSize;
+      void main() {
+        vAlpha = aAlpha;
+        vec4 mv = modelViewMatrix * vec4(position, 1.0);
+        gl_PointSize = uSize * (300.0 / max(1.0, -mv.z));
+        gl_Position = projectionMatrix * mv;
+      }`,
+    fragmentShader: `
+      varying float vAlpha;
+      uniform vec3 uColor;
+      void main() {
+        float d = length(gl_PointCoord - vec2(0.5));
+        if (d > 0.5) discard;
+        gl_FragColor = vec4(uColor, vAlpha * smoothstep(0.5, 0.32, d));
+      }`,
+  })
+  return new THREE.Points(geo, mat)
+}
+
 // ---- shared albedo texture cache (v3) ----
 const texCache = new Map()
 let onTexLoad = null // set by the scene so async texture loads trigger a re-render
@@ -164,13 +233,13 @@ function placeMesh(mesh, partId, px, py, pz, rot) {
 }
 
 export default function BuilderScene({
-  state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle, captureRef, readOnly,
+  state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle, onHoverPart, captureRef, readOnly,
 }) {
   const mountRef = useRef(null)
   const stRef = useRef(null)
   const propsRef = useRef({})
   const [tick, setTick] = useState(0)
-  propsRef.current = { state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle, readOnly }
+  propsRef.current = { state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle, onHoverPart, readOnly }
 
   // ---------- init ----------
   useEffect(() => {
@@ -180,7 +249,7 @@ export default function BuilderScene({
     const renderer = new THREE.WebGLRenderer({ antialias: true, preserveDrawingBuffer: true })
     renderer.setSize(W, H)
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2))
-    renderer.setClearColor(0x0d1320)
+    renderer.setClearColor(SKY_HORIZON) // fallback; the gradient sky dome covers it
     // filmic tone mapping + correct colour management for a "rendered" look
     renderer.outputColorSpace = THREE.SRGBColorSpace
     renderer.toneMapping = THREE.ACESFilmicToneMapping
@@ -191,7 +260,7 @@ export default function BuilderScene({
     mount.appendChild(renderer.domElement)
 
     const scene = new THREE.Scene()
-    scene.fog = new THREE.Fog(0x0d1320, 90, 220)
+    scene.fog = new THREE.Fog(FOG_COLOR, 95, 260)
     const camera = new THREE.PerspectiveCamera(46, W / H, 0.5, 400)
 
     // image-based lighting: a neutral room env gives metal/brass something to
@@ -217,15 +286,54 @@ export default function BuilderScene({
     dir2.position.set(-30, 20, -40)
     scene.add(dir2)
 
-    // sand ground
+    // ---- desert-dusk sky: a large back-faced dome with a vertical gradient
+    // (deep indigo overhead → warm amber at the horizon). Unlit, fog-exempt, and
+    // depth-write-off so it always sits behind the rig.
+    const sky = new THREE.Mesh(
+      new THREE.SphereGeometry(320, 32, 16),
+      new THREE.ShaderMaterial({
+        side: THREE.BackSide, depthWrite: false, fog: false,
+        uniforms: {
+          top: { value: new THREE.Color(SKY_TOP) },
+          mid: { value: new THREE.Color(SKY_MID) },
+          horizon: { value: new THREE.Color(SKY_HORIZON) },
+        },
+        vertexShader: `
+          varying vec3 vDir;
+          void main() {
+            vDir = normalize((modelMatrix * vec4(position, 1.0)).xyz);
+            gl_Position = projectionMatrix * modelViewMatrix * vec4(position, 1.0);
+          }`,
+        fragmentShader: `
+          varying vec3 vDir;
+          uniform vec3 top; uniform vec3 mid; uniform vec3 horizon;
+          void main() {
+            float h = clamp(vDir.y, 0.0, 1.0);
+            vec3 col = mix(horizon, mid, smoothstep(0.0, 0.32, h));
+            col = mix(col, top, smoothstep(0.28, 0.85, h));
+            gl_FragColor = vec4(col, 1.0);
+          }`,
+      }),
+    )
+    scene.add(sky)
+
+    // ---- sand ground: a disc with a radial gradient (lit sand under the rig →
+    // shadowed sand toward the rim), generated once as a canvas texture.
     const ground = new THREE.Mesh(
-      new THREE.CircleGeometry(180, 48),
-      new THREE.MeshStandardMaterial({ color: 0x8a6f47, roughness: 1 }),
+      new THREE.CircleGeometry(180, 64),
+      new THREE.MeshStandardMaterial({ map: makeGroundTexture(), roughness: 1, metalness: 0 }),
     )
     ground.rotation.x = -Math.PI / 2
     ground.position.y = -7
     ground.receiveShadow = true
     scene.add(ground)
+
+    // ---- ambient grid dots at every cell corner across the ground, fading out
+    // toward the rim and with distance. Atmospheric — distinct from the functional
+    // blue chassis cell-outline grid drawn per active level.
+    const dots = makeGroundDots()
+    dots.position.y = ground.position.y + 0.06
+    scene.add(dots)
 
     const rigGroup = new THREE.Group()
     const helperGroup = new THREE.Group()
@@ -233,7 +341,7 @@ export default function BuilderScene({
     scene.add(rigGroup, helperGroup, ghostGroup)
 
     const st = {
-      renderer, scene, camera, rigGroup, helperGroup, ghostGroup, ground,
+      renderer, scene, camera, rigGroup, helperGroup, ghostGroup, ground, dots,
       theta: Math.PI * 0.28, phi: 1.0, dist: 42,
       target: new THREE.Vector3(0, 4, 0),
       drag: null, // {mode:'orbit'|'pan'|'movePl', sx, sy, plId, moved}
@@ -286,6 +394,42 @@ export default function BuilderScene({
       if (hits.length) return { plId: hits[0].object.userData.plId }
       return null
     }
+
+    // ---- hover highlight: warm emissive tint on the placed mesh under the cursor,
+    // so the X key (delete-hovered) shows what it will hit. Distinct from the green
+    // selection glow; skipped on the selected mesh so its glow isn't overwritten.
+    function applyHoverTint(mesh, on) {
+      if (!mesh) return
+      const mats = Array.isArray(mesh.material) ? mesh.material : [mesh.material]
+      for (const m of mats) {
+        if (!m.emissive) continue
+        if (on) {
+          if (m.userData._heBak === undefined) {
+            m.userData._heBak = m.emissive.getHex()
+            m.userData._hiBak = m.emissiveIntensity
+          }
+          m.emissive.setHex(0xffd98a)
+          m.emissiveIntensity = 0.24
+        } else if (m.userData._heBak !== undefined) {
+          m.emissive.setHex(m.userData._heBak)
+          m.emissiveIntensity = m.userData._hiBak
+          delete m.userData._heBak
+          delete m.userData._hiBak
+        }
+      }
+    }
+    function setHover(plId) {
+      const P = propsRef.current
+      if (st.hoverPlId === plId) return
+      if (st.hoverPlId != null) applyHoverTint(st.placedMeshes.get(st.hoverPlId), false)
+      st.hoverPlId = plId
+      // don't tint the selected mesh (keep its green glow), but still report it
+      if (plId != null && plId !== P.selectedId) applyHoverTint(st.placedMeshes.get(plId), true)
+      el.style.cursor = plId != null ? 'pointer' : 'grab'
+      P.onHoverPart?.(plId)
+      render()
+    }
+    st.setHover = setHover
 
     function onDown(e) {
       const P = propsRef.current
@@ -354,6 +498,14 @@ export default function BuilderScene({
             render()
           }
         }
+      }
+      // hover highlight when idle (not dragging, not placing a part, not view-only),
+      // and only while the pointer is actually over the viewport.
+      if (!d && !P.activePart && !P.readOnly) {
+        const r = el.getBoundingClientRect()
+        const inside = e.clientX >= r.left && e.clientX <= r.right && e.clientY >= r.top && e.clientY <= r.bottom
+        const hit = inside ? pickPlacement(e) : null
+        setHover(hit?.plId ?? null)
       }
     }
 
@@ -538,6 +690,13 @@ export default function BuilderScene({
     helperGroup.clear()
     st.placedMeshes.clear()
     st.socketSprites = []
+    // meshes are recreated below — drop any hover so we don't hold a stale id/tint.
+    // The next pointer-move re-detects what's under the cursor.
+    if (st.hoverPlId != null) {
+      st.hoverPlId = null
+      propsRef.current.onHoverPart?.(null)
+      st.renderer.domElement.style.cursor = 'grab'
+    }
 
     const bump = () => stRef.current && setTick((t) => t + 1)
 
@@ -587,8 +746,11 @@ export default function BuilderScene({
           rigGroup.add(lc)
           placed++
         }
-        // drop the sand to meet the feet so the trampler reads as grounded
-        if (placed && ground) ground.position.y = footY - 0.05
+        // drop the sand (and its dot grid) to meet the feet so the rig reads as grounded
+        if (placed && ground) {
+          ground.position.y = footY - 0.05
+          if (st.dots) st.dots.position.y = ground.position.y + 0.06
+        }
       }
     }
 
@@ -718,7 +880,7 @@ export default function BuilderScene({
   return (
     <div ref={mountRef} className="bv2-canvas">
       <div className="bv2-hud">
-        LMB drag = orbit · RMB / WASD / arrows = move · scroll = zoom · click = select · R = rotate · C = copy · X / Del = remove
+        LMB drag = orbit · RMB / WASD / arrows = move · scroll = zoom · click = select · Space = rotate · R / F = level up/down · C = copy · X / Del = remove
       </div>
     </div>
   )

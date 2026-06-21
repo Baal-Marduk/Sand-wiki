@@ -114,6 +114,10 @@ export default function BuilderV2() {
   const idRef = useRef(Date.now() % 1e7)
   const moveBackup = useRef(null)
   const captureRef = useRef(null)
+  // Latest placement the pointer is over in the 3D scene (for context-aware X).
+  // A ref, not state, so hovering never re-renders the React tree — the scene
+  // draws its own hover outline.
+  const hoveredId = useRef(null)
 
   useEffect(() => {
     localStorage.setItem(STORE_KEY, JSON.stringify(state))
@@ -277,6 +281,20 @@ export default function BuilderV2() {
     setSelectedId(null)
   }
 
+  // X — context-aware "clear": cancel a pending placement, else delete whatever the
+  // pointer is hovering, else fall back to deleting the selected piece.
+  function deleteContext() {
+    if (activePart) { setActivePart(null); return }
+    const id = hoveredId.current
+    if (id) {
+      setState((s) => ({ ...s, placements: s.placements.filter((p) => p.id !== id) }))
+      if (selectedId === id) setSelectedId(null)
+      hoveredId.current = null
+      return
+    }
+    removeSelected()
+  }
+
   // Copy = pick up a fresh copy of the selected part to place again (matches the
   // in-game builder's C shortcut), reusing the normal place flow.
   function copySelected() {
@@ -316,8 +334,11 @@ export default function BuilderV2() {
     function down(e) {
       keysDown.current.add(e.key)
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
-      if (e.key === 'r' || e.key === 'R') rotate()
-      if (e.key === 'Delete' || e.key === 'Backspace' || e.key === 'x' || e.key === 'X') removeSelected()
+      if (e.key === ' ' || e.code === 'Space') { e.preventDefault(); rotate() } // Space scrolls the page by default
+      if (e.key === 'r' || e.key === 'R') setLevel((l) => Math.min(LEVEL_LABELS.length, l + 1))
+      if (e.key === 'f' || e.key === 'F') setLevel((l) => Math.max(1, l - 1))
+      if (e.key === 'Delete' || e.key === 'Backspace') removeSelected()
+      if (e.key === 'x' || e.key === 'X') deleteContext()
       if (e.key === 'c' || e.key === 'C') copySelected()
       if (e.key === 'Escape') {
         setActivePart(null)
@@ -534,6 +555,7 @@ export default function BuilderV2() {
             onMove={movePlacement}
             onHoverInfo={setHoverInfo}
             onSocketToggle={toggleSocket}
+            onHoverPart={(plId) => { hoveredId.current = plId }}
             captureRef={captureRef}
           />
 
@@ -549,21 +571,21 @@ export default function BuilderV2() {
 
           {/* bottom toolbar */}
           <div className="tb-toolbar">
-            <button type="button" className="tb-tool" onClick={rotate} title="rotate (R)"><span className="ic">⟳</span>Rotate</button>
+            <button type="button" className="tb-tool" onClick={rotate} title="rotate (Space)"><span className="ic">⟳</span>Rotate</button>
             <button type="button" className="tb-tool" onClick={mirrorSelected} disabled={!selectedPart?.mirror && !PART_BY_ID[`${selectedPl?.partId}_mirror`]} title="mirror (M)"><span className="ic">⇄</span>Mirror</button>
-            <button type="button" className="tb-tool danger" onClick={removeSelected} disabled={!selectedId} title="remove (Del)"><span className="ic">✕</span>Remove</button>
+            <button type="button" className="tb-tool danger" onClick={removeSelected} disabled={!selectedId} title="remove (X / Del)"><span className="ic">✕</span>Remove</button>
           </div>
 
           {/* contextual messages */}
           {activePart && (
             <div className="tb-placing">
-              placing <b>{PART_BY_ID[activePart]?.name}</b> on {LEVEL_LABELS[level - 1]} — click to place, R rotate, hold Shift to keep placing, Esc to cancel
+              placing <b>{PART_BY_ID[activePart]?.name}</b> on {LEVEL_LABELS[level - 1]} — click to place, Space rotate, hold Shift to keep placing, X / Esc to cancel
               {hoverInfo && <span className="tb-placing-err"> · {hoverInfo}</span>}
             </div>
           )}
           {selectedPl && !activePart && (
             <div className="tb-placing">
-              <b>{selectedPart?.name}</b> selected — drag to move, R rotate, M mirror, Del remove · spheres = convertible sockets (click: wall → door → open)
+              <b>{selectedPart?.name}</b> selected — drag to move, Space rotate, M mirror, X / Del remove · spheres = convertible sockets (click: wall → door → open)
             </div>
           )}
         </section>
