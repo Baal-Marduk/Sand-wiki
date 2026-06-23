@@ -214,14 +214,16 @@ function getLegProto(onReady) {
   return null
 }
 
-function partMaterials(geo, { transparent = false, opacity = 1, selected = false } = {}) {
+function partMaterials(geo, { transparent = false, opacity = 1, selected = false, invalid = false } = {}) {
   const { tex = [], col = [], flatIdx = 0 } = geo.userData || {}
   const mk = (opts) => {
     const m = new THREE.MeshStandardMaterial({
       metalness: 0.3, roughness: 0.7, envMapIntensity: 0.8, side: THREE.DoubleSide,
       transparent, opacity, ...opts,
     })
-    if (selected) { m.emissive = new THREE.Color(0x59ffa1); m.emissiveIntensity = 0.16 }
+    // invalid (overlap / no socket / off-grid) glows red and wins over the green select tint
+    if (invalid) { m.emissive = new THREE.Color(0xff2a2a); m.emissiveIntensity = 0.5 }
+    else if (selected) { m.emissive = new THREE.Color(0x59ffa1); m.emissiveIntensity = 0.16 }
     return m
   }
   // the albedo map already carries the colour — don't multiply by the part's base
@@ -277,13 +279,13 @@ function placeMesh(mesh, partId, px, py, pz, rot) {
 }
 
 export default function BuilderScene({
-  state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle, onHoverPart, captureRef, readOnly,
+  state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle, onHoverPart, captureRef, readOnly, invalidIds,
 }) {
   const mountRef = useRef(null)
   const stRef = useRef(null)
   const propsRef = useRef({})
   const [tick, setTick] = useState(0)
-  propsRef.current = { state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle, onHoverPart, readOnly }
+  propsRef.current = { state, level, activePart, activeRot, selectedId, onPlace, onSelect, onMove, onHoverInfo, onSocketToggle, onHoverPart, readOnly, invalidIds }
 
   // ---------- init ----------
   useEffect(() => {
@@ -819,7 +821,7 @@ export default function BuilderScene({
       const g = loadGeometry(pl.partId, bump)
       if (g) {
         const mats = partMaterials(g, {
-          transparent: above, opacity: above ? 0.14 : 1, selected: isSel && !above,
+          transparent: above, opacity: above ? 0.14 : 1, selected: isSel && !above, invalid: !!invalidIds?.has(pl.id),
         })
         const m = new THREE.Mesh(g, mats)
         m.castShadow = !above
@@ -939,7 +941,7 @@ export default function BuilderScene({
 
     st.updateGhost?.()
     st.render()
-  }, [state, level, selectedId, activePart, activeRot, tick])
+  }, [state, level, selectedId, activePart, activeRot, tick, invalidIds])
 
   return (
     <div ref={mountRef} className="bv2-canvas">
