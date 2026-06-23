@@ -1,5 +1,5 @@
 'use client'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import { useRouter } from 'next/navigation'
 import { ToolNavBrand } from '@/components/ToolNavBrand'
 import { ToolNav } from '@/components/ToolNav'
@@ -29,6 +29,26 @@ export default function BuilderView({
   const man = useMemo(() => (state ? manifest(state) : { rows: [], total: 0 }), [state])
   const summary = useMemo(() => (state ? buildSummary(state) : null), [state])
   const cost = useMemo(() => (state ? costBreakdown(state) : { crowns: 0, mechanical: 0, pneumatic: 0, computing: 0 }), [state])
+
+  // Floor navigation in view mode: the scene fades floors above the active level, so a
+  // viewer can step down through the rig to inspect each deck. Default to the top floor
+  // (whole rig visible). R/F or the ▲/▼ rail change levels, clamped to occupied floors.
+  const maxFloor = useMemo(
+    () => Math.max(1, ...(state?.placements ?? []).map((p) => p.y ?? 1)),
+    [state],
+  )
+  // Start on the top floor (whole rig visible). buildCode is a fixed prop so maxFloor is
+  // stable; the rail/keys clamp to it from here.
+  const [level, setLevel] = useState(maxFloor)
+  useEffect(() => {
+    const onKey = (e) => {
+      if (e.target?.tagName === 'INPUT' || e.target?.tagName === 'TEXTAREA') return
+      if (e.key === 'r' || e.key === 'R') setLevel((l) => Math.min(maxFloor, l + 1))
+      if (e.key === 'f' || e.key === 'F') setLevel((l) => Math.max(1, l - 1))
+    }
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [maxFloor])
 
   function note(msg) {
     setFlash(msg)
@@ -84,7 +104,7 @@ export default function BuilderView({
           {state ? (
             <BuilderScene
               state={state}
-              level={1}
+              level={level}
               activePart={null}
               activeRot={0}
               selectedId={null}
@@ -92,6 +112,17 @@ export default function BuilderView({
             />
           ) : (
             <div className="bld-loading">This build couldn’t be loaded.</div>
+          )}
+          {/* hull level rail — step through floors (upper floors fade so you can see each deck) */}
+          {state && maxFloor > 1 && (
+            <div className="tb-hull">
+              <button type="button" className="tb-hull-btn" title="up a level (R)" onClick={() => setLevel((l) => Math.min(maxFloor, l + 1))}>▲</button>
+              <div className="tb-hull-label" title={`Level ${level} of ${maxFloor}`}>
+                <span className="txt">Level</span>
+                <span className="lvl">{level}</span>
+              </div>
+              <button type="button" className="tb-hull-btn" title="down a level (F)" onClick={() => setLevel((l) => Math.max(1, l - 1))}>▼</button>
+            </div>
           )}
         </section>
 
