@@ -21,7 +21,7 @@ import {
   costBreakdown, COST_ROWS,
 } from './builderCore.js'
 import { decodeWbt, wbtToState } from './wbtImport.js'
-import { downloadWbt } from './wbtExport.js'
+import { downloadWbt, wbtFilename } from './wbtExport.js'
 import { submitBuild } from './galleryApi.js'
 import { designShareUrl } from '@/lib/share'
 
@@ -104,6 +104,7 @@ export default function BuilderV2() {
   const [shareOpen, setShareOpen] = useState(false)
   const [importOpen, setImportOpen] = useState(false)
   const [loadOpen, setLoadOpen] = useState(false)
+  const [downloadOpen, setDownloadOpen] = useState(false)
   const [shareText, setShareText] = useState('')
   const [pubOpen, setPubOpen] = useState(false)
   const [clearOpen, setClearOpen] = useState(false)
@@ -138,7 +139,7 @@ export default function BuilderV2() {
   // Close any open modal on Escape (UI only — placement Esc is handled separately).
   useEffect(() => {
     function onKey(e) {
-      if (e.key === 'Escape') { setShareOpen(false); setImportOpen(false); setLoadOpen(false); setPubOpen(false); setPubThumb(null) }
+      if (e.key === 'Escape') { setShareOpen(false); setImportOpen(false); setLoadOpen(false); setDownloadOpen(false); setPubOpen(false); setPubThumb(null) }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -448,7 +449,7 @@ export default function BuilderV2() {
     try {
       const iconSrc = captureRef.current ? captureRef.current() : null
       await downloadWbt(state, { iconSrc })
-      flash('downloaded .wbt')
+      setDownloadOpen(true) // show where to drop the file so the game picks it up
     } catch {
       flash('couldn’t build .wbt')
     }
@@ -776,6 +777,33 @@ export default function BuilderV2() {
               <span>Drop a <b>.wbt</b> save here, or click to browse</span>
               <input type="file" accept=".wbt,.wbtb" hidden onChange={(e) => { doImportWbt(e.target.files[0]); e.target.value = '' }} />
             </label>
+          </div>
+        </Modal>
+      )}
+
+      {downloadOpen && (
+        <Modal
+          title="Download complete" icon={<span style={{ color: 'var(--info)' }}>⭳</span>} onClose={() => setDownloadOpen(false)}
+          footer={(
+            <>
+              <Button variant="ghost" size="sm" onClick={() => downloadWbt(state, { iconSrc: captureRef.current ? captureRef.current() : null })}>Download again</Button>
+              <Button size="sm" onClick={() => setDownloadOpen(false)}>Done</Button>
+            </>
+          )}
+        >
+          <p>Saved <b>{wbtFilename(state.name)}</b> to your browser&apos;s downloads. To load it in SAND, move it into your trampler saves folder — the same place the game keeps its own saves.</p>
+          <div className="tb-modal-block">
+            <span className="blk-h">Where your saves live</span>
+            <ol className="tb-steps">
+              <li><span className="sn">1</span>Open your file explorer and paste the path below into the address bar.</li>
+              <li><span className="sn">2</span>Move the downloaded <b>.wbt</b> from your Downloads folder into it.</li>
+              <li><span className="sn">3</span>Launch SAND — the trampler shows up in your saved rigs.</li>
+            </ol>
+            <div className="tb-path">
+              <code>{SAVE_PATH}</code>
+              <Button variant="ghost" size="sm" className="copy" onClick={() => { flash('copied'); try { navigator.clipboard?.writeText(SAVE_PATH) } catch { /* clipboard blocked */ } }}>Copy</Button>
+            </div>
+            <span className="tb-note">Windows default. On other platforms look under your Sand user-data folder → <b>Data/Walkers</b>.</span>
           </div>
         </Modal>
       )}
