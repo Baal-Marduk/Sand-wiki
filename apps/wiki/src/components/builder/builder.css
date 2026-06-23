@@ -334,3 +334,34 @@
 .bld-gate-btn.primary:hover { background: var(--primary-hover); color: #1a0f04; }
 .bld-gate-btn.ghost { border-color: transparent; color: var(--muted-foreground); }
 .bld-gate-btn.ghost:hover { color: var(--foreground); }
+
+/* ===== Builder overhaul (2026-06): hull picker, essentials, disabled ===== */
+.tb-cat-head.static { cursor: default; border-left-color: transparent; }
+.tb-cat-head.static:hover { color: var(--foreground); }
+.tb-cat-sub { font-size: 10px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); margin-left: 2px; }
+.tb-cat-dot.ess { background: var(--primary); box-shadow: 0 0 0 2px color-mix(in srgb, var(--primary) 30%, transparent); }
+
+/* chassis image-tile grid (hull picker) */
+.tb-chassis-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 1px; background: var(--border); }
+.tb-part.chassis { flex-direction: column; align-items: center; text-align: center; gap: 4px; padding: 8px 6px; background: var(--card); }
+.tb-part.chassis .tb-part-icon { width: 48px; height: 48px; }
+.tb-part.chassis .tb-part-name { font-size: 11px; }
+.tb-part.chassis .tb-part-size { font-size: 10px; }
+.tb-part.chassis.active { background: color-mix(in srgb, var(--primary) 16%, var(--card)); outline: 1px solid var(--primary); outline-offset: -1px; }
+
+/* essentials sub-groups (one per category, divider between) */
+.tb-ess-group { border-bottom: 1px solid var(--border); }
+.tb-ess-group:last-child { border-bottom: none; }
+.tb-ess-label { display: flex; align-items: center; gap: 6px; padding: 4px 10px; font-size: 10px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--dim); background: color-mix(in srgb, var(--primary) 5%, transparent); }
+
+/* disabled parts (in files, not in-game) */
+.tb-part.is-disabled { opacity: .72; }
+.tb-part.is-disabled .tb-part-icon { filter: grayscale(.5); }
+.tb-badge-dis { font-size: 8.5px; font-weight: 700; letter-spacing: .06em; color: #1a0f04; background: #b08d57; padding: 1px 4px; border-radius: 3px; margin-left: 6px; vertical-align: middle; }
+.tb-disabled-note { font-style: italic; color: var(--dim); padding: 6px 10px; }
+
+/* right-panel chassis readout (selection moved to the left hull picker) */
+.tb-chassis-readout { display: flex; align-items: center; gap: 8px; padding: 6px 8px; border: 1px solid var(--border-strong); background: var(--card); }
+.tb-chassis-ic { width: 36px; height: 36px; display: grid; place-items: center; flex: none; }
+.tb-chassis-ic img { max-width: 100%; max-height: 100%; object-fit: contain; }
+.tb-chassis-name { font-size: 13px; color: var(--foreground); }
