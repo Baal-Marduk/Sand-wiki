@@ -65,8 +65,15 @@ for pid in pinfo:
 print('views resolved:', len(view_of), '/', len(pinfo), flush=True)
 
 # ---- 2. combined env: walker (prefabs+meshes+materials) + shared-asset bundle (textures) ----
-env = UnityPy.load(BASE + 'walker_assets_all.bundle',
-                   BASE + 'duplicateassetisolation_assets_all_fb84156cf155cf0afd68566bd5e732f9.bundle')
+# The shared-asset bundle's filename carries a content hash that changes on every game
+# update, so glob it rather than hard-coding the hash (a stale name silently loads no
+# textures -> parts export flat/grey).
+import glob as _glob
+_dup = sorted(_glob.glob(BASE + 'duplicateassetisolation_assets_all_*.bundle'))
+if not _dup:
+    raise SystemExit('texture bundle not found: ' + BASE + 'duplicateassetisolation_assets_all_*.bundle')
+print('texture bundle:', os.path.basename(_dup[0]), flush=True)
+env = UnityPy.load(BASE + 'walker_assets_all.bundle', *_dup)
 objs = {}
 for o in env.objects:
     objs[(o.assets_file, o.path_id)] = o
@@ -261,7 +268,9 @@ def collect(tfk, M, lods):
     gco = deref(o, d.get('m_GameObject', {}))
     gk = (gco.assets_file, gco.path_id) if gco else None
     nm = go_name.get(gk, '') if gk else ''
-    if gk and (not go_active.get(gk, True) or 'Damaged' in nm):
+    # Skip destruction variants, inactive nodes, and RAILINGS (the builder draws rails at
+    # runtime on exposed edges; baked rails span the cell boundary and oversize the part).
+    if gk and (not go_active.get(gk, True) or 'Damaged' in nm or nm.lower().startswith('walker_railing')):
         return
     mf = filters.get(gk)
     if mf and mf.get('m_PathID'):
@@ -271,6 +280,32 @@ def collect(tfk, M, lods):
         lods.setdefault(key, {})[lod] = (mf, gk, M2.copy())
     for ch in children_of.get(tfk, []):
         collect(ch, M2, lods)
+
+# Walk the prefab for `walker_railing[*]_placeholder` nodes — the game's markers for where
+# a railing attaches. Each sits at a cell-face midpoint (cellCenter + 0.5*dir, 1 cell == 4
+# model units). Returns [[cellX, cellZ, dirX, dirZ], ...].
+def collect_rails(tfk, M, out):
+    item = tf_data.get(tfk)
+    if item is None:
+        return
+    o, d = item
+    M2 = M @ trs(d)
+    gco = deref(o, d.get('m_GameObject', {}))
+    gk = (gco.assets_file, gco.path_id) if gco else None
+    nm = go_name.get(gk, '') if gk else ''
+    if gk and (not go_active.get(gk, True) or 'Damaged' in nm):
+        return
+    if 'railing[' in nm and 'placeholder' in nm.lower():
+        nx, nz = float(M2[0, 3]) / 4.0, float(M2[2, 3]) / 4.0
+        dblx, dblz = round(nx * 2), round(nz * 2)
+        if dblx % 2 != 0:
+            dx = 1 if dblx > 0 else -1
+            out.append([(dblx - dx) // 2, dblz // 2, dx, 0])
+        elif dblz % 2 != 0:
+            dz = 1 if dblz > 0 else -1
+            out.append([dblx // 2, (dblz - dz) // 2, 0, dz])
+    for ch in children_of.get(tfk, []):
+        collect_rails(ch, M2, out)
 
 def pick_lod(group, level):
     prefs = {0: (0, -1, 1, 2, 3), 1: (1, 0, -1, 2, 3), 2: (2, 1, 0, -1, 3)}[level]
@@ -294,12 +329,21 @@ COMPOSITES = {
 
 any_owner = next(iter(tf_data.values()))[0]
 index = {}
+railings = {}
 cell_samples = []
 total_bytes = 0
 for pid, view in sorted(view_of.items()):
     root = roots.get(view)
     if not root:
         continue
+    rails = []
+    collect_rails(root, np.eye(4), rails)
+    seen = set(); uniq = []
+    for r in rails:
+        if tuple(r) not in seen:
+            seen.add(tuple(r)); uniq.append(r)
+    if uniq:
+        railings[pid] = uniq
     lods = {}
     collect(root, np.eye(4), lods)
     for extra in COMPOSITES.get(pid, []):
@@ -402,5 +446,6 @@ for pid, view in sorted(view_of.items()):
 cell = float(np.median(cell_samples)) if cell_samples else 3.0
 index['_cell'] = round(cell, 4)
 json.dump(index, open('../data/generated/mesh_index.json', 'w'), separators=(',', ':'))
+json.dump(railings, open('../data/generated/part_railings.json', 'w'), separators=(',', ':'))
 print('meshes exported:', len(index) - 1, '| total MB:', round(total_bytes / 1e6, 1),
-      '| textures:', len(tex_registry), '| cell (m):', index['_cell'])
+      '| textures:', len(tex_registry), '| cell (m):', index['_cell'], '| railed:', len(railings))

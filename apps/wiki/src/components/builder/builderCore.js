@@ -4,6 +4,7 @@
 import partsV2 from './data/parts_v2.json'
 import meshIndex from './data/mesh_index_v3.json' // v3 = real UVs + albedo textures
 import partCosts from './data/part_costs.json' // wiki build cost per part id (crowns + resources)
+import partRailings from './data/part_railings.json' // parts whose rails are drawn at runtime: id -> [[cellX,cellZ,dirX,dirZ]]
 
 export const GROUP_LIMITS = partsV2.groupLimits // { REACTOR:1, STEERING:1, CAPTAIN:1 }
 export const SOCKET_STATES = partsV2.socketStates // slotType -> state -> spawned entity
@@ -13,6 +14,21 @@ export const PARTS = partsV2.parts.filter((p) => p.enabled)
 export const ALL_PARTS = partsV2.parts
 export const PART_BY_ID = Object.fromEntries(partsV2.parts.map((p) => [p.id, p]))
 export const MESH_INDEX = meshIndex
+export const PART_RAILINGS = partRailings
+
+// World-space rail edges for a placement, rotated by `rot`. Each entry is the cell the
+// rail sits on plus the outward face direction; the scene draws a rail there only when
+// that face is exposed (no neighbouring part across it). Mirrors rotCell so rails track
+// the part's rotation. Returns [{x,y,z, dx,dz}] in grid-cell coords.
+export function worldRailEdges(part, px, py, pz, rot) {
+  const edges = PART_RAILINGS[part.id]
+  if (!edges) return []
+  return edges.map(([cx, cz, dx, dz]) => {
+    const [rx, , rz] = rotCell([cx, 0, cz], rot)
+    const [rdx, , rdz] = rotCell([dx, 0, dz], rot)
+    return { x: px + rx, y: py, z: pz + rz, dx: rdx, dz: rdz }
+  })
+}
 
 export const CELL_XZ = meshIndex._cell || 4 // metres per grid cell (derived from meshes)
 export const CELL_Y = 3.07 // metres per deck level (room height, measured from meshes)
@@ -58,6 +74,11 @@ export function worldCells(part, px, py, pz, rot) {
     return {
       x: x + px, y: y + py, z: z + pz,
       vol: !c.noVol, sup: !!c.sup, sockets,
+      // `ignOOR` (ignore-out-of-range) cells are overhang/clearance the part extends over
+      // but doesn't claim — e.g. the corner turret deck's two arm cells. They must not
+      // block other parts or be blocked themselves, else the part over-claims slots and
+      // can't rotate in a build ("cell occupied").
+      ignOOR: !!c.ignOOR,
       local: c.p,
     }
   })
@@ -144,6 +165,7 @@ export function buildOccupancy(state) {
   const ch = PART_BY_ID[state.chassisId]
   if (ch) {
     for (const c of worldCells(ch, 0, 0, 0, 0)) {
+      if (c.ignOOR) continue // overhang/clearance doesn't claim the cell
       occ.set(cellKey(c.x, c.y, c.z), { plId: '_chassis', vol: c.vol, sockets: c.sockets })
     }
   }
@@ -151,6 +173,7 @@ export function buildOccupancy(state) {
     const part = PART_BY_ID[pl.partId]
     if (!part) continue
     for (const c of worldCells(part, pl.x, pl.y, pl.z, pl.rot)) {
+      if (c.ignOOR) continue // overhang/clearance doesn't claim the cell
       occ.set(cellKey(c.x, c.y, c.z), { plId: pl.id, vol: c.vol, sockets: c.sockets })
     }
   }
@@ -172,6 +195,9 @@ export function validate(state, occ, partId, px, py, pz, rot, ignoreId = null) {
   const cells = worldCells(part, px, py, pz, rot)
 
   for (const c of cells) {
+    // Overhang/clearance cells (ignOOR) may extend out of range or over other parts —
+    // they neither fail bounds nor collide. (e.g. corner turret deck arms.)
+    if (c.ignOOR) continue
     if (Math.abs(c.x) > GRID.x || c.z < GRID.zMin || c.z > GRID.zMax || c.y < 0 || c.y > GRID.yMax) {
       // Non-solid clearance may poke out the top OR hang below the floor — e.g. an
       // entrance's ladder clearance runs down the outside of the hull (y < 0).

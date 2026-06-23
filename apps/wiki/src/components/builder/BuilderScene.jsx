@@ -7,7 +7,7 @@ import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
 import {
   PART_BY_ID, MESH_INDEX, CELL_XZ, CELL_Y, DIRS,
   worldCells, validate, buildOccupancy, editableSockets, cellKey,
-  chassisLegs, isEntrance, entranceLegalCells,
+  chassisLegs, isEntrance, entranceLegalCells, worldRailEdges,
 } from './builderCore.js'
 import { asset } from './data.js'
 
@@ -232,6 +232,25 @@ function partMaterials(geo, { transparent = false, opacity = 1, selected = false
   return mats
 }
 
+// Procedural deck railing: a top + mid rail and a few posts, modelled along local +X
+// (one cell long), base at y=0. The scene rotates/positions one per EXPOSED rail edge so
+// railings track the deck's open sides like the game (instead of baking them into the
+// mesh, where they'd span into neighbour cells and oversize the part).
+const RAIL_H = 1.15
+function makeRail() {
+  const g = new THREE.Group()
+  const mat = new THREE.MeshStandardMaterial({ color: 0x9a8f7a, metalness: 0.55, roughness: 0.55 })
+  const L = CELL_XZ * 0.94
+  const bar = (y, t) => { const m = new THREE.Mesh(new THREE.BoxGeometry(L, t, t), mat); m.position.y = y; m.castShadow = true; g.add(m) }
+  bar(RAIL_H, 0.13)
+  bar(RAIL_H * 0.55, 0.08)
+  for (const f of [-0.47, -0.16, 0.16, 0.47]) {
+    const p = new THREE.Mesh(new THREE.BoxGeometry(0.11, RAIL_H, 0.11), mat)
+    p.position.set(f * L, RAIL_H / 2, 0); p.castShadow = true; g.add(p)
+  }
+  return g
+}
+
 // position a part mesh so its volume-cell footprint sits on its cells
 function placeMesh(mesh, partId, px, py, pz, rot) {
   const part = PART_BY_ID[partId]
@@ -240,14 +259,14 @@ function placeMesh(mesh, partId, px, py, pz, rot) {
   const cells = worldCells(part, px, py, pz, rot)
   const fp = cells.filter((c) => c.vol)
   const use = fp.length ? fp : cells.filter((c) => c.y === py)
-  let minX = Infinity, maxX = -Infinity, minZ = Infinity, maxZ = -Infinity, minY = Infinity
-  for (const c of use) {
-    minX = Math.min(minX, c.x); maxX = Math.max(maxX, c.x)
-    minZ = Math.min(minZ, c.z); maxZ = Math.max(maxZ, c.z)
-    minY = Math.min(minY, c.y)
-  }
-  const cx = ((minX + maxX) / 2) * CELL_XZ
-  const cz = ((minZ + maxZ) / 2) * CELL_XZ
+  // Footprint centre = MEAN of the cells (matches the game's GetPosition avgCell, and the
+  // mesh-space mcx/mcz mean below). NOT the bbox centre — for non-rectangular footprints
+  // (e.g. the L-shaped corner turret decks) bbox-centre ≠ mean, which slid the mesh off
+  // its cells. Rectangles are unaffected (mean == bbox centre).
+  let minY = Infinity, sumX = 0, sumZ = 0
+  for (const c of use) { minY = Math.min(minY, c.y); sumX += c.x; sumZ += c.z }
+  const cx = (sumX / use.length) * CELL_XZ
+  const cz = (sumZ / use.length) * CELL_XZ
   const b = meta.b
   // The v3 export REFLECTS every mesh across Z (Unity LH → three RH), but the grid /
   // cells / sockets all live in unflipped game-Z space. A reflection can't be undone by
@@ -806,6 +825,9 @@ export default function BuilderScene({
       }
     }
 
+    // occupancy for both the helper grid below and the runtime edge-rail exposure test
+    const occ = buildOccupancy(state)
+
     // placements
     // Floor visibility: the active floor and every floor BELOW it render fully opaque and
     // stay selectable; floors ABOVE the active level fade to a faint ghost and can't be
@@ -845,10 +867,24 @@ export default function BuilderScene({
           st.placedMeshes.set(pl.id, bx)
         }
       }
+      // runtime edge-rails: draw a railing on each of this part's rail faces that is
+      // exposed (no neighbouring part across it), like the game. No-op for parts without
+      // rail data. Skipped on faded upper floors. Decorative — not added to placedMeshes,
+      // so they never intercept selection.
+      if (!above) {
+        for (const e of worldRailEdges(part, pl.x, pl.y, pl.z, pl.rot)) {
+          // expose a rail only when nothing sits across this face at the same level
+          // (decks are non-volumetric, so test occupancy by any part, not just `vol`).
+          if (occ.get(cellKey(e.x + e.dx, e.y, e.z + e.dz))) continue
+          const rail = makeRail()
+          rail.rotation.y = e.dx !== 0 ? Math.PI / 2 : 0
+          rail.position.set((e.x + 0.5 * e.dx) * CELL_XZ, (e.y - 1) * CELL_Y, (e.z + 0.5 * e.dz) * CELL_XZ)
+          rigGroup.add(rail)
+        }
+      }
     }
 
     // ---- helpers: active-level grid over chassis extent + front arrow ----
-    const occ = buildOccupancy(state)
     const gridMat = new THREE.LineBasicMaterial({ color: 0x3f6f9e, transparent: true, opacity: 0.55 })
     const pts = []
     if (ch) {
