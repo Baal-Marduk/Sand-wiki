@@ -371,6 +371,19 @@ export function manifest(state) {
   return { rows, groups, crew, total: state.placements.length }
 }
 
+// Which placed parts are currently in an invalid spot (overlap / no socket / off-grid).
+// Returns Map<plId, reason>. Used to let the user place/rotate freely while flagging bad
+// parts in red instead of blocking the action. O(n^2) but fine for builder-sized rigs.
+export function invalidPlacements(state) {
+  const bad = new Map()
+  for (const pl of state.placements) {
+    const others = { ...state, placements: state.placements.filter((p) => p.id !== pl.id) }
+    const v = validate(others, buildOccupancy(others), pl.partId, pl.x, pl.y, pl.z, pl.rot)
+    if (!v.ok) bad.set(pl.id, v.reason)
+  }
+  return bad
+}
+
 // ---- share codes ----
 export function encodeShare(state) {
   return 'SANDBP2.' + btoa(unescape(encodeURIComponent(JSON.stringify(state))))

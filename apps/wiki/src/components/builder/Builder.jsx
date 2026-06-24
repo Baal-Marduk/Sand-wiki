@@ -18,7 +18,7 @@ import {
   PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
   CAT_COLOR, CATEGORY_ORDER, buildOccupancy, validate, manifest,
   encodeShare, decodeShare, editableSockets, checkPaths,
-  costBreakdown, COST_ROWS,
+  costBreakdown, COST_ROWS, invalidPlacements,
 } from './builderCore.js'
 import { decodeWbt, wbtToState } from './wbtImport.js'
 import { downloadWbt, wbtFilename } from './wbtExport.js'
@@ -175,6 +175,9 @@ export default function BuilderV2() {
   // Total build cost (crowns + the three resources), via the shared helper so
   // the gallery cards and this panel can never drift.
   const cost = useMemo(() => costBreakdown(state), [state])
+  // Which placed parts are currently in an invalid spot → shown pulsing red in the scene
+  // and listed in the inspector. Placement/rotation/move never block; they just flag.
+  const invalid = useMemo(() => invalidPlacements(state), [state])
 
   // ---------- actions ----------
   function flash(msg) {
@@ -185,10 +188,9 @@ export default function BuilderV2() {
 
   function place(gx, gz, valid) {
     if (!activePart) return
-    if (!valid) {
-      flash(hoverInfo || 'invalid position')
-      return
-    }
+    // Place even into an invalid spot — the part lands and pulses red until fixed, so you can
+    // stage parts aside and rearrange instead of the click being silently rejected.
+    if (!valid) flash(hoverInfo || 'placed — needs fixing')
     const id = `p${idRef.current++}`
     setState((s) => ({
       ...s,
@@ -213,25 +215,9 @@ export default function BuilderV2() {
         }
       })
     } else {
-      // commit: validate final spot, revert if invalid
-      setState((s) => {
-        const pl = s.placements.find((p) => p.id === plId)
-        if (!pl) return s
-        const others = { ...s, placements: s.placements.filter((p) => p.id !== plId) }
-        const o = buildOccupancy(others)
-        const v = validate(others, o, pl.partId, pl.x, pl.y, pl.z, pl.rot)
-        if (!v.ok && moveBackup.current?.id === plId) {
-          flash(`can't move there — ${v.reason}`)
-          const bk = moveBackup.current
-          moveBackup.current = null
-          return {
-            ...s,
-            placements: s.placements.map((p) => (p.id === plId ? { ...p, x: bk.x, z: bk.z } : p)),
-          }
-        }
-        moveBackup.current = null
-        return s
-      })
+      // commit: keep the part wherever it was dropped. An invalid landing just pulses red
+      // (no revert), so you can park a part somewhere temporarily while you rearrange.
+      moveBackup.current = null
       setSelectedId(plId)
     }
   }
@@ -242,18 +228,12 @@ export default function BuilderV2() {
       return
     }
     if (selectedId) {
-      setState((s) => {
-        const pl = s.placements.find((p) => p.id === selectedId)
-        if (!pl) return s
-        const rot = (pl.rot + 1) % 4
-        const others = { ...s, placements: s.placements.filter((p) => p.id !== selectedId) }
-        const v = validate(others, buildOccupancy(others), pl.partId, pl.x, pl.y, pl.z, rot)
-        if (!v.ok) {
-          flash(`can't rotate — ${v.reason}`)
-          return s
-        }
-        return { ...s, placements: s.placements.map((p) => (p.id === selectedId ? { ...p, rot } : p)) }
-      })
+      // Always rotate, even if the rotated footprint doesn't currently fit — it just pulses
+      // red until you move it somewhere valid (no more delete-rotate-replace dance).
+      setState((s) => ({
+        ...s,
+        placements: s.placements.map((p) => (p.id === selectedId ? { ...p, rot: (p.rot + 1) % 4 } : p)),
+      }))
     }
   }
 
@@ -315,6 +295,18 @@ export default function BuilderV2() {
     setSelectedId(null)
   }
 
+  // Change the active deck level. If a placed part is selected (and we're not mid-placement),
+  // carry that part to the new level too — so you can lift/lower an already-placed part
+  // (it pulses red if the new level is invalid, like any other move).
+  function changeLevel(delta) {
+    const nl = Math.max(1, Math.min(LEVEL_LABELS.length, level + delta))
+    if (nl === level) return
+    setLevel(nl)
+    if (selectedId && !activePart) {
+      setState((s) => ({ ...s, placements: s.placements.map((p) => (p.id === selectedId ? { ...p, y: nl } : p)) }))
+    }
+  }
+
   function toggleSocket(plId, key) {
     setState((s) => ({
       ...s,
@@ -337,8 +329,8 @@ export default function BuilderV2() {
       keysDown.current.add(e.key)
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
       if (e.key === ' ' || e.code === 'Space') { e.preventDefault(); rotate() } // Space scrolls the page by default
-      if (e.key === 'r' || e.key === 'R') setLevel((l) => Math.min(LEVEL_LABELS.length, l + 1))
-      if (e.key === 'f' || e.key === 'F') setLevel((l) => Math.max(1, l - 1))
+      if (e.key === 'r' || e.key === 'R') changeLevel(1)
+      if (e.key === 'f' || e.key === 'F') changeLevel(-1)
       if (e.key === 'Delete' || e.key === 'Backspace') removeSelected()
       if (e.key === 'x' || e.key === 'X') deleteContext()
       if (e.key === 'c' || e.key === 'C') copySelected()
@@ -573,17 +565,18 @@ export default function BuilderV2() {
             onHoverInfo={setHoverInfo}
             onSocketToggle={toggleSocket}
             onHoverPart={(plId) => { hoveredId.current = plId }}
+            invalidIds={invalid}
             captureRef={captureRef}
           />
 
           {/* hull level rail */}
           <div className="tb-hull">
-            <button type="button" className="tb-hull-btn" title="up a level" onClick={() => setLevel((l) => Math.min(LEVEL_LABELS.length, l + 1))}>▲</button>
+            <button type="button" className="tb-hull-btn" title="up a level (carries a selected part)" onClick={() => changeLevel(1)}>▲</button>
             <div className="tb-hull-label" title={LEVEL_LABELS[level - 1] ?? `Level ${level}`}>
               <span className="txt">Level</span>
               <span className="lvl">{level}</span>
             </div>
-            <button type="button" className="tb-hull-btn" title="down a level" onClick={() => setLevel((l) => Math.max(1, l - 1))}>▼</button>
+            <button type="button" className="tb-hull-btn" title="down a level (carries a selected part)" onClick={() => changeLevel(-1)}>▼</button>
           </div>
 
           {/* bottom toolbar */}
@@ -618,6 +611,29 @@ export default function BuilderV2() {
               />
               <span className="edit-ic">✎</span>
             </div>
+
+            {/* invalid-placement warning — parts placed/rotated into bad spots pulse red in
+                the scene; this lists what to fix. Click a row to select that part. */}
+            {invalid.size > 0 && (
+              <div className="tb-invalid-warn">
+                <div className="tb-invalid-head">
+                  <span className="tb-invalid-ic">⚠</span>
+                  {invalid.size} part{invalid.size > 1 ? 's' : ''} need{invalid.size > 1 ? '' : 's'} fixing
+                </div>
+                <div className="tb-invalid-list">
+                  {[...invalid.entries()].slice(0, 5).map(([id, reason]) => {
+                    const pl = state.placements.find((p) => p.id === id)
+                    const nm = pl && PART_BY_ID[pl.partId]?.name
+                    return (
+                      <button type="button" key={id} className="tb-invalid-row" onClick={() => { setSelectedId(id); setLevel(pl?.y ?? level) }}>
+                        <b>{nm ?? 'part'}</b> — {reason}
+                      </button>
+                    )
+                  })}
+                  {invalid.size > 5 && <div className="tb-invalid-more">…and {invalid.size - 5} more</div>}
+                </div>
+              </div>
+            )}
 
             {/* chassis */}
             <div className="tb-section">
