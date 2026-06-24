@@ -12,6 +12,11 @@ export const PARTS = partsV2.parts.filter((p) => p.enabled)
 // All parts incl. ones the game currently has disabled (not yet enabled). The locker
 // shows these too, marked, so the catalogue is complete; validation/essentials use PARTS.
 export const ALL_PARTS = partsV2.parts
+// Parts the game ships but has flagged disabled (not yet in-game). Surfaced in the locker
+// under a "Disabled" group, placeable but badged, so the catalogue is complete.
+export const DISABLED_PARTS = partsV2.parts.filter(
+  (p) => !p.enabled && p.category !== 'Chassis' && !p.id.endsWith('_mirror'),
+)
 export const PART_BY_ID = Object.fromEntries(partsV2.parts.map((p) => [p.id, p]))
 export const MESH_INDEX = meshIndex
 export const PART_RAILINGS = partRailings

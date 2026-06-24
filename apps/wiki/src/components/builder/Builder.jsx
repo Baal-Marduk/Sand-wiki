@@ -2,7 +2,7 @@
 // Builder V2: identical in-game builder rebuild.
 // Truth source: the game's CompartmentsDatabase (cells/sockets/limits), real meshes.
 import './builder.css'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { ToolNavBrand } from '@/components/ToolNavBrand'
 import { AuthMenuClient } from '@/components/AuthMenuClient'
 import { ToolNav } from '@/components/ToolNav'
@@ -15,7 +15,7 @@ import partTech from './data/part_tech.json'
 import partIcons from './data/part_icons.json'
 import { asset } from './data.js'
 import {
-  PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS,
+  PARTS, PART_BY_ID, GROUP_LIMITS, MEMBER_LIMIT, ESSENTIALS, DISABLED_PARTS,
   CAT_COLOR, CATEGORY_ORDER, buildOccupancy, validate, manifest,
   encodeShare, decodeShare, editableSockets, checkPaths,
   costBreakdown, COST_ROWS, invalidPlacements,
@@ -29,9 +29,14 @@ const STORE_KEY = 'sand_blueprint_v2'
 // The /tech page persists the user's unlocked nodes here (JSON array of node slugs).
 const TECH_KEY = 'sand_techtree_unlocked_v1'
 const chassisList = PARTS.filter((p) => p.category === 'Chassis')
-// Locker lists only parts enabled in the game (chassis + mirror variants excluded).
-const lockerParts = PARTS
-  .filter((p) => p.category !== 'Chassis' && !p.id.endsWith('_mirror'))
+// Groups that make a trampler valid — these parts are the "Essentials" (mandatory).
+const ESS_GROUPS = new Set(ESSENTIALS.map((e) => e.group))
+const isEssential = (p) => (p.groups ?? []).some((g) => ESS_GROUPS.has(g))
+// Locker lists parts enabled in the game (chassis + mirror variants excluded), split into
+// Essentials (required groups) vs everything else. Disabled parts come from DISABLED_PARTS.
+const lockerParts = PARTS.filter((p) => p.category !== 'Chassis' && !p.id.endsWith('_mirror'))
+const essentialParts = lockerParts.filter(isEssential)
+const otherParts = lockerParts.filter((p) => !isEssential(p))
 
 const DEFAULT_STATE = {
   v: 2,
@@ -94,6 +99,10 @@ export default function BuilderV2() {
   const [activeRot, setActiveRot] = useState(0)
   const [selectedId, setSelectedId] = useState(null)
   const [openCat, setOpenCat] = useState('Cargo')
+  // Hull picker + Essentials are collapsible (default open) so users can fold them away
+  // once their hull + required parts are in, to cut scrolling — re-open any time.
+  const [hullOpen, setHullOpen] = useState(true)
+  const [essOpen, setEssOpen] = useState(true)
   const [q, setQ] = useState('')
   // "Match my tech tree": when on, parts gated behind a not-yet-unlocked tech node
   // are shown locked (greyed, non-placeable). unlockedNodes mirrors the /tech planner.
@@ -108,6 +117,7 @@ export default function BuilderV2() {
   const [shareText, setShareText] = useState('')
   const [pubOpen, setPubOpen] = useState(false)
   const [clearOpen, setClearOpen] = useState(false)
+  const [pendingChassis, setPendingChassis] = useState(null)
   const [pub, setPub] = useState({ name: '' })
   const [pubThumb, setPubThumb] = useState(null)
   const [pubBusy, setPubBusy] = useState(false)
@@ -295,6 +305,20 @@ export default function BuilderV2() {
     setSelectedId(null)
   }
 
+  // Pick a hull from the left-panel chassis tiles. Switching chassis clears the build,
+  // so confirm first when there are placements to lose.
+  function chooseChassis(id) {
+    if (id === state.chassisId) return
+    if (state.placements.length > 0) { setPendingChassis(id); return }
+    setState((s) => ({ ...s, chassisId: id, placements: [] }))
+    setSelectedId(null)
+  }
+  function applyChassis(id) {
+    setState((s) => ({ ...s, chassisId: id, placements: [] }))
+    setSelectedId(null)
+    setPendingChassis(null)
+  }
+
   // Change the active deck level. If a placed part is selected (and we're not mid-placement),
   // carry that part to the new level too — so you can lift/lower an already-placed part
   // (it pulses red if the new level is invalid, like any other move).
@@ -352,11 +376,11 @@ export default function BuilderV2() {
   })
 
   // ---------- locker ----------
-  const cats = useMemo(() => {
+  // Group a part list into [category, parts][] honouring the search box + "match my tech".
+  const groupParts = useCallback((list) => {
     const byCat = new Map()
-    for (const p of lockerParts) {
+    for (const p of list) {
       if (q && !p.name.toLowerCase().includes(q.toLowerCase()) && !p.id.toLowerCase().includes(q.toLowerCase())) continue
-      // "Match my tech tree": hide parts gated behind a not-yet-unlocked node.
       if (matchTech) {
         const t = partTech[p.id]
         if (t && !unlockedNodes.has(t.node)) continue
@@ -369,10 +393,59 @@ export default function BuilderV2() {
         a[0].localeCompare(b[0]),
     )
   }, [q, matchTech, unlockedNodes])
+  // Essentials (required parts, grouped by category) shown first; everything else below;
+  // disabled (not-yet-in-game) parts last, search-filtered.
+  const essCats = useMemo(() => groupParts(essentialParts), [groupParts])
+  const cats = useMemo(() => groupParts(otherParts), [groupParts])
+  const disabledList = useMemo(
+    () => DISABLED_PARTS.filter((p) => !q ||
+      p.name.toLowerCase().includes(q.toLowerCase()) || p.id.toLowerCase().includes(q.toLowerCase())),
+    [q],
+  )
+  // Hull picker honours "Match my tech tree" just like the parts list: when on, only show
+  // chassis whose tech node is unlocked (chassis with no tech node are always available).
+  // The currently-selected hull stays visible even if locked, so you never lose your build.
+  const chassisShown = useMemo(() => chassisList.filter((c) => {
+    if (!matchTech) return true
+    if (c.id === state.chassisId) return true
+    const t = partTech[c.id]
+    return !t || unlockedNodes.has(t.node)
+  }), [matchTech, unlockedNodes, state.chassisId])
 
   const essentialsState = ESSENTIALS.map((e) => ({ ...e, ok: man.groups.has(e.group) }))
   const selectedPl = state.placements.find((p) => p.id === selectedId)
   const selectedPart = selectedPl && PART_BY_ID[selectedPl.partId]
+  const chassisPart = PART_BY_ID[state.chassisId]
+
+  // One locker part row — reused in Essentials, the category accordions, and Disabled.
+  function renderPart(p, opts = {}) {
+    const tech = partTech[p.id]
+    return (
+      <div key={p.id} className="tb-part-row">
+        <button
+          type="button"
+          className={`tb-part ${activePart === p.id ? 'active' : ''} ${opts.disabled ? 'is-disabled' : ''}`}
+          onClick={() => { setActivePart(activePart === p.id ? null : p.id); setActiveRot(0); setSelectedId(null) }}
+          title={p.desc ? `${p.name}\n\n${p.desc}` : p.id}
+        >
+          <span className="tb-part-icon"><Thumb partId={p.id} /></span>
+          <span className="tb-part-name">{p.name}{opts.disabled && <span className="tb-badge-dis">SOON</span>}</span>
+          <span className="tb-part-size">
+            {p.bounds[0]}×{p.bounds[2]}{p.bounds[1] > 1 ? `·${p.bounds[1]}h` : ''}{p.mirror ? ' ⇋' : ''}
+          </span>
+        </button>
+        {tech && (
+          <a
+            className="tb-part-tech"
+            href={`/tech?select=${encodeURIComponent(tech.node)}`}
+            target="_blank" rel="noopener noreferrer"
+            title={`Unlocked by "${tech.name ?? 'tech node'}" — open in the tech tree`}
+            aria-label={`Show ${p.name} in the tech tree`}
+          >⌖</a>
+        )}
+      </div>
+    )
+  }
 
   // ---------- share ----------
   function doExport() {
@@ -493,61 +566,98 @@ export default function BuilderV2() {
             </button>
           </div>
           <div className="tb-scroll">
+            {/* ① Hull — choose a chassis first; image tiles, not a dropdown. Collapsible. */}
+            <div className={`tb-cat ${hullOpen ? 'open' : ''}`}>
+              <button type="button" className="tb-cat-head" onClick={() => setHullOpen((v) => !v)}>
+                <span className="tb-cat-caret">▶</span>
+                <span className="tb-cat-dot" style={{ '--cat': CAT_COLOR.Chassis }} />
+                ① Choose a hull
+                <span className="tb-cat-count">{chassisShown.length}{matchTech && chassisShown.length < chassisList.length ? ` / ${chassisList.length}` : ''}</span>
+              </button>
+              {hullOpen && (
+                <div className="tb-cat-body tb-chassis-grid">
+                  {chassisShown.map((c) => (
+                    <button
+                      key={c.id}
+                      type="button"
+                      className={`tb-part chassis ${state.chassisId === c.id ? 'active' : ''}`}
+                      onClick={() => chooseChassis(c.id)}
+                      title={c.label ?? c.name}
+                    >
+                      <span className="tb-part-icon"><Thumb partId={c.id} /></span>
+                      <span className="tb-part-name">{c.label ?? c.name}</span>
+                      <span className="tb-part-size">{c.bounds[0]}×{c.bounds[2]}</span>
+                    </button>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* ② Essentials — the parts a trampler needs to be valid, grouped by category.
+                Collapsible (force-open while searching so matches still show). */}
+            {(() => {
+              const essShow = essOpen || !!q
+              return (
+                <div className={`tb-cat ${essShow ? 'open' : ''}`}>
+                  <button type="button" className="tb-cat-head" onClick={() => setEssOpen((v) => !v)}>
+                    <span className="tb-cat-caret">▶</span>
+                    <span className="tb-cat-dot ess" />
+                    ② Essentials <span className="tb-cat-sub">required</span>
+                    <span className="tb-cat-count">{essCats.reduce((n, [, it]) => n + it.length, 0)}</span>
+                  </button>
+                  {essShow && (
+                    <div className="tb-cat-body">
+                      {essCats.length === 0 && <div className="tb-hint-sm">No matches.</div>}
+                      {essCats.map(([cat, items]) => (
+                        <div key={cat} className="tb-ess-group">
+                          <div className="tb-ess-label">
+                            <span className="tb-cat-dot" style={{ '--cat': CAT_COLOR[cat] ?? 'var(--primary)' }} />{cat}
+                          </div>
+                          {items.map((p) => renderPart(p))}
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              )
+            })()}
+
+            {/* ③ Everything else — optional categories (collapsible) */}
             {cats.map(([cat, items]) => {
               const open = openCat === cat || !!q
               return (
                 <div key={cat} className={`tb-cat ${open ? 'open' : ''}`}>
-                  <button
-                    type="button"
-                    className="tb-cat-head"
-                    onClick={() => setOpenCat(openCat === cat ? null : cat)}
-                  >
+                  <button type="button" className="tb-cat-head" onClick={() => setOpenCat(openCat === cat ? null : cat)}>
                     <span className="tb-cat-caret">▶</span>
                     <span className="tb-cat-dot" style={{ '--cat': CAT_COLOR[cat] ?? 'var(--primary)' }} />
                     {cat}
                     <span className="tb-cat-count">{items.length}</span>
                   </button>
+                  {open && <div className="tb-cat-body">{items.map((p) => renderPart(p))}</div>}
+                </div>
+              )
+            })}
+
+            {/* ④ Disabled — in the files but not enabled in-game */}
+            {disabledList.length > 0 && (() => {
+              const open = openCat === '__disabled' || !!q
+              return (
+                <div className={`tb-cat ${open ? 'open' : ''}`}>
+                  <button type="button" className="tb-cat-head" onClick={() => setOpenCat(openCat === '__disabled' ? null : '__disabled')}>
+                    <span className="tb-cat-caret">▶</span>
+                    <span className="tb-cat-dot" style={{ '--cat': '#6b7280' }} />
+                    Disabled
+                    <span className="tb-cat-count">{disabledList.length}</span>
+                  </button>
                   {open && (
                     <div className="tb-cat-body">
-                      {items.map((p) => {
-                        const tech = partTech[p.id]
-                        return (
-                        <div key={p.id} className="tb-part-row">
-                          <button
-                            type="button"
-                            className={`tb-part ${activePart === p.id ? 'active' : ''}`}
-                            onClick={() => {
-                              setActivePart(activePart === p.id ? null : p.id)
-                              setActiveRot(0)
-                              setSelectedId(null)
-                            }}
-                            title={p.desc ? `${p.name}\n\n${p.desc}` : p.id}
-                          >
-                            <span className="tb-part-icon"><Thumb partId={p.id} /></span>
-                            <span className="tb-part-name">{p.name}</span>
-                            <span className="tb-part-size">
-                              {p.bounds[0]}×{p.bounds[2]}{p.bounds[1] > 1 ? `·${p.bounds[1]}h` : ''}
-                              {p.mirror ? ' ⇋' : ''}
-                            </span>
-                          </button>
-                          {tech && (
-                            <a
-                              className="tb-part-tech"
-                              href={`/tech?select=${encodeURIComponent(tech.node)}`}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              title={`Unlocked by "${tech.name ?? 'tech node'}" — open in the tech tree`}
-                              aria-label={`Show ${p.name} in the tech tree`}
-                            >⌖</a>
-                          )}
-                        </div>
-                        )
-                      })}
+                      <div className="tb-hint-sm tb-disabled-note">Not in the game yet — shown for preview, placeable.</div>
+                      {disabledList.map((p) => renderPart(p, { disabled: true }))}
                     </div>
                   )}
                 </div>
               )
-            })}
+            })()}
           </div>
         </aside>
 
@@ -635,19 +745,14 @@ export default function BuilderV2() {
               </div>
             )}
 
-            {/* chassis */}
+            {/* chassis — chosen via the left panel's hull picker */}
             <div className="tb-section">
               <div className="tb-section-h">Chassis</div>
-              <select
-                className="tb-select"
-                value={state.chassisId}
-                onChange={(e) => setState((s) => ({ ...s, chassisId: e.target.value, placements: [] }))}
-              >
-                {chassisList.map((c) => (
-                  <option key={c.id} value={c.id}>{c.label ?? c.name}</option>
-                ))}
-              </select>
-              <div className="tb-hint-sm">Changing chassis clears the build.</div>
+              <div className="tb-chassis-readout">
+                <span className="tb-chassis-ic"><Thumb partId={state.chassisId} /></span>
+                <span className="tb-chassis-name">{chassisPart?.label ?? chassisPart?.name ?? state.chassisId}</span>
+              </div>
+              <div className="tb-hint-sm">Pick a hull from the left panel. Changing it clears the build.</div>
             </div>
 
             {/* manifest */}
@@ -859,6 +964,17 @@ export default function BuilderV2() {
         cancelLabel="Cancel"
         destructive
         onConfirm={doClear}
+      />
+
+      <ConfirmDialog
+        open={!!pendingChassis}
+        onOpenChange={(o) => { if (!o) setPendingChassis(null) }}
+        title="Change hull?"
+        description="Switching the hull clears every placed part. This can't be undone."
+        confirmLabel="Change hull"
+        cancelLabel="Cancel"
+        destructive
+        onConfirm={() => applyChassis(pendingChassis)}
       />
     </div>
   )
