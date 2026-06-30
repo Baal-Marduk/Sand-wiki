@@ -427,33 +427,105 @@
      },
      {
       "item": "item_resourceHighGradeGunpowder",
-      "pct": 100.0,
+      "pct": 66.7,
       "min": 3,
       "max": 3
      },
      {
-      "item": "item_semiAutomaticPistol_increasedMag",
-      "pct": 75.0,
-      "min": 1,
-      "max": 1
-     },
-     {
-      "item": "item_pistolAmmo",
-      "pct": 75.0,
-      "min": 50,
-      "max": 50
-     },
-     {
-      "item": "item_rifleMusketClip",
-      "pct": 25.0,
+      "item": "item_grenadeContact",
+      "pct": 33.3,
       "min": 1,
       "max": 1
      },
      {
       "item": "item_rifleAmmo",
-      "pct": 25.0,
+      "pct": 16.7,
       "min": 30,
       "max": 30
+     },
+     {
+      "item": "item_shotgun",
+      "pct": 16.7,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_shotgunAmmo_explosive",
+      "pct": 16.7,
+      "min": 30,
+      "max": 30
+     },
+     {
+      "item": "item_repeaterRifle",
+      "pct": 16.7,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_rifleAmmo_Armor",
+      "pct": 16.7,
+      "min": 30,
+      "max": 30
+     },
+     {
+      "item": "item_semiAutomaticPistol",
+      "pct": 16.7,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_pistolAmmo_Armor",
+      "pct": 16.7,
+      "min": 50,
+      "max": 50
+     },
+     {
+      "item": "item_sniperRifle_ironSights",
+      "pct": 16.7,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_sniperRifleAmmo_highPenetration",
+      "pct": 16.7,
+      "min": 5,
+      "max": 7
+     },
+     {
+      "item": "item_rifleMusketClip",
+      "pct": 8.3,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_semiAutomaticPistol_increasedMag",
+      "pct": 8.3,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_pistolAmmo",
+      "pct": 8.3,
+      "min": 50,
+      "max": 50
+     },
+     {
+      "item": "item_rifleRepeaterAperture",
+      "pct": 8.3,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_revolverQuickReload",
+      "pct": 8.3,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_pistolAmmo_highVelocity",
+      "pct": 8.3,
+      "min": 50,
+      "max": 50
      }
     ],
     "storm": [
@@ -471,38 +543,110 @@
      },
      {
       "item": "item_resourceHighGradeGunpowder",
-      "pct": 100.0,
+      "pct": 66.7,
       "min": 7,
       "max": 7
      },
      {
-      "item": "item_semiAutomaticPistol_increasedMag",
-      "pct": 75.0,
-      "min": 1,
-      "max": 1
-     },
-     {
-      "item": "item_pistolAmmo",
-      "pct": 75.0,
-      "min": 50,
-      "max": 50
-     },
-     {
-      "item": "item_rifleMusketClip",
-      "pct": 25.0,
+      "item": "item_grenadeContact",
+      "pct": 33.3,
       "min": 1,
       "max": 1
      },
      {
       "item": "item_rifleAmmo",
-      "pct": 25.0,
+      "pct": 16.7,
       "min": 30,
       "max": 30
+     },
+     {
+      "item": "item_shotgun",
+      "pct": 16.7,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_shotgunAmmo_explosive",
+      "pct": 16.7,
+      "min": 30,
+      "max": 30
+     },
+     {
+      "item": "item_repeaterRifle",
+      "pct": 16.7,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_rifleAmmo_Armor",
+      "pct": 16.7,
+      "min": 30,
+      "max": 30
+     },
+     {
+      "item": "item_semiAutomaticPistol",
+      "pct": 16.7,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_pistolAmmo_Armor",
+      "pct": 16.7,
+      "min": 50,
+      "max": 50
+     },
+     {
+      "item": "item_sniperRifle_ironSights",
+      "pct": 16.7,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_sniperRifleAmmo_highPenetration",
+      "pct": 16.7,
+      "min": 5,
+      "max": 7
+     },
+     {
+      "item": "item_rifleMusketClip",
+      "pct": 8.3,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_semiAutomaticPistol_increasedMag",
+      "pct": 8.3,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_pistolAmmo",
+      "pct": 8.3,
+      "min": 50,
+      "max": 50
+     },
+     {
+      "item": "item_rifleRepeaterAperture",
+      "pct": 8.3,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_revolverQuickReload",
+      "pct": 8.3,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_pistolAmmo_highVelocity",
+      "pct": 8.3,
+      "min": 50,
+      "max": 50
      }
     ],
     "tier": 3,
     "effort": "high",
-    "sets": 4
+    "sets": 8
    },
    "1|high": {
     "voyage": [
@@ -630,16 +774,22 @@
       "max": 1
      },
      {
+      "item": "item_repeaterRifle",
+      "pct": 40.0,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_revolverQuickReload",
+      "pct": 40.0,
+      "min": 1,
+      "max": 1
+     },
+     {
       "item": "item_pistolAmmo_Armor",
       "pct": 40.0,
       "min": 35,
       "max": 45
-     },
-     {
-      "item": "item_repeaterRifle",
-      "pct": 20.0,
-      "min": 1,
-      "max": 1
      },
      {
       "item": "item_rifleAmmo_Armor",
@@ -648,25 +798,13 @@
       "max": 25
      },
      {
-      "item": "item_revolverQuickReload",
-      "pct": 20.0,
-      "min": 1,
-      "max": 1
-     },
-     {
       "item": "item_semiAutomaticPistol",
       "pct": 20.0,
       "min": 1,
       "max": 1
      },
      {
-      "item": "item_semiAutomaticPistol_increasedMag",
-      "pct": 20.0,
-      "min": 1,
-      "max": 1
-     },
-     {
-      "item": "item_pistolAmmo",
+      "item": "item_pistolAmmo_highVelocity",
       "pct": 20.0,
       "min": 50,
       "max": 50
@@ -676,12 +814,6 @@
       "pct": 20.0,
       "min": 3,
       "max": 3
-     },
-     {
-      "item": "item_rifleRepeaterAperture",
-      "pct": 20.0,
-      "min": 1,
-      "max": 1
      },
      {
       "item": "item_rifleAmmo_highVelocity",
@@ -710,16 +842,22 @@
       "max": 1
      },
      {
+      "item": "item_repeaterRifle",
+      "pct": 40.0,
+      "min": 1,
+      "max": 1
+     },
+     {
+      "item": "item_revolverQuickReload",
+      "pct": 40.0,
+      "min": 1,
+      "max": 1
+     },
+     {
       "item": "item_pistolAmmo_Armor",
       "pct": 40.0,
       "min": 35,
       "max": 45
-     },
-     {
-      "item": "item_repeaterRifle",
-      "pct": 20.0,
-      "min": 1,
-      "max": 1
      },
      {
       "item": "item_rifleAmmo_Armor",
@@ -728,25 +866,13 @@
       "max": 25
      },
      {
-      "item": "item_revolverQuickReload",
-      "pct": 20.0,
-      "min": 1,
-      "max": 1
-     },
-     {
       "item": "item_semiAutomaticPistol",
       "pct": 20.0,
       "min": 1,
       "max": 1
      },
      {
-      "item": "item_semiAutomaticPistol_increasedMag",
-      "pct": 20.0,
-      "min": 1,
-      "max": 1
-     },
-     {
-      "item": "item_pistolAmmo",
+      "item": "item_pistolAmmo_highVelocity",
       "pct": 20.0,
       "min": 50,
       "max": 50
@@ -756,12 +882,6 @@
       "pct": 20.0,
       "min": 7,
       "max": 7
-     },
-     {
-      "item": "item_rifleRepeaterAperture",
-      "pct": 20.0,
-      "min": 1,
-      "max": 1
      },
      {
       "item": "item_rifleAmmo_highVelocity",
@@ -2887,25 +3007,25 @@
      },
      {
       "item": "item_smallValuables",
-      "pct": 75.0,
+      "pct": 56.5,
       "min": 45,
       "max": 55
      },
      {
       "item": "item_valuablePapers",
-      "pct": 25.0,
+      "pct": 43.5,
       "min": 25,
       "max": 30
      },
      {
       "item": "game_keyIslandDoorGreen",
-      "pct": 25.0,
+      "pct": 6.5,
       "min": 1,
       "max": 1
      },
      {
       "item": "ArtefactCrystal",
-      "pct": 25.0,
+      "pct": 6.5,
       "min": 4,
       "max": 6
      }
@@ -2937,25 +3057,25 @@
      },
      {
       "item": "item_smallValuables",
-      "pct": 75.0,
+      "pct": 56.5,
       "min": 35,
       "max": 125
      },
      {
       "item": "item_valuablePapers",
-      "pct": 25.0,
+      "pct": 43.5,
       "min": 35,
       "max": 40
      },
      {
       "item": "game_keyIslandDoorGreen",
-      "pct": 25.0,
+      "pct": 6.5,
       "min": 1,
       "max": 1
      },
      {
       "item": "ArtefactCrystal",
-      "pct": 25.0,
+      "pct": 6.5,
       "min": 10,
       "max": 14
      }

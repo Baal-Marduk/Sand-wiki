@@ -15,6 +15,7 @@ Il2CppDumper on `gamefiles/GameAssembly.dll` + `gamefiles/Sand_Data/il2cpp_data/
 ```bash
 python scripts/extract_icons.py
 python scripts/extract_loot_spawners.py
+python scripts/extract_loot_tables.py            # -> extracted/json/loottables_{voyage,storm}.json (Odin configs — see loot note)
 python scripts/build_loot_sources.py
 python scripts/scan_location_prefabs.py
 python scripts/build_location_contents.py
@@ -29,9 +30,22 @@ python scripts/extract_turret_stats.py && python scripts/build_turret_stats.py
 # localization: obtain per-locale i2_terms_<locale>.json (re-extract I2Languages, all langs) into extracted/json/
 python scripts/build_localization.py             # -> sek-out/localization.json (all locales)
 python scripts/extract_item_defs.py              # -> extracted/json/item_defs.json (full ItemDatabase — see note)
-python scripts/build_site_data.py                # items, recipes -> sek-out/
+# raw typetree dumps build_site_data enumerates over (not Odin — plain MonoBehaviours):
+python scripts/dump_bundle_json.py gamefiles/Sand_Data/StreamingAssets/aa/StandaloneWindows64/craftingrecipes_assets_all.bundle extracted/json/craftingrecipes.json
+python scripts/dump_bundle_json.py gamefiles/Sand_Data/StreamingAssets/aa/StandaloneWindows64/lootsets_assets_all.bundle extracted/json/lootsets.json
+python scripts/build_site_data.py                # items, recipes, loot_tables -> sek-out/
 python scripts/build_container_loot.py
 ```
+
+> **Loot-table changes (datamine):** `extract_loot_tables.py` decodes the two Odin-serialized
+> `conf_worldLootTables{Voyage,Storm}Config` MonoBehaviours in `configuration_assets_all` into the
+> `{_lootTables:{$items:[…]}}` shape `build_loot_sources.py` / `build_site_data.py` consume (the raw
+> dumps are gitignored). `build_site_data.py` writes the normalized **all-tables** view to
+> `sek-out/loot_tables.json` (committed, ~197 tables, `{id, voyage:[{item,min,max}], storm:[…]}`).
+> That file is nothing-reads-it output — its only purpose is the per-build diff: after a re-mine,
+> `git diff sek-out/loot_tables.json` shows every drop-composition / count-range change across ALL
+> tables, not just the 8 player-facing containers `container_loot.json` surfaces. Commit the
+> regenerated `loot_tables.json` each build so the next build's diff stays meaningful.
 
 > **Trampler stats note:** after `extract_compartments_db.py`, inspect
 > `extracted/json/compartments_database.json` for health/weight/energy/slot fields. If

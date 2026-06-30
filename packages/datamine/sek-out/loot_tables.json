@@ -7356,7 +7356,7 @@
   "group": "Weapons Crate",
   "voyage": [
    {
-    "item": "item_rifleRepeaterAperture",
+    "item": "item_repeaterRifle",
     "min": 1,
     "max": 1
    },
@@ -7383,7 +7383,7 @@
   ],
   "storm": [
    {
-    "item": "item_rifleRepeaterAperture",
+    "item": "item_repeaterRifle",
     "min": 1,
     "max": 1
    },
@@ -7542,14 +7542,14 @@
   "group": "Weapons Crate",
   "voyage": [
    {
-    "item": "item_semiAutomaticPistol_increasedMag",
+    "item": "item_rifleRepeaterAperture",
     "min": 1,
     "max": 1
    },
    {
-    "item": "item_pistolAmmo",
-    "min": 50,
-    "max": 50
+    "item": "item_rifleAmmo",
+    "min": 30,
+    "max": 30
    },
    {
     "item": "item_resourceScrappedAmmo",
@@ -7569,14 +7569,14 @@
   ],
   "storm": [
    {
-    "item": "item_semiAutomaticPistol_increasedMag",
+    "item": "item_rifleRepeaterAperture",
     "min": 1,
     "max": 1
    },
    {
-    "item": "item_pistolAmmo",
-    "min": 50,
-    "max": 50
+    "item": "item_rifleAmmo",
+    "min": 30,
+    "max": 30
    },
    {
     "item": "item_resourceScrappedAmmo",
@@ -7604,12 +7604,12 @@
   "group": "Weapons Crate",
   "voyage": [
    {
-    "item": "item_semiAutomaticPistol_increasedMag",
+    "item": "item_revolverQuickReload",
     "min": 1,
     "max": 1
    },
    {
-    "item": "item_pistolAmmo",
+    "item": "item_pistolAmmo_highVelocity",
     "min": 50,
     "max": 50
    },
@@ -7631,14 +7631,262 @@
   ],
   "storm": [
    {
-    "item": "item_semiAutomaticPistol_increasedMag",
+    "item": "item_revolverQuickReload",
     "min": 1,
     "max": 1
    },
    {
-    "item": "item_pistolAmmo",
+    "item": "item_pistolAmmo_highVelocity",
     "min": 50,
     "max": 50
+   },
+   {
+    "item": "item_resourceScrappedAmmo",
+    "min": 40,
+    "max": 45
+   },
+   {
+    "item": "item_resourceWeaponParts",
+    "min": 15,
+    "max": 20
+   },
+   {
+    "item": "item_resourceHighGradeGunpowder",
+    "min": 7,
+    "max": 7
+   }
+  ]
+ },
+ {
+  "id": "weapons_container_highEffort_T3_set5",
+  "category": "weapons",
+  "effort": "high",
+  "tier": 3,
+  "set": 5,
+  "group": "Weapons Crate",
+  "voyage": [
+   {
+    "item": "item_shotgun",
+    "min": 1,
+    "max": 1
+   },
+   {
+    "item": "item_shotgunAmmo_explosive",
+    "min": 30,
+    "max": 30
+   },
+   {
+    "item": "item_resourceScrappedAmmo",
+    "min": 35,
+    "max": 40
+   },
+   {
+    "item": "item_resourceWeaponParts",
+    "min": 14,
+    "max": 15
+   },
+   {
+    "item": "item_grenadeContact",
+    "min": 1,
+    "max": 1
+   }
+  ],
+  "storm": [
+   {
+    "item": "item_shotgun",
+    "min": 1,
+    "max": 1
+   },
+   {
+    "item": "item_shotgunAmmo_explosive",
+    "min": 30,
+    "max": 30
+   },
+   {
+    "item": "item_resourceScrappedAmmo",
+    "min": 40,
+    "max": 45
+   },
+   {
+    "item": "item_resourceWeaponParts",
+    "min": 15,
+    "max": 20
+   },
+   {
+    "item": "item_grenadeContact",
+    "min": 1,
+    "max": 1
+   }
+  ]
+ },
+ {
+  "id": "weapons_container_highEffort_T3_set6",
+  "category": "weapons",
+  "effort": "high",
+  "tier": 3,
+  "set": 6,
+  "group": "Weapons Crate",
+  "voyage": [
+   {
+    "item": "item_repeaterRifle",
+    "min": 1,
+    "max": 1
+   },
+   {
+    "item": "item_rifleAmmo_Armor",
+    "min": 30,
+    "max": 30
+   },
+   {
+    "item": "item_resourceScrappedAmmo",
+    "min": 35,
+    "max": 40
+   },
+   {
+    "item": "item_resourceWeaponParts",
+    "min": 14,
+    "max": 15
+   },
+   {
+    "item": "item_grenadeContact",
+    "min": 1,
+    "max": 1
+   }
+  ],
+  "storm": [
+   {
+    "item": "item_repeaterRifle",
+    "min": 1,
+    "max": 1
+   },
+   {
+    "item": "item_rifleAmmo_Armor",
+    "min": 30,
+    "max": 30
+   },
+   {
+    "item": "item_resourceScrappedAmmo",
+    "min": 40,
+    "max": 45
+   },
+   {
+    "item": "item_resourceWeaponParts",
+    "min": 15,
+    "max": 20
+   },
+   {
+    "item": "item_grenadeContact",
+    "min": 1,
+    "max": 1
+   }
+  ]
+ },
+ {
+  "id": "weapons_container_highEffort_T3_set7",
+  "category": "weapons",
+  "effort": "high",
+  "tier": 3,
+  "set": 7,
+  "group": "Weapons Crate",
+  "voyage": [
+   {
+    "item": "item_semiAutomaticPistol",
+    "min": 1,
+    "max": 1
+   },
+   {
+    "item": "item_pistolAmmo_Armor",
+    "min": 50,
+    "max": 50
+   },
+   {
+    "item": "item_resourceScrappedAmmo",
+    "min": 35,
+    "max": 40
+   },
+   {
+    "item": "item_resourceWeaponParts",
+    "min": 14,
+    "max": 15
+   },
+   {
+    "item": "item_resourceHighGradeGunpowder",
+    "min": 3,
+    "max": 3
+   }
+  ],
+  "storm": [
+   {
+    "item": "item_semiAutomaticPistol",
+    "min": 1,
+    "max": 1
+   },
+   {
+    "item": "item_pistolAmmo_Armor",
+    "min": 50,
+    "max": 50
+   },
+   {
+    "item": "item_resourceScrappedAmmo",
+    "min": 40,
+    "max": 45
+   },
+   {
+    "item": "item_resourceWeaponParts",
+    "min": 15,
+    "max": 20
+   },
+   {
+    "item": "item_resourceHighGradeGunpowder",
+    "min": 7,
+    "max": 7
+   }
+  ]
+ },
+ {
+  "id": "weapons_container_highEffort_T3_set8",
+  "category": "weapons",
+  "effort": "high",
+  "tier": 3,
+  "set": 8,
+  "group": "Weapons Crate",
+  "voyage": [
+   {
+    "item": "item_sniperRifle_ironSights",
+    "min": 1,
+    "max": 1
+   },
+   {
+    "item": "item_sniperRifleAmmo_highPenetration",
+    "min": 5,
+    "max": 7
+   },
+   {
+    "item": "item_resourceScrappedAmmo",
+    "min": 35,
+    "max": 40
+   },
+   {
+    "item": "item_resourceWeaponParts",
+    "min": 14,
+    "max": 15
+   },
+   {
+    "item": "item_resourceHighGradeGunpowder",
+    "min": 3,
+    "max": 3
+   }
+  ],
+  "storm": [
+   {
+    "item": "item_sniperRifle_ironSights",
+    "min": 1,
+    "max": 1
+   },
+   {
+    "item": "item_sniperRifleAmmo_highPenetration",
+    "min": 5,
+    "max": 7
    },
    {
     "item": "item_resourceScrappedAmmo",

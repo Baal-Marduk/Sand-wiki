@@ -11837,8 +11837,8 @@
     "amount": null,
     "tier": "Tier 2",
     "value1": "50",
-    "value2": "25-50",
-    "value3": "25-50",
+    "value2": "25-45",
+    "value3": "25-45",
     "sortOrder": 18,
     "buyGroup": null
   },
@@ -11927,7 +11927,7 @@
     "name": "Repeater Rifle",
     "amount": null,
     "tier": "Tier 2",
-    "value1": "20",
+    "value1": "40",
     "value2": "1",
     "value3": "1",
     "sortOrder": 25,
@@ -11940,7 +11940,7 @@
     "name": "Revolver Quick Reload",
     "amount": null,
     "tier": "Tier 2",
-    "value1": "20",
+    "value1": "40",
     "value2": "1",
     "value3": "1",
     "sortOrder": 26,
@@ -12039,14 +12039,14 @@
   },
   {
     "sourceSlug": "weapon-crate",
-    "targetSlug": "semi-automatic-pistol-increased-mag",
+    "targetSlug": "pistol-ammo-high-velocity",
     "role": "loot",
-    "name": "Semi Automatic Pistol Increased Mag",
+    "name": "Pistol Ammo High Velocity",
     "amount": null,
     "tier": "Tier 2",
     "value1": "20",
-    "value2": "1",
-    "value3": "1",
+    "value2": "50",
+    "value3": "50",
     "sortOrder": 34,
     "buyGroup": null
   },
@@ -12065,19 +12065,6 @@
   },
   {
     "sourceSlug": "weapon-crate",
-    "targetSlug": "rifle-repeater-aperture",
-    "role": "loot",
-    "name": "Rifle Repeater Aperture",
-    "amount": null,
-    "tier": "Tier 2",
-    "value1": "20",
-    "value2": "1",
-    "value3": "1",
-    "sortOrder": 36,
-    "buyGroup": null
-  },
-  {
-    "sourceSlug": "weapon-crate",
     "targetSlug": "rifle-ammo-high-velocity",
     "role": "loot",
     "name": "Rifle Ammo High Velocity",
@@ -12086,7 +12073,7 @@
     "value1": "20",
     "value2": "30",
     "value3": "30",
-    "sortOrder": 37,
+    "sortOrder": 36,
     "buyGroup": null
   },
   {
@@ -12099,7 +12086,7 @@
     "value1": "100",
     "value2": "15-40",
     "value3": "20-45",
-    "sortOrder": 38,
+    "sortOrder": 37,
     "buyGroup": null
   },
   {
@@ -12112,7 +12099,7 @@
     "value1": "100",
     "value2": "4-15",
     "value3": "8-20",
-    "sortOrder": 39,
+    "sortOrder": 38,
     "buyGroup": null
   },
   {
@@ -12125,7 +12112,7 @@
     "value1": "100",
     "value2": "1-3",
     "value3": "4-7",
-    "sortOrder": 40,
+    "sortOrder": 39,
     "buyGroup": null
   },
   {
@@ -12135,10 +12122,10 @@
     "name": "Pistol Ammo",
     "amount": null,
     "tier": "Tier 3",
-    "value1": "75",
+    "value1": "50",
     "value2": "25-50",
     "value3": "25-50",
-    "sortOrder": 41,
+    "sortOrder": 40,
     "buyGroup": null
   },
   {
@@ -12151,7 +12138,7 @@
     "value1": "25",
     "value2": "1",
     "value3": "1",
-    "sortOrder": 42,
+    "sortOrder": 41,
     "buyGroup": null
   },
   {
@@ -12164,7 +12151,7 @@
     "value1": "25",
     "value2": "8-30",
     "value3": "8-30",
-    "sortOrder": 43,
+    "sortOrder": 42,
     "buyGroup": null
   },
   {
@@ -12177,7 +12164,7 @@
     "value1": "25",
     "value2": "1",
     "value3": "1",
-    "sortOrder": 44,
+    "sortOrder": 43,
     "buyGroup": null
   },
   {
@@ -12190,7 +12177,7 @@
     "value1": "25",
     "value2": "1",
     "value3": "1",
-    "sortOrder": 45,
+    "sortOrder": 44,
     "buyGroup": null
   },
   {
@@ -12203,7 +12190,7 @@
     "value1": "25",
     "value2": "8-12",
     "value3": "8-12",
-    "sortOrder": 46,
+    "sortOrder": 45,
     "buyGroup": null
   },
   {
@@ -12216,7 +12203,7 @@
     "value1": "25",
     "value2": "1",
     "value3": "1",
-    "sortOrder": 47,
+    "sortOrder": 46,
     "buyGroup": null
   },
   {
@@ -12229,7 +12216,7 @@
     "value1": "100",
     "value2": "1",
     "value3": "1",
-    "sortOrder": 48,
+    "sortOrder": 47,
     "buyGroup": null
   },
   {
@@ -12240,9 +12227,9 @@
     "amount": null,
     "tier": "Tier 3",
     "value1": "40",
-    "value2": "35-45",
-    "value3": "35-45",
-    "sortOrder": 49,
+    "value2": "35-50",
+    "value3": "35-50",
+    "sortOrder": 48,
     "buyGroup": null
   },
   {
@@ -12255,7 +12242,7 @@
     "value1": "20",
     "value2": "18-22",
     "value3": "18-22",
-    "sortOrder": 50,
+    "sortOrder": 49,
     "buyGroup": null
   },
   {
@@ -12268,7 +12255,7 @@
     "value1": "20",
     "value2": "18-22",
     "value3": "18-22",
-    "sortOrder": 51,
+    "sortOrder": 50,
     "buyGroup": null
   },
   {
@@ -12281,7 +12268,7 @@
     "value1": "20",
     "value2": "1",
     "value3": "1",
-    "sortOrder": 52,
+    "sortOrder": 51,
     "buyGroup": null
   },
   {
@@ -12292,22 +12279,48 @@
     "amount": null,
     "tier": "Tier 3",
     "value1": "20",
-    "value2": "8-12",
-    "value3": "8-12",
+    "value2": "5-12",
+    "value3": "5-12",
+    "sortOrder": 52,
+    "buyGroup": null
+  },
+  {
+    "sourceSlug": "weapon-crate",
+    "targetSlug": "shotgun-ammo-explosive",
+    "role": "loot",
+    "name": "Shotgun Ammo Explosive",
+    "amount": null,
+    "tier": "Tier 3",
+    "value1": "16.7",
+    "value2": "30",
+    "value3": "30",
     "sortOrder": 53,
     "buyGroup": null
   },
   {
     "sourceSlug": "weapon-crate",
-    "targetSlug": "semi-automatic-pistol-increased-mag",
+    "targetSlug": "rifle-ammo-armor",
     "role": "loot",
-    "name": "Semi Automatic Pistol Increased Mag",
+    "name": "Rifle Ammo Armor",
     "amount": null,
     "tier": "Tier 3",
-    "value1": "75",
-    "value2": "1",
-    "value3": "1",
+    "value1": "16.7",
+    "value2": "30",
+    "value3": "30",
     "sortOrder": 54,
+    "buyGroup": null
+  },
+  {
+    "sourceSlug": "weapon-crate",
+    "targetSlug": "pistol-ammo-armor",
+    "role": "loot",
+    "name": "Pistol Ammo Armor",
+    "amount": null,
+    "tier": "Tier 3",
+    "value1": "16.7",
+    "value2": "50",
+    "value3": "50",
+    "sortOrder": 55,
     "buyGroup": null
   },
   {
@@ -12317,10 +12330,36 @@
     "name": "Repeater Rifle Quick Reload",
     "amount": null,
     "tier": "Tier 3",
-    "value1": "25",
+    "value1": "8.3",
     "value2": "1",
     "value3": "1",
-    "sortOrder": 55,
+    "sortOrder": 56,
+    "buyGroup": null
+  },
+  {
+    "sourceSlug": "weapon-crate",
+    "targetSlug": "semi-automatic-pistol-increased-mag",
+    "role": "loot",
+    "name": "Semi Automatic Pistol Increased Mag",
+    "amount": null,
+    "tier": "Tier 3",
+    "value1": "8.3",
+    "value2": "1",
+    "value3": "1",
+    "sortOrder": 57,
+    "buyGroup": null
+  },
+  {
+    "sourceSlug": "weapon-crate",
+    "targetSlug": "rifle-repeater-aperture",
+    "role": "loot",
+    "name": "Rifle Repeater Aperture",
+    "amount": null,
+    "tier": "Tier 3",
+    "value1": "8.3",
+    "value2": "1",
+    "value3": "1",
+    "sortOrder": 58,
     "buyGroup": null
   },
   {
@@ -12941,7 +12980,7 @@
     "name": "Small Valuables",
     "amount": null,
     "tier": "Tier 3",
-    "value1": "75",
+    "value1": "56.5",
     "value2": "15-55",
     "value3": "25-125",
     "sortOrder": 12,
@@ -12980,7 +13019,7 @@
     "name": "Game Key Island Door Green",
     "amount": null,
     "tier": "Tier 3",
-    "value1": "25",
+    "value1": "6.5",
     "value2": "1",
     "value3": "1",
     "sortOrder": 15,
@@ -12993,7 +13032,7 @@
     "name": "Artefact Crystal",
     "amount": null,
     "tier": "Tier 3",
-    "value1": "25",
+    "value1": "6.5",
     "value2": "4-6",
     "value3": "10-14",
     "sortOrder": 16,
