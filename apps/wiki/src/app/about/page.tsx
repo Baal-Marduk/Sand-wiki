@@ -1,10 +1,8 @@
 import { itemCategoryCounts, envCategoryCounts, tramplerCategoryCounts, recipeCount } from "@/lib/queries";
 import { StatGrid } from "@/components/StatGrid";
+import { artBackdrop } from "@/lib/art";
 
-// Shared with the Home hero — desert glow + faint blueprint grid.
-const heroBackground =
-  "radial-gradient(120% 120% at 80% -10%, color-mix(in srgb, var(--secondary) 30%, transparent), transparent 55%), " +
-  "linear-gradient(180deg, var(--card) 0%, var(--background) 100%)";
+// Faint blueprint grid kept as a top overlay over the art backdrop.
 const gridStyle: React.CSSProperties = {
   backgroundImage:
     "linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)",
@@ -37,12 +35,15 @@ export default async function AboutPage() {
 
   return (
     <div className="-m-4">
-      <section
-        className="relative overflow-hidden border-b border-border px-6 py-14"
-        style={{ background: heroBackground }}
-      >
-        <div aria-hidden className="pointer-events-none absolute inset-0 opacity-35" style={gridStyle} />
-        <div className="relative mx-auto max-w-2xl">
+      <section className="relative overflow-hidden border-b border-border px-6 py-16">
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img {...artBackdrop("cargo-port")} alt="" className="size-full object-cover object-[center_42%]" />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/45" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/35 to-transparent" />
+          <div className="absolute inset-0 opacity-20" style={gridStyle} />
+        </div>
+        <div className="relative mx-auto max-w-2xl [text-shadow:0_1px_10px_rgba(0,0,0,0.6)]">
           <span className="font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
             About
           </span>

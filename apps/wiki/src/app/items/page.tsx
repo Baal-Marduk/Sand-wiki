@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { listItems, listRarities, listWorkbenchTiers, listItemClasses, itemCategoryCounts } from "@/lib/queries";
 import { EntityCard } from "@/components/EntityCard";
+import { SectionBanner } from "@/components/SectionBanner";
 import { CategoryQuickNav } from "@/components/CategoryQuickNav";
 import { FilterSelect } from "@/components/FilterSelect";
 import { RarityChips } from "@/components/RarityChips";
@@ -65,7 +66,16 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
   const clearHref = category ? `/items?category=${category}` : "/items";
 
   return (
-    <section className="py-2">
+    <section className="pb-2">
+      {!category && (
+        <SectionBanner
+          eyebrow="Database"
+          title="Items"
+          tagline="Every weapon, ammo type, resource, tool and piece of medical kit in the Wastes."
+          art="shootout"
+          focal="center 42%"
+        />
+      )}
       <div className="grid items-start gap-6 lg:grid-cols-[212px_1fr]">
         <aside className="order-1">
           <CategoryQuickNav
@@ -80,7 +90,13 @@ export default async function ItemsPage({ searchParams }: { searchParams: Search
 
         <div className="order-2 min-w-0">
           <div className="mb-4 flex items-baseline justify-between gap-3">
-            <h1 className="font-display text-2xl font-bold uppercase tracking-[0.01em]">{title}</h1>
+            {category ? (
+              <h1 className="font-display text-2xl font-bold uppercase tracking-[0.01em]">{title}</h1>
+            ) : (
+              <h2 className="font-display text-sm font-semibold uppercase tracking-[0.08em] text-muted-foreground">
+                All items
+              </h2>
+            )}
             <span className="shrink-0 font-mono text-xs text-muted-foreground" aria-live="polite">
               {items.length} result{items.length === 1 ? "" : "s"}
             </span>

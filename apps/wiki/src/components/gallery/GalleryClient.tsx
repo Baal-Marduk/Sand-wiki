@@ -257,7 +257,7 @@ export function GalleryClient({
   return (
     <div className="tg-app" data-screen-label="Trampler Gallery">
       {/* ===== top bar ===== */}
-      <header className="tg-appbar">
+      <header className="tg-appbar sand-topbar">
         <div className="flex items-center gap-4">
           <ToolNavBrand title="Trampler Builder" />
           <ToolNav active="gallery" />

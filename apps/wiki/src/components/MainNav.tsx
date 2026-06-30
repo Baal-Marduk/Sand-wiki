@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, usePathname } from "next/navigation";
 import { SECTIONS, isWipSection } from "@/lib/taxonomy";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { WipBadge } from "@/components/WipBadge";
@@ -33,6 +33,11 @@ const contentCls =
 
 export function MainNav() {
   const router = useRouter();
+  const pathname = usePathname();
+  // A section reads as active when the current route is its index or a page
+  // beneath it. The ember tick (.nav-tick) then sits under that label so the bar
+  // always signals where you are.
+  const isActive = (base: string) => pathname === base || pathname.startsWith(`${base}/`);
   return (
     // viewport={false} keeps each dropdown's content positioned beneath its own
     // item and inside this NavigationMenu's DOM subtree (no portaled viewport),
@@ -47,7 +52,7 @@ export function MainNav() {
                 {/* Hover still opens the category dropdown; a click (or Enter)
                     navigates to the section's index page. */}
                 <NavigationMenuTrigger
-                  className={triggerCls}
+                  className={`${triggerCls}${isActive(`/${section.slug}`) ? " nav-tick text-primary" : ""}`}
                   onClick={() => router.push(`/${section.slug}`)}
                 >
                   {section.label}
@@ -91,7 +96,10 @@ export function MainNav() {
           const href = section.href ?? `/${section.slug}`;
           return (
             <NavigationMenuItem key={section.slug}>
-              <Link href={href} className={navItemCls}>
+              <Link
+                href={href}
+                className={`${navItemCls}${isActive(href) ? " nav-tick text-primary" : ""}`}
+              >
                 {section.label}
               </Link>
             </NavigationMenuItem>

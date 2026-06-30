@@ -84,7 +84,7 @@ export default function BuilderView({
 
   return (
     <div className="tb-app" data-screen-label="Trampler Builder">
-      <header className="tb-appbar">
+      <header className="tb-appbar sand-topbar">
         <ToolNavBrand title="Trampler Builder" />
         <ToolNav active="builder" />
         <span className="spacer" />

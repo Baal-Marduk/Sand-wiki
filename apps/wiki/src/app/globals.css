@@ -124,5 +124,44 @@ a, button, input, select, textarea, summary,
 }
 .nav-link:hover, .nav-link:focus-visible { color: var(--primary); }
 .row-link:hover, .row-link:focus-visible { background-color: var(--card-elevated); }
+
+/* ── Signature: the "horizon line" ───────────────────────────────────────────
+ * A single warm desert-gradient hairline glowing beneath every top bar — the
+ * wiki header, the Tech Tree app-bar and the Trampler Builder app-bar. It echoes
+ * the sunset horizon in the key art and is the one mark that unifies the three
+ * otherwise-independent navigation surfaces. Sits exactly on the bottom border;
+ * reduced-motion users still get it (it is static). */
+.sand-topbar { position: relative; }
+.sand-topbar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 1px;
+  pointer-events: none;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    color-mix(in srgb, var(--primary) 85%, transparent) 28%,
+    var(--accent) 52%,
+    color-mix(in srgb, var(--primary) 85%, transparent) 72%,
+    transparent 100%
+  );
+  opacity: 0.6;
+}
+/* Active main-nav section: a short ember tick centered under the label. */
+.nav-tick { position: relative; }
+.nav-tick::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -3px;
+  height: 2px;
+  width: 16px;
+  transform: translateX(-50%);
+  background: var(--primary);
+  box-shadow: 0 0 8px color-mix(in srgb, var(--primary) 70%, transparent);
+}
 /* Brighten sprites only inside an actual link/card. */
 a:hover .item-sprite, a:focus-visible .item-sprite { filter: brightness(1.1); }

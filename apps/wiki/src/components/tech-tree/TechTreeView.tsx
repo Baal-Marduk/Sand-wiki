@@ -275,7 +275,7 @@ export function TechTreeView({ tree }: { tree: TechTree }) {
 
   return (
     <div className="tt-app">
-      <header className="tt-appbar">
+      <header className="tt-appbar sand-topbar">
         <ToolNavBrand title="Tech Tree" />
         <div className="tt-toolbar">
           <span className="tt-progress">{unlocked.size} / {tree.nodes.length} unlocked</span>

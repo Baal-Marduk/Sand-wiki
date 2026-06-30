@@ -450,7 +450,7 @@ export default function BuilderV2() {
   return (
     <div className="tb-app" data-screen-label="Trampler Builder">
       {/* ===== top bar ===== */}
-      <header className="tb-appbar">
+      <header className="tb-appbar sand-topbar">
         <ToolNavBrand title="Trampler Builder" />
         <ToolNav active="builder" />
         <span className="spacer" />

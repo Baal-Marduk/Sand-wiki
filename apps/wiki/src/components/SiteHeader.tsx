@@ -6,7 +6,7 @@ import { MobileNav } from "@/components/MobileNav";
 
 export async function SiteHeader() {
   return (
-    <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/75">
+    <header className="sand-topbar sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/75">
       {/* The single "Primary" navigation landmark. Search + About live inside
           this nav so the e2e suite can scope queries to nav.getByRole(...). */}
       <nav

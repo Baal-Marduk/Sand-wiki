@@ -2,6 +2,7 @@ import { getSection, isEnvCategory } from "@/lib/taxonomy";
 import { listEnvEntities, envCategoryCounts } from "@/lib/queries";
 import { sessionIsAdmin } from "@/lib/auth";
 import { EntityCard } from "@/components/EntityCard";
+import { SectionBanner } from "@/components/SectionBanner";
 import { CategoryQuickNav } from "@/components/CategoryQuickNav";
 import { CategoryEntryCard, type CategoryEntry } from "@/components/CategoryEntryCard";
 
@@ -35,8 +36,14 @@ export default async function EnvironmentPage({ searchParams }: { searchParams: 
       };
     });
     return (
-      <section className="py-2">
-        <h1 className="mb-4 font-display text-2xl font-bold uppercase tracking-[0.01em]">Environment</h1>
+      <section className="pb-2">
+        <SectionBanner
+          eyebrow="Database"
+          title="Environment"
+          tagline="Loot containers, landmarks and game modes scattered across the islands."
+          art="azure-island"
+          focal="center 38%"
+        />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {entries.map((e) => (
             <CategoryEntryCard key={e.title} entry={e} />

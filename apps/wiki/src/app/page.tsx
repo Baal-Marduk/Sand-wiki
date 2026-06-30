@@ -4,12 +4,9 @@ import { CategoryEntryCard, type CategoryEntry } from "@/components/CategoryEntr
 import { itemCategoryCounts, envCategoryCounts, tramplerCategoryCounts, techToolStats } from "@/lib/queries";
 import { HomeToolsCallout } from "@/components/HomeToolsCallout";
 
-// Desert-glow + faint blueprint grid. The home hero is the only screen that uses
-// the radial glow; every other surface stays flat. Values mirror the approved
-// `.superpowers/design` reference (`.hero` / `.hero-grid`).
-const heroBackground =
-  "radial-gradient(120% 120% at 80% -10%, color-mix(in srgb, var(--secondary) 30%, transparent), transparent 55%), " +
-  "linear-gradient(180deg, var(--card) 0%, var(--background) 100%)";
+// Hero art backdrop: a Trampler crossing the dunes at sunset (press-kit key art,
+// optimized to webp under /art/optimized). The faint blueprint grid stays as a
+// top overlay so the photographic hero still reads as part of the system.
 const gridStyle: React.CSSProperties = {
   backgroundImage:
     "linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px)",
@@ -50,22 +47,41 @@ export default async function HomePage() {
   return (
     <div className="-m-4">
       {/* Hero */}
-      {/* No overflow-hidden: the hero-search autocomplete panel is absolutely
-          positioned inside here and must escape the hero's bottom edge. The grid
-          overlay is inset-0 so it stays bounded without clipping. */}
-      <section
-        className="relative border-b border-border px-6 py-16 sm:py-20"
-        style={{ background: heroBackground }}
-      >
-        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden opacity-35" style={gridStyle} />
-        <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-5 text-center">
-          <span className="font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">
+      {/* No overflow-hidden on the <section>: the hero-search autocomplete panel is
+          absolutely positioned inside and must escape the hero's bottom edge. The
+          art backdrop carries its own overflow-hidden so the image stays clipped. */}
+      <section className="relative border-b border-border">
+        <div aria-hidden className="pointer-events-none absolute inset-0 overflow-hidden">
+          <img
+            src="/art/optimized/hero-towards-island-2400.webp"
+            srcSet="/art/optimized/hero-towards-island-960.webp 960w, /art/optimized/hero-towards-island-1600.webp 1600w, /art/optimized/hero-towards-island-2400.webp 2400w"
+            sizes="100vw"
+            alt=""
+            fetchPriority="high"
+            className="size-full object-cover object-[66%_center]"
+          />
+          {/* Scrim — anchor the bottom edge to the page background and darken the
+              whole frame enough to keep the cream display type legible over the
+              bright sunset sky. */}
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/75 to-background/35" />
+          {/* Warm horizon bloom drifting in from the right, echoing the navbar accent. */}
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(70% 90% at 78% 35%, color-mix(in srgb, var(--secondary) 22%, transparent), transparent 60%)",
+            }}
+          />
+          <div className="absolute inset-0 opacity-[0.18]" style={gridStyle} />
+        </div>
+        <div className="relative mx-auto flex max-w-2xl flex-col items-center gap-5 px-6 py-24 text-center sm:py-32">
+          <span className="font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-primary [text-shadow:0_1px_8px_rgba(0,0,0,0.5)]">
             Unofficial database
           </span>
-          <h1 className="font-display text-4xl font-bold uppercase leading-[0.98] tracking-[0.02em] sm:text-5xl">
+          <h1 className="font-display text-[2.75rem] font-bold uppercase leading-[0.95] tracking-[0.02em] [text-shadow:0_2px_24px_rgba(0,0,0,0.55)] sm:text-6xl">
             Everything in the Wastes
           </h1>
-          <p className="max-w-md text-[15px] text-muted-foreground">
+          <p className="max-w-md text-[15px] text-foreground/80 [text-shadow:0_1px_10px_rgba(0,0,0,0.6)]">
             {itemTotal} items, {tramplerTotal} trampler parts and {envTotal} environments — crafting trees,
             loot tables and stats for <em>SAND: Raiders of Sophie</em>.
           </p>

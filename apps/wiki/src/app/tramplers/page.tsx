@@ -2,6 +2,7 @@ import { getSection, isTramplerCategory, TRAMPLER_CATEGORIES } from "@/lib/taxon
 import { listTramplerParts, tramplerCategoryCounts } from "@/lib/queries";
 import { sessionIsAdmin } from "@/lib/auth";
 import { EntityCard, type EntityStat } from "@/components/EntityCard";
+import { SectionBanner } from "@/components/SectionBanner";
 import { CategoryQuickNav, categoryNavHref } from "@/components/CategoryQuickNav";
 import { CategoryEntryCard, type CategoryEntry } from "@/components/CategoryEntryCard";
 
@@ -33,8 +34,14 @@ export default async function TramplersPage({ searchParams }: { searchParams: Se
       };
     });
     return (
-      <section className="py-2">
-        <h1 className="mb-4 font-display text-2xl font-bold uppercase tracking-[0.01em]">Tramplers</h1>
+      <section className="pb-2">
+        <SectionBanner
+          eyebrow="Database"
+          title="Tramplers"
+          tagline="Chassis, legs, cabins, turrets and every part you can bolt onto your machine."
+          art="walker"
+          focal="center 40%"
+        />
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
           {entries.map((e) => (
             <CategoryEntryCard key={e.href} entry={e} />

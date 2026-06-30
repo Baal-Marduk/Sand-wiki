@@ -22,3 +22,8 @@ node_modules/
 /sand-scraper/
 /tech-tree/
 /sek
+
+# Press-kit key art: the source PNG/JPG are ~166MB and must not enter the repo.
+# Only the small optimized webps under art/optimized/ are committed and served.
+/apps/wiki/public/art/*
+!/apps/wiki/public/art/optimized/
