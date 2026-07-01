@@ -7,32 +7,42 @@ interface SectionBannerProps {
   title: string;
   /** One line of supporting copy. */
   tagline: string;
-  /** Optimized art slug under /art/optimized (e.g. "walker"). */
-  art: string;
-  /** CSS object-position for the backdrop crop. Defaults to centre. */
+  /** Optimized art slug under /art/optimized (e.g. "walker"). Omit for a flat,
+   *  no-art header (same width/type/alignment, used by the data-tool pages). */
+  art?: string;
+  /** CSS object-position for the backdrop crop. Defaults to centre. Ignored without art. */
   focal?: string;
 }
 
-// Full-bleed art band that opens a section page. Breaks out of the page's
-// max-w-6xl padding (-mx-4 -mt-4) so it sits flush under the header, mirroring
-// the home hero at a shorter height. The scrim darkens the bottom (seam into the
-// page) and the left (where the type sits) so the cream display face stays legible.
+// Full-bleed band that opens a section page. Breaks out of the page's max-w-6xl
+// padding (-mx-4 -mt-4) so it sits flush under the header. With `art` it renders a
+// photographic backdrop + scrim (mirroring the home hero at a shorter height); without
+// `art` it's a flat header sharing the exact same inner width, padding and type scale,
+// so alignment never shifts between marketing and utility pages.
 export function SectionBanner({ eyebrow, title, tagline, art, focal = "center" }: SectionBannerProps) {
-  const shadow = "[text-shadow:0_1px_10px_rgba(0,0,0,0.6)]";
+  // The text-shadow only earns its keep over photographic art; on a flat header it
+  // muddies the type, so it's dropped there.
+  const shadow = art ? "[text-shadow:0_1px_10px_rgba(0,0,0,0.6)]" : "";
   return (
     <section className="relative -mx-4 -mt-4 mb-6 overflow-hidden border-b border-border">
-      <div aria-hidden className="pointer-events-none absolute inset-0">
-        {/* eslint-disable-next-line @next/next/no-img-element */}
-        <img
-          {...artBackdrop(art)}
-          alt=""
-          className="size-full object-cover"
-          style={{ objectPosition: focal }}
-        />
-        <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
-        <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/30 to-transparent" />
-      </div>
-      <div className="relative mx-auto flex min-h-[148px] max-w-6xl flex-col justify-center px-6 py-9 sm:min-h-[176px]">
+      {art && (
+        <div aria-hidden className="pointer-events-none absolute inset-0">
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img
+            {...artBackdrop(art)}
+            alt=""
+            className="size-full object-cover"
+            style={{ objectPosition: focal }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-t from-background via-background/80 to-background/40" />
+          <div className="absolute inset-0 bg-gradient-to-r from-background/85 via-background/30 to-transparent" />
+        </div>
+      )}
+      <div
+        className={`relative mx-auto flex max-w-6xl flex-col justify-center px-6 py-9 ${
+          art ? "min-h-[148px] sm:min-h-[176px]" : "sm:py-11"
+        }`}
+      >
         <span className={`font-display text-[11px] font-semibold uppercase tracking-[0.2em] text-primary ${shadow}`}>
           {eyebrow}
         </span>

@@ -1,7 +1,6 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { AdminBack } from "@/components/AdminBack";
 import ballistics from "./data/weapon_ballistics.json";
 import turretCompare from "./data/turret_compare.json";
 
@@ -196,12 +195,8 @@ export function BallisticsClient() {
   }, []);
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
-      <AdminBack />
-      <h1 className="mt-2 font-display text-2xl font-bold uppercase tracking-wide text-primary">Ballistics Sheet</h1>
-      <p className="mt-1 text-xs uppercase tracking-wide text-muted-foreground">Admin · datamined weapon &amp; turret figures</p>
-
-      <div className="mt-5 flex gap-2">
+    <div className="pb-2">
+      <div className="flex gap-2">
         {TABS.map(([key, label]) => {
           const active = tab === key;
           return (

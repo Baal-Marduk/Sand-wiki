@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/db";
 import { AdminBack } from "@/components/AdminBack";
+import { SectionBanner } from "@/components/SectionBanner";
 import { entityHref } from "@/lib/entity-links";
 import { CraftingBrowser, type CraftRecipe } from "./CraftingBrowser";
 
@@ -31,12 +32,13 @@ export default async function CraftingPage() {
   }));
 
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="pb-2">
+      <SectionBanner
+        eyebrow="Data"
+        title="Crafting"
+        tagline="Every recipe, grouped by item type — what it makes, ingredients, bench/location, tier and time."
+      />
       <AdminBack />
-      <h1 className="mt-2 font-display text-2xl font-bold uppercase tracking-wide text-primary">Crafting</h1>
-      <p className="mt-1 text-sm text-muted-foreground">
-        Every recipe, grouped by item type — what it makes, ingredients, bench/location, tier and time.
-      </p>
       <CraftingBrowser recipes={data} />
     </div>
   );

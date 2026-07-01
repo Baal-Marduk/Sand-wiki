@@ -1,4 +1,5 @@
 import { AdminBack } from "@/components/AdminBack";
+import { SectionBanner } from "@/components/SectionBanner";
 import { ContractsClient } from "./ContractsClient";
 
 export const metadata = {
@@ -7,13 +8,13 @@ export const metadata = {
 
 export default function ContractsPage() {
   return (
-    <div className="mx-auto max-w-6xl px-4 py-8">
+    <div className="pb-2">
+      <SectionBanner
+        eyebrow="Data"
+        title="Contracts"
+        tagline="Deliver the requested items into a contract platform's slots for a tiered reward drop — bundles and key-locked-box loot from the game files."
+      />
       <AdminBack />
-      <h1 className="mt-2 font-display text-2xl font-bold uppercase tracking-wide text-primary">Contracts</h1>
-      <p className="mt-1 max-w-3xl text-sm text-muted-foreground">
-        Find a contract platform in the world, deliver the requested items into its slots, and a
-        tiered reward drop comes in. These are the reward bundles + key-locked-box loot from the game files.
-      </p>
       <ContractsClient />
     </div>
   );
