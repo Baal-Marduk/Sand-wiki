@@ -5,7 +5,8 @@ import { Oswald } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { ConditionalChrome } from "@/components/ConditionalChrome";
-import { SITE_URL, SITE_NAME } from "@/lib/site";
+import { JsonLd } from "@/components/JsonLd";
+import { SITE_URL, SITE_NAME, siteJsonLd } from "@/lib/site";
 import "./globals.css";
 
 const oswald = Oswald({
@@ -45,6 +46,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
   return (
     <html lang="en" className={`dark ${oswald.variable}`}>
       <body className="min-h-screen bg-background text-foreground flex flex-col">
+        <JsonLd data={siteJsonLd()} />
         <ConditionalChrome
           header={<SiteHeader />}
           footer={

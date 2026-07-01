@@ -1,4 +1,6 @@
 import { Breadcrumb, type Crumb } from "@/components/Breadcrumb";
+import { JsonLd } from "@/components/JsonLd";
+import { breadcrumbJsonLd } from "@/lib/site";
 import { StatGrid } from "@/components/StatGrid";
 import { ItemTabs, type Tab } from "@/components/ItemTabs";
 import { ItemDetailsPanel } from "@/components/ItemDetailsPanel";
@@ -87,6 +89,7 @@ export function EntityDetail({
 
   return (
     <article className={`mx-auto space-y-6 py-6 ${hasSidebar ? "max-w-5xl" : "max-w-3xl"}`}>
+      <JsonLd data={breadcrumbJsonLd(breadcrumb)} />
       <div className="flex items-center justify-between gap-3">
         <Breadcrumb items={breadcrumb} />
       </div>
