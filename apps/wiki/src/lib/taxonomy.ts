@@ -54,7 +54,19 @@ export const SECTIONS: Section[] = [
   { slug: "tech", label: "Tech Tree", kind: "link", categories: [] },
   { slug: "builder", label: "Builder", kind: "link", categories: [] },
   { slug: "gallery", label: "Gallery", kind: "link", categories: [] },
-  { slug: "admin", label: "Data", kind: "link", href: "/admin", categories: [] },
+  {
+    // Data hub: a dropdown of standalone tool pages (each category slug IS the route),
+    // unlike "data" sections whose categories filter the section index page.
+    slug: "data",
+    label: "Data",
+    kind: "tools",
+    categories: [
+      { slug: "ballistics", label: "Ballistics" },
+      { slug: "crafting", label: "Crafting" },
+      { slug: "contracts", label: "Contracts" },
+      { slug: "achievements", label: "Achievements" },
+    ],
+  },
 ];
 
 export const ITEM_CATEGORIES = itemCategories;

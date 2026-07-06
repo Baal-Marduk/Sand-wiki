@@ -12,7 +12,7 @@ import {
 describe("taxonomy", () => {
   it("exposes the top-level sections in order", () => {
     expect(SECTIONS.map((s) => s.slug)).toEqual([
-      "items", "environment", "tramplers", "tech", "builder", "gallery", "admin",
+      "items", "environment", "tramplers", "tech", "builder", "gallery", "data",
     ]);
   });
 

@@ -83,6 +83,35 @@ export function MainNav() {
             );
           }
 
+          if (section.kind === "tools" && section.categories.length > 0) {
+            // Tool hub (Data): same dropdown chrome as data sections, but each entry
+            // IS its own route (/ballistics, /achievements, ...) rather than a
+            // ?category= filter. Active when on the hub or any of its tool pages.
+            const toolActive =
+              isActive(`/${section.slug}`) || section.categories.some((c) => isActive(`/${c.slug}`));
+            return (
+              <NavigationMenuItem key={section.slug}>
+                <NavigationMenuTrigger
+                  className={`${triggerCls}${toolActive ? " nav-tick text-primary" : ""}`}
+                  onClick={() => router.push(`/${section.slug}`)}
+                >
+                  {section.label}
+                </NavigationMenuTrigger>
+                <NavigationMenuContent className={contentCls}>
+                  <ul className="grid w-52 gap-0.5">
+                    {section.categories.map((c) => (
+                      <li key={c.slug}>
+                        <Link href={`/${c.slug}`} className={itemCls}>
+                          {c.label}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
+                </NavigationMenuContent>
+              </NavigationMenuItem>
+            );
+          }
+
           if (isWipSection(section)) {
             return (
               <NavigationMenuItem key={section.slug}>

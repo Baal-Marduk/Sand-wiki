@@ -3,7 +3,7 @@ import { SectionBanner } from "@/components/SectionBanner";
 import { ContractsClient } from "./ContractsClient";
 
 export const metadata = {
-  title: "Contracts — Sand Help",
+  title: "Contracts",
 };
 
 export default function ContractsPage() {

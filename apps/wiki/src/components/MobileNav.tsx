@@ -14,9 +14,10 @@ import { Button } from "@/components/ui/button";
 import { SECTIONS } from "@/lib/taxonomy";
 
 // Browse = real data sections; Tools = the standalone tool/link pages (Tech Tree,
-// Builder, Gallery, Data — all `link` kind).
+// Builder, Gallery) plus the Data hub (`tools` kind — links to its hub page here;
+// its sub-pages are one tap away on the hub).
 const BROWSE = SECTIONS.filter((s) => s.kind === "data");
-const TOOLS = SECTIONS.filter((s) => s.kind === "link");
+const TOOLS = SECTIONS.filter((s) => s.kind === "link" || s.kind === "tools");
 
 const groupLabelCls =
   "px-2 pb-1 pt-4 font-display text-xs font-semibold uppercase tracking-wider text-muted-foreground";

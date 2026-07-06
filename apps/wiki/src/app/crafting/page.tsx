@@ -5,7 +5,7 @@ import { entityHref } from "@/lib/entity-links";
 import { CraftingBrowser, type CraftRecipe } from "./CraftingBrowser";
 
 export const metadata = {
-  title: "Crafting — Sand Help",
+  title: "Crafting",
 };
 
 export default async function CraftingPage() {

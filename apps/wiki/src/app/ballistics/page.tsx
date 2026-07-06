@@ -3,7 +3,7 @@ import { SectionBanner } from "@/components/SectionBanner";
 import { BallisticsClient } from "./BallisticsClient";
 
 export const metadata = {
-  title: "Ballistics — Sand Help",
+  title: "Ballistics",
 };
 
 export default function BallisticsPage() {
