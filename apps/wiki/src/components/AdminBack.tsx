@@ -6,7 +6,7 @@ import { ChevronLeft } from "lucide-react";
 export function AdminBack() {
   return (
     <Link
-      href="/admin"
+      href="/data"
       className="inline-flex items-center gap-1 text-sm font-semibold text-muted-foreground transition-colors hover:text-primary"
     >
       <ChevronLeft className="size-4" />
