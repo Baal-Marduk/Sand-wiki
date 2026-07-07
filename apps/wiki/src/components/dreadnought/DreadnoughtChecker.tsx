@@ -45,20 +45,20 @@ export function DreadnoughtChecker() {
   } else if (cities === 9) {
     verdict = {
       tone: "good",
-      title: "Dreadnought is on this map",
-      body: "Nine cities means the Dreadnought has taken one of your location slots. This is a Dreadnought run — commit. It stays buried until the end circle, so head for the map centre and scout for the buried battleship (masts poking out of a rock formation). If you want the Admiral's Quarters, start the key chain early.",
+      title: "A finale is out there — most likely the Dreadnought",
+      body: "Nine cities means a big finale event has taken one of your location slots. It's roughly a 2-in-3 chance that finale is the Dreadnought, and a 1-in-3 chance it's the Ship Graveyard (the worm pit). Either way it's worth committing. If it's the Dreadnought, it stays buried until the end circle — head for the map centre and scout for the buried battleship (masts poking out of a rock formation), and start the key chain early if you want the Admiral's Quarters.",
     };
   } else if (cities === 10) {
     verdict = {
       tone: "warn",
-      title: "No Dreadnought this run",
-      body: "Ten cities means all your location slots are normal towns — no Dreadnought event took a slot. The end circle will be an ordinary finale. If you're specifically hunting the Dreadnought, extract early and requeue rather than waste the run.",
+      title: "Clear run — no finale event",
+      body: "Ten cities means all your location slots are normal towns — no finale event took a slot. The end circle will be an ordinary close, no Dreadnought and no worm pit. If you're specifically hunting the Dreadnought, extract early and requeue rather than waste the run.",
     };
   } else {
     verdict = {
       tone: "neutral",
       title: "Unusual count — recount",
-      body: `Every map has exactly 14 labeled locations: 4 are always Forts, leaving 10 slots. A normal map shows 10 cities; a Dreadnought map shows 9 (the Dreadnought eats one). ${cities} is off the expected pattern — double-check you counted every non-fort location and didn't include the 4 Forts.`,
+      body: `Every map has exactly 14 labeled locations: 4 are always Forts, leaving 10 slots. A clear map shows 10 cities; a finale map shows 9 (the finale event eats one). ${cities} is off the expected pattern — double-check you counted every non-fort location and didn't include the 4 Forts.`,
     };
   }
   const tone = TONE[verdict.tone];
@@ -74,10 +74,12 @@ export function DreadnoughtChecker() {
           <span className="font-display text-[11px] font-semibold uppercase tracking-[0.18em] text-primary">Storm Dive Tool</span>
           <h1 className="mt-2.5 font-display text-3xl font-bold uppercase leading-none tracking-[0.01em] sm:text-4xl">Dreadnought Predictor</h1>
           <p className="mt-4 text-[15px] leading-relaxed text-muted-foreground">
-            The Dreadnought stays hidden until the end circle, so you can&apos;t spot it on the map directly. But it takes up a
-            location slot when it spawns — so you can read it off the map at load by <strong className="text-foreground">counting your cities</strong>.
-            Forts are always 4. A normal map has <strong className="text-foreground">10 cities</strong>; a Dreadnought map has{" "}
-            <strong className="text-foreground">9</strong>, because the Dreadnought ate one of the slots.
+            A finale event (like the Dreadnought) stays hidden until the end circle, so you can&apos;t spot it on the map directly.
+            But it takes up a location slot when it spawns — so you can read it off the map at load by{" "}
+            <strong className="text-foreground">counting your cities</strong>. Forts are always 4. A clear map has{" "}
+            <strong className="text-foreground">10 cities</strong>; a finale map has <strong className="text-foreground">9</strong>,
+            because the finale ate one of the slots. And a 9-city map is <strong className="text-foreground">~67% a Dreadnought</strong>,
+            ~33% the Ship Graveyard (worm pit).
           </p>
         </div>
       </section>
@@ -128,7 +130,7 @@ export function DreadnoughtChecker() {
                 data-on={cities === n}
                 className="rounded-md border border-border px-4 py-1.5 text-sm font-medium text-muted-foreground transition-colors hover:text-foreground data-[on=true]:border-primary/50 data-[on=true]:bg-primary/10 data-[on=true]:text-foreground"
               >
-                {n === 9 ? "9 (Dreadnought)" : "10 (clear)"}
+                {n === 9 ? "9 (finale)" : "10 (clear)"}
               </button>
             ))}
             {cities !== null && (
@@ -156,13 +158,20 @@ export function DreadnoughtChecker() {
           <p className="text-sm leading-relaxed text-foreground/85">
             Every Storm Dive map generates exactly <strong className="text-foreground">14 labeled locations</strong> — that&apos;s a fixed
             number in the game&apos;s world config. <strong className="text-foreground">4 are always Forts</strong>, leaving 10 slots. On a
-            normal map all 10 are cities. When the Dreadnought spawns, it&apos;s an event that occupies one of those slots but isn&apos;t
-            shown as a named city — so you see <strong className="text-foreground">9 cities + 4 forts</strong>, and the missing city is the
-            Dreadnought.
+            clear map all 10 are cities. When a finale event spawns, it occupies one of those slots but isn&apos;t shown as a named city —
+            so you see <strong className="text-foreground">9 cities + 4 forts</strong>, and the missing city is the finale.
+          </p>
+          <p className="mt-2 text-sm leading-relaxed text-foreground/85">
+            Two finale events take a slot like this: the <strong className="text-foreground">Dreadnought</strong> and the{" "}
+            <strong className="text-foreground">Ship Graveyard</strong> (the worm pit). In the game&apos;s finale roster the Dreadnought is
+            weighted twice as heavily as the Ship Graveyard, so a 9-city map works out to roughly{" "}
+            <strong className="text-foreground">two-thirds Dreadnought, one-third worm pit</strong>. Across every Storm Dive run, about{" "}
+            <strong className="text-foreground">29%</strong> are Dreadnought maps.
           </p>
           <p className="mt-2 text-xs text-muted-foreground">
-            Confidence: matches every map we&apos;ve checked so far (crowd-confirmed) and lines up with the game&apos;s own location budget.
-            Treat it as a strong working rule — a single map that breaks 9-vs-10 would revise it.
+            Confidence: the 9-vs-10 split and the finale weights are both read straight from the game files, and every map we&apos;ve
+            checked fits. The 67/33 split assumes the other finale types (Meeresauge, Venedig, Archipel, Deus Ex) show up as 10-city maps —
+            which all data so far supports.
           </p>
         </div>
 
