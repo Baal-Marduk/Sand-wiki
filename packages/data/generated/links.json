@@ -12409,8 +12409,8 @@
     "amount": null,
     "tier": "Tier 1",
     "value1": "100",
-    "value2": "15-40",
-    "value3": "20-60",
+    "value2": "10-30",
+    "value3": "15-40",
     "sortOrder": 3,
     "buyGroup": null
   },
@@ -12474,8 +12474,8 @@
     "amount": null,
     "tier": "Tier 2",
     "value1": "100",
-    "value2": "20-45",
-    "value3": "20-60",
+    "value2": "10-30",
+    "value3": "15-40",
     "sortOrder": 8,
     "buyGroup": null
   },
@@ -12539,8 +12539,8 @@
     "amount": null,
     "tier": "Tier 3",
     "value1": "100",
-    "value2": "25-50",
-    "value3": "5-60",
+    "value2": "10-30",
+    "value3": "15-40",
     "sortOrder": 13,
     "buyGroup": null
   },
@@ -13996,7 +13996,7 @@
     "tier": "Drops",
     "value1": "25.6",
     "value2": "3-7",
-    "value3": "8-15",
+    "value3": "10-12",
     "sortOrder": 4,
     "buyGroup": null
   },
@@ -14008,8 +14008,8 @@
     "amount": null,
     "tier": "Drops",
     "value1": "20.5",
-    "value2": "3-7",
-    "value3": "10-15",
+    "value2": "5-7",
+    "value3": "10-12",
     "sortOrder": 5,
     "buyGroup": null
   },
@@ -14022,7 +14022,7 @@
     "tier": "Drops",
     "value1": "20.5",
     "value2": "15-25",
-    "value3": "25-35",
+    "value3": "25-45",
     "sortOrder": 6,
     "buyGroup": null
   },
@@ -14061,7 +14061,7 @@
     "tier": "Drops",
     "value1": "12.8",
     "value2": "15-25",
-    "value3": "25-35",
+    "value3": "25-45",
     "sortOrder": 9,
     "buyGroup": null
   },
@@ -14073,8 +14073,8 @@
     "amount": null,
     "tier": "Drops",
     "value1": "7.7",
-    "value2": "4-7",
-    "value3": "8-10",
+    "value2": "5-7",
+    "value3": "10-12",
     "sortOrder": 10,
     "buyGroup": null
   },

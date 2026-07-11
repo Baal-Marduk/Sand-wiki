@@ -2,12 +2,508 @@
   "_doc": "Entities whose icon is absent (null) or points at a file that does not exist on disk — TODO for the next datamining/extraction pass. By kind: items -> extract_icons.py must emit /icons/<sprite> (a 'file-missing' means the data references a sprite filename that was never produced; check the icon mapping/filename). trampler-part -> render_part_thumbs.py / export_part_meshes_v3.py (/tramplers). By design (reported under byDesign, NOT needsExtraction): tech-node entities have no own icon (the /tech page renders the unlock's glyph); environment locations (landmarks/game-modes) have NO icon in the game files at all, so they are never extractable (loot containers, which do have art, are unaffected).",
   "summary": {
     "trampler-part:null": 2,
-    "item:null": 1
+    "item:null": 63
   },
   "needsExtraction": [
     {
+      "slug": "40-mm-autocannon-shells",
+      "name": "40 mm Autocannon Shells",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "70-mm-canister-shots",
+      "name": "70 mm Canister Shots",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "80-mm-cannon-shells",
+      "name": "80 mm Cannon Shells",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "90-mm-grapple-harpoon",
+      "name": "90 mm Grapple-Harpoon",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "ammo-crate",
+      "name": "Ammo crate",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "autopistol-test",
+      "name": "Autopistol (Test)",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "box",
+      "name": "Box",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "crystal-crate",
+      "name": "Crystal crate",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "debug-resource-box-1",
+      "name": "Debug resource box #1",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "debug-resource-box-2",
+      "name": "Debug resource box #2",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-keyislanddoorblack",
+      "name": "game_keyIslandDoorBlack",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-keyislanddoorblue",
+      "name": "game_keyIslandDoorBlue",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-keyislanddoorfort",
+      "name": "game_keyIslandDoorFort",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-keyislanddoorred",
+      "name": "game_keyIslandDoorRed",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-keyislanddoorwhite",
+      "name": "game_keyIslandDoorWhite",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedautoturrett1container",
+      "name": "game_packedAutoTurretT1Container",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedautoturrett2container",
+      "name": "game_packedAutoTurretT2Container",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedautoturrett3container",
+      "name": "game_packedAutoTurretT3Container",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedautoturrett4accelerating-container",
+      "name": "game_packedAutoTurretT4Accelerating_Container",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedshotgunturrett1container",
+      "name": "game_packedShotgunTurretT1Container",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedshotgunturrett2container",
+      "name": "game_packedShotgunTurretT2Container",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedshotgunturrett3container",
+      "name": "game_packedShotgunTurretT3Container",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedshotgunturrett4doublebarrel-container",
+      "name": "game_packedShotgunTurretT4DoubleBarrel_Container",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedturrett1container",
+      "name": "game_packedTurretT1Container",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedturrett2container",
+      "name": "game_packedTurretT2Container",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedturrett3container",
+      "name": "game_packedTurretT3Container",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedturrett4-doublebarrelcontainer",
+      "name": "game_packedTurretT4_DoubleBarrelContainer",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "game-packedturrett4-railguncontainer",
+      "name": "game_packedTurretT4_RailGunContainer",
+      "kind": "item",
+      "category": "weapons",
+      "icon": null,
+      "issue": "null"
+    },
+    {
       "slug": "ironclad-s-cargo-box",
       "name": "Ironclad's Cargo Box",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "kf-mk-9000-unstable-energy-rod",
+      "name": "KF Mk 9000 Unstable Energy Rod",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "large-backpack",
+      "name": "Large Backpack",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-10",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-11",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-12",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-13",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-14",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-15",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-16",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-17",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-18",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-19",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-2",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-20",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-21",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-22",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-23",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-24",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-25",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-26",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-3",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-4",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-5",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-6",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-7",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-8",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "note-9",
+      "name": "Note",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "nz-mk3-impure-energy-rod",
+      "name": "NZ Mk3 Impure Energy Rod",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "sgow-sw-52-body-armor-decommissioned",
+      "name": "SGOW SW.52 Body Armor (decommissioned)",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "sgow-sw-52-body-armor-decommissioned-2",
+      "name": "SGOW SW.52 Body Armor (decommissioned)",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "small-backpack",
+      "name": "Small Backpack",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "spark-contact-emp-grenade",
+      "name": "Spark Contact EMP Grenade",
+      "kind": "item",
+      "category": "misc",
+      "icon": null,
+      "issue": "null"
+    },
+    {
+      "slug": "wok-bomb-2",
+      "name": "Wok Bomb",
       "kind": "item",
       "category": "misc",
       "icon": null,
