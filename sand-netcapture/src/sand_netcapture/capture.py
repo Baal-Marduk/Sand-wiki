@@ -44,3 +44,29 @@ class CaptureAddon:
             body=flow.response.raw_content or b"",
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
+
+
+# --- mitmproxy module-level entry points (live session only) ---
+_ADDON: CaptureAddon | None = None
+
+
+def load(loader):  # pragma: no cover - live session
+    loader.add_option("captures_dir", str, "out/captures", "capture output dir")
+    loader.add_option("host_allowlist", str, "", "comma-separated host substrings")
+    loader.add_option("expected_endpoints", str, "", "comma-separated expected keys")
+
+
+def running():  # pragma: no cover - live session
+    from mitmproxy import ctx
+
+    global _ADDON
+    _ADDON = CaptureAddon(
+        captures_dir=Path(ctx.options.captures_dir),
+        host_allowlist=ctx.options.host_allowlist.split(","),
+        expected_endpoints=ctx.options.expected_endpoints.split(","),
+    )
+
+
+def response(flow):  # pragma: no cover - live session
+    if _ADDON is not None:
+        _ADDON.response(flow)
