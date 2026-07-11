@@ -4,8 +4,12 @@ from urllib.parse import urlparse
 
 
 def host_allowed(host: str, allowlist: list[str]) -> bool:
-    """True if host contains any allowlisted substring."""
-    return any(fragment in host for fragment in allowlist)
+    """True if host contains any allowlisted substring.
+
+    Empty fragments are ignored: an empty string would match every host, which would
+    silently capture all traffic and break the observe-only scoping.
+    """
+    return any(fragment and fragment in host for fragment in allowlist)
 
 
 def derive_endpoint_key(url: str) -> str:

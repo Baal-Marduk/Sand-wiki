@@ -34,9 +34,10 @@ def run_capture(*, config_path: Path) -> None:  # pragma: no cover - live sessio
 
     cfg = load_config(config_path)
     addon_path = Path(__file__).with_name("capture.py")
-    prior = enable_capture_proxy(cfg.proxy_port)
+    prior = None
     proc = None
     try:
+        prior = enable_capture_proxy(cfg.proxy_port)
         proc = subprocess.Popen([
             sys.executable, "-m", "mitmproxy.tools.main", "mitmdump",
             "-p", str(cfg.proxy_port), "-s", str(addon_path),
@@ -57,8 +58,13 @@ def run_capture(*, config_path: Path) -> None:  # pragma: no cover - live sessio
     finally:
         if proc is not None:
             proc.terminate()
-        restore_system_proxy(prior)
-        print("\nSystem proxy restored.")
+            try:
+                proc.wait(timeout=5)
+            except subprocess.TimeoutExpired:
+                proc.kill()
+        if prior is not None:
+            restore_system_proxy(prior)
+            print("\nSystem proxy restored.")
 
 
 def main(argv: list[str] | None = None) -> None:

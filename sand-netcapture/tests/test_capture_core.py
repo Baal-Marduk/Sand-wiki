@@ -16,6 +16,12 @@ def test_host_allowed_substring_match():
     assert host_allowed("evil.com", allow) is False
 
 
+def test_host_allowed_ignores_empty_fragments():
+    # An empty fragment must NOT match every host (would capture all traffic).
+    assert host_allowed("anything.com", [""]) is False
+    assert host_allowed("anything.com", []) is False
+
+
 def test_build_record_captures_metadata():
     rec = build_record(
         key="GetResearchTree",
