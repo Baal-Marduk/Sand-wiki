@@ -52,8 +52,9 @@ export interface TechNodeStats {
 export interface EnemyStats {
   /** creature = on-foot mob (Upior); enemy-trampler = enemy walker (Ironclad). */
   type: "creature" | "enemy-trampler";
-  /** One row per in-game variant, e.g. Upior Melee/Ranged or Ironclad Buckler/Falchion. */
-  variants: { name: string; hp: number }[];
+  /** One row per in-game variant, e.g. Upior Melee/Ranged or Ironclad Buckler/Falchion.
+   *  hp is null when the datamine couldn't read the variant's HealthDataComponent. */
+  variants: { name: string; hp: number | null }[];
 }
 
 export interface LocalizedText {

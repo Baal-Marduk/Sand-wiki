@@ -1,6 +1,10 @@
 """Extract per-enemy gameplay stats (HP, niceName, type) from the mob_* EPB prefabs.
 Odin-decodes each allow-listed GameObject's components. Output: extracted/json/enemy_stats.json
 Run from packages/datamine/ :  python scripts/extract_enemy_stats.py
+
+Only `hp` is consumed downstream (by build_enemies.py). `niceName`, `type`, and `components`
+are informational — they help author transform/overrides/enemy-overrides.json, where the
+authoritative name/type/variant mapping actually lives (the override wins).
 """
 import UnityPy, json, sys, os
 sys.path.insert(0, os.path.dirname(__file__))
