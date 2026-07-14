@@ -183,16 +183,20 @@ kind and leaves no place for HP / type. Rejected.
 
 ## Known risks
 
-- **Ironclad loot-variant labels:** loot tables are keyed by caliber (40/70/80mm) +
-  packed-turret + guaranteed-Alloy, with no clean caliber → hull
-  (Buckler/Falchion/Tophelm) mapping. Loot rows are labeled by loot-group
-  (e.g. "40mm cargo", "Guaranteed"), overridable via `enemy-overrides.json`,
-  rather than forcing a false hull mapping. Ironclad HP variants (Buckler 5000 /
-  Falchion 4000 / Tophelm 4000) remain per-hull in the stats table.
+- **Ironclad loot-variant labels:** the `build_loot_sources.py` stage already
+  collapses the caliber tables (40/70/80mm + packed-turret) into a single merged
+  "Ironclad Loot Box" pool, so per-caliber (let alone per-hull
+  Buckler/Falchion/Tophelm) attribution is not available downstream. Ironclad loot
+  is therefore shown as one merged group (labeled "Cargo", overridable via
+  `enemy-overrides.json`) plus a "Guaranteed" group for the mandatory Alloy Steel —
+  not a false per-hull mapping. Ironclad HP variants (Buckler 5000 / Falchion 4000 /
+  Tophelm 4000) still appear per-hull in the stats table (HP comes from the EPBs
+  directly, independent of loot).
 - **Name-key mismatch:** loc stem `game_ghoulNavAgent_name` vs EPB `mob_ghoul`; the
   EPB `NiceNameDataComponent` is the bridge, with an override fallback.
-- **First-landing slug guard:** as with the icon-gate change, the first transform
-  run that introduces the new enemy slugs may require `--allow-slug-changes`.
+- **First-landing slug guard:** the new enemy slugs are *additions only* (nothing is
+  removed), so the run.ts slug-removal guard is not tripped — unlike the icon-gate
+  change, the first landing needs **no** `--allow-slug-changes`.
 - **No `dump.cs`:** class/field names were recovered from
   `global-metadata.dat` strings + live Odin decoding; field names used in the
   extractor should be re-verified against a live decode when implementing.
