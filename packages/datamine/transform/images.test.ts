@@ -38,3 +38,14 @@ describe("classifyImages", () => {
     expect(r.needsExtraction.map((m) => m.slug)).not.toContain("a-location");
   });
 });
+
+describe("images: enemy icon exemption", () => {
+  it("counts null-icon enemies under byDesign, not needsExtraction", () => {
+    const report = classifyImages(
+      [ent("upior", "enemy", null)],
+      () => false,
+    );
+    expect(report.needsExtraction).toHaveLength(0);
+    expect(report.byDesign.enemyNoIcon).toBe(1);
+  });
+});
