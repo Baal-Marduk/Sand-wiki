@@ -8,7 +8,7 @@ import { rarityColor } from "@/lib/rarity";
 import { categoryLabel } from "@/lib/taxonomy";
 import { searchSuggestions, type SearchIndex, type Suggestions } from "@/lib/search";
 
-const EMPTY: SearchIndex = { items: [], places: [] };
+const EMPTY: SearchIndex = { items: [], places: [], enemies: [] };
 
 /** Bold the first case-insensitive occurrence of the query inside a label.
  *  The full label text is preserved so the option's accessible name is unchanged. */
@@ -36,7 +36,7 @@ function loadIndex(): Promise<SearchIndex> {
   return indexPromise;
 }
 
-interface Flat { kind: "category" | "item" | "place"; slug: string; label: string; category: string; icon?: string | null; rarity?: string | null }
+interface Flat { kind: "category" | "item" | "place" | "enemy"; slug: string; label: string; category: string; icon?: string | null; rarity?: string | null }
 interface Group { header: string; options: Flat[] }
 
 /** Ordered dropdown groups, each included only when it has matches:
@@ -56,6 +56,9 @@ function buildGroups(s: Suggestions): Group[] {
   const land = s.places.filter((p) => p.category === "landmarks");
   if (land.length) {
     groups.push({ header: "Landmarks", options: land.map((p) => ({ kind: "place", slug: p.slug, label: p.name, category: p.category })) });
+  }
+  if (s.enemies.length) {
+    groups.push({ header: "Enemies", options: s.enemies.map((e) => ({ kind: "enemy", slug: e.slug, label: e.name, category: e.category })) });
   }
   return groups;
 }
@@ -82,14 +85,14 @@ export function SearchBox({ variant }: { variant: "navbar" | "hero" }) {
   if (variant === "navbar" && pathname === "/") return null;
 
   const suggestions = query.trim()
-    ? searchSuggestions(query, index.items, index.places)
-    : { categories: [], items: [], places: [] };
+    ? searchSuggestions(query, index.items, index.places, index.enemies)
+    : { categories: [], items: [], places: [], enemies: [] };
   const groups = buildGroups(suggestions);
   const options = groups.flatMap((g) => g.options);
   const showList = open && options.length > 0;
 
   function ensureIndex() {
-    if (index.items.length === 0 && index.places.length === 0) loadIndex().then(setIndex);
+    if (index.items.length === 0 && index.places.length === 0 && index.enemies.length === 0) loadIndex().then(setIndex);
   }
 
   function navigate(f: Flat) {
@@ -98,6 +101,7 @@ export function SearchBox({ variant }: { variant: "navbar" | "hero" }) {
     setQuery("");
     if (f.kind === "category") router.push(`/items?category=${f.slug}`);
     else if (f.kind === "place") router.push(`/environment/${f.slug}`);
+    else if (f.kind === "enemy") router.push(`/enemies/${f.slug}`);
     else router.push(`/items/${f.slug}`);
   }
 

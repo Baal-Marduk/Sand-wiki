@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { searchSuggestions, type IndexItem, type IndexPlace } from "./search";
+import { searchSuggestions, type IndexItem, type IndexPlace, type IndexEnemy } from "./search";
 
 const index: IndexItem[] = [
   { slug: "sniper-rifle", name: "1874s Petros Sniper Rifle", category: "weapons", derivedName: "Sniper Rifle" },
@@ -13,10 +13,15 @@ const places: IndexPlace[] = [
   { slug: "dreadnaught", name: "Dreadnaught", category: "landmarks" },
 ];
 
+const enemies: IndexEnemy[] = [
+  { slug: "ironclad", name: "Ironclad", category: "enemy-tramplers" },
+  { slug: "sand-crawler", name: "Sand Crawler", category: "creatures" },
+];
+
 describe("searchSuggestions", () => {
   it("returns nothing for an empty/whitespace query", () => {
-    expect(searchSuggestions("", index)).toEqual({ categories: [], items: [], places: [] });
-    expect(searchSuggestions("   ", index)).toEqual({ categories: [], items: [], places: [] });
+    expect(searchSuggestions("", index)).toEqual({ categories: [], items: [], places: [], enemies: [] });
+    expect(searchSuggestions("   ", index)).toEqual({ categories: [], items: [], places: [], enemies: [] });
   });
 
   it("matches item names case-insensitively", () => {
@@ -74,5 +79,21 @@ describe("searchSuggestions", () => {
       slug: `crate-${n}`, name: `Crate ${n}`, category: "loot-containers",
     }));
     expect(searchSuggestions("crate", index, many).places).toHaveLength(6);
+  });
+
+  it("matches enemies by name and returns them in the enemies field", () => {
+    const r = searchSuggestions("iron", index, [], enemies);
+    expect(r.enemies.map((e) => e.slug)).toContain("ironclad");
+  });
+
+  it("defaults enemies to empty when not provided", () => {
+    expect(searchSuggestions("iron", index).enemies).toEqual([]);
+  });
+
+  it("caps enemy results at 6", () => {
+    const many: IndexEnemy[] = Array.from({ length: 20 }, (_, n) => ({
+      slug: `enemy-${n}`, name: `Enemy ${n}`, category: "creatures",
+    }));
+    expect(searchSuggestions("enemy", index, [], many).enemies).toHaveLength(6);
   });
 });

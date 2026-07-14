@@ -29,9 +29,9 @@ export default async function EnemiesPage({ searchParams }: { searchParams: Sear
       return {
         icon: c.slug,
         title: c.label,
-        wip: false,
-        href: `/enemies?category=${c.slug}`,
-        meta: n > 0 ? `${n} entr${n === 1 ? "y" : "ies"}` : "Coming soon",
+        wip: c.wip,
+        href: c.wip ? undefined : `/enemies?category=${c.slug}`,
+        meta: c.wip ? undefined : n > 0 ? `${n} entr${n === 1 ? "y" : "ies"}` : "Coming soon",
       };
     });
     return (
