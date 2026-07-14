@@ -34,8 +34,12 @@ def test_build_enemies(tmp_path):
                 "storm":  [{"item": "item_weaponParts", "pct": 80.0, "min": 5, "max": 10}]}},
          "mandatory": [{"item": "item_alloySteel", "min": 1, "max": 1}]},
     ])
-    _write(tmp_path, "transform/overrides/enemy-overrides.json",
-           json.loads((HERE.parent / "transform" / "overrides" / "enemy-overrides.json").read_text(encoding="utf-8")))
+    _ov = json.loads((HERE.parent / "transform" / "overrides" / "enemy-overrides.json").read_text(encoding="utf-8"))
+    # Authored drop chance for one extra table (mechanism for game-code-sourced rates).
+    for _e in _ov["enemies"]:
+        if _e["id"] == "ironclad":
+            _e["extraTableChances"] = {"ironcladLoot_repairKitEntity_set": 12.5}
+    _write(tmp_path, "transform/overrides/enemy-overrides.json", _ov)
     # Orphaned extra tables (repair kit + a packed turret) the source can't reach.
     _write(tmp_path, "extracted/json/loottables_voyage.json", {"_lootTables": {"$items": [
         {"lootTableId": "ironcladLoot_repairKitEntity_set", "items": {"$items": [
@@ -74,5 +78,6 @@ def test_build_enemies(tmp_path):
     # cargo item (computed %), alloy folded in at 100%, and orphaned extraTables at unknown chance.
     assert by_slug["weapon-parts"]["chance"] == 80.0
     assert by_slug["resource-alloy-steel"]["chance"] == 100.0
-    assert by_slug["repair-kit"]["chance"] is None
+    # authored extraTableChances shows for the repair kit; unauthored artillery stays unknown.
+    assert by_slug["repair-kit"]["chance"] == 12.5
     assert by_slug["game-packed-turret-t2-container"]["chance"] is None

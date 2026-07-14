@@ -96,12 +96,16 @@ for edef in ov["enemies"]:
                      "voyage": rng, "storm": rng, "resolved": ok})
 
     # extraTables: orphaned on-death drop tables the source can't reach (repair kit, artillery).
-    # Read straight from the loot tables; no roll weights exist, so chance is null (unknown).
+    # Read straight from the loot tables. Their drop odds aren't in the game bundles (hard-coded
+    # in compiled C#), so chance is null UNLESS authored in extraTableChances (table id -> %,
+    # e.g. recovered from the assembly or community-sourced).
+    extra_chances = edef.get("extraTableChances", {})
     for tid in edef.get("extraTables", []):
+        chance = extra_chances.get(tid)
         for it in loot_tables.get(tid, []):
             slug, name, ok = resolve(it["item"])
             rng = fmt_range(it["min"], it["max"])
-            loot.append({"group": mand_group, "slug": slug, "name": name, "chance": None,
+            loot.append({"group": mand_group, "slug": slug, "name": name, "chance": chance,
                          "voyage": rng, "storm": rng, "resolved": ok})
 
     # Genuinely dropped = no slug at all (no id/name/alias match). A row with a slug but
