@@ -1,5 +1,13 @@
 {
   "ironclad-s-cargo-box": { "disabled": true },
+  "artefactcrystal": { "disabled": true },
+  "repairkit": { "disabled": true },
+  "old-jacket-2": { "disabled": true },
+  "old-jackett3": { "disabled": true },
+  "m1866-9-pioneer-breechloader": { "disabled": true },
+  "game-keyislanddoorgreen": { "disabled": true },
+  "game-keylockedbox": { "disabled": true },
+  "v1-repair-patch": { "disabled": true },
   "game-alarm-lock-box-black": { "name": "Box with Radio Beacon (Black)" },
   "game-alarm-lock-box-green": { "name": "Box with Radio Beacon (Green)" },
   "game-alarm-lock-box-yellow": { "name": "Box with Radio Beacon (Yellow)" }

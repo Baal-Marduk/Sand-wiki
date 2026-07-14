@@ -15824,7 +15824,7 @@
     "imageAlt": null,
     "derivedName": null,
     "sourceUrl": null,
-    "disabled": false,
+    "disabled": true,
     "itemStats": null,
     "tramplerStats": null,
     "techNodeStats": null
@@ -15841,7 +15841,7 @@
     "imageAlt": null,
     "derivedName": null,
     "sourceUrl": null,
-    "disabled": false,
+    "disabled": true,
     "itemStats": {
       "storageStack": null,
       "workbenchTier": null,
@@ -15882,7 +15882,7 @@
     "imageAlt": null,
     "derivedName": null,
     "sourceUrl": null,
-    "disabled": false,
+    "disabled": true,
     "itemStats": {
       "storageStack": null,
       "workbenchTier": null,
@@ -15923,7 +15923,7 @@
     "imageAlt": null,
     "derivedName": null,
     "sourceUrl": null,
-    "disabled": false,
+    "disabled": true,
     "itemStats": null,
     "tramplerStats": null,
     "techNodeStats": null
@@ -15940,7 +15940,7 @@
     "imageAlt": null,
     "derivedName": null,
     "sourceUrl": null,
-    "disabled": false,
+    "disabled": true,
     "itemStats": null,
     "tramplerStats": null,
     "techNodeStats": null
@@ -15957,7 +15957,7 @@
     "imageAlt": null,
     "derivedName": null,
     "sourceUrl": null,
-    "disabled": false,
+    "disabled": true,
     "itemStats": null,
     "tramplerStats": null,
     "techNodeStats": null
@@ -15974,7 +15974,7 @@
     "imageAlt": null,
     "derivedName": null,
     "sourceUrl": null,
-    "disabled": false,
+    "disabled": true,
     "itemStats": null,
     "tramplerStats": null,
     "techNodeStats": null,
@@ -16029,7 +16029,7 @@
     "imageAlt": null,
     "derivedName": null,
     "sourceUrl": null,
-    "disabled": false,
+    "disabled": true,
     "itemStats": {
       "storageStack": null,
       "workbenchTier": null,
