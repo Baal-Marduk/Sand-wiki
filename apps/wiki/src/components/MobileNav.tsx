@@ -4,6 +4,7 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { SearchBox } from "@/components/SearchBox";
+import { SectionIcon } from "@/components/SectionIcon";
 import {
   Sheet,
   SheetContent,
@@ -40,8 +41,9 @@ export function MobileNav() {
       key={slug}
       href={href}
       aria-current={isActive(href) ? "page" : undefined}
-      className={itemCls(isActive(href))}
+      className={`flex items-center gap-2.5 ${itemCls(isActive(href))}`}
     >
+      <SectionIcon slug={slug} className="size-4 shrink-0" />
       {label}
     </Link>
   );

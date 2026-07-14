@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { SECTIONS, isWipSection } from "@/lib/taxonomy";
 import { CategoryIcon } from "@/components/CategoryIcon";
+import { SectionIcon } from "@/components/SectionIcon";
 import { WipBadge } from "@/components/WipBadge";
 import {
   NavigationMenu,
@@ -18,7 +19,8 @@ import {
 // the auto-appended chevron rotates on open.
 const triggerCls =
   "nav-link inline-flex h-auto cursor-pointer items-center gap-1 rounded-none bg-transparent px-2 py-1 text-sm font-semibold text-foreground hover:bg-transparent hover:text-primary focus:bg-transparent focus:text-primary data-[state=open]:bg-transparent data-[state=open]:text-primary data-[state=open]:hover:bg-transparent data-[state=open]:focus:bg-transparent data-[state=open]:focus:text-primary";
-const navItemCls = "nav-link rounded px-2 py-1 text-sm font-semibold text-foreground hover:text-primary";
+const navItemCls =
+  "nav-link inline-flex items-center gap-1.5 rounded px-2 py-1 text-sm font-semibold text-foreground hover:text-primary";
 const disabledNavCls =
   "inline-flex cursor-not-allowed items-center gap-1.5 px-2 py-1 text-sm font-semibold text-muted-foreground";
 // Dropdown rows (.menu-item): icon + label, light warm hover wash + primary text.
@@ -60,6 +62,7 @@ export function MainNav() {
                   className={`${triggerCls}${isActive(`/${section.slug}`) ? " nav-tick text-primary" : ""}`}
                   onClick={() => router.push(`/${section.slug}`)}
                 >
+                  <SectionIcon slug={section.slug} className="size-4 shrink-0" />
                   {section.label}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className={contentCls}>
@@ -105,6 +108,7 @@ export function MainNav() {
                 href={href}
                 className={`${navItemCls}${isActive(href) ? " nav-tick text-primary" : ""}`}
               >
+                <SectionIcon slug={section.slug} className="size-4 shrink-0" />
                 {section.label}
               </Link>
             </NavigationMenuItem>
