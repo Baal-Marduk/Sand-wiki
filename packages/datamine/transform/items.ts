@@ -71,3 +71,16 @@ export function newItemEntity(slug: string, it: SekItem): Entity {
     itemStats: null, tramplerStats: null, techNodeStats: null,
   };
 }
+
+/** Drop item-kind entities that have no icon. Item icons come from sprite-match against
+ *  shipped game art, so a null icon means the item has no in-game sprite yet — i.e. it is
+ *  not released / not player-facing (internal notes, debug/test boxes, packed-turret
+ *  containers, and genuinely-unreleased items). Scoped strictly to kind "item":
+ *  tech-node / environment / trampler-part legitimately have null icons and are kept.
+ *  Because the transform baseline is the previous artifact, this both evicts already-shipped
+ *  no-icon pages and blocks new ones; an item reappears automatically once it ships with a
+ *  real icon. To rescue a released item that lacks a sprite, add it to overrides/icon-map.json
+ *  (applied before this prune). */
+export function pruneIconlessItems(entities: Entity[]): Entity[] {
+  return entities.filter((e) => e.kind !== "item" || !!e.icon);
+}
