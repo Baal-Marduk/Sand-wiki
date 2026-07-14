@@ -65,7 +65,7 @@ export interface LocalizedText {
 export interface Entity {
   id: string;
   slug: string;
-  kind: string; // "item" | "environment" | "trampler-part" | "tech-node" | "enemy"
+  kind: string; // "item" | "environment" | "trampler-part" | "tech-node" (NPCs are environment + enemyStats)
   name: string;
   description: string | null;
   category: string;

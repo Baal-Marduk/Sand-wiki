@@ -16099,7 +16099,7 @@
   {
     "id": "upior",
     "slug": "upior",
-    "kind": "enemy",
+    "kind": "environment",
     "name": "Upiór",
     "description": null,
     "category": "creatures",
@@ -16133,7 +16133,7 @@
   {
     "id": "ironclad",
     "slug": "ironclad",
-    "kind": "enemy",
+    "kind": "environment",
     "name": "Ironclad",
     "description": null,
     "category": "enemy-tramplers",

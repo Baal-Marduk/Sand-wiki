@@ -18,18 +18,18 @@ const baseItem = (slug: string): Entity => ({
 });
 
 describe("enemy merge", () => {
-  it("appends a new enemy entity with enemyStats and mapped category", () => {
+  it("appends an NPC as an environment entity with enemyStats and mapped category", () => {
     const out = mergeEnemies([baseItem("pistol-ammo")], [upior]);
     expect(out).toHaveLength(2);
     const e = out.find((x) => x.slug === "upior")!;
-    expect(e.kind).toBe("enemy");
+    expect(e.kind).toBe("environment");
     expect(e.category).toBe("creatures");
     expect(e.icon).toBeNull();
     expect(e.enemyStats).toEqual({ type: "creature", variants: [{ name: "Ranged", hp: 100 }, { name: "Melee", hp: 100 }] });
   });
 
-  it("upserts (refreshes) an existing enemy instead of duplicating it", () => {
-    const stale: Entity = { ...baseItem("upior"), kind: "enemy", name: "OLD", enemyStats: { type: "creature", variants: [] } };
+  it("upserts (refreshes) an existing NPC instead of duplicating it", () => {
+    const stale: Entity = { ...baseItem("upior"), kind: "environment", name: "OLD", enemyStats: { type: "creature", variants: [] } };
     const out = mergeEnemies([stale, baseItem("pistol-ammo")], [upior]);
     expect(out.filter((x) => x.slug === "upior")).toHaveLength(1);
     expect(out.find((x) => x.slug === "upior")!.name).toBe("Upiór");

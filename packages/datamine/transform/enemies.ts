@@ -25,9 +25,12 @@ const CATEGORY: Record<EnemyData["type"], string> = {
   "enemy-trampler": "enemy-tramplers",
 };
 
+// NPCs are modelled as environment entities (kind "environment") in the creatures /
+// enemy-tramplers categories, so they flow through the Environment listing, detail route,
+// search, and sitemap unchanged. Their HP lives on enemyStats (rendered by the env detail page).
 function toEntity(e: EnemyData): Entity {
   return {
-    id: e.id, slug: e.slug, kind: "enemy", name: e.name,
+    id: e.id, slug: e.slug, kind: "environment", name: e.name,
     description: null, category: CATEGORY[e.type], rarity: null,
     icon: e.icon, imageAlt: null, derivedName: null, sourceUrl: null, disabled: false,
     itemStats: null, tramplerStats: null, techNodeStats: null,
@@ -35,7 +38,7 @@ function toEntity(e: EnemyData): Entity {
   };
 }
 
-/** Upsert enemy entities over the baseline: refresh any existing slug in place,
+/** Upsert enemy (NPC) entities over the baseline: refresh any existing slug in place,
  *  append the rest. Idempotent across re-runs (baseline = previous artifact). */
 export function mergeEnemies(entities: Entity[], enemies: EnemyData[]): Entity[] {
   const bySlug = new Map(enemies.map((e) => [e.slug, toEntity(e)]));

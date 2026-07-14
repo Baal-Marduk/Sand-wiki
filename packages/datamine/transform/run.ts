@@ -146,7 +146,7 @@ if (danglingRefs.length) {
 // --- images: report entities whose icon is null or whose file is missing on disk ---
 const images = classifyImages(withEnemies, (icon) => existsSync(resolve(PUBLIC, `.${icon}`)));
 console.log(`missing images: ${images.needsExtraction.length} need extraction ` +
-  `(by design: ${images.byDesign.techNodeNoIcon} tech-nodes, ${images.byDesign.environmentNoIcon} locations, ${images.byDesign.enemyNoIcon} enemies)`);
+  `(by design: ${images.byDesign.techNodeNoIcon} tech-nodes, ${images.byDesign.environmentNoIcon} locations/NPCs)`);
 
 // recipes + non-loot links + parts/tech/locations entities pass through from baseline.
 writeArtifact(withEnemies, recipeMerge.recipes, links);
