@@ -183,36 +183,6 @@ export async function envCategoryCounts(): Promise<Record<string, number>> {
   return data.categoryCounts("environment");
 }
 
-/** Enemy NPC entities (Upior, Ironclad), optionally filtered by category. */
-export async function listEnemies(category?: string, isAdmin = false) {
-  const rows = category
-    ? data.listByCategory("enemy", category)
-    : data.listByKind("enemy");
-  return visible(rows, isAdmin).slice().sort((a, b) => a.name.localeCompare(b.name));
-}
-
-export const getEnemyBySlug = cache(async (slug: string) => {
-  const entity = data.getEntity(slug);
-  if (entity === null || entity.kind !== "enemy") return null;
-
-  const allLinks = data.outgoingLinks(slug, ["loot"])
-    .filter((l) => l.targetSlug === null || data.isEntityEnabled(l.targetSlug));
-  const outgoingLinks = allLinks.map((l) => {
-    const t = l.targetSlug ? data.getEntity(l.targetSlug) : null;
-    return {
-      ...l,
-      target: t ? { slug: t.slug, kind: t.kind, name: t.name, icon: t.icon, rarity: t.rarity, category: t.category } : null,
-    };
-  });
-
-  return { ...entity, outgoingLinks };
-});
-
-/** Count of enemy entities per category — for the Enemies landing. */
-export async function enemyCategoryCounts(): Promise<Record<string, number>> {
-  return data.categoryCounts("enemy");
-}
-
 /** Trampler parts, optionally filtered by functional category. List cards read
  *  dimensions/research from the tramplerStats extension, so it is included. */
 export async function listTramplerParts(category?: string, isAdmin = false) {

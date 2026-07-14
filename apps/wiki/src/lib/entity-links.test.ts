@@ -67,11 +67,11 @@ describe("groupLootByTier ordering", () => {
   });
 });
 
-describe("entityHref enemy case", () => {
-  it("maps enemy kind to /enemies/<slug>", () => {
-    expect(entityHref("enemy", "upior")).toBe("/enemies/upior");
+describe("entityHref", () => {
+  it("maps NPCs (environment kind) to /environment/<slug>", () => {
+    expect(entityHref("environment", "upior")).toBe("/environment/upior");
   });
-  it("still returns null for unknown kinds", () => {
+  it("returns null for unknown kinds", () => {
     expect(entityHref("mystery", "x")).toBeNull();
   });
 });

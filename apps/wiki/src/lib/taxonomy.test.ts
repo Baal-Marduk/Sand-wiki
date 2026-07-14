@@ -7,13 +7,12 @@ import {
   isWeaponClassCategory, WEAPON_CLASS_CATEGORIES,
   isWipSection,
   FACTIONS, isFaction,
-  isEnemyCategory,
 } from "./taxonomy";
 
 describe("taxonomy", () => {
   it("exposes the top-level sections in order", () => {
     expect(SECTIONS.map((s) => s.slug)).toEqual([
-      "items", "environment", "tramplers", "enemies", "tech", "builder", "gallery", "admin",
+      "items", "environment", "tramplers", "tech", "builder", "gallery", "admin",
     ]);
   });
 
@@ -53,11 +52,11 @@ describe("taxonomy", () => {
     expect(getSection("missing")).toBeUndefined();
   });
 
-  it("environment is a data section with the four env categories", () => {
+  it("environment is a data section with its env categories (incl. NPCs)", () => {
     const env = getSection("environment");
     expect(env?.kind).toBe("data");
     expect(env?.categories.map((c) => c.slug)).toEqual([
-      "loot-containers", "landmarks", "game-modes", "npcs",
+      "loot-containers", "landmarks", "game-modes", "creatures", "enemy-tramplers",
     ]);
   });
 
@@ -212,13 +211,9 @@ describe("WIP markers", () => {
     expect(isWipSection(getSection("tramplers")!)).toBe(false);
     expect(isWipSection(getSection("tech")!)).toBe(false);
   });
-  it("marks the NPCs env category wip and leaves the others live", () => {
+  it("leaves all env categories live (no WIP placeholders)", () => {
     const env = getSection("environment")!;
-    const bySlug = Object.fromEntries(env.categories.map((c) => [c.slug, c]));
-    expect(bySlug["npcs"].wip).toBe(true);
-    expect(bySlug["loot-containers"].wip).toBeFalsy();
-    expect(bySlug["landmarks"].wip).toBeFalsy();
-    expect(bySlug["game-modes"].wip).toBeFalsy();
+    for (const c of env.categories) expect(c.wip).toBeFalsy();
   });
 });
 
@@ -250,18 +245,23 @@ describe("gallery nav section", () => {
   });
 });
 
-describe("enemy taxonomy", () => {
-  it("recognizes enemy category slugs", () => {
-    expect(isEnemyCategory("creatures")).toBe(true);
-    expect(isEnemyCategory("enemy-tramplers")).toBe(true);
-    expect(isEnemyCategory("weapons")).toBe(false);
+describe("NPC categories under Environment", () => {
+  it("registers creatures + enemy-tramplers as Environment categories", () => {
+    const env = getSection("environment");
+    const slugs = env?.categories.map((c) => c.slug) ?? [];
+    expect(slugs).toContain("creatures");
+    expect(slugs).toContain("enemy-tramplers");
+    expect(slugs).not.toContain("npcs"); // the old WIP placeholder is gone
   });
-  it("registers the Enemies section with both categories", () => {
-    const s = getSection("enemies");
-    expect(s?.kind).toBe("data");
-    expect(s?.categories.map((c) => c.slug)).toEqual(["creatures", "enemy-tramplers"]);
+  it("treats the NPC categories as environment categories", () => {
+    expect(isEnvCategory("creatures")).toBe(true);
+    expect(isEnvCategory("enemy-tramplers")).toBe(true);
   });
-  it("labels enemy categories", () => {
+  it("labels the NPC categories", () => {
     expect(categoryLabel("enemy-tramplers")).toBe("Enemy Tramplers");
+    expect(categoryLabel("creatures")).toBe("Creatures");
+  });
+  it("has no separate Enemies section", () => {
+    expect(getSection("enemies")).toBeUndefined();
   });
 });

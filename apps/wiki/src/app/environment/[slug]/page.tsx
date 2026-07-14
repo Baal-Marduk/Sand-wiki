@@ -6,6 +6,7 @@ import { lootEntryView } from "@/lib/loot";
 import { groupLootByTier, entityHref, type LinkRow } from "@/lib/entity-links";
 import { categoryLabel } from "@/lib/taxonomy";
 import { byRarityThenName } from "@/lib/rarity";
+import { enemyStatCells } from "@/lib/enemy-view";
 import { EntityDetail } from "@/components/EntityDetail";
 import { CategoryTag } from "@/components/CategoryTag";
 import { LootTable } from "@/components/LootTable";
@@ -114,6 +115,8 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
       title={entity.name}
       badges={<CategoryTag slug={entity.category} />}
       description={entity.description}
+      // NPC entities (creatures / enemy-tramplers) carry enemyStats → show per-variant HP.
+      stats={entity.enemyStats ? enemyStatCells(entity.enemyStats.variants) : undefined}
       disabled={entity.disabled}
       adminControls={
         admin ? (

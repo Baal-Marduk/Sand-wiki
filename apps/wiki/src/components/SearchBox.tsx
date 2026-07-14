@@ -8,7 +8,7 @@ import { rarityColor } from "@/lib/rarity";
 import { categoryLabel } from "@/lib/taxonomy";
 import { searchSuggestions, type SearchIndex, type Suggestions } from "@/lib/search";
 
-const EMPTY: SearchIndex = { items: [], places: [], enemies: [] };
+const EMPTY: SearchIndex = { items: [], places: [] };
 
 /** Bold the first case-insensitive occurrence of the query inside a label.
  *  The full label text is preserved so the option's accessible name is unchanged. */
@@ -36,31 +36,32 @@ function loadIndex(): Promise<SearchIndex> {
   return indexPromise;
 }
 
-interface Flat { kind: "category" | "item" | "place" | "enemy"; slug: string; label: string; category: string; icon?: string | null; rarity?: string | null }
+interface Flat { kind: "category" | "item" | "place"; slug: string; label: string; category: string; icon?: string | null; rarity?: string | null }
 interface Group { header: string; options: Flat[] }
 
+const placeGroup = (s: Suggestions, header: string, category: string): Group | null => {
+  const rows = s.places.filter((p) => p.category === category);
+  return rows.length
+    ? { header, options: rows.map((p) => ({ kind: "place", slug: p.slug, label: p.name, category: p.category })) }
+    : null;
+};
+
 /** Ordered dropdown groups, each included only when it has matches:
- *  Categories → Items → Loot Containers → Landmarks. */
+ *  Categories → Items → Loot Containers → Landmarks → Creatures → Enemy Tramplers.
+ *  All place kinds (containers, landmarks, NPCs) live under /environment. */
 function buildGroups(s: Suggestions): Group[] {
-  const groups: Group[] = [];
+  const groups: (Group | null)[] = [];
   if (s.categories.length) {
     groups.push({ header: "Categories", options: s.categories.map((c) => ({ kind: "category", slug: c.slug, label: c.label, category: c.slug })) });
   }
   if (s.items.length) {
     groups.push({ header: "Items", options: s.items.map((i) => ({ kind: "item", slug: i.slug, label: i.name, category: i.category, icon: i.icon, rarity: i.rarity })) });
   }
-  const loot = s.places.filter((p) => p.category === "loot-containers");
-  if (loot.length) {
-    groups.push({ header: "Loot Containers", options: loot.map((p) => ({ kind: "place", slug: p.slug, label: p.name, category: p.category })) });
-  }
-  const land = s.places.filter((p) => p.category === "landmarks");
-  if (land.length) {
-    groups.push({ header: "Landmarks", options: land.map((p) => ({ kind: "place", slug: p.slug, label: p.name, category: p.category })) });
-  }
-  if (s.enemies.length) {
-    groups.push({ header: "Enemies", options: s.enemies.map((e) => ({ kind: "enemy", slug: e.slug, label: e.name, category: e.category })) });
-  }
-  return groups;
+  groups.push(placeGroup(s, "Loot Containers", "loot-containers"));
+  groups.push(placeGroup(s, "Landmarks", "landmarks"));
+  groups.push(placeGroup(s, "Creatures", "creatures"));
+  groups.push(placeGroup(s, "Enemy Tramplers", "enemy-tramplers"));
+  return groups.filter((g): g is Group => g !== null);
 }
 
 export function SearchBox({ variant }: { variant: "navbar" | "hero" }) {
@@ -85,14 +86,14 @@ export function SearchBox({ variant }: { variant: "navbar" | "hero" }) {
   if (variant === "navbar" && pathname === "/") return null;
 
   const suggestions = query.trim()
-    ? searchSuggestions(query, index.items, index.places, index.enemies)
-    : { categories: [], items: [], places: [], enemies: [] };
+    ? searchSuggestions(query, index.items, index.places)
+    : { categories: [], items: [], places: [] };
   const groups = buildGroups(suggestions);
   const options = groups.flatMap((g) => g.options);
   const showList = open && options.length > 0;
 
   function ensureIndex() {
-    if (index.items.length === 0 && index.places.length === 0 && index.enemies.length === 0) loadIndex().then(setIndex);
+    if (index.items.length === 0 && index.places.length === 0) loadIndex().then(setIndex);
   }
 
   function navigate(f: Flat) {
@@ -100,8 +101,7 @@ export function SearchBox({ variant }: { variant: "navbar" | "hero" }) {
     setActive(-1);
     setQuery("");
     if (f.kind === "category") router.push(`/items?category=${f.slug}`);
-    else if (f.kind === "place") router.push(`/environment/${f.slug}`);
-    else if (f.kind === "enemy") router.push(`/enemies/${f.slug}`);
+    else if (f.kind === "place") router.push(`/environment/${f.slug}`); // containers, landmarks, NPCs
     else router.push(`/items/${f.slug}`);
   }
 
