@@ -16095,5 +16095,73 @@
         "description": null
       }
     }
+  },
+  {
+    "id": "upior",
+    "slug": "upior",
+    "kind": "enemy",
+    "name": "Upiór",
+    "description": null,
+    "category": "creatures",
+    "rarity": null,
+    "icon": null,
+    "imageAlt": null,
+    "derivedName": null,
+    "sourceUrl": null,
+    "disabled": false,
+    "itemStats": null,
+    "tramplerStats": null,
+    "techNodeStats": null,
+    "enemyStats": {
+      "type": "creature",
+      "variants": [
+        {
+          "name": "Ranged",
+          "hp": 100
+        },
+        {
+          "name": "Melee",
+          "hp": 100
+        },
+        {
+          "name": "Melee (Shovel)",
+          "hp": 100
+        }
+      ]
+    }
+  },
+  {
+    "id": "ironclad",
+    "slug": "ironclad",
+    "kind": "enemy",
+    "name": "Ironclad",
+    "description": null,
+    "category": "enemy-tramplers",
+    "rarity": null,
+    "icon": null,
+    "imageAlt": null,
+    "derivedName": null,
+    "sourceUrl": null,
+    "disabled": false,
+    "itemStats": null,
+    "tramplerStats": null,
+    "techNodeStats": null,
+    "enemyStats": {
+      "type": "enemy-trampler",
+      "variants": [
+        {
+          "name": "Buckler",
+          "hp": 5000
+        },
+        {
+          "name": "Falchion",
+          "hp": 4000
+        },
+        {
+          "name": "Tophelm",
+          "hp": 4000
+        }
+      ]
+    }
   }
 ]
