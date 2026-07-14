@@ -24,7 +24,7 @@ const groupLabelCls =
 
 function itemCls(active: boolean) {
   return [
-    "block rounded px-2 py-2 text-sm font-semibold transition-colors",
+    "rounded px-2 py-2 text-sm font-semibold transition-colors",
     active
       ? "bg-card-elevated text-primary"
       : "text-foreground hover:bg-card-elevated hover:text-primary",
