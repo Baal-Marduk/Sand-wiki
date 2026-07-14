@@ -3,7 +3,8 @@
  "itemSlugAliases": {
   "game_coinCrownPile_10": "coin-crown",
   "game_ValuablePiles01_mobDrop": "small-valuables",
-  "item_alloySteel": "resource-alloy-steel"
+  "item_alloySteel": "resource-alloy-steel",
+  "item_weirdCoral": "resource-weird-coral"
  },
  "enemies": [
   {
