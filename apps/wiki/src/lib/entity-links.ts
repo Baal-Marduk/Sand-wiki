@@ -84,6 +84,7 @@ export function entityHref(kind: string | null, slug: string): string | null {
     case "item": return `/items/${slug}`;
     case "environment": return `/environment/${slug}`;
     case "trampler-part": return `/tramplers/${slug}`;
+    case "enemy": return `/enemies/${slug}`;
     default: return null;
   }
 }

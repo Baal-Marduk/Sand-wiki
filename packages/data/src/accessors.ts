@@ -54,7 +54,7 @@ export function isEntityEnabled(s: Store, slug: string): boolean {
 }
 
 export function entityPaths(s: Store): { slug: string; kind: string }[] {
-  const kinds = new Set(["item", "environment", "trampler-part"]);
+  const kinds = new Set(["item", "environment", "trampler-part", "enemy"]);
   return s.entities
     .filter((e) => kinds.has(e.kind) && !e.disabled)
     .map((e) => ({ slug: e.slug, kind: e.kind }))
