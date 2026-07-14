@@ -44,4 +44,18 @@ describe("reportDanglingRefs", () => {
     const links = [link({ sourceSlug: "a", targetSlug: null, role: "cost" })];
     expect(reportDanglingRefs(entities, links, [])).toEqual([]);
   });
+
+  it("flags a dangling link source", () => {
+    const entities = [entity("a")];
+    const links = [link({ sourceSlug: "gone-source", targetSlug: "a", role: "cost" })];
+    const out = reportDanglingRefs(entities, links, []);
+    expect(out).toEqual(["link cost source: gone-source"]);
+  });
+
+  it("flags a dangling recipe locationSlug", () => {
+    const entities = [entity("a")];
+    const recipes = [recipe({ slug: "a", locationSlug: "gone-place", inputs: [{ itemSlug: "a", amount: 1 }] })];
+    const out = reportDanglingRefs(entities, [], recipes);
+    expect(out).toEqual(["recipe a location: gone-place"]);
+  });
 });

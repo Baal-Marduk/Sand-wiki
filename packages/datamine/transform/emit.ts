@@ -57,6 +57,7 @@ export function reportDanglingRefs(entities: Entity[], links: EntityLink[], reci
   for (const r of recipes) {
     for (const i of r.inputs) if (i.itemSlug && !known.has(i.itemSlug)) out.push(`recipe ${r.slug} input: ${i.itemSlug}`);
     for (const o of r.outputs) if (o.itemSlug && !known.has(o.itemSlug)) out.push(`recipe ${r.slug} output: ${o.itemSlug}`);
+    if (r.locationSlug && !known.has(r.locationSlug)) out.push(`recipe ${r.slug} location: ${r.locationSlug}`);
   }
   return [...new Set(out)];
 }
