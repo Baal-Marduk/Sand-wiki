@@ -10,7 +10,7 @@ import { loadSekItems, loadLocalization, loadContainerLoot } from "./sek";
 import { reconcile } from "./reconcile";
 import { buildItemI18n } from "./i18n";
 import { mergeItems } from "./merge";
-import { applyIconOverrides, applyEntityOverrides, type EntityOverride } from "./items";
+import { applyIconOverrides, applyEntityOverrides, pruneIconlessItems, type EntityOverride } from "./items";
 import { loadCompartmentStats, mergeTrampler } from "./trampler";
 import { loadWeaponStats, loadTurretStats, mergeCombatStats } from "./combat-stats";
 import { loadRecipes, mergeRecipes } from "./recipes";
@@ -19,7 +19,7 @@ import { canonicalSekId } from "./variants";
 import { buildLootLinks, applyLoot, type LootOverrides } from "./loot";
 import { classifyImages } from "./images";
 import { diffEntities } from "./diff";
-import { validateEntities, writeArtifact, writeMissingReport, writeImagesReport, writeRecipesMissingReport } from "./emit";
+import { validateEntities, writeArtifact, writeMissingReport, writeImagesReport, writeRecipesMissingReport, reportDanglingRefs } from "./emit";
 
 const PUBLIC = resolve(import.meta.dirname, "../../../apps/wiki/public");
 
@@ -60,7 +60,14 @@ const mergeable = allItems.filter((it) => {
 const i18n = buildItemI18n(loc, new Map([...rec.bySekId].map(([id, hit]) => [id, hit.slug])));
 const merged = mergeItems(baseline.entities, mergeable, rec.bySekId, i18n);
 // Force corrected icons last (fixes stale/wrong paths in the source data).
-const entities = applyEntityOverrides(applyIconOverrides(merged.entities, iconMap), entityOverrides);
+const withOverrides = applyEntityOverrides(applyIconOverrides(merged.entities, iconMap), entityOverrides);
+// Item pages require an icon: an item with no shippable sprite is not available in-game
+// (internal notes/debug boxes/packed-turret containers, and not-yet-released items). Non-item
+// kinds (tech-node/environment/trampler-part) keep their by-design null icons. Applied after
+// icon-map so an override can rescue an item before the prune.
+const entities = pruneIconlessItems(withOverrides);
+const prunedCount = withOverrides.length - entities.length;
+console.log(`icon gate: dropped ${prunedCount} icon-less item page(s)`);
 // Genuine gaps only — drop the intentionally-hardcoded baseline-only items.
 const missing = merged.missing.filter((m) => !hardcodedItems.has(m.slug));
 const hardcodedKept = merged.missing.length - missing.length;
@@ -113,6 +120,12 @@ if (diff.removed.length > 0 && !allowSlugChanges) {
 }
 
 validateEntities(withCombat);
+
+const danglingRefs = reportDanglingRefs(withCombat, links, recipeMerge.recipes);
+if (danglingRefs.length) {
+  console.warn(`referential integrity: ${danglingRefs.length} dangling reference(s) to missing entities:`,
+    danglingRefs.slice(0, 20).join(", ") + (danglingRefs.length > 20 ? " …" : ""));
+}
 
 // --- images: report entities whose icon is null or whose file is missing on disk ---
 const images = classifyImages(withCombat, (icon) => existsSync(resolve(PUBLIC, `.${icon}`)));

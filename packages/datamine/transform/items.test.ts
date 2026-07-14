@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { sekItemPatch, newItemEntity, applyIconOverrides, applyEntityOverrides } from "./items";
+import { sekItemPatch, newItemEntity, applyIconOverrides, applyEntityOverrides, pruneIconlessItems } from "./items";
 import type { SekItem } from "./sek";
 import type { Entity } from "@sandlabs/data";
 
@@ -76,5 +76,24 @@ describe("items transform", () => {
     expect(out.find((x) => x.slug === "box-black")!.name).toBe("Box with Radio Beacon (Black)");
     expect(out.find((x) => x.slug === "box-black")!.disabled).toBe(false); // disabled untouched
     expect(out.find((x) => x.slug === "other")!.name).toBe("Other"); // unmapped -> untouched
+  });
+
+  it("pruneIconlessItems drops only null-icon item entities, keeps everything else", () => {
+    const ent = (slug: string, kind: Entity["kind"], icon: string | null): Entity => ({
+      id: slug, slug, kind, name: slug, description: null, category: "misc",
+      rarity: null, icon, imageAlt: null, derivedName: null, sourceUrl: null,
+      disabled: false, itemStats: null, tramplerStats: null, techNodeStats: null,
+    });
+    const out = pruneIconlessItems([
+      ent("note", "item", null),              // dropped: item, no icon
+      ent("box", "item", null),               // dropped: item, no icon
+      ent("iron-ingot", "item", "/icons/iron.png"), // kept: item with icon
+      ent("captain-module", "trampler-part", null), // kept: part, null by design
+      ent("tier-1-armor", "tech-node", null),       // kept: tech-node, null by design
+      ent("scrapyard", "environment", null),        // kept: environment, null by design
+    ]);
+    expect(out.map((e) => e.slug)).toEqual([
+      "iron-ingot", "captain-module", "tier-1-armor", "scrapyard",
+    ]);
   });
 });
