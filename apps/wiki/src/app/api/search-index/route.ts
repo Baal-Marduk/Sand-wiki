@@ -16,7 +16,11 @@ export async function GET() {
     .filter((e) => !e.disabled && (e.category === "loot-containers" || e.category === "landmarks"))
     .sort((a, b) => a.name.localeCompare(b.name))
     .map((e) => ({ slug: e.slug, name: e.name, category: e.category }));
-  return NextResponse.json({ items, places }, {
+  const enemies = data.listByKind("enemy")
+    .filter((e) => !e.disabled)
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .map((e) => ({ slug: e.slug, name: e.name, category: e.category }));
+  return NextResponse.json({ items, places, enemies }, {
     headers: { "cache-control": "public, max-age=3600" },
   });
 }
