@@ -36,12 +36,21 @@ def test_build_enemies(tmp_path):
     ])
     _write(tmp_path, "transform/overrides/enemy-overrides.json",
            json.loads((HERE.parent / "transform" / "overrides" / "enemy-overrides.json").read_text(encoding="utf-8")))
+    # Orphaned extra tables (repair kit + a packed turret) the source can't reach.
+    _write(tmp_path, "extracted/json/loottables_voyage.json", {"_lootTables": {"$items": [
+        {"lootTableId": "ironcladLoot_repairKitEntity_set", "items": {"$items": [
+            {"itemBlueprint": "item_repairKit", "countMin": 1, "countMax": 1}]}},
+        {"lootTableId": "ironcladLoot_packedTurretT2_80mm_set", "items": {"$items": [
+            {"itemBlueprint": "game_packedTurretT2Container", "countMin": 1, "countMax": 1}]}},
+    ]}})
     wiki = tmp_path / "wiki-entities.json"
     wiki.write_text(json.dumps([
         {"id": "item_pistolAmmo", "slug": "pistol-ammo", "name": "Pistol Ammo", "kind": "item"},
         {"id": "item_weaponParts", "slug": "weapon-parts", "name": "Weapon Parts", "kind": "item"},
         {"id": "item_alloySteel", "slug": "resource-alloy-steel", "name": "Alloy Steel", "kind": "item"},
         {"id": "game_coinCrownPile_10", "slug": "coin-crown", "name": "Coin (Crown)", "kind": "item"},
+        {"id": "RepairKit", "slug": "repair-kit", "name": "Repair Kit", "kind": "item"},
+        {"id": "game_packedTurretT2Container", "slug": "game-packed-turret-t2-container", "name": "Packed Turret T2", "kind": "item"},
     ]), encoding="utf-8")
 
     env = {**os.environ, "WIKI_ENTITIES": str(wiki)}
@@ -59,7 +68,11 @@ def test_build_enemies(tmp_path):
     ic = enemies["ironclad"]
     assert [v["name"] for v in ic["variants"]] == ["Buckler", "Falchion", "Tophelm"]
     assert [v["hp"] for v in ic["variants"]] == [5000, 4000, 4000]
-    cargo = [r for r in ic["loot"] if r["group"] == "Cargo"]
-    guaranteed = [r for r in ic["loot"] if r["group"] == "Guaranteed"]
-    assert cargo and cargo[0]["slug"] == "weapon-parts"
-    assert guaranteed and guaranteed[0]["slug"] == "resource-alloy-steel" and guaranteed[0]["chance"] == 100.0
+    # Single "Loot" group (no separate "Guaranteed" tab); everything lives there.
+    assert all(r["group"] == "Loot" for r in ic["loot"])
+    by_slug = {r["slug"]: r for r in ic["loot"]}
+    # cargo item (computed %), alloy folded in at 100%, and orphaned extraTables at unknown chance.
+    assert by_slug["weapon-parts"]["chance"] == 80.0
+    assert by_slug["resource-alloy-steel"]["chance"] == 100.0
+    assert by_slug["repair-kit"]["chance"] is None
+    assert by_slug["game-packed-turret-t2-container"]["chance"] is None

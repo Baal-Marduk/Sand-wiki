@@ -6,7 +6,7 @@ export interface EnemyLootRow {
   group: string;
   slug: string | null;   // null => item id didn't resolve to a wiki slug (reported upstream)
   name: string;
-  chance: number;
+  chance: number | null; // null => drop rate unknown (orphaned extraTables with no roll weights)
   voyage: string | null;
   storm: string | null;
 }
@@ -58,7 +58,7 @@ export function buildEnemyLootLinks(enemies: EnemyData[]): LootResult {
       if (!r.slug) continue;
       links.push({
         sourceSlug: e.slug, targetSlug: r.slug, role: "loot", name: r.name,
-        amount: null, tier: r.group, value1: String(r.chance),
+        amount: null, tier: r.group, value1: r.chance == null ? null : String(r.chance),
         value2: r.voyage ?? null, value3: r.storm ?? null, sortOrder: sort++, buyGroup: null,
       });
     }

@@ -1,10 +1,13 @@
 """Build sek-out/enemies.json from enemy_stats.json + loot_sources.json + enemy-overrides.json.
 Upior loot groups per variant (variant.lootEffort -> a 'Mob Drops' cell); Ironclad loot is one
-merged 'Cargo' pool + a 'Guaranteed' group (mandatory drops). Item ids resolve to wiki slugs via
-loot_resolve against the wiki item snapshot (WIKI_ENTITIES env, default
-../../apps/wiki/prisma/data.json) — the same internal-id<->slug source build_container_loot.py
-uses; the generated entities.json carries DB CUIDs, not game ids, so it can't resolve loot refs.
-Run from packages/datamine/ : python scripts/build_enemies.py
+merged group (edef.lootGroup, e.g. "Loot") that inlines its mandatory drops at 100% and any
+extraTables drops. Item ids resolve to wiki slugs via loot_resolve against the wiki item snapshot
+(WIKI_ENTITIES env, default ../../apps/wiki/prisma/data.json) — the same internal-id<->slug source
+build_container_loot.py uses; the generated entities.json carries DB CUIDs, not game ids, so it
+can't resolve loot refs. extraTables (from enemy-overrides) are loot tables the source can't reach
+(orphaned on-death drops); they're read straight from loottables_{voyage,storm}.json and emitted
+with no computed chance (no roll weights available). Run from packages/datamine/ :
+python scripts/build_enemies.py
 """
 import json, os, sys
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
@@ -20,6 +23,22 @@ _wiki_raw = json.load(open(WIKI_ENTITIES, encoding="utf-8"))
 wiki_items = [e for e in (_wiki_raw.get("items", []) if isinstance(_wiki_raw, dict) else _wiki_raw) if e.get("id")]
 
 resolve = make_resolver(wiki_items, ov.get("itemSlugAliases", {}))
+
+# Raw loot tables (id -> [{item, min, max}]), for extraTables the source can't reach. Optional:
+# absent in the unit test unless a fixture is provided.
+def _load_tables(path):
+    if not os.path.exists(path):
+        return {}
+    doc = json.load(open(path, encoding="utf-8"))
+    out = {}
+    for t in doc.get("_lootTables", {}).get("$items", []):
+        out[t["lootTableId"]] = [
+            {"item": i["itemBlueprint"], "min": i["countMin"], "max": i["countMax"]}
+            for i in t.get("items", {}).get("$items", [])
+        ]
+    return out
+
+loot_tables = _load_tables("extracted/json/loottables_voyage.json")
 
 def fmt_range(lo, hi):
     return str(lo) if lo == hi else f"{lo}-{hi}"
@@ -68,12 +87,22 @@ for edef in ov["enemies"]:
         for cell in src.get("cells", {}).values():
             loot.extend(rows_from_cell(cell, group))
 
-    # Guaranteed (mandatory) drops -> a 100% "Guaranteed" group.
+    # Mandatory (guaranteed) drops -> the enemy's main loot group at 100% (no separate tab).
+    mand_group = edef.get("lootGroup", "Loot")
     for m in src.get("mandatory", []):
         slug, name, ok = resolve(m["item"])
         rng = fmt_range(m["min"], m["max"])
-        loot.append({"group": "Guaranteed", "slug": slug, "name": name, "chance": 100.0,
+        loot.append({"group": mand_group, "slug": slug, "name": name, "chance": 100.0,
                      "voyage": rng, "storm": rng, "resolved": ok})
+
+    # extraTables: orphaned on-death drop tables the source can't reach (repair kit, artillery).
+    # Read straight from the loot tables; no roll weights exist, so chance is null (unknown).
+    for tid in edef.get("extraTables", []):
+        for it in loot_tables.get(tid, []):
+            slug, name, ok = resolve(it["item"])
+            rng = fmt_range(it["min"], it["max"])
+            loot.append({"group": mand_group, "slug": slug, "name": name, "chance": None,
+                         "voyage": rng, "storm": rng, "resolved": ok})
 
     # Genuinely dropped = no slug at all (no id/name/alias match). A row with a slug but
     # resolved=False still links fine (its alias target is a live slug missing from the lagging

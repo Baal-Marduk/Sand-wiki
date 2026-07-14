@@ -1373,7 +1373,7 @@
     "description": "The amount of food on board the trampler determines the number of quick respawns available for the Crew. You also can just eat it to improve your well-being.",
     "category": "medical",
     "rarity": "Uncommon",
-    "icon": "/icons/icon_item_game_fishCan.png",
+    "icon": "/icons/icon_food.png",
     "imageAlt": null,
     "derivedName": "Food Can",
     "sourceUrl": null,

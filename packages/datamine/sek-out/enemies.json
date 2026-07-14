@@ -157,7 +157,7 @@
    ],
    "loot": [
     {
-     "group": "Cargo",
+     "group": "Loot",
      "slug": "resource-weapon-parts",
      "name": "Weapon Parts",
      "chance": 76.9,
@@ -166,7 +166,7 @@
      "resolved": true
     },
     {
-     "group": "Cargo",
+     "group": "Loot",
      "slug": "energy-bar",
      "name": "NZ Mk2 Energy Rod",
      "chance": 64.1,
@@ -175,7 +175,7 @@
      "resolved": true
     },
     {
-     "group": "Cargo",
+     "group": "Loot",
      "slug": "food-can",
      "name": "Canned Food",
      "chance": 35.9,
@@ -184,7 +184,7 @@
      "resolved": true
     },
     {
-     "group": "Cargo",
+     "group": "Loot",
      "slug": "turret-ammo-high-velocity",
      "name": "High Velocity 80 mm Shell",
      "chance": 25.6,
@@ -193,7 +193,7 @@
      "resolved": true
     },
     {
-     "group": "Cargo",
+     "group": "Loot",
      "slug": "shotgun-turret-ammo-slug",
      "name": "70 mm Shotgun Cannon Slug",
      "chance": 20.5,
@@ -202,7 +202,7 @@
      "resolved": true
     },
     {
-     "group": "Cargo",
+     "group": "Loot",
      "slug": "small-cannon-ammo-long-range",
      "name": "Long-Range 40 mm Shell",
      "chance": 20.5,
@@ -211,7 +211,7 @@
      "resolved": true
     },
     {
-     "group": "Cargo",
+     "group": "Loot",
      "slug": "resource-metal-t3",
      "name": "Computing Module",
      "chance": 19.2,
@@ -220,7 +220,7 @@
      "resolved": true
     },
     {
-     "group": "Cargo",
+     "group": "Loot",
      "slug": "shotgun-turret-ammo-smoke",
      "name": "Smoke 70 mm Shell",
      "chance": 12.8,
@@ -229,7 +229,7 @@
      "resolved": true
     },
     {
-     "group": "Cargo",
+     "group": "Loot",
      "slug": "small-cannon-ammo-low-recoil",
      "name": "Low-Recoil 40 mm Shell",
      "chance": 12.8,
@@ -238,7 +238,7 @@
      "resolved": true
     },
     {
-     "group": "Cargo",
+     "group": "Loot",
      "slug": "turret-ammo-delayed-detonation",
      "name": "80 mm Proximity Fuse Shell",
      "chance": 7.7,
@@ -247,7 +247,7 @@
      "resolved": true
     },
     {
-     "group": "Cargo",
+     "group": "Loot",
      "slug": "boosted-energy-bar",
      "name": "NZ Mk1 Modified Energy Rod",
      "chance": 3.8,
@@ -256,13 +256,76 @@
      "resolved": true
     },
     {
-     "group": "Guaranteed",
+     "group": "Loot",
      "slug": "resource-alloy-steel",
      "name": "Alloy Steel",
      "chance": 100.0,
      "voyage": "1",
      "storm": "1",
      "resolved": false
+    },
+    {
+     "group": "Loot",
+     "slug": "repair-kit",
+     "name": "Repair Kit",
+     "chance": null,
+     "voyage": "1",
+     "storm": "1",
+     "resolved": true
+    },
+    {
+     "group": "Loot",
+     "slug": "game-packed-turret-t2-container",
+     "name": "Worn 80 mm Naval Cannon Kit",
+     "chance": null,
+     "voyage": "1",
+     "storm": "1",
+     "resolved": true
+    },
+    {
+     "group": "Loot",
+     "slug": "game-packed-shotgun-turret-t2-container",
+     "name": "Worn 70 mm Shotgun Cannon Kit",
+     "chance": null,
+     "voyage": "1",
+     "storm": "1",
+     "resolved": true
+    },
+    {
+     "group": "Loot",
+     "slug": "game-packed-auto-turret-t2-container",
+     "name": "Worn 40 mm Autocannon Kit",
+     "chance": null,
+     "voyage": "1",
+     "storm": "1",
+     "resolved": true
+    },
+    {
+     "group": "Loot",
+     "slug": "game-packed-turret-t3-container",
+     "name": "Pristine 80 mm Naval Cannon Kit",
+     "chance": null,
+     "voyage": "1",
+     "storm": "1",
+     "resolved": true
+    },
+    {
+     "group": "Loot",
+     "slug": "game-packed-shotgun-turret-t3-container",
+     "name": "Pristine 70 mm Shotgun Cannon Kit",
+     "chance": null,
+     "voyage": "1",
+     "storm": "1",
+     "resolved": true
+    },
+    {
+     "group": "Loot",
+     "slug": "game-packed-auto-turret-t3-container",
+     "name": "Pristine 40 mm Autocannon Kit",
+     "chance": null,
+     "voyage": "1",
+     "storm": "1",
+     "resolved": true
     }
    ]
   }
