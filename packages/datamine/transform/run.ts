@@ -19,7 +19,7 @@ import { canonicalSekId } from "./variants";
 import { buildLootLinks, applyLoot, type LootOverrides } from "./loot";
 import { classifyImages } from "./images";
 import { diffEntities } from "./diff";
-import { validateEntities, writeArtifact, writeMissingReport, writeImagesReport, writeRecipesMissingReport } from "./emit";
+import { validateEntities, writeArtifact, writeMissingReport, writeImagesReport, writeRecipesMissingReport, reportDanglingRefs } from "./emit";
 
 const PUBLIC = resolve(import.meta.dirname, "../../../apps/wiki/public");
 
@@ -120,6 +120,12 @@ if (diff.removed.length > 0 && !allowSlugChanges) {
 }
 
 validateEntities(withCombat);
+
+const danglingRefs = reportDanglingRefs(withCombat, links, recipeMerge.recipes);
+if (danglingRefs.length) {
+  console.warn(`referential integrity: ${danglingRefs.length} dangling reference(s) to missing entities:`,
+    danglingRefs.slice(0, 20).join(", ") + (danglingRefs.length > 20 ? " …" : ""));
+}
 
 // --- images: report entities whose icon is null or whose file is missing on disk ---
 const images = classifyImages(withCombat, (icon) => existsSync(resolve(PUBLIC, `.${icon}`)));
