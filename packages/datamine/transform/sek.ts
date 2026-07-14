@@ -1,5 +1,5 @@
 // Typed loaders for the committed sek-out datasets (the datamine inputs).
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { resolve } from "node:path";
 
 const SEK = resolve(import.meta.dirname, "../sek-out");
@@ -34,4 +34,14 @@ export function loadContainerLoot(dir = SEK): ContainerLoot {
   // build_container_loot.py emits a { meta, containers } envelope; tolerate a bare map too.
   const raw = read<Record<string, unknown>>("container_loot.json", dir);
   return (raw.containers ?? raw) as ContainerLoot;
+}
+
+// --- enemies (NPC entities + variant HP + combined loot; produced by build_enemies.py) ---
+import type { EnemyData } from "./enemies";
+
+export function loadEnemies(dir = SEK): EnemyData[] {
+  const p = resolve(dir, "enemies.json");
+  if (!existsSync(p)) return [];  // Stage A hasn't produced it yet -> no-op in the transform
+  const raw = JSON.parse(readFileSync(p, "utf-8")) as { enemies?: EnemyData[] } | EnemyData[];
+  return (Array.isArray(raw) ? raw : raw.enemies ?? []);
 }
