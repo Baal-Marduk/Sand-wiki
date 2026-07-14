@@ -7,12 +7,13 @@ import {
   isWeaponClassCategory, WEAPON_CLASS_CATEGORIES,
   isWipSection,
   FACTIONS, isFaction,
+  isEnemyCategory,
 } from "./taxonomy";
 
 describe("taxonomy", () => {
   it("exposes the top-level sections in order", () => {
     expect(SECTIONS.map((s) => s.slug)).toEqual([
-      "items", "environment", "tramplers", "tech", "builder", "gallery", "admin",
+      "items", "environment", "tramplers", "enemies", "tech", "builder", "gallery", "admin",
     ]);
   });
 
@@ -246,5 +247,21 @@ describe("gallery nav section", () => {
     const slugs = SECTIONS.map((s) => s.slug);
     expect(slugs).toContain("gallery");
     expect(slugs.indexOf("gallery")).toBeGreaterThan(slugs.indexOf("builder"));
+  });
+});
+
+describe("enemy taxonomy", () => {
+  it("recognizes enemy category slugs", () => {
+    expect(isEnemyCategory("creatures")).toBe(true);
+    expect(isEnemyCategory("enemy-tramplers")).toBe(true);
+    expect(isEnemyCategory("weapons")).toBe(false);
+  });
+  it("registers the Enemies section with both categories", () => {
+    const s = getSection("enemies");
+    expect(s?.kind).toBe("data");
+    expect(s?.categories.map((c) => c.slug)).toEqual(["creatures", "enemy-tramplers"]);
+  });
+  it("labels enemy categories", () => {
+    expect(categoryLabel("enemy-tramplers")).toBe("Enemy Tramplers");
   });
 });

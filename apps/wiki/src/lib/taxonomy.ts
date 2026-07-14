@@ -37,6 +37,11 @@ const tramplerCategories: Category[] = [
   { slug: "structure", label: "Structure & Decks" },
 ];
 
+const enemyCategories: Category[] = [
+  { slug: "creatures", label: "Creatures" },
+  { slug: "enemy-tramplers", label: "Enemy Tramplers" },
+];
+
 export const SECTIONS: Section[] = [
   { slug: "items", label: "Items", kind: "data", categories: itemCategories },
   {
@@ -51,6 +56,7 @@ export const SECTIONS: Section[] = [
     ],
   },
   { slug: "tramplers", label: "Tramplers", kind: "data", categories: tramplerCategories },
+  { slug: "enemies", label: "Enemies", kind: "data", categories: enemyCategories },
   { slug: "tech", label: "Tech Tree", kind: "link", categories: [] },
   { slug: "builder", label: "Builder", kind: "link", categories: [] },
   { slug: "gallery", label: "Gallery", kind: "link", categories: [] },
@@ -93,6 +99,13 @@ export const ENV_CATEGORY_SLUGS = envCategories.map((c) => c.slug);
 
 export function isEnvCategory(slug: string): boolean {
   return ENV_CATEGORY_SLUGS.includes(slug);
+}
+
+export const ENEMY_CATEGORIES = enemyCategories;
+export const ENEMY_CATEGORY_SLUGS = enemyCategories.map((c) => c.slug);
+
+export function isEnemyCategory(slug: string): boolean {
+  return ENEMY_CATEGORY_SLUGS.includes(slug);
 }
 
 export const TRAMPLER_CATEGORIES = tramplerCategories;
@@ -198,6 +211,9 @@ export const CATEGORY_COLORS: Record<string, string> = {
   landmarks: "#7aa6b0",
   "game-modes": "#b07aa0",
   npcs: "#9b8b73",
+  // enemy categories
+  creatures: "#c65f5f",
+  "enemy-tramplers": "#8b94a6",
   // trampler categories
   chassis: "#a6794f",
   reactors: "#d4a23f",
