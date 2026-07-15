@@ -18,7 +18,7 @@ def test_build_enemies(tmp_path):
         "mob_ironclad_Tophelm": {"hp": 4000, "niceName": None, "type": "enemy-trampler", "components": []},
     })
     _write(tmp_path, "sek-out/loot_sources.json", [
-        {"name": "Mob Drops", "tiers": [], "efforts": [], "mandatory": [], "cells": {
+        {"name": "Mob Drops", "approx": True, "tiers": [], "efforts": [], "mandatory": [], "cells": {
             "0|ranged mob": {"tier": None, "effort": "ranged mob", "sets": 1,
                 "voyage": [{"item": "item_pistolAmmo", "pct": 100.0, "min": 1, "max": 1}],
                 "storm":  [{"item": "item_pistolAmmo", "pct": 100.0, "min": 1, "max": 2}]},
@@ -68,6 +68,8 @@ def test_build_enemies(tmp_path):
     assert [v["hp"] for v in upior["variants"]] == [100, 100, 100]
     ranged = [r for r in upior["loot"] if r["group"] == "Ranged"]
     assert ranged and ranged[0]["slug"] == "pistol-ammo" and ranged[0]["storm"] == "1-2"
+    # Mob Drops is approx (no real per-set weights) -> chance suppressed (unknown), not fabricated.
+    assert all(r["chance"] is None for r in upior["loot"])
 
     ic = enemies["ironclad"]
     assert [v["name"] for v in ic["variants"]] == ["Buckler", "Falchion", "Tophelm"]

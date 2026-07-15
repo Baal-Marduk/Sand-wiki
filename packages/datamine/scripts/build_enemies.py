@@ -43,8 +43,11 @@ loot_tables = _load_tables("extracted/json/loottables_voyage.json")
 def fmt_range(lo, hi):
     return str(lo) if lo == hi else f"{lo}-{hi}"
 
-def rows_from_cell(cell, group):
-    """One loot cell (voyage/storm item lists) -> loot rows; chance = max pct across modes."""
+def rows_from_cell(cell, group, approx=False):
+    """One loot cell (voyage/storm item lists) -> loot rows; chance = max pct across modes.
+    When approx (e.g. the "Mob Drops" source, whose per-set roll weights aren't in the game
+    data — build_loot_sources assumes equal weight), the computed % is a fabrication, so emit
+    chance=None (unknown) rather than a misleading uniform number."""
     order, seen, vagg, sagg = [], set(), {}, {}
     for mode, agg in (("voyage", vagg), ("storm", sagg)):
         for e in (cell.get(mode) or []):
@@ -56,7 +59,7 @@ def rows_from_cell(cell, group):
     for it in order:
         slug, name, ok = resolve(it)
         v, s = vagg.get(it), sagg.get(it)
-        chance = max(x[2] for x in (v, s) if x)
+        chance = None if approx else max(x[2] for x in (v, s) if x)
         rows.append({
             "group": group, "slug": slug, "name": name, "chance": chance,
             "voyage": fmt_range(v[0], v[1]) if v else None,
@@ -71,6 +74,9 @@ def cells_by_effort(source):
 out, unresolved = [], []
 for edef in ov["enemies"]:
     src = sources.get(edef["lootSource"], {})
+    # "Mob Drops" has no real per-set roll weights (build_loot_sources flags it approx +
+    # assumes equal weight), so its computed % is fabricated — suppress it (chance=None).
+    approx = bool(src.get("approx"))
     variants = [{"name": v["name"], "hp": enemy_stats.get(v["epb"], {}).get("hp")} for v in edef["variants"]]
 
     loot = []
@@ -80,12 +86,12 @@ for edef in ov["enemies"]:
         for v in edef["variants"]:
             cell = eff.get(v.get("lootEffort"))
             if cell:
-                loot.extend(rows_from_cell(cell, v["name"]))
+                loot.extend(rows_from_cell(cell, v["name"], approx))
     else:
         # Single merged pool (Ironclad): all cells under one group label.
         group = edef.get("lootGroup", "Drops")
         for cell in src.get("cells", {}).values():
-            loot.extend(rows_from_cell(cell, group))
+            loot.extend(rows_from_cell(cell, group, approx))
 
     # Mandatory (guaranteed) drops -> the enemy's main loot group at 100% (no separate tab).
     mand_group = edef.get("lootGroup", "Loot")
