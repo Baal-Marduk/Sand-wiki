@@ -49,7 +49,13 @@ export function applyEntityOverrides(entities: Entity[], overrides: Record<strin
     if (!o) return e;
     let description = e.description;
     if (o.description !== undefined) description = o.description;
-    else if (o.descriptionAppend) description = e.description ? `${e.description}\n\n${o.descriptionAppend}` : o.descriptionAppend;
+    else if (o.descriptionAppend) {
+      // Idempotent + self-healing: strip any existing copies of the appended block first (the
+      // transform baseline is the previous artifact, so a naive append would stack up each run),
+      // then append exactly one.
+      const base = (e.description ?? "").split(o.descriptionAppend).join("").replace(/\n{3,}/g, "\n\n").trim();
+      description = base ? `${base}\n\n${o.descriptionAppend}` : o.descriptionAppend;
+    }
     return {
       ...e,
       ...(o.name !== undefined ? { name: o.name } : {}),
