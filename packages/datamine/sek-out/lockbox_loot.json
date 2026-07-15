@@ -102,19 +102,19 @@
      "resolved": true
     },
     {
-     "slug": "shotgun-turret-ammo",
-     "name": "70 mm Shell",
-     "chance": 11.4,
-     "tier": "Loot",
-     "count": "30-60",
-     "resolved": true
-    },
-    {
      "slug": "small-cannon-ammo",
      "name": "40 mm Shell",
      "chance": 11.4,
      "tier": "Loot",
      "count": "80-160",
+     "resolved": true
+    },
+    {
+     "slug": "shotgun-turret-ammo",
+     "name": "70 mm Shell",
+     "chance": 11.4,
+     "tier": "Loot",
+     "count": "30-60",
      "resolved": true
     },
     {
@@ -166,6 +166,14 @@
      "resolved": true
     },
     {
+     "slug": "turret-ammo-emp",
+     "name": "EMP 80 mm Shell",
+     "chance": 0.6,
+     "tier": "Loot",
+     "count": "3",
+     "resolved": true
+    },
+    {
      "slug": "turret-ammo-high-velocity",
      "name": "High Velocity 80 mm Shell",
      "chance": 0.6,
@@ -179,14 +187,6 @@
      "chance": 0.6,
      "tier": "Loot",
      "count": "30",
-     "resolved": true
-    },
-    {
-     "slug": "turret-ammo-emp",
-     "name": "EMP 80 mm Shell",
-     "chance": 0.6,
-     "tier": "Loot",
-     "count": "3",
      "resolved": true
     },
     {
@@ -273,24 +273,24 @@
      "resolved": true
     },
     {
-     "slug": "game-key-locked-box",
-     "name": "Box Key",
-     "chance": 2.4,
-     "tier": "Loot",
-     "count": "1",
-     "resolved": true
-    },
-    {
-     "slug": "artefactcrystal",
-     "name": "ArtefactCrystal",
+     "slug": "artefact-crystal",
+     "name": "Crystal",
      "chance": 2.4,
      "tier": "Loot",
      "count": "10",
      "resolved": true
     },
     {
-     "slug": "game-keyislanddoorgreen",
-     "name": "game_keyIslandDoorGreen",
+     "slug": "game-key-island-door-green",
+     "name": "Green Key",
+     "chance": 2.4,
+     "tier": "Loot",
+     "count": "1",
+     "resolved": true
+    },
+    {
+     "slug": "game-key-locked-box",
+     "name": "Box Key",
      "chance": 2.4,
      "tier": "Loot",
      "count": "1",
@@ -308,19 +308,19 @@
    "requiresKeyName": "Box Key",
    "loot": [
     {
-     "slug": "resource-metal-t2",
-     "name": "Pneumatic Parts",
-     "chance": 100.0,
-     "tier": "Loot",
-     "count": "75-150",
-     "resolved": true
-    },
-    {
      "slug": "resource-metal-t1",
      "name": "Mechanical Parts",
      "chance": 100.0,
      "tier": "Loot",
      "count": "400-750",
+     "resolved": true
+    },
+    {
+     "slug": "resource-metal-t2",
+     "name": "Pneumatic Parts",
+     "chance": 100.0,
+     "tier": "Loot",
+     "count": "75-150",
      "resolved": true
     },
     {
@@ -348,14 +348,6 @@
      "resolved": true
     },
     {
-     "slug": "game-key-locked-box",
-     "name": "Box Key",
-     "chance": 4.5,
-     "tier": "Loot",
-     "count": "1",
-     "resolved": true
-    },
-    {
      "slug": "resource-metal-t3",
      "name": "Computing Module",
      "chance": 4.5,
@@ -364,8 +356,16 @@
      "resolved": true
     },
     {
-     "slug": "old-jackett3",
-     "name": "Old_JacketT3",
+     "slug": "game-key-locked-box",
+     "name": "Box Key",
+     "chance": 4.5,
+     "tier": "Loot",
+     "count": "1",
+     "resolved": true
+    },
+    {
+     "slug": "old-jacket-t3",
+     "name": "SGOW SW.73 Light Armor",
      "chance": 4.5,
      "tier": "Loot",
      "count": "1",

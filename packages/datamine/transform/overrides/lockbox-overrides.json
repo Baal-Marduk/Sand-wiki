@@ -5,8 +5,12 @@
   { "id": "valuables-box", "slug": "valuables-box", "name": "Valuables Box", "epb": "game_lockedBox_valuables", "icon": null, "requiresKeySlug": "game-key-locked-box" },
   { "id": "utility-box", "slug": "utility-box", "name": "Utility Box", "epb": "game_lockedBox_utility", "icon": null, "requiresKeySlug": "game-key-locked-box" }
  ],
+ "_aliasDoc": "Force blueprints onto their REAL entity slug — several drops otherwise resolve to disabled junk over-mints whose id == the blueprint (e.g. green key -> game-keyislanddoorgreen), which the wiki hides.",
  "itemSlugAliases": {
   "item_rifleMusketClip": "repeater-rifle-quick-reload",
-  "game_keyLockedBox": "game-key-locked-box"
+  "game_keyLockedBox": "game-key-locked-box",
+  "game_keyIslandDoorGreen": "game-key-island-door-green",
+  "ArtefactCrystal": "artefact-crystal",
+  "Old_JacketT3": "old-jacket-t3"
  }
 }
