@@ -124,7 +124,6 @@ export default async function EnvEntityPage({ params }: { params: Params }) {
         ) : undefined
       }
       tabs={tabs}
-      sourceUrl={entity.sourceUrl}
     />
   );
 }
