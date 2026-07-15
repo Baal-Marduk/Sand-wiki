@@ -52,11 +52,10 @@ export function buildLocationLootLinks(data: LocationLootData | null): LocationL
   return { covered, links };
 }
 
-/** Replace ONLY the prior NOTABLE_TIER loot links from covered locations, then add the new ones —
- *  preserves any other (wiki-authored) loot already on those location pages. Idempotent. */
+/** Full-overwrite loot for covered locations: the datamined notable loot is authoritative for a
+ *  location we surface, so drop ALL prior loot links from those sources (e.g. the stale wiki-import
+ *  "Very Rare" single-item tab on the Dreadnought) and add ours. Non-covered locations untouched. */
 export function applyLocationLoot(baseLinks: EntityLink[], result: LocationLootLinks): EntityLink[] {
-  const kept = baseLinks.filter(
-    (l) => !(l.role === "loot" && l.tier === NOTABLE_TIER && result.covered.has(l.sourceSlug)),
-  );
+  const kept = baseLinks.filter((l) => !(l.role === "loot" && result.covered.has(l.sourceSlug)));
   return kept.concat(result.links);
 }

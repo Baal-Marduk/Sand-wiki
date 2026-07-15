@@ -7008,19 +7008,6 @@
   },
   {
     "sourceSlug": "dreadnaught",
-    "targetSlug": "wok-bomb",
-    "role": "loot",
-    "name": "E-Wok Bomb",
-    "amount": null,
-    "tier": "Very Rare",
-    "value1": "1",
-    "value2": null,
-    "value3": null,
-    "sortOrder": 0,
-    "buyGroup": null
-  },
-  {
-    "sourceSlug": "dreadnaught",
     "targetSlug": "game-key-island-door-black",
     "role": "requires-key",
     "name": "Black Key",

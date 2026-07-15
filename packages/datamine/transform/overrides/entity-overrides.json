@@ -8,6 +8,9 @@
   "game-keyislanddoorgreen": { "disabled": true },
   "game-keylockedbox": { "disabled": true },
   "v1-repair-patch": { "disabled": true },
+  "dreadnaught": { "name": "Dreadnought" },
+  "fort-tarndpol": { "name": "Fort Tarnopol" },
+  "archipel-von-leopold": { "name": "Archipel von Leopold" },
   "game-alarm-lock-box-black": { "name": "Box with Radio Beacon (Black)" },
   "game-alarm-lock-box-green": { "name": "Box with Radio Beacon (Green)" },
   "game-alarm-lock-box-yellow": { "name": "Box with Radio Beacon (Yellow)" }

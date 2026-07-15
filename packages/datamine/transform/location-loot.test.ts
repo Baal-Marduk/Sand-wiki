@@ -35,15 +35,15 @@ describe("location loot links", () => {
     expect(d).toMatchObject({ targetSlug: "game-packed-turret-t4-rail-gun-container", role: "loot", tier: NOTABLE_TIER, value1: "33.3" });
   });
 
-  it("applyLocationLoot replaces only prior notable-tier links, keeps other loot", () => {
+  it("applyLocationLoot full-overwrites loot for covered locations, keeps others' loot", () => {
     const base: EntityLink[] = [
-      { sourceSlug: "dreadnaught", targetSlug: "old-notable", role: "loot", name: "Old", amount: null, tier: NOTABLE_TIER, value1: "1", value2: null, value3: null, sortOrder: 0, buyGroup: null },
-      { sourceSlug: "dreadnaught", targetSlug: "wiki-loot", role: "loot", name: "Wiki", amount: null, tier: "Tier 1", value1: "5", value2: null, value3: null, sortOrder: 0, buyGroup: null },
+      { sourceSlug: "dreadnaught", targetSlug: "wiki-veryrare", role: "loot", name: "Old", amount: null, tier: "Very Rare", value1: "5", value2: null, value3: null, sortOrder: 0, buyGroup: null },
+      { sourceSlug: "weapon-crate", targetSlug: "x", role: "loot", name: "X", amount: null, tier: "Tier 1", value1: "5", value2: null, value3: null, sortOrder: 0, buyGroup: null },
     ];
     const out = applyLocationLoot(base, buildLocationLootLinks(data));
     const dread = out.filter((l) => l.sourceSlug === "dreadnaught");
-    expect(dread.some((l) => l.targetSlug === "old-notable")).toBe(false);   // stale notable removed
-    expect(dread.some((l) => l.targetSlug === "wiki-loot")).toBe(true);      // other-tier loot kept
+    expect(dread.some((l) => l.targetSlug === "wiki-veryrare")).toBe(false);  // stale wiki loot dropped
     expect(dread.some((l) => l.targetSlug === "game-packed-turret-t4-rail-gun-container")).toBe(true);
+    expect(out.some((l) => l.sourceSlug === "weapon-crate")).toBe(true);      // non-covered untouched
   });
 });
