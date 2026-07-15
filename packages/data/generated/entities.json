@@ -16163,5 +16163,22 @@
         }
       ]
     }
+  },
+  {
+    "id": "world-ground-loot",
+    "slug": "world-ground-loot",
+    "kind": "environment",
+    "name": "World / Ground Loot",
+    "description": "Loose items that spawn on the ground out in the world (POIs, camps, wrecks) — pick them up directly rather than from a container. Exact spawn odds vary by location and aren't fixed data.",
+    "category": "loot-containers",
+    "rarity": null,
+    "icon": null,
+    "imageAlt": null,
+    "derivedName": null,
+    "sourceUrl": null,
+    "disabled": false,
+    "itemStats": null,
+    "tramplerStats": null,
+    "techNodeStats": null
   }
 ]

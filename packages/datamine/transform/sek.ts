@@ -45,3 +45,12 @@ export function loadEnemies(dir = SEK): EnemyData[] {
   const raw = JSON.parse(readFileSync(p, "utf-8")) as { enemies?: EnemyData[] } | EnemyData[];
   return (Array.isArray(raw) ? raw : raw.enemies ?? []);
 }
+
+// --- world/ground loose-item spawns (the "World / Ground Loot" source; build_world_spawns.py) ---
+import type { WorldSpawnData } from "./world-spawns";
+
+export function loadWorldSpawns(dir = SEK): WorldSpawnData | null {
+  const p = resolve(dir, "world_spawns.json");
+  if (!existsSync(p)) return null;  // Stage A hasn't produced it yet -> no-op
+  return JSON.parse(readFileSync(p, "utf-8")) as WorldSpawnData;
+}
