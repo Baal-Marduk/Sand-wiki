@@ -54,3 +54,12 @@ export function loadWorldSpawns(dir = SEK): WorldSpawnData | null {
   if (!existsSync(p)) return null;  // Stage A hasn't produced it yet -> no-op
   return JSON.parse(readFileSync(p, "utf-8")) as WorldSpawnData;
 }
+
+// --- locked crates (Military/Valuables/Utility Box; build_lockbox_loot.py) ---
+import type { LockboxData } from "./lockbox";
+
+export function loadLockboxes(dir = SEK): LockboxData | null {
+  const p = resolve(dir, "lockbox_loot.json");
+  if (!existsSync(p)) return null;  // Stage A hasn't produced it yet -> no-op
+  return JSON.parse(readFileSync(p, "utf-8")) as LockboxData;
+}
