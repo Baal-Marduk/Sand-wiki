@@ -7,6 +7,7 @@ export interface LocationLoot {
   name: string;
   mint: boolean;         // true -> the location entity doesn't exist yet and must be created
   category: string;
+  description?: string | null;
   loot: LocationLootRow[];
 }
 export interface LocationLootData { locations: LocationLoot[] }
@@ -15,19 +16,24 @@ export interface LocationLootData { locations: LocationLoot[] }
  *  replace ONLY these links on re-run, leaving any existing (wiki-authored) location loot intact. */
 export const NOTABLE_TIER = "Notable loot";
 
-/** Mint location entities flagged mint:true (e.g. Ship Graveyard); existing ones (Dreadnought) are
- *  left untouched — we only add loot links to them. Idempotent. */
+/** Mint/refresh location entities flagged mint:true (e.g. Ship Graveyard) — upsert so the
+ *  minted name/category/description stay correct across re-runs (baseline = previous artifact,
+ *  which already contains a first-minted entity). Non-mint locations (Dreadnought) are left
+ *  untouched — we only add loot links to those, and curate their text via entity-overrides. */
 export function mergeLocationEntities(entities: Entity[], data: LocationLootData | null): Entity[] {
   if (!data) return entities;
-  const existing = new Set(entities.map((e) => e.slug));
-  const toMint = data.locations.filter((l) => l.mint && !existing.has(l.slug));
-  const rows: Entity[] = toMint.map((l) => ({
-    id: l.slug, slug: l.slug, kind: "environment", name: l.name,
-    description: null, category: l.category, rarity: null, icon: null,
-    imageAlt: null, derivedName: null, sourceUrl: null, disabled: false,
+  const mints = new Map(data.locations.filter((l) => l.mint).map((l) => [l.slug, l]));
+  const toEntity = (l: LocationLoot, base?: Entity): Entity => ({
+    id: base?.id ?? l.slug, slug: l.slug, kind: "environment", name: l.name,
+    description: l.description ?? null, category: l.category, rarity: null,
+    icon: base?.icon ?? null, imageAlt: base?.imageAlt ?? null, derivedName: null,
+    sourceUrl: base?.sourceUrl ?? null, disabled: base?.disabled ?? false,
     itemStats: null, tramplerStats: null, techNodeStats: null,
-  }));
-  return entities.concat(rows);
+  });
+  const existing = new Set(entities.map((e) => e.slug));
+  const refreshed = entities.map((e) => (mints.has(e.slug) ? toEntity(mints.get(e.slug)!, e) : e));
+  const added = [...mints.values()].filter((l) => !existing.has(l.slug)).map((l) => toEntity(l));
+  return refreshed.concat(added);
 }
 
 export interface LocationLootLinks { covered: Set<string>; links: EntityLink[] }

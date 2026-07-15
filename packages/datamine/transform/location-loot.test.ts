@@ -20,10 +20,18 @@ const ent = (slug: string, kind = "environment"): Entity => ({
 });
 
 describe("location entity minting", () => {
-  it("mints only mint:true locations that don't already exist", () => {
+  it("mints mint:true locations and leaves non-mint ones", () => {
     const out = mergeLocationEntities([ent("dreadnaught")], data);
     expect(out.map((e) => e.slug).sort()).toEqual(["dreadnaught", "ship-graveyard"]);
     expect(out.find((e) => e.slug === "ship-graveyard")!.kind).toBe("environment");
+  });
+  it("upserts an already-minted location's description on re-run", () => {
+    const withDesc: LocationLootData = { locations: [
+      { slug: "ship-graveyard", name: "Ship Graveyard", mint: true, category: "landmarks", description: "worm pit finale", loot: [] },
+    ] };
+    const out = mergeLocationEntities([ent("ship-graveyard")], withDesc);
+    expect(out.filter((e) => e.slug === "ship-graveyard")).toHaveLength(1);   // no duplicate
+    expect(out.find((e) => e.slug === "ship-graveyard")!.description).toBe("worm pit finale");
   });
 });
 

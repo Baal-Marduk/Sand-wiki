@@ -9,6 +9,7 @@
    "name": "Dreadnought",
    "mint": false,
    "category": "landmarks",
+   "description": null,
    "loot": [
     {
      "slug": "rocket-launcher-ammo-armor-piercing",
@@ -80,6 +81,7 @@
    "name": "Ship Graveyard",
    "mint": true,
    "category": "landmarks",
+   "description": "The Ship Graveyard (the \"worm pit\") is an event-exclusive [[storm-dive]] finale. It only appears on 9-city maps, at about 1 in 3 — the [[dreadnaught]] takes the other 2 in 3. Like the Dreadnought, it holds experimental cannon kits.",
    "loot": [
     {
      "slug": "game-packed-shotgun-turret-t4-double-barrel-container",
