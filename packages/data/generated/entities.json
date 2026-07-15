@@ -16231,5 +16231,22 @@
     "itemStats": null,
     "tramplerStats": null,
     "techNodeStats": null
+  },
+  {
+    "id": "ship-graveyard",
+    "slug": "ship-graveyard",
+    "kind": "environment",
+    "name": "Ship Graveyard",
+    "description": null,
+    "category": "landmarks",
+    "rarity": null,
+    "icon": null,
+    "imageAlt": null,
+    "derivedName": null,
+    "sourceUrl": null,
+    "disabled": false,
+    "itemStats": null,
+    "tramplerStats": null,
+    "techNodeStats": null
   }
 ]

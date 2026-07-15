@@ -63,3 +63,12 @@ export function loadLockboxes(dir = SEK): LockboxData | null {
   if (!existsSync(p)) return null;  // Stage A hasn't produced it yet -> no-op
   return JSON.parse(readFileSync(p, "utf-8")) as LockboxData;
 }
+
+// --- per-location notable loot (Dreadnought experimental cannons, etc.; build_location_loot.py) ---
+import type { LocationLootData } from "./location-loot";
+
+export function loadLocationLoot(dir = SEK): LocationLootData | null {
+  const p = resolve(dir, "location_loot.json");
+  if (!existsSync(p)) return null;  // Stage A hasn't produced it yet -> no-op
+  return JSON.parse(readFileSync(p, "utf-8")) as LocationLootData;
+}
