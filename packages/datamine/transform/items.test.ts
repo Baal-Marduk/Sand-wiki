@@ -78,6 +78,24 @@ describe("items transform", () => {
     expect(out.find((x) => x.slug === "other")!.name).toBe("Other"); // unmapped -> untouched
   });
 
+  it("descriptionAppend is idempotent/self-healing (never stacks up across re-runs)", () => {
+    const ent = (description: string | null): Entity => ({
+      id: "x", slug: "x", kind: "environment", name: "X", description, category: "landmarks",
+      rarity: null, icon: null, imageAlt: null, derivedName: null, sourceUrl: null,
+      disabled: false, itemStats: null, tramplerStats: null, techNodeStats: null,
+    });
+    const ov = { x: { descriptionAppend: "Finale note." } };
+    const first = applyEntityOverrides([ent("Intro.")], ov)[0].description!;
+    expect(first).toBe("Intro.\n\nFinale note.");
+    // Feeding the already-appended description back in (baseline = previous artifact) must NOT stack.
+    const second = applyEntityOverrides([ent(first)], ov)[0].description!;
+    expect(second).toBe("Intro.\n\nFinale note.");
+    expect(second.split("Finale note.").length - 1).toBe(1);
+    // Heals an already-duplicated baseline down to a single copy.
+    const healed = applyEntityOverrides([ent("Intro.\n\nFinale note.\n\nFinale note.")], ov)[0].description!;
+    expect(healed.split("Finale note.").length - 1).toBe(1);
+  });
+
   it("pruneIconlessItems drops only null-icon item entities, keeps everything else", () => {
     const ent = (slug: string, kind: Entity["kind"], icon: string | null): Entity => ({
       id: slug, slug, kind, name: slug, description: null, category: "misc",

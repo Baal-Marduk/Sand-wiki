@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { SECTIONS, isWipSection } from "@/lib/taxonomy";
 import { CategoryIcon } from "@/components/CategoryIcon";
+import { SectionIcon } from "@/components/SectionIcon";
 import { WipBadge } from "@/components/WipBadge";
 import {
   NavigationMenu,
@@ -18,7 +19,8 @@ import {
 // the auto-appended chevron rotates on open.
 const triggerCls =
   "nav-link inline-flex h-auto cursor-pointer items-center gap-1 rounded-none bg-transparent px-2 py-1 text-sm font-semibold text-foreground hover:bg-transparent hover:text-primary focus:bg-transparent focus:text-primary data-[state=open]:bg-transparent data-[state=open]:text-primary data-[state=open]:hover:bg-transparent data-[state=open]:focus:bg-transparent data-[state=open]:focus:text-primary";
-const navItemCls = "nav-link rounded px-2 py-1 text-sm font-semibold text-foreground hover:text-primary";
+const navItemCls =
+  "nav-link inline-flex items-center gap-1.5 rounded px-2 py-1 text-sm font-semibold text-foreground hover:text-primary";
 const disabledNavCls =
   "inline-flex cursor-not-allowed items-center gap-1.5 px-2 py-1 text-sm font-semibold text-muted-foreground";
 // Dropdown rows (.menu-item): icon + label, light warm hover wash + primary text.
@@ -28,8 +30,10 @@ const itemDisabledCls =
   "flex cursor-not-allowed items-center gap-2.5 px-2.5 py-2 text-sm text-muted-foreground";
 // Lift the open dropdown panel off the near-black page: lighter surface, a
 // stronger border and a real shadow so it reads as elevated rather than flat.
+// z-50 keeps the panel above the topbar's ember horizon line (.sand-topbar::after),
+// which is a positioned pseudo-element that would otherwise paint over the panel.
 const contentCls =
-  "group-data-[viewport=false]/navigation-menu:bg-card-elevated group-data-[viewport=false]/navigation-menu:border-border-strong group-data-[viewport=false]/navigation-menu:shadow-lg group-data-[viewport=false]/navigation-menu:shadow-black/50";
+  "z-50 group-data-[viewport=false]/navigation-menu:bg-card-elevated group-data-[viewport=false]/navigation-menu:border-border-strong group-data-[viewport=false]/navigation-menu:shadow-lg group-data-[viewport=false]/navigation-menu:shadow-black/50";
 
 export function MainNav() {
   const router = useRouter();
@@ -45,7 +49,10 @@ export function MainNav() {
     // that the e2e suite queries via nav.getByRole(...).
     <NavigationMenu viewport={false} className="max-w-none justify-start">
       <NavigationMenuList className="flex-wrap justify-start gap-1">
-        {SECTIONS.map((section) => {
+        {/* Gallery is reachable from the Builder tool's segmented switch (ToolNav),
+            so it's dropped from the desktop bar here. MobileNav still lists it
+            because the Builder page is gated below 1024px. */}
+        {SECTIONS.filter((s) => s.slug !== "gallery").map((section) => {
           if (section.kind === "data" && section.categories.length > 0) {
             return (
               <NavigationMenuItem key={section.slug}>
@@ -55,6 +62,7 @@ export function MainNav() {
                   className={`${triggerCls}${isActive(`/${section.slug}`) ? " nav-tick text-primary" : ""}`}
                   onClick={() => router.push(`/${section.slug}`)}
                 >
+                  <SectionIcon slug={section.slug} className="size-4 shrink-0" />
                   {section.label}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className={contentCls}>
@@ -100,6 +108,7 @@ export function MainNav() {
                 href={href}
                 className={`${navItemCls}${isActive(href) ? " nav-tick text-primary" : ""}`}
               >
+                <SectionIcon slug={section.slug} className="size-4 shrink-0" />
                 {section.label}
               </Link>
             </NavigationMenuItem>

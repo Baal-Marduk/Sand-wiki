@@ -161,7 +161,7 @@
     "id": "cmq8kxkgm008tbgz0z0olsz9n",
     "slug": "archipel-von-leopold",
     "kind": "environment",
-    "name": "Archipel Von Leopold",
+    "name": "Archipel von Leopold",
     "description": "",
     "category": "landmarks",
     "rarity": null,
@@ -1057,8 +1057,8 @@
     "id": "cmq8kxkis008vbgz0d6y84tcc",
     "slug": "dreadnaught",
     "kind": "environment",
-    "name": "Dreadnaught",
-    "description": "The Dreadnaught is a Landmark that can only be found in the game mode [[storm-dive]], and holds some of the best loot in the game.\r\n\r\nSpawning\r\nUnlike other landmarks, the dreadnaught does not spawn at the start of the game, instead it has a rare chance of spawning during the in game event Final Extract\r\n\r\nThe dreadnaught is the exclusive home of experimental weapons and items, along with some of the rarest materials in the game.",
+    "name": "Dreadnought",
+    "description": "The Dreadnaught is a Landmark that can only be found in the game mode [[storm-dive]], and holds some of the best loot in the game.\r\n\r\nSpawning\r\nUnlike other landmarks, the dreadnaught does not spawn at the start of the game, instead it has a rare chance of spawning during the in game event Final Extract\r\n\r\nThe dreadnaught is the exclusive home of experimental weapons and items, along with some of the rarest materials in the game.\n\nStorm Dive finale — it only turns up on 9-city maps, and it's the likelier of the two event finales: about 2 in 3 (double the [[ship-graveyard]]'s odds).",
     "category": "landmarks",
     "rarity": null,
     "icon": null,
@@ -1161,7 +1161,7 @@
     "imageAlt": null,
     "derivedName": null,
     "sourceUrl": "https://sandgame.wiki/index.php/Factorio",
-    "disabled": false,
+    "disabled": true,
     "itemStats": null,
     "tramplerStats": null,
     "techNodeStats": null
@@ -1373,7 +1373,7 @@
     "description": "The amount of food on board the trampler determines the number of quick respawns available for the Crew. You also can just eat it to improve your well-being.",
     "category": "medical",
     "rarity": "Uncommon",
-    "icon": "/icons/icon_item_game_fishCan.png",
+    "icon": "/icons/icon_food.png",
     "imageAlt": null,
     "derivedName": "Food Can",
     "sourceUrl": null,
@@ -1571,7 +1571,7 @@
     "id": "cmq8kxklq0091bgz0kxh05muj",
     "slug": "fort-tarndpol",
     "kind": "environment",
-    "name": "Fort Tarndpol",
+    "name": "Fort Tarnopol",
     "description": "",
     "category": "landmarks",
     "rarity": null,
@@ -13016,7 +13016,7 @@
     "slug": "storm-dive",
     "kind": "environment",
     "name": "Storm Dive",
-    "description": "Storm Dive is one of the two game modes in Sand, after selecting your trampler, inventory and loadout, you will be dropped onto the surface of Sophie by the insertion ship. You'll have limited time to explore, fight and loot before being consumed by the ever approaching dust storm, so you'd better keep moving!",
+    "description": "Storm Dive is one of the two game modes in Sand, after selecting your trampler, inventory and loadout, you will be dropped onto the surface of Sophie by the insertion ship. You'll have limited time to explore, fight and loot before being consumed by the ever approaching dust storm, so you'd better keep moving!\n\nFinales: every map has one finale location. Count the cities (ignore the 4 forts) — 10 cities means an ordinary island is the finale (nothing special); 9 cities means an event finale: either the [[dreadnaught]] (~2 in 3) or the [[ship-graveyard]] worm pit (~1 in 3). Note: the ~2/3 split is observed, not confirmed from the game files.",
     "category": "game-modes",
     "rarity": null,
     "icon": null,
@@ -16095,5 +16095,158 @@
         "description": null
       }
     }
+  },
+  {
+    "id": "upior",
+    "slug": "upior",
+    "kind": "environment",
+    "name": "Upiór",
+    "description": null,
+    "category": "creatures",
+    "rarity": null,
+    "icon": null,
+    "imageAlt": null,
+    "derivedName": null,
+    "sourceUrl": null,
+    "disabled": false,
+    "itemStats": null,
+    "tramplerStats": null,
+    "techNodeStats": null,
+    "enemyStats": {
+      "type": "creature",
+      "variants": [
+        {
+          "name": "Ranged",
+          "hp": 100
+        },
+        {
+          "name": "Melee",
+          "hp": 100
+        },
+        {
+          "name": "Melee (Shovel)",
+          "hp": 100
+        }
+      ]
+    }
+  },
+  {
+    "id": "ironclad",
+    "slug": "ironclad",
+    "kind": "environment",
+    "name": "Ironclad",
+    "description": null,
+    "category": "enemy-tramplers",
+    "rarity": null,
+    "icon": null,
+    "imageAlt": null,
+    "derivedName": null,
+    "sourceUrl": null,
+    "disabled": false,
+    "itemStats": null,
+    "tramplerStats": null,
+    "techNodeStats": null,
+    "enemyStats": {
+      "type": "enemy-trampler",
+      "variants": [
+        {
+          "name": "Buckler",
+          "hp": 5000
+        },
+        {
+          "name": "Falchion",
+          "hp": 4000
+        },
+        {
+          "name": "Tophelm",
+          "hp": 4000
+        }
+      ]
+    }
+  },
+  {
+    "id": "world-ground-loot",
+    "slug": "world-ground-loot",
+    "kind": "environment",
+    "name": "World / Ground Loot",
+    "description": "Loose items that spawn on the ground out in the world (POIs, camps, wrecks) — pick them up directly rather than from a container. Exact spawn odds vary by location and aren't fixed data.",
+    "category": "loot-containers",
+    "rarity": null,
+    "icon": null,
+    "imageAlt": null,
+    "derivedName": null,
+    "sourceUrl": null,
+    "disabled": false,
+    "itemStats": null,
+    "tramplerStats": null,
+    "techNodeStats": null
+  },
+  {
+    "id": "military-box",
+    "slug": "military-box",
+    "kind": "environment",
+    "name": "Military Box",
+    "description": "A key-locked crate found out in the world — unlock it with the Box Key to claim the loot inside.",
+    "category": "loot-containers",
+    "rarity": null,
+    "icon": null,
+    "imageAlt": null,
+    "derivedName": null,
+    "sourceUrl": null,
+    "disabled": false,
+    "itemStats": null,
+    "tramplerStats": null,
+    "techNodeStats": null
+  },
+  {
+    "id": "valuables-box",
+    "slug": "valuables-box",
+    "kind": "environment",
+    "name": "Valuables Box",
+    "description": "A key-locked crate found out in the world — unlock it with the Box Key to claim the loot inside.",
+    "category": "loot-containers",
+    "rarity": null,
+    "icon": null,
+    "imageAlt": null,
+    "derivedName": null,
+    "sourceUrl": null,
+    "disabled": false,
+    "itemStats": null,
+    "tramplerStats": null,
+    "techNodeStats": null
+  },
+  {
+    "id": "utility-box",
+    "slug": "utility-box",
+    "kind": "environment",
+    "name": "Utility Box",
+    "description": "A key-locked crate found out in the world — unlock it with the Box Key to claim the loot inside.",
+    "category": "loot-containers",
+    "rarity": null,
+    "icon": null,
+    "imageAlt": null,
+    "derivedName": null,
+    "sourceUrl": null,
+    "disabled": false,
+    "itemStats": null,
+    "tramplerStats": null,
+    "techNodeStats": null
+  },
+  {
+    "id": "ship-graveyard",
+    "slug": "ship-graveyard",
+    "kind": "environment",
+    "name": "Ship Graveyard",
+    "description": "The Ship Graveyard (the \"worm pit\") is an event-exclusive [[storm-dive]] finale. It only appears on 9-city maps, at about 1 in 3 — the [[dreadnaught]] takes the other 2 in 3. Like the Dreadnought, it holds experimental cannon kits.",
+    "category": "landmarks",
+    "rarity": null,
+    "icon": null,
+    "imageAlt": null,
+    "derivedName": null,
+    "sourceUrl": null,
+    "disabled": false,
+    "itemStats": null,
+    "tramplerStats": null,
+    "techNodeStats": null
   }
 ]

@@ -32,17 +32,36 @@ export function applyIconOverrides(entities: Entity[], iconMap: Record<string, s
 /** Curated, display-level entity field overrides keyed by slug, for fixes the datamine can't
  *  express: hide a redundant duplicate (disabled) or disambiguate identical names. Only the
  *  whitelisted fields below are overridable; applied after the merge so they always win. */
-export interface EntityOverride { name?: string; disabled?: boolean; category?: string }
+export interface EntityOverride {
+  name?: string;
+  disabled?: boolean;
+  category?: string;
+  /** Replace the description outright. */
+  description?: string;
+  /** Append this to the existing description (curated notes the wiki import lacks), as a new
+   *  paragraph. Ignored when `description` is also set. */
+  descriptionAppend?: string;
+}
 
 export function applyEntityOverrides(entities: Entity[], overrides: Record<string, EntityOverride>): Entity[] {
   return entities.map((e) => {
     const o = overrides[e.slug];
     if (!o) return e;
+    let description = e.description;
+    if (o.description !== undefined) description = o.description;
+    else if (o.descriptionAppend) {
+      // Idempotent + self-healing: strip any existing copies of the appended block first (the
+      // transform baseline is the previous artifact, so a naive append would stack up each run),
+      // then append exactly one.
+      const base = (e.description ?? "").split(o.descriptionAppend).join("").replace(/\n{3,}/g, "\n\n").trim();
+      description = base ? `${base}\n\n${o.descriptionAppend}` : o.descriptionAppend;
+    }
     return {
       ...e,
       ...(o.name !== undefined ? { name: o.name } : {}),
       ...(o.disabled !== undefined ? { disabled: o.disabled } : {}),
       ...(o.category !== undefined ? { category: o.category } : {}),
+      description,
     };
   });
 }
