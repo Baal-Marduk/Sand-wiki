@@ -100,7 +100,7 @@ for slug, items in by_slug.items():
         del r["min"]; del r["max"]
         r["tier"] = "Notable loot"
     out.append({"slug": slug, "name": m["name"], "mint": bool(m.get("mint")),
-                "category": m.get("category", "landmarks"), "loot": loot})
+                "category": m.get("category", "landmarks"), "description": m.get("description"), "loot": loot})
 
 artifact = {"meta": {"source": "location_spawns.json", "locations": len(out)}, "locations": out}
 os.makedirs("sek-out", exist_ok=True)
