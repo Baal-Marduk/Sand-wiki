@@ -110,12 +110,12 @@ function mountViewer(root) {
     const c = document.createElement("canvas"); c.width = 2; c.height = 256;
     const g = c.getContext("2d");
     const grd = g.createLinearGradient(0, 0, 0, 256);
-    grd.addColorStop(0, "#e7d3ab"); grd.addColorStop(0.45, "#d8c199"); grd.addColorStop(1, "#a98f68");
+    grd.addColorStop(0, "#b39c72"); grd.addColorStop(0.45, "#8a7551"); grd.addColorStop(1, "#4c4029");
     g.fillStyle = grd; g.fillRect(0, 0, 2, 256);
     const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
   })();
   scene.background = _sky;
-  scene.fog = new THREE.Fog(0xc9b48f, 500, 2600); // sandy haze so distance blends into the sky
+  scene.fog = new THREE.Fog(0x8a7551, 500, 2600); // dark sandy haze so distance blends into the sky
   // image-based lighting: a neutral procedural room env gives every surface soft, even
   // fill — the single biggest quality win, same approach as the Trampler Builder.
   const _pmrem = new THREE.PMREMGenerator(renderer);
