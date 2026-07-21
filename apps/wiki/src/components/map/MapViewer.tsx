@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { ToolNavBrand } from "@/components/ToolNavBrand";
-import { slugForName } from "@/components/map/entityLinkIndex";
+import { slugForName, keyOpens, doorKey } from "@/components/map/entityLinkIndex";
 import "@/components/map/map.css";
 
 // Faithful port of sand3d/viewer/index.html's <script type="module"> body.
@@ -548,6 +548,19 @@ function mountViewer(root) {
             `</div>${inner}</div>`;
         }).join("");
     }
+    // lockable door: show the key it requires (colour-matched, incl. fort)
+    const req = doorKey(o.userData.t);
+    if (req)
+      body += `<div class="mv-becomes-lbl">Requires</div><div class="mv-contents">` +
+        `<a class="ci" href="${req.href}">${req.icon ? `<img class="mv-loot-icon" src="${req.icon}" alt="" aria-hidden="true">` : ""}${req.name}</a><span class="cq"></span></div>`;
+    // key backlink: if the clicked object is a key, list the locations/boxes it opens
+    const opens = keyOpens(o.userData.t);
+    if (opens.length)
+      body += `<div class="mv-becomes-lbl">Opens</div><div class="mv-contents">` +
+        opens.map(x => {
+          const ic = x.icon ? `<img class="mv-loot-icon" src="${x.icon}" alt="" aria-hidden="true">` : "";
+          return `<a class="ci" href="${x.href}">${ic}${x.name}</a><span class="cq"></span>`;
+        }).join("") + `</div>`;
 
     // title: effort stripped, tier kept; links to the wiki entity/container when one matches
     const tHit = slugForName(o.userData.t);

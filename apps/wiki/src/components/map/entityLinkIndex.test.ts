@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { slugForName, __normalize } from "./entityLinkIndex";
+import { slugForName, __normalize, keyOpens, doorKey } from "./entityLinkIndex";
 
 describe("__normalize", () => {
   it("lowercases, trims, and collapses internal whitespace", () => {
@@ -58,10 +58,16 @@ describe("slugForName", () => {
     expect(slugForName("Valuable Piles03")).toMatchObject({ href: "/items/coin-crown" });
   });
 
-  it("links lockable doors to their colour-matched key", () => {
-    expect(slugForName("Sqr Door Lockable Black")).toMatchObject({ href: "/items/game-key-island-door-black" });
-    expect(slugForName("Sqr Door Lockable Red")).toMatchObject({ href: "/items/game-key-island-door-red" });
-    expect(slugForName("Sqr Door Lockable Fort")).toMatchObject({ href: "/items/game-key-island-door-fort" });
+  it("doorKey returns a lockable door's colour-matched key (incl. fort)", () => {
+    expect(doorKey("Sqr Door Lockable Black")).toMatchObject({ href: "/items/game-key-island-door-black" });
+    expect(doorKey("Sqr Door Lockable Fort")).toMatchObject({ href: "/items/game-key-island-door-fort" });
+    expect(doorKey("Destructible Door Medium")).toBeNull(); // not a keyed door
+  });
+
+  it("keyOpens lists what a key unlocks (requires-key backlink)", () => {
+    expect(keyOpens("Green Key").some(o => o.href === "/environment/kaiserplatz")).toBe(true);
+    expect(keyOpens("Box Key").some(o => o.href === "/environment/military-box")).toBe(true);
+    expect(keyOpens("Metal Rods")).toEqual([]); // not a key
   });
 
   // Armored turrets have no corresponding wiki kit — intentionally unlinked (no alias,

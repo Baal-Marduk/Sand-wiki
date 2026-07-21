@@ -1,4 +1,4 @@
-import { listByKind, getEntity } from "@sandlabs/data";
+import { listByKind, getEntity, incomingLinks } from "@sandlabs/data";
 
 /** Kinds that have a wiki detail route, in collision-priority order. */
 const KIND_ROUTE: { kind: string; base: string }[] = [
@@ -45,14 +45,17 @@ const FAMILIES: { re: RegExp; slug: string }[] = [
   { re: /^locked box valuables\b/i, slug: "valuables-box" },
   { re: /^safe\b/i, slug: "valuables-safe" },
   { re: /^valuable pile/i, slug: "coin-crown" }, // ground piles of crowns ("Valuable Piles01"…)
-  // lockable doors → the colour-matched key that opens them
-  { re: /^sqr door lockable black/i, slug: "game-key-island-door-black" },
-  { re: /^sqr door lockable blue/i, slug: "game-key-island-door-blue" },
-  { re: /^sqr door lockable green/i, slug: "game-key-island-door-green" },
-  { re: /^sqr door lockable red/i, slug: "game-key-island-door-red" },
-  { re: /^sqr door lockable white/i, slug: "game-key-island-door-white" },
-  { re: /^sqr door lockable fort/i, slug: "game-key-island-door-fort" },
 ];
+
+/** Lockable door label → the key item that opens it (colour-matched, plus the fort key). */
+const DOOR_KEY: Record<string, string> = {
+  black: "game-key-island-door-black",
+  blue: "game-key-island-door-blue",
+  green: "game-key-island-door-green",
+  red: "game-key-island-door-red",
+  white: "game-key-island-door-white",
+  fort: "game-key-island-door-fort",
+};
 
 /** Lowercase, trim, collapse internal whitespace. Exported for tests. */
 export function __normalize(name: string): string {
@@ -107,4 +110,32 @@ export function slugForName(name: string): EntityRoute | null {
   if (hit) return hit;
   for (const f of FAMILIES) if (f.re.test(name.trim())) return routeFor(f.slug);
   return null;
+}
+
+/** The key a lockable door requires ("Sqr Door Lockable Black" → Black Key), or null.
+ *  Doors aren't wiki entities, so this powers a "Requires" row rather than a title link. */
+export function doorKey(label: string): { name: string; href: string; icon: string | null } | null {
+  const m = /^sqr door lockable (black|blue|green|red|white|fort)\b/i.exec(label || "");
+  if (!m) return null;
+  const slug = DOOR_KEY[m[1].toLowerCase()];
+  const e = getEntity(slug);
+  if (!e || e.disabled) return null;
+  const base = KIND_ROUTE.find((k) => k.kind === e.kind)?.base;
+  return base ? { name: e.name, href: `${base}/${slug}`, icon: e.icon ?? null } : null;
+}
+
+/** Reverse backlink for a key: the locations/containers it opens (i.e. the entities
+ *  that `requires-key` this key). Empty unless `name` resolves to a game-key-* item. */
+export function keyOpens(name: string): { name: string; href: string; icon: string | null }[] {
+  const hit = slugForName(name);
+  const slug = hit?.href.split("/").pop();
+  if (!slug || !/^game-key-/.test(slug)) return [];
+  const out: { name: string; href: string; icon: string | null }[] = [];
+  for (const l of incomingLinks(slug, ["requires-key"])) {
+    const e = getEntity(l.sourceSlug);
+    if (!e || e.disabled) continue;
+    const base = KIND_ROUTE.find((k) => k.kind === e.kind)?.base;
+    if (base) out.push({ name: e.name, href: `${base}/${e.slug}`, icon: e.icon ?? null });
+  }
+  return out;
 }
