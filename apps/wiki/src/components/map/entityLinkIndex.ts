@@ -38,10 +38,12 @@ const FAMILIES: { re: RegExp; slug: string }[] = [
   { re: /^shells box\b/i, slug: "crate-of-shells" },
   { re: /^food box\b/i, slug: "food-crate" },
   { re: /^parts box\b/i, slug: "parts-crate" },
+  { re: /^army box\b/i, slug: "military-box" },
   { re: /^medical cabinet\b/i, slug: "medical-cabinet" },
   { re: /^locked box military\b/i, slug: "military-box" },
   { re: /^locked box utility\b/i, slug: "utility-box" },
   { re: /^locked box valuables\b/i, slug: "valuables-box" },
+  { re: /^safe\b/i, slug: "valuables-safe" },
 ];
 
 /** Lowercase, trim, collapse internal whitespace. Exported for tests. */

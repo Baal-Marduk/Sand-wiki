@@ -168,6 +168,23 @@ function mountViewer(root) {
   const GLB2KEY = {}; // reverse: glb path -> location key (for the URL hash)
   let currentLocKey = null; // key of the currently-open location
   const openCats = new Set(); // expanded categories (persist across re-render)
+  // ---- persist the category filter across reloads/locations (localStorage) ----
+  const known = new Set(); // thing-keys we've already applied the default-visibility rule to
+  const FKEY = "sand3d-map:filters";
+  const saveFilters = () => { try { localStorage.setItem(FKEY, JSON.stringify({ hidden: [...hidden], known: [...known] })); } catch { /* storage disabled */ } };
+  try { const s = JSON.parse(localStorage.getItem(FKEY) || "{}");
+    if (Array.isArray(s.hidden)) s.hidden.forEach(k => hidden.add(k));
+    if (Array.isArray(s.known)) s.known.forEach(k => known.add(k)); } catch { /* ignore */ }
+  // Generic green "Container Box" crates are clutter — hidden by default until the user
+  // opts in. Applied once per newly-seen thing-key; the user's choice then persists.
+  const defaultHidden = (label) => /^container box\b/i.test(label || "");
+  function applyDefaults() {
+    let changed = false;
+    for (const k in byCat) for (const [tk, t] of byCat[k].things) {
+      if (!known.has(tk)) { known.add(tk); changed = true; if (defaultHidden(t.label)) hidden.add(tk); }
+    }
+    if (changed) saveFilters();
+  }
   const loader = new GLTFLoader();
   const ray = new THREE.Raycaster(); const ndc = new THREE.Vector2();
   const PICK_TOL = 24; // px: clicking/hovering this near a small object still selects it
@@ -285,11 +302,11 @@ function mountViewer(root) {
         const tr = document.createElement("div"); tr.className = "thingrow" + (hidden.has(tk) ? " off" : ""); tr.dataset.tk = tk;
         tr.innerHTML = `<input type="checkbox" ${hidden.has(tk) ? "" : "checked"}>` +
           `<span class="dotmini" style="background:${color}"></span><span class="n">${t.label}</span><span class="c">${t.meshes.length}</span>`;
-        tr.onclick = e => { e.stopPropagation(); hidden.has(tk) ? hidden.delete(tk) : hidden.add(tk); update(); };
+        tr.onclick = e => { e.stopPropagation(); hidden.has(tk) ? hidden.delete(tk) : hidden.add(tk); saveFilters(); update(); };
         things.appendChild(tr);
       });
       cb.onclick = e => { e.stopPropagation(); const hide = (st !== "none"); // checkbox: toggle whole category
-        for (const tk of g.things.keys()) hide ? hidden.add(tk) : hidden.delete(tk); update(); };
+        for (const tk of g.things.keys()) hide ? hidden.add(tk) : hidden.delete(tk); saveFilters(); update(); };
       const caret = row.querySelector(".caret");
       const toggleOpen = e => { e.stopPropagation(); openCats.has(k) ? openCats.delete(k) : openCats.add(k);
         const o = openCats.has(k); things.classList.toggle("open", o); caret.textContent = o ? "▾" : "▸"; };
@@ -305,8 +322,8 @@ function mountViewer(root) {
     if (hovered && !hovered.visible) { if (hovered !== selected) setMat(hovered, null); hovered = null; tip.style.display = "none"; }
     buildLegend();
   }
-  $("allOn").onclick = () => { hidden.clear(); update(); };
-  $("allOff").onclick = () => { for (const k in byCat) for (const tk of byCat[k].things.keys()) hidden.add(tk); update(); };
+  $("allOn").onclick = () => { hidden.clear(); saveFilters(); update(); };
+  $("allOff").onclick = () => { for (const k in byCat) for (const tk of byCat[k].things.keys()) hidden.add(tk); saveFilters(); update(); };
   $("baseBtn").onclick = () => { showBase = !showBase; const b = $("baseBtn");
     b.textContent = showBase ? "Hide terrain" : "Show terrain"; b.setAttribute("aria-pressed", String(!showBase)); update(); };
   // X-ray: draw item meshes over terrain (depthTest off + high renderOrder). Highlight mats share the flag.
@@ -355,8 +372,9 @@ function mountViewer(root) {
       camera.position.set(c.x + sceneR * 0.7, c.y + sceneR * 0.8, c.z + sceneR * 0.7);
       camera.near = Math.max(0.3, sceneR / 2000); camera.far = sceneR * 60; camera.updateProjectionMatrix();
       camera.lookAt(c); euler.setFromQuaternion(camera.quaternion, "YXZ"); // seed fly-cam orientation
-      hidden.clear(); showBase = true; $("baseBtn").textContent = "Hide terrain";
+      showBase = true; $("baseBtn").textContent = "Hide terrain"; // keep the persisted category filter
       buildGroups();
+      applyDefaults(); // default-hide new container-box crates (once), respecting saved choices
       if (pendingSolo) { // arriving from a search jump: isolate one thing
         for (const k in byCat) for (const tk of byCat[k].things.keys()) if (tk !== pendingSolo) hidden.add(tk);
         for (const k in byCat) if (byCat[k].things.has(pendingSolo)) openCats.add(k);
