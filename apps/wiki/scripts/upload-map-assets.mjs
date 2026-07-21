@@ -36,11 +36,11 @@ if (!process.env.BLOB_READ_WRITE_TOKEN && existsSync(".env.local")) {
   }
 }
 
-if (!process.env.BLOB_READ_WRITE_TOKEN) {
+const TOKEN = process.env.BLOB_READ_WRITE_TOKEN;
+if (!TOKEN || !/^vercel_blob_rw_/.test(TOKEN)) {
   console.error(
-    "BLOB_READ_WRITE_TOKEN is not set. Provision a Vercel Blob store, then run\n" +
-      "  npx vercel env pull .env.local\n" +
-      "(from apps/wiki) and re-run: node scripts/upload-map-assets.mjs",
+    `BLOB_READ_WRITE_TOKEN is missing or not a real read-write token${TOKEN === "[SENSITIVE]" ? ' (got the "[SENSITIVE]" placeholder — that var is flagged Sensitive on Vercel, so `env pull` cannot emit it)' : ""}.\n` +
+      "Put a real 'vercel_blob_rw_…' token in apps/wiki/.env.local, then re-run: node scripts/upload-map-assets.mjs",
   );
   process.exit(1);
 }
@@ -64,6 +64,7 @@ for (const f of files) {
   const contentType = f.endsWith(".json") ? "application/json" : "application/octet-stream";
   const { url } = await put(`${PREFIX}/${f}`, body, {
     access: "public",
+    token: TOKEN, // pass explicitly so it never falls back to OIDC auth
     addRandomSuffix: false, // deterministic keys so manifest's bare filenames resolve
     allowOverwrite: true, // safe to re-run after a re-bake
     contentType,
