@@ -4,12 +4,11 @@
 // Blob (public, CDN-backed) and the viewer reads it via NEXT_PUBLIC_MAP_ASSETS_BASE.
 //
 // Prerequisites:
-//   1. A Vercel Blob store on the project (Dashboard → Storage → Blob, or
-//      `vercel integration add`), which provisions BLOB_READ_WRITE_TOKEN.
-//   2. That token available to this script. Either `vercel env pull .env.local`
-//      then `npx dotenv -e .env.local -- node scripts/upload-map-assets.mjs`,
-//      or export BLOB_READ_WRITE_TOKEN in your shell.
-//   3. `npm i -D @vercel/blob` (already a devDependency).
+//   1. A Vercel Blob store on the project (Dashboard → Storage → Blob), which
+//      provisions BLOB_READ_WRITE_TOKEN.
+//   2. `vercel env pull .env.local` (from apps/wiki) so BLOB_READ_WRITE_TOKEN lands
+//      in .env.local — this script loads it automatically (no dotenv-cli needed).
+//   3. `@vercel/blob` (already a devDependency).
 //
 // Usage (from apps/wiki):
 //   node scripts/upload-map-assets.mjs [SRC_DIR]
@@ -20,16 +19,28 @@
 
 import { put } from "@vercel/blob";
 import { readdir, readFile } from "node:fs/promises";
+import { readFileSync, existsSync } from "node:fs";
 import path from "node:path";
 
 const SRC = process.argv[2] || "public/map";
 const PREFIX = "map"; // blob key prefix → base URL ends in ".../map/"
 
+// Load .env.local if the token isn't already exported (so no dotenv-cli wrapper is needed).
+if (!process.env.BLOB_READ_WRITE_TOKEN && existsSync(".env.local")) {
+  for (const line of readFileSync(".env.local", "utf8").split(/\r?\n/)) {
+    const m = line.match(/^([A-Z0-9_]+)\s*=\s*(.*)$/);
+    if (!m) continue;
+    let v = m[2].trim();
+    if ((v.startsWith('"') && v.endsWith('"')) || (v.startsWith("'") && v.endsWith("'"))) v = v.slice(1, -1);
+    if (!process.env[m[1]]) process.env[m[1]] = v;
+  }
+}
+
 if (!process.env.BLOB_READ_WRITE_TOKEN) {
   console.error(
-    "BLOB_READ_WRITE_TOKEN is not set. Provision a Vercel Blob store, then\n" +
-      "  vercel env pull .env.local\n" +
-      "and run: npx dotenv -e .env.local -- node scripts/upload-map-assets.mjs",
+    "BLOB_READ_WRITE_TOKEN is not set. Provision a Vercel Blob store, then run\n" +
+      "  npx vercel env pull .env.local\n" +
+      "(from apps/wiki) and re-run: node scripts/upload-map-assets.mjs",
   );
   process.exit(1);
 }
