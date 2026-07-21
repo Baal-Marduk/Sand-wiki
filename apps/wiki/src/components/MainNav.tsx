@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import { SECTIONS, isWipSection } from "@/lib/taxonomy";
 import { CategoryIcon } from "@/components/CategoryIcon";
 import { WipBadge } from "@/components/WipBadge";
+import { NewBadge } from "@/components/NewBadge";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -107,6 +108,7 @@ export function MainNav() {
                 className={`${navItemCls}${isActive(href) ? " nav-tick text-primary" : ""}`}
               >
                 {section.label}
+                {section.slug === "map" && <NewBadge />}
               </Link>
             </NavigationMenuItem>
           );
