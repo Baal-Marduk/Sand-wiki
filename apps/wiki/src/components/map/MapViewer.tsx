@@ -242,6 +242,20 @@ function mountViewer(root) {
     } else if (e.key === "Escape") { locList.classList.remove("open"); locInput.blur(); }
   });
 
+  // resolve a landmark name (from a /map#place=<name> deep link on a wiki landmark page)
+  // to a location key — match the location label first, then the key suffix; on ties
+  // prefer island > fort > event > poi. Lets landmark pages link without knowing keys.
+  const _normPlace = (s) => (s || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+  function resolvePlace(name) {
+    const q = _normPlace(name); if (!q) return null;
+    const prio = { island: 0, fort: 1, event: 2, poi: 3 };
+    let best = null, bestP = 99;
+    const consider = it => { const p = prio[it.cat] ?? 5; if (p < bestP) { best = it; bestP = p; } };
+    for (const it of LOCITEMS) if (_normPlace(it.label) === q) consider(it);
+    if (!best) for (const it of LOCITEMS) if (_normPlace(it.key.replace(/^(island_|poi_|loc_event_)/, "")) === q) consider(it);
+    return best ? best.key : null;
+  }
+
   fetch(ASSETS + "manifest.json").then(r => { if (!r.ok) throw 0; return r.json(); }).then(m => {
     if (!alive) return;
     CATS = m.cats; LOCCATS = m.loccats;
@@ -259,9 +273,10 @@ function mountViewer(root) {
     LOCITEMS = [];
     for (const ck of cats) for (const l of locs.filter(x => x.cat === ck))
       LOCITEMS.push({ glb: l.glb, label: l.label, cat: ck, catLabel: catLabel[ck] || ck, objects: l.objects, key: l.key });
-    // initial location: URL hash if valid, else the first item
-    const want = readHash().loc;
-    if (want && LOCMAP[want]) loadLoc(LOCMAP[want].glb, LOCMAP[want].label);
+    // initial location: #loc=<key>, else #place=<landmark name>, else the first item
+    const h = readHash();
+    const startKey = (h.loc && LOCMAP[h.loc]) ? h.loc : resolvePlace(h.place);
+    if (startKey && LOCMAP[startKey]) loadLoc(LOCMAP[startKey].glb, LOCMAP[startKey].label);
     else if (LOCITEMS.length) loadLoc(LOCITEMS[0].glb, LOCITEMS[0].label);
   }).catch(() => fail(
     `Couldn't load <code>manifest.json</code>. The 3D viewer needs a local web server (browsers block
@@ -421,7 +436,8 @@ function mountViewer(root) {
   }
   // react to manual hash edits / back-forward (our own writes use replaceState, so they don't loop here)
   function onHashChange() { const s = readHash();
-    if (s.loc && LOCMAP[s.loc] && s.loc !== currentLocKey) { loadLoc(LOCMAP[s.loc].glb, LOCMAP[s.loc].label); } }
+    const key = (s.loc && LOCMAP[s.loc]) ? s.loc : resolvePlace(s.place);
+    if (key && LOCMAP[key] && key !== currentLocKey) loadLoc(LOCMAP[key].glb, LOCMAP[key].label); }
   window.addEventListener("hashchange", onHashChange); off.push(() => window.removeEventListener("hashchange", onHashChange));
 
   // ---- picking ----
