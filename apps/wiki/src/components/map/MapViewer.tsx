@@ -105,8 +105,17 @@ function mountViewer(root) {
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
   renderer.toneMappingExposure = 0.9;
   const scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x15120e);
-  scene.fog = new THREE.Fog(0x15120e, 400, 2200);
+  // sandy vertical gradient sky (screen-filling) instead of flat dark brown
+  const _sky = (() => {
+    const c = document.createElement("canvas"); c.width = 2; c.height = 256;
+    const g = c.getContext("2d");
+    const grd = g.createLinearGradient(0, 0, 0, 256);
+    grd.addColorStop(0, "#e7d3ab"); grd.addColorStop(0.45, "#d8c199"); grd.addColorStop(1, "#a98f68");
+    g.fillStyle = grd; g.fillRect(0, 0, 2, 256);
+    const t = new THREE.CanvasTexture(c); t.colorSpace = THREE.SRGBColorSpace; return t;
+  })();
+  scene.background = _sky;
+  scene.fog = new THREE.Fog(0xc9b48f, 500, 2600); // sandy haze so distance blends into the sky
   // image-based lighting: a neutral procedural room env gives every surface soft, even
   // fill — the single biggest quality win, same approach as the Trampler Builder.
   const _pmrem = new THREE.PMREMGenerator(renderer);
@@ -144,7 +153,7 @@ function mountViewer(root) {
   // Adaptive speed: scale with the camera's distance to the scene centre (clamped), so you
   // slow right down when close among objects and stay quick when far out. Base factor tuned
   // slower than before per feedback that it was hard to navigate up close.
-  const BASE_SPEED = 0.35;
+  const BASE_SPEED = 0.25;
   const moveScale = () => { const d = camera.position.distanceTo(sceneCenter); return Math.min(sceneR, Math.max(sceneR * 0.04, d)); };
   let dollyVel = 0; // wheel-scroll momentum along the view dir; eased out each frame (smooth scroll)
   function flyStep(dt) {
@@ -168,6 +177,25 @@ function mountViewer(root) {
   let hovered = null, selected = null;
   function setMat(o, m) { if (!o) return; if (m) { if (!o._om) o._om = o.material; o.material = m; }
     else if (o._om) { o.material = o._om; o._om = null; } }
+
+  // hovering a name in the left list drops bright, always-on-top markers on the matching
+  // objects so small ones (e.g. keys) are spottable from afar. Cleared on mouse-leave.
+  const _hlGroup = new THREE.Group(); scene.add(_hlGroup);
+  const _hlGeo = new THREE.SphereGeometry(1, 12, 8);
+  const _hlMat = new THREE.MeshBasicMaterial({ color: 0xffe14a, depthTest: false, transparent: true, opacity: 0.92 });
+  const _hlV = new THREE.Vector3();
+  function highlightMeshes(meshes) {
+    _hlGroup.clear();
+    if (!meshes) return;
+    const r = Math.max(2, sceneR * 0.02); // marker size scales with the scene
+    for (const o of meshes) {
+      if (!o.visible) continue;
+      o.getWorldPosition(_hlV);
+      const s = new THREE.Mesh(_hlGeo, _hlMat);
+      s.position.copy(_hlV); s.scale.setScalar(r); s.renderOrder = 1000;
+      _hlGroup.add(s);
+    }
+  }
 
   // ---- state ----
   let CATS = [], LOCCATS = [], current = null, pickables = [], showBase = true, xray = false;
@@ -334,6 +362,8 @@ function mountViewer(root) {
         tr.innerHTML = `<input type="checkbox" ${hidden.has(tk) ? "" : "checked"}>` +
           `<span class="dotmini" style="background:${color}"></span><span class="n">${t.label}</span><span class="c">${t.meshes.length}</span>`;
         tr.onclick = e => { e.stopPropagation(); hidden.has(tk) ? hidden.delete(tk) : hidden.add(tk); saveFilters(); update(); };
+        tr.onmouseenter = () => highlightMeshes(t.meshes); // spotlight these objects in the scene
+        tr.onmouseleave = () => highlightMeshes(null);
         things.appendChild(tr);
       });
       cb.onclick = e => { e.stopPropagation(); const hide = (st !== "none"); // checkbox: toggle whole category
@@ -342,6 +372,8 @@ function mountViewer(root) {
       const toggleOpen = e => { e.stopPropagation(); openCats.has(k) ? openCats.delete(k) : openCats.add(k);
         const o = openCats.has(k); things.classList.toggle("open", o); caret.textContent = o ? "▾" : "▸"; };
       caret.onclick = toggleOpen; row.onclick = toggleOpen; // big expand target (everything but the checkbox)
+      row.onmouseenter = () => highlightMeshes([...g.things.values()].flatMap(t => t.meshes)); // whole category
+      row.onmouseleave = () => highlightMeshes(null);
       wrap.appendChild(row); wrap.appendChild(things); lg.appendChild(wrap);
     });
   }
@@ -679,6 +711,7 @@ function mountViewer(root) {
     cancelAnimationFrame(rafId);
     off.forEach(f => f());
     _envTex.dispose();
+    _sky.dispose(); _hlGeo.dispose(); _hlMat.dispose();
     renderer.dispose();
     disposeCurrent();
   };
