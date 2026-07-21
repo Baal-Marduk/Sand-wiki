@@ -104,7 +104,7 @@ function mountViewer(root) {
   // filmic tone mapping + colour management for a "rendered" look (matches the builder)
   renderer.outputColorSpace = THREE.SRGBColorSpace;
   renderer.toneMapping = THREE.ACESFilmicToneMapping;
-  renderer.toneMappingExposure = 1.1;
+  renderer.toneMappingExposure = 0.9;
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x15120e);
   scene.fog = new THREE.Fog(0x15120e, 400, 2200);
@@ -113,6 +113,7 @@ function mountViewer(root) {
   const _pmrem = new THREE.PMREMGenerator(renderer);
   const _envTex = _pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
   scene.environment = _envTex;
+  scene.environmentIntensity = 0.4; // gentle IBL fill — full strength blows the scene out
   _pmrem.dispose();
   const camera = new THREE.PerspectiveCamera(55, 1, 0.5, 8000);
   // first-person fly camera: pivot is the camera itself (look in place), not an orbit target.
@@ -123,9 +124,9 @@ function mountViewer(root) {
   const fwd = () => new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
   const rgt = () => new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
 
-  scene.add(new THREE.HemisphereLight(0xcfe4ff, 0x2a2118, 0.5)); // cool sky / warm ground
-  const sun = new THREE.DirectionalLight(0xfff1d6, 1.4); sun.position.set(0.6, 1, 0.35); scene.add(sun); // warm key
-  const fill = new THREE.DirectionalLight(0x88aaff, 0.35); fill.position.set(-0.5, 0.4, -0.6); scene.add(fill); // cool fill
+  scene.add(new THREE.HemisphereLight(0xcfe4ff, 0x2a2118, 0.35)); // cool sky / warm ground
+  const sun = new THREE.DirectionalLight(0xfff1d6, 1.2); sun.position.set(0.6, 1, 0.35); scene.add(sun); // warm key
+  const fill = new THREE.DirectionalLight(0x88aaff, 0.25); fill.position.set(-0.5, 0.4, -0.6); scene.add(fill); // cool fill
 
   function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h); // updateStyle=true:
     camera.aspect = w / h; camera.updateProjectionMatrix(); } // set canvas CSS size so buffer-centre==screen-centre
@@ -388,9 +389,22 @@ function mountViewer(root) {
       disposeCurrent();
       current = gltf.scene; scene.add(current);
       pickables = [];
-      current.traverse(o => { if (o.isMesh) { o.frustumCulled = true;
-        if (o.userData && o.userData.t) { pickables.push(o); } // interactable object
-      } });
+      const _neut = new Set(); // dedup shared materials
+      current.traverse(o => {
+        if (!o.isMesh) return;
+        o.frustumCulled = true;
+        if (o.userData && o.userData.t) { pickables.push(o); return; } // interactable — keeps its category tint
+        // non-clickable geometry (terrain + base structures): mute to earth-grey mid-tones
+        // so only the colored, clickable objects carry hue. Matte, no env reflection.
+        const mats = Array.isArray(o.material) ? o.material : [o.material];
+        for (const mt of mats) {
+          if (!mt || _neut.has(mt) || !mt.color) continue; _neut.add(mt);
+          const l = mt.color.getHSL({}).l;
+          mt.color.setHSL(0.08, 0.06, Math.min(0.5, Math.max(0.3, l)));
+          if (mt.metalness !== undefined) mt.metalness = 0;
+          if (mt.roughness !== undefined) mt.roughness = 1;
+        }
+      });
       // frame camera on bounding box, then look at its centre
       const box = new THREE.Box3().setFromObject(current); const c = box.getCenter(new THREE.Vector3());
       const sz = box.getSize(new THREE.Vector3()); sceneR = Math.max(sz.x, sz.y, sz.z) * 0.6 + 5;
