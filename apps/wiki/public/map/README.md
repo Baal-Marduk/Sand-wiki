@@ -36,7 +36,27 @@ For exact sand3d invocation flags and setup, see the sand3d repository's README.
 
 ## Size and Storage
 
-The complete GLB set is on the order of tens of MB. By default, these files are committed as plain files; if repository size becomes a concern, Git LFS can be configured for `apps/wiki/public/map/*.glb.gz` (not currently set up).
+A full bake of all locations is large — on the order of **~500 MB** (the biggest single `.glb.gz` is ~40 MB). That is too large to commit to git, so:
+
+- `*.glb.gz` are **gitignored** (see `apps/wiki/.gitignore`) — they are never committed.
+- Only the small `manifest.json` / `spawns.json` **fixtures** are tracked (fresh-clone default + e2e).
+- Real assets are served **off-repo from Vercel Blob** (public, CDN-backed), and the viewer
+  reads them via the `NEXT_PUBLIC_MAP_ASSETS_BASE` env var (default `/map/`).
+
+### Publishing a bake to Vercel Blob
+
+1. Bake locally and copy the output into this folder (see above).
+2. Provision a Vercel Blob store (Dashboard → Storage → Blob), which sets `BLOB_READ_WRITE_TOKEN`.
+3. Pull it and run the upload script from `apps/wiki`:
+   ```bash
+   vercel env pull .env.local
+   npx dotenv -e .env.local -- node scripts/upload-map-assets.mjs
+   ```
+4. Set the printed `NEXT_PUBLIC_MAP_ASSETS_BASE=https://<store-id>.public.blob.vercel-storage.com/map/`
+   in the Vercel project env (Production/Preview) — and in `.env.local` to test locally against Blob.
+
+Local development without Blob still works: leave `NEXT_PUBLIC_MAP_ASSETS_BASE` unset and drop a
+local bake into this folder (the gitignored `.glb.gz` + real `manifest.json`/`spawns.json`).
 
 ## Browser Compatibility
 

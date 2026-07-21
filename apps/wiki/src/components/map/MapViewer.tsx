@@ -142,8 +142,11 @@ function mountViewer(root) {
   const loader = new GLTFLoader();
   const ray = new THREE.Raycaster(); const ndc = new THREE.Vector2();
 
-  // baked assets (manifest, spawns table, *.glb.gz) are served from the wiki's public/map/ folder.
-  const ASSETS = "/map/";
+  // baked assets (manifest, spawns table, *.glb.gz). Default: the wiki's own public/map/
+  // folder. In production the ~500MB asset set lives off-repo (e.g. Vercel Blob); point
+  // NEXT_PUBLIC_MAP_ASSETS_BASE at that base URL and every fetch below follows it.
+  const _base = process.env.NEXT_PUBLIC_MAP_ASSETS_BASE || "/map/";
+  const ASSETS = _base.endsWith("/") ? _base : _base + "/";
 
   // ---- load the static spawner->items table (optional; click panel lists what a spawner can become) ----
   fetch(ASSETS + "spawns.json").then(r => r.ok ? r.json() : {}).then(s => { if (!alive) return; SPAWNS = s; }).catch(() => {});
