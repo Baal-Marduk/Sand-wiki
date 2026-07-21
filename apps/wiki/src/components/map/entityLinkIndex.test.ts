@@ -55,6 +55,7 @@ describe("slugForName", () => {
     expect(slugForName("Locked Box Military")).toMatchObject({ href: "/environment/military-box" });
     expect(slugForName("Army Box T1 High Effort")).toMatchObject({ href: "/environment/military-box" });
     expect(slugForName("Safe Middle T2")).toMatchObject({ href: "/environment/valuables-safe" });
+    expect(slugForName("Valuable Piles03")).toMatchObject({ href: "/items/coin-crown" });
   });
 
   // Armored turrets have no corresponding wiki kit — intentionally unlinked (no alias,
