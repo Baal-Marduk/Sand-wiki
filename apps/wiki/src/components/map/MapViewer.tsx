@@ -4,6 +4,7 @@
 import { useEffect, useRef } from "react";
 import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
+import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { ToolNavBrand } from "@/components/ToolNavBrand";
 import { slugForName } from "@/components/map/entityLinkIndex";
 import "@/components/map/map.css";
@@ -100,9 +101,19 @@ function mountViewer(root) {
   const canvas = $("c");
   const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
   renderer.setPixelRatio(Math.min(devicePixelRatio, 2));
+  // filmic tone mapping + colour management for a "rendered" look (matches the builder)
+  renderer.outputColorSpace = THREE.SRGBColorSpace;
+  renderer.toneMapping = THREE.ACESFilmicToneMapping;
+  renderer.toneMappingExposure = 1.1;
   const scene = new THREE.Scene();
   scene.background = new THREE.Color(0x15120e);
   scene.fog = new THREE.Fog(0x15120e, 400, 2200);
+  // image-based lighting: a neutral procedural room env gives every surface soft, even
+  // fill — the single biggest quality win, same approach as the Trampler Builder.
+  const _pmrem = new THREE.PMREMGenerator(renderer);
+  const _envTex = _pmrem.fromScene(new RoomEnvironment(), 0.04).texture;
+  scene.environment = _envTex;
+  _pmrem.dispose();
   const camera = new THREE.PerspectiveCamera(55, 1, 0.5, 8000);
   // first-person fly camera: pivot is the camera itself (look in place), not an orbit target.
   const euler = new THREE.Euler(0, 0, 0, "YXZ"); // yaw(Y) then pitch(X), no roll
@@ -112,9 +123,9 @@ function mountViewer(root) {
   const fwd = () => new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
   const rgt = () => new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
 
-  scene.add(new THREE.HemisphereLight(0xfff0d8, 0x3a2c1c, 1.1));
-  const sun = new THREE.DirectionalLight(0xfff2dd, 1.4); sun.position.set(0.6, 1, 0.35); scene.add(sun);
-  scene.add(new THREE.AmbientLight(0xffffff, 0.15));
+  scene.add(new THREE.HemisphereLight(0xcfe4ff, 0x2a2118, 0.5)); // cool sky / warm ground
+  const sun = new THREE.DirectionalLight(0xfff1d6, 1.4); sun.position.set(0.6, 1, 0.35); scene.add(sun); // warm key
+  const fill = new THREE.DirectionalLight(0x88aaff, 0.35); fill.position.set(-0.5, 0.4, -0.6); scene.add(fill); // cool fill
 
   function resize() { const w = innerWidth, h = innerHeight; renderer.setSize(w, h); // updateStyle=true:
     camera.aspect = w / h; camera.updateProjectionMatrix(); } // set canvas CSS size so buffer-centre==screen-centre
@@ -627,6 +638,7 @@ function mountViewer(root) {
     alive = false;
     cancelAnimationFrame(rafId);
     off.forEach(f => f());
+    _envTex.dispose();
     renderer.dispose();
     disposeCurrent();
   };
