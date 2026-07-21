@@ -1,5 +1,5 @@
 import type { IconType } from "react-icons";
-import { GiFamilyTree, GiWrench, GiDatabase } from "react-icons/gi";
+import { GiFamilyTree, GiWrench, GiDatabase, GiIsland } from "react-icons/gi";
 
 /** Monochrome glyph for a top-level nav SECTION (keyed by section slug — a different
  *  keyspace than CategoryIcon's category slugs). Only the standalone tool/link entries
@@ -9,6 +9,7 @@ import { GiFamilyTree, GiWrench, GiDatabase } from "react-icons/gi";
 const SECTION_ICONS: Record<string, IconType> = {
   tech: GiFamilyTree,
   builder: GiWrench,
+  map: GiIsland,
   admin: GiDatabase,
 };
 
