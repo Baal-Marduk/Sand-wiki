@@ -507,14 +507,19 @@ function mountViewer(root) {
       let opened = false;
       body += `<div class="mv-becomes-lbl">Can become</div>` +
         E.m.map(s => {
-          const cc = CATS.find(x => x[0] === s.cat) || ["", "", "#888"];
           const tail = (s.pct != null) ? `${s.pct}%` : (s.count ? `×${s.count}` : "");
           const pct = tail ? `<span class="mv-become-pct">${tail}</span>` : "";
           const ml = (SPAWNS[s.bp] || {}).loot;
-          const sel = (ml && ml.length && !opened) ? " sel" : ""; if (sel) opened = true;
-          const inner = (ml && ml.length) ? `<div class="mv-become-contents">${contents(ml)}</div>` : "";
-          return `<div class="mv-become${sel}"><div class="mv-become-row">` +
-            `<span class="mv-become-dot" style="background:${cc[2]}"></span>${namedLink(s.label, "mv-become-nm")}${pct}` +
+          const foldable = !!(ml && ml.length);
+          const sel = (foldable && !opened) ? " sel" : ""; if (sel) opened = true;
+          const inner = foldable ? `<div class="mv-become-contents">${contents(ml)}</div>` : "";
+          // name is plain text (clicking the row folds/unfolds); a separate ↗ icon opens
+          // the wiki page, so users don't change page by accident while expanding.
+          const hit = slugForName(s.label), disp = cleanLabel(s.label);
+          const ic = hit && hit.icon ? `<img class="mv-loot-icon" src="${hit.icon}" alt="" aria-hidden="true">` : "";
+          const open = hit ? `<a class="mv-become-open" href="${hit.href}" title="Open ${disp}" aria-label="Open ${disp}">↗</a>` : "";
+          return `<div class="mv-become${foldable ? " foldable" : ""}${sel}"><div class="mv-become-row">` +
+            `<span class="mv-become-caret" aria-hidden="true"></span>${ic}<span class="mv-become-nm">${disp}</span>${open}${pct}` +
             `</div>${inner}</div>`;
         }).join("");
     }
@@ -532,10 +537,13 @@ function mountViewer(root) {
       `</div><div class="mv-ins-body">${body}</div>`;
     // amounts toggle
     info.querySelectorAll(".mv-aseg button").forEach(el => el.onclick = () => { LOOTMODE = el.dataset.m; showInfo(selected); });
-    // expand/collapse a "can become" member (entity-name links still navigate)
+    // expand/collapse a "can become" member — clicking anywhere on the row toggles it,
+    // except the ↗ open-link (which navigates). Only foldable members respond.
     info.querySelectorAll(".mv-become-row").forEach(row => row.onclick = e => {
       if (e.target.closest("a")) return;
-      const b = row.closest(".mv-become"), was = b.classList.contains("sel");
+      const b = row.closest(".mv-become");
+      if (!b.classList.contains("foldable")) return;
+      const was = b.classList.contains("sel");
       info.querySelectorAll(".mv-become").forEach(x => x.classList.remove("sel"));
       if (!was) b.classList.add("sel");
     });

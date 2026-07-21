@@ -157,16 +157,21 @@
 .sand3d-map .mv-become-contents { display: none; }
 .sand3d-map .mv-become.sel { background: color-mix(in srgb, var(--primary) 10%, var(--card)); border-left: 2px solid var(--primary); padding-left: 14px; }
 .sand3d-map .mv-become.sel .mv-become-contents { display: grid; }
-.sand3d-map .mv-become.sel .mv-become-nm, .sand3d-map .mv-become.sel a.mv-become-nm { color: var(--primary-hover); }
+.sand3d-map .mv-become.sel .mv-become-nm { color: var(--primary-hover); }
 .sand3d-map .mv-become.sel .mv-become-pct { color: var(--primary); font-weight: 600; }
-.sand3d-map a.mv-become-nm { text-decoration: none; }
-.sand3d-map a.mv-become-nm:hover { color: var(--primary-hover); }
+/* fold caret (replaces the old color square); only foldable members show it */
+.sand3d-map .mv-become-caret { width: 11px; flex: 0 0 auto; text-align: center; color: var(--dim); font-size: 9px; }
+.sand3d-map .mv-become.foldable .mv-become-caret::before { content: "▸"; }
+.sand3d-map .mv-become.foldable.sel .mv-become-caret::before { content: "▾"; }
+.sand3d-map .mv-become.foldable.sel .mv-become-caret { color: var(--primary); }
+/* small ↗ open-link, kept separate from the name so folding never navigates */
+.sand3d-map .mv-become-open { flex: 0 0 auto; color: var(--muted-foreground); font-size: 13px; line-height: 1; padding: 0 3px; text-decoration: none; }
+.sand3d-map .mv-become-open:hover { color: var(--primary-hover); }
 /* a container's own contents (always shown, not collapsible) */
 .sand3d-map .mv-contents { display: grid; grid-template-columns: 1fr auto; gap: 5px 10px; align-items: center; padding: 4px 16px 13px; }
 .sand3d-map .mv-contents .cq { font-family: var(--font-mono); font-size: 12px; color: var(--foreground); text-align: right; }
-.sand3d-map .mv-become-dot { width: 12px; height: 12px; flex: 0 0 auto; border: 1px solid rgba(0,0,0,.35); }
-.sand3d-map .mv-become-nm { display: inline-flex; align-items: center; gap: 7px; font-size: 13px; color: var(--foreground); font-weight: 500; }
-.sand3d-map .mv-become-pct { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: var(--muted-foreground); }
+.sand3d-map .mv-become-nm { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; color: var(--foreground); font-weight: 500; }
+.sand3d-map .mv-become-pct { margin-left: auto; padding-left: 6px; font-family: var(--font-mono); font-size: 12px; color: var(--muted-foreground); }
 .sand3d-map .mv-become-contents { margin: 9px 0 0 21px; grid-template-columns: 1fr auto; gap: 5px 10px; align-items: center; }
 .sand3d-map .mv-become-contents .cq { font-family: var(--font-mono); font-size: 12px; color: var(--foreground); text-align: right; }
 /* linked loot/entity name + optional sprite */
@@ -176,8 +181,7 @@
 /* "can become" members: prefer the object sprite over the category square — when a
    member has an icon, hide its color dot and show the sprite larger; icon-less
    members keep the dot as their cue. (:has() is fine — the viewer is Chromium-only.) */
-.sand3d-map .mv-become-row:has(.mv-loot-icon) .mv-become-dot { display: none; }
-.sand3d-map .mv-become-nm .mv-loot-icon { width: 30px; height: 30px; }
+.sand3d-map .mv-become-row > .mv-loot-icon { width: 26px; height: 26px; }
 
 /* ---- viewport overlays (offset into the visible viewport) ---- */
 .sand3d-map #compass {
