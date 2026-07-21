@@ -12,19 +12,22 @@ export function __normalize(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, " ");
 }
 
-export interface EntityLink {
+export interface EntityRoute {
   href: string;
 }
 
-let INDEX: Map<string, EntityLink> | null = null;
+let INDEX: Map<string, EntityRoute> | null = null;
 
 /** Build once: normalized-name -> {href}. Higher-priority kinds are inserted
- *  first; lower-priority kinds must not overwrite an existing key. */
-function getIndex(): Map<string, EntityLink> {
+ *  first; lower-priority kinds must not overwrite an existing key. Disabled
+ *  entities are skipped — the wiki's hard rule is that disabled entities are
+ *  scrubbed from all cross-refs (listByKind does not filter these itself). */
+function getIndex(): Map<string, EntityRoute> {
   if (INDEX) return INDEX;
-  const m = new Map<string, EntityLink>();
+  const m = new Map<string, EntityRoute>();
   for (const { kind, base } of KIND_ROUTE) {
     for (const e of listByKind(kind)) {
+      if (e.disabled) continue;
       const key = __normalize(e.name);
       if (!m.has(key)) m.set(key, { href: `${base}/${e.slug}` });
     }
@@ -34,7 +37,7 @@ function getIndex(): Map<string, EntityLink> {
 }
 
 /** Route for a loot/container display name, or null if no enabled entity matches. */
-export function slugForName(name: string): EntityLink | null {
+export function slugForName(name: string): EntityRoute | null {
   if (!name) return null;
   return getIndex().get(__normalize(name)) ?? null;
 }
