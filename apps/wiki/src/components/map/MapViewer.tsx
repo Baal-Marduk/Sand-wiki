@@ -171,6 +171,9 @@ function mountViewer(root) {
 
   // ---- state ----
   let CATS = [], LOCCATS = [], current = null, pickables = [], showBase = true, xray = false;
+  // only these enemy/AI-spawn objects are shown; every other "enemy" object is fully hidden
+  const ENEMY_ALLOW = new Set(["Ai Spawn Nest Ghoul", "Sentinel Spawner Ambush"]);
+  const DOOR_RED = "#e0473c"; // destructible-door tint (applied to meshes + the legend dot)
   let byCat = {}; // catKey -> {label,color, things:Map(thingKey->{label,meshes})}
   const hidden = new Set(); // hidden thing keys (blueprint); category state derives from these
   let pendingSolo = null; // blueprint to isolate after next load (from a search jump)
@@ -270,12 +273,14 @@ function mountViewer(root) {
   fetch(ASSETS + "manifest.json").then(r => { if (!r.ok) throw 0; return r.json(); }).then(m => {
     if (!alive) return;
     CATS = m.cats; LOCCATS = m.loccats;
+    const _dc = CATS.find(c => c[0] === "door"); if (_dc) _dc[2] = DOOR_RED; // legend dot matches the red door meshes
     // clean: drop event locations that just duplicate islands (keep KEEP_EVENTS)
     const locs = m.locations.filter(l => l.cat !== "event" || KEEP_EVENTS.has(l.key));
     // cross-location object-search index, built from the cleaned set
     LOCMAP = {}; SEARCHIX = {};
     locs.forEach(l => { LOCMAP[l.key] = { glb: l.glb, label: l.label, cat: l.cat }; GLB2KEY[l.glb] = l.key;
       (l.things || []).forEach(([label, cat, bp, count]) => {
+        if (cat === "enemy" && !ENEMY_ALLOW.has(label)) return; // keep hidden enemies out of search too
         let e = SEARCHIX[bp]; if (!e) e = SEARCHIX[bp] = { label, cat, total: 0, locs: {} };
         e.total += count; e.locs[l.key] = (e.locs[l.key] || 0) + count; }); });
     // ordered picker list: events first, then the rest; manifest order within a category
@@ -389,10 +394,20 @@ function mountViewer(root) {
       current = gltf.scene; scene.add(current);
       pickables = [];
       const _neut = new Set(); // dedup shared materials
+      const _doorMat = new Set(); // dedup door materials being recoloured
       current.traverse(o => {
         if (!o.isMesh) return;
         o.frustumCulled = true;
-        if (o.userData && o.userData.t) { pickables.push(o); return; } // interactable — keeps its category tint
+        if (o.userData && o.userData.t) { // interactable — keeps its category tint
+          // enemies/AI spawns: hide everything except these two (fully hidden, not just toggled off)
+          if (o.userData.c === "enemy" && !ENEMY_ALLOW.has(o.userData.t)) { o.visible = false; return; }
+          // destructible doors: recolour to red
+          if (o.userData.c === "door") {
+            const dmats = Array.isArray(o.material) ? o.material : [o.material];
+            for (const mt of dmats) { if (mt && mt.color && !_doorMat.has(mt)) { _doorMat.add(mt); mt.color.set(DOOR_RED); } }
+          }
+          pickables.push(o); return;
+        }
         // non-clickable geometry (terrain + base structures): mute to earth-grey mid-tones
         // so only the colored, clickable objects carry hue. Matte, no env reflection.
         const mats = Array.isArray(o.material) ? o.material : [o.material];
