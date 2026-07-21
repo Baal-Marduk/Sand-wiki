@@ -188,7 +188,7 @@ function mountViewer(root) {
     _hlGroup.clear();
     if (!meshes || !meshes.length) return;
     if (color) _hlMat.color.set(color); // markers take the item's category colour
-    const r = Math.max(0.4, sceneR * 0.001); // small pin (was 20× bigger)
+    const r = Math.max(0.6, sceneR * 0.0015); // small pin
     for (const o of meshes) {
       if (!o.visible) continue;
       o.getWorldPosition(_hlV);
