@@ -44,7 +44,7 @@ const FAMILIES: { re: RegExp; slug: string }[] = [
   { re: /^locked box utility\b/i, slug: "utility-box" },
   { re: /^locked box valuables\b/i, slug: "valuables-box" },
   { re: /^safe\b/i, slug: "valuables-safe" },
-  { re: /^valuable piles?\b/i, slug: "coin-crown" }, // ground piles of crowns
+  { re: /^valuable pile/i, slug: "coin-crown" }, // ground piles of crowns ("Valuable Piles01"…)
 ];
 
 /** Lowercase, trim, collapse internal whitespace. Exported for tests. */
