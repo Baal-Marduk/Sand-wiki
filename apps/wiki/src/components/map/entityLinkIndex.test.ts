@@ -13,16 +13,25 @@ describe("slugForName", () => {
   });
 
   it("resolves a known item name to its /items route (case-insensitive)", () => {
-    expect(slugForName("Binoculars")).toEqual({ href: "/items/binoculars" });
-    expect(slugForName("  BINOCULARS  ")).toEqual({ href: "/items/binoculars" });
+    expect(slugForName("Binoculars")).toMatchObject({ href: "/items/binoculars" });
+    expect(slugForName("  BINOCULARS  ")).toMatchObject({ href: "/items/binoculars" });
   });
 
   it("resolves another known item name", () => {
-    expect(slugForName("Black Box")).toEqual({ href: "/items/black-box" });
+    expect(slugForName("Black Box")).toMatchObject({ href: "/items/black-box" });
   });
 
   it("resolves a known environment name to its /environment route", () => {
-    expect(slugForName("Crate of Shells")).toEqual({ href: "/environment/crate-of-shells" });
+    expect(slugForName("Crate of Shells")).toMatchObject({ href: "/environment/crate-of-shells" });
+  });
+
+  it("includes the entity icon path when the entity has one", () => {
+    // Binoculars has a sprite in the current dataset.
+    expect(slugForName("Binoculars")).toMatchObject({ icon: "/icons/icon_item_binocular.png" });
+    // Every resolved route exposes an `icon` key (string path or null).
+    const hit = slugForName("Black Box");
+    expect(hit).not.toBeNull();
+    expect(hit).toHaveProperty("icon");
   });
 
   it("returns null for empty input", () => {

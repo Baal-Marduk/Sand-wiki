@@ -14,6 +14,8 @@ export function __normalize(name: string): string {
 
 export interface EntityRoute {
   href: string;
+  /** Sprite path (e.g. "/icons/…png") when the entity has one, else null. */
+  icon: string | null;
 }
 
 let INDEX: Map<string, EntityRoute> | null = null;
@@ -29,7 +31,7 @@ function getIndex(): Map<string, EntityRoute> {
     for (const e of listByKind(kind)) {
       if (e.disabled) continue;
       const key = __normalize(e.name);
-      if (!m.has(key)) m.set(key, { href: `${base}/${e.slug}` });
+      if (!m.has(key)) m.set(key, { href: `${base}/${e.slug}`, icon: e.icon ?? null });
     }
   }
   INDEX = m;
