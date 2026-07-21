@@ -28,8 +28,10 @@ export default function MapViewer() {
         <ToolNavBrand title="3D Map" />
         <span className="tab on" id="tabMap">Map</span>
         <span className="tab" id="tabSearch">Search</span>
-        <select id="loc"></select>
-        <span className="sub" id="sub"></span>
+        <div id="locpick">
+          <input id="locinput" type="text" placeholder="Search location…" autoComplete="off" spellCheck={false} />
+          <div id="loclist"></div>
+        </div>
       </header>
       <aside>
         <div id="catpanel">
@@ -72,8 +74,8 @@ function mountViewer(root) {
   const off = [];
   // liveness flag: StrictMode double-invokes this effect in dev (mount -> cleanup -> mount,
   // same DOM). Guards the top-level fetch().then() chains below so a phantom first-mount's
-  // fetch resolving after its teardown ran does nothing (else the <select id="loc"> gets
-  // every location appended twice).
+  // fetch resolving after its teardown ran does nothing (else the picker list gets
+  // built twice / a stale location loads).
   let alive = true;
 
   // ---- loot cross-links: item/spawner labels become wiki links when a matching entity exists ----
@@ -93,6 +95,7 @@ function mountViewer(root) {
   // first-person fly camera: pivot is the camera itself (look in place), not an orbit target.
   const euler = new THREE.Euler(0, 0, 0, "YXZ"); // yaw(Y) then pitch(X), no roll
   let sceneR = 100; // scene scale (set per location) drives all speeds
+  const sceneCenter = new THREE.Vector3(); // scene centre (set per location) → adaptive speed
   function setLook() { camera.quaternion.setFromEuler(euler); }
   const fwd = () => new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
   const rgt = () => new THREE.Vector3(1, 0, 0).applyQuaternion(camera.quaternion);
@@ -115,9 +118,14 @@ function mountViewer(root) {
   window.addEventListener("keydown", onKeyDown); off.push(() => window.removeEventListener("keydown", onKeyDown));
   window.addEventListener("keyup", onKeyUp); off.push(() => window.removeEventListener("keyup", onKeyUp));
   const slowMul = () => (keys.ShiftLeft || keys.ShiftRight) ? 0.05 : 1; // hold Shift = 5% speed (fine nav)
+  // Adaptive speed: scale with the camera's distance to the scene centre (clamped), so you
+  // slow right down when close among objects and stay quick when far out. Base factor tuned
+  // slower than before per feedback that it was hard to navigate up close.
+  const BASE_SPEED = 0.35;
+  const moveScale = () => { const d = camera.position.distanceTo(sceneCenter); return Math.min(sceneR, Math.max(sceneR * 0.04, d)); };
   let dollyVel = 0; // wheel-scroll momentum along the view dir; eased out each frame (smooth scroll)
   function flyStep(dt) {
-    const sp = sceneR * 0.5 * dt * slowMul(); // speed scales with scene size; Shift = 5%
+    const sp = moveScale() * BASE_SPEED * dt * slowMul(); // slower when close to the scene; Shift = 5%
     const f = fwd(), r = rgt(), m = new THREE.Vector3();
     if (keys.KeyW) m.add(f); if (keys.KeyS) m.sub(f);
     if (keys.KeyD) m.add(r); if (keys.KeyA) m.sub(r);
@@ -150,6 +158,8 @@ function mountViewer(root) {
   const openCats = new Set(); // expanded categories (persist across re-render)
   const loader = new GLTFLoader();
   const ray = new THREE.Raycaster(); const ndc = new THREE.Vector2();
+  const PICK_TOL = 24; // px: clicking/hovering this near a small object still selects it
+  const _wp = new THREE.Vector3(), _dir = new THREE.Vector3(); // scratch for the generous-pick fallback
 
   // baked assets (manifest, spawns table, *.glb.gz). Default: the wiki's own public/map/
   // folder. In production the ~500MB asset set lives off-repo (e.g. Vercel Blob); point
@@ -160,34 +170,75 @@ function mountViewer(root) {
   // ---- load the static spawner->items table (optional; click panel lists what a spawner can become) ----
   fetch(ASSETS + "spawns.json").then(r => r.ok ? r.json() : {}).then(s => { if (!alive) return; SPAWNS = s; }).catch(() => {});
 
-  // ---- load manifest, populate dropdown ----
-  const locSel = $("loc");
+  // ---- searchable location picker + manifest load ----
+  // Events duplicate the islands, except these two standalone set-pieces — drop the rest.
+  const KEEP_EVENTS = new Set(["loc_event_Dreadnought", "loc_event_ShipGraveyard"]);
+  const catRank = c => (c === "event" ? 0 : c === "poi" ? 3 : 1); // events on top, POIs at the very bottom
+  let LOCITEMS = [], locFiltered = [], locActive = -1; // combobox state
+  const locInput = $("locinput"), locList = $("loclist");
+
+  function renderLocList(q) {
+    q = (q || "").trim().toLowerCase();
+    locFiltered = q ? LOCITEMS.filter(it => it.label.toLowerCase().includes(q)) : LOCITEMS.slice();
+    locActive = -1; locList.innerHTML = "";
+    if (!locFiltered.length) { const d = document.createElement("div"); d.className = "locempty"; d.textContent = "No match"; locList.appendChild(d); return; }
+    const counts = {}; for (const it of locFiltered) counts[it.cat] = (counts[it.cat] || 0) + 1;
+    let lastCat = null;
+    locFiltered.forEach((it, i) => {
+      if (it.cat !== lastCat) { lastCat = it.cat;
+        const h = document.createElement("div"); h.className = "locgroup";
+        h.textContent = `${it.catLabel} (${counts[it.cat]})`; locList.appendChild(h); }
+      const row = document.createElement("div"); row.className = "locrow"; row.dataset.i = i;
+      row.innerHTML = `<span class="locname">${it.label}</span><span class="loccount">${it.objects}</span>`;
+      row.onmousedown = e => { e.preventDefault(); chooseLoc(i); }; // mousedown fires before the input's blur
+      locList.appendChild(row);
+    });
+  }
+  function highlightActive() {
+    locList.querySelectorAll(".locrow").forEach(r => r.classList.toggle("active", +r.dataset.i === locActive));
+    const a = locList.querySelector(".locrow.active"); if (a) a.scrollIntoView({ block: "nearest" });
+  }
+  function chooseLoc(i) { const it = locFiltered[i]; if (!it) return;
+    locList.classList.remove("open"); locInput.blur(); loadLoc(it.glb, it.label); }
+  locInput.addEventListener("focus", () => { locInput.select(); renderLocList(""); locList.classList.add("open"); });
+  locInput.addEventListener("input", () => { renderLocList(locInput.value); locList.classList.add("open"); });
+  locInput.addEventListener("blur", () => { setTimeout(() => locList.classList.remove("open"), 120); });
+  locInput.addEventListener("keydown", e => {
+    if (e.key === "ArrowDown" || e.key === "ArrowUp") { e.preventDefault();
+      if (!locList.classList.contains("open")) { renderLocList(locInput.value); locList.classList.add("open"); }
+      const n = locFiltered.length; if (!n) return;
+      locActive = (locActive + (e.key === "ArrowDown" ? 1 : -1) + n) % n; highlightActive();
+    } else if (e.key === "Enter") { e.preventDefault();
+      if (locActive >= 0) chooseLoc(locActive); else if (locFiltered.length === 1) chooseLoc(0);
+    } else if (e.key === "Escape") { locList.classList.remove("open"); locInput.blur(); }
+  });
+
   fetch(ASSETS + "manifest.json").then(r => { if (!r.ok) throw 0; return r.json(); }).then(m => {
     if (!alive) return;
     CATS = m.cats; LOCCATS = m.loccats;
-    // global index for search: blueprint -> {label,cat,total,locs:{key:count}}
+    // clean: drop event locations that just duplicate islands (keep KEEP_EVENTS)
+    const locs = m.locations.filter(l => l.cat !== "event" || KEEP_EVENTS.has(l.key));
+    // cross-location object-search index, built from the cleaned set
     LOCMAP = {}; SEARCHIX = {};
-    m.locations.forEach(l => { LOCMAP[l.key] = { glb: l.glb, label: l.label, cat: l.cat }; GLB2KEY[l.glb] = l.key;
+    locs.forEach(l => { LOCMAP[l.key] = { glb: l.glb, label: l.label, cat: l.cat }; GLB2KEY[l.glb] = l.key;
       (l.things || []).forEach(([label, cat, bp, count]) => {
         let e = SEARCHIX[bp]; if (!e) e = SEARCHIX[bp] = { label, cat, total: 0, locs: {} };
         e.total += count; e.locs[l.key] = (e.locs[l.key] || 0) + count; }); });
-    (LOCCATS || [["island", "Islands"]]).forEach(([ck, cl]) => {
-      const ks = m.locations.filter(l => l.cat === ck); if (!ks.length) return;
-      const og = document.createElement("optgroup"); og.label = `${cl} (${ks.length})`;
-      ks.forEach(l => { const o = document.createElement("option"); o.value = l.glb;
-        o.dataset.label = l.label; o.textContent = `${l.label}  (${l.objects})`; og.appendChild(o); });
-      locSel.appendChild(og);
-    });
-    // initial location: from the URL hash if valid, else the first dropdown entry
+    // ordered picker list: events first, then the rest; manifest order within a category
+    const catLabel = Object.fromEntries((LOCCATS || []).map(([ck, cl]) => [ck, cl]));
+    const cats = [...new Set(locs.map(l => l.cat))].sort((a, b) => catRank(a) - catRank(b));
+    LOCITEMS = [];
+    for (const ck of cats) for (const l of locs.filter(x => x.cat === ck))
+      LOCITEMS.push({ glb: l.glb, label: l.label, cat: ck, catLabel: catLabel[ck] || ck, objects: l.objects, key: l.key });
+    // initial location: URL hash if valid, else the first item
     const want = readHash().loc;
-    if (want && LOCMAP[want]) { locSel.value = LOCMAP[want].glb; loadLoc(LOCMAP[want].glb, LOCMAP[want].label); }
-    else if (locSel.value) { loadLoc(locSel.value, locSel.selectedOptions[0].dataset.label); }
+    if (want && LOCMAP[want]) loadLoc(LOCMAP[want].glb, LOCMAP[want].label);
+    else if (LOCITEMS.length) loadLoc(LOCITEMS[0].glb, LOCITEMS[0].label);
   }).catch(() => fail(
     `Couldn't load <code>manifest.json</code>. The 3D viewer needs a local web server (browsers block
      <code>fetch()</code> of local files over <code>file://</code>).<br><br>Run from this folder:<br>
      <code>python3 -m http.server</code><br>then open <code>http://localhost:8000/</code>.<br><br>
      If the page is already served, the GLBs may not be baked yet.`));
-  locSel.onchange = () => { loadLoc(locSel.value, locSel.selectedOptions[0].dataset.label); locSel.blur(); };
 
   // ---- category legend: checkbox toggles the category (cascades to its things), big row expands ----
   const thingKeyOf = o => o.userData.b || o.userData.t; // group objects by blueprint (fallback label)
@@ -286,6 +337,7 @@ function mountViewer(root) {
       // frame camera on bounding box, then look at its centre
       const box = new THREE.Box3().setFromObject(current); const c = box.getCenter(new THREE.Vector3());
       const sz = box.getSize(new THREE.Vector3()); sceneR = Math.max(sz.x, sz.y, sz.z) * 0.6 + 5;
+      sceneCenter.copy(c); // adaptive speed scales with distance from here
       camera.position.set(c.x + sceneR * 0.7, c.y + sceneR * 0.8, c.z + sceneR * 0.7);
       camera.near = Math.max(0.3, sceneR / 2000); camera.far = sceneR * 60; camera.updateProjectionMatrix();
       camera.lookAt(c); euler.setFromQuaternion(camera.quaternion, "YXZ"); // seed fly-cam orientation
@@ -299,7 +351,7 @@ function mountViewer(root) {
       update();
       applyXray(); // re-apply x-ray to the new location's items
       applyHash(readHash()); // restore any afterLoad state (camera) from the URL
-      $("sub").textContent = `${pickables.length} objects · drag to look around`;
+      const li = $("locinput"); if (li) li.value = label || ""; // sync the searchable picker
       $("hud").textContent = label || "";
       loadEl.style.display = "none";
     } catch (e) { fail(`Failed to load <code>${glb}</code>: ${e.message}.<br>Make sure the GLBs are baked and served over http.`); }
@@ -314,7 +366,7 @@ function mountViewer(root) {
       get: () => currentLocKey || null,
       apply: (key) => { const l = LOCMAP[key]; if (!l) return false;
         if (key === currentLocKey) return true; // already open
-        locSel.value = l.glb; loadLoc(l.glb, l.label); return true; },
+        loadLoc(l.glb, l.label); return true; },
     },
   };
   let _suppressHash = false;
@@ -337,16 +389,38 @@ function mountViewer(root) {
   }
   // react to manual hash edits / back-forward (our own writes use replaceState, so they don't loop here)
   function onHashChange() { const s = readHash();
-    if (s.loc && LOCMAP[s.loc] && s.loc !== currentLocKey) { locSel.value = LOCMAP[s.loc].glb; loadLoc(LOCMAP[s.loc].glb, LOCMAP[s.loc].label); } }
+    if (s.loc && LOCMAP[s.loc] && s.loc !== currentLocKey) { loadLoc(LOCMAP[s.loc].glb, LOCMAP[s.loc].label); } }
   window.addEventListener("hashchange", onHashChange); off.push(() => window.removeEventListener("hashchange", onHashChange));
 
   // ---- picking ----
   function pick(ev) {
     const r = canvas.getBoundingClientRect();
-    ndc.x = ((ev.clientX - r.left) / r.width) * 2 - 1; ndc.y = -((ev.clientY - r.top) / r.height) * 2 + 1;
+    const px = ev.clientX - r.left, py = ev.clientY - r.top;
+    ndc.x = (px / r.width) * 2 - 1; ndc.y = -(py / r.height) * 2 + 1;
     ray.setFromCamera(ndc, camera);
-    const hit = ray.intersectObjects(pickables.filter(o => o.visible), false); // skip filtered-out objects
-    return hit.length ? hit[0].object : null;
+    const vis = pickables.filter(o => o.visible); // skip filtered-out objects
+    // 1) exact triangle hit wins — precise when you click right on something.
+    const hit = ray.intersectObjects(vis, false);
+    if (hit.length) return hit[0].object;
+    // 2) fallback: nearest object CENTER within PICK_TOL px of the cursor, so small
+    //    crates/markers are selectable by clicking near them. Tie → nearer the camera.
+    const f = fwd();
+    let best = null, bestD = PICK_TOL, bestCam = Infinity;
+    for (const o of vis) {
+      o.getWorldPosition(_wp);
+      _dir.subVectors(_wp, camera.position);
+      const camDist = _dir.length();
+      if (_dir.dot(f) <= 0) continue; // behind the camera
+      _wp.project(camera); // world → NDC (mutates _wp)
+      const sx = (_wp.x * 0.5 + 0.5) * r.width;
+      const sy = (-_wp.y * 0.5 + 0.5) * r.height;
+      const d = Math.hypot(sx - px, sy - py);
+      if (d > PICK_TOL) continue;
+      if (d < bestD - 2 || (Math.abs(d - bestD) <= 2 && camDist < bestCam)) {
+        best = o; bestD = d; bestCam = camDist;
+      }
+    }
+    return best;
   }
   function hoverPick(ev) {
     const o = pick(ev);
@@ -424,9 +498,9 @@ function mountViewer(root) {
     canvas.style.cursor = "grab"; if (wasClick) clickPick(ev); }
   canvas.addEventListener("pointerup", endDrag); off.push(() => canvas.removeEventListener("pointerup", endDrag));
   function onWheel(ev) { ev.preventDefault();
-    // add an impulse to the dolly momentum; flyStep eases it out. Matches the old
-    // per-notch distance (sceneR*0.5 * 0.12s time constant ≈ sceneR*0.06) but glides.
-    dollyVel += -Math.sign(ev.deltaY) * sceneR * 0.5 * slowMul(); }
+    // add an impulse to the dolly momentum; flyStep eases it out (smooth scroll). Uses the
+    // same adaptive scale as WASD, so scrolling is gentle when close and snappier when far.
+    dollyVel += -Math.sign(ev.deltaY) * moveScale() * BASE_SPEED * slowMul(); }
   canvas.addEventListener("wheel", onWheel, { passive: false }); off.push(() => canvas.removeEventListener("wheel", onWheel));
 
   // ---- Map / Search tabs ----
@@ -462,7 +536,7 @@ function mountViewer(root) {
   function onSearchInput(e) { renderSearch(e.target.value); }
   $("sbox").addEventListener("input", onSearchInput); off.push(() => $("sbox").removeEventListener("input", onSearchInput));
   function jumpTo(locKey, bp) { const loc = LOCMAP[locKey]; if (!loc) return;
-    pendingSolo = bp; setView("map"); locSel.value = loc.glb; loadLoc(loc.glb, loc.label); }
+    pendingSolo = bp; setView("map"); loadLoc(loc.glb, loc.label); }
 
   // ---- loop ----
   let last = performance.now();
