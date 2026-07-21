@@ -4,6 +4,12 @@
  * and token-mapped onto the site's dark-theme CSS custom properties
  * (see apps/wiki/src/app/globals.css: --background, --card, --border,
  * --foreground, --muted-foreground) via the --s3d-* aliases below.
+ *
+ * Remaining literal hex colors (e.g. #33e0ff selection-highlight accent
+ * matching the three.js SELECT material, #e8b error text, #cdbfa6 loot
+ * text, #fff strong emphasis) are intentional viewer-specific values
+ * preserved from the original tool and deliberately NOT mapped to site
+ * tokens, to keep the ported look faithful.
  */
 
 .sand3d-map {
@@ -12,6 +18,7 @@
   --s3d-line: var(--border, #332c22);
   --s3d-ink: var(--foreground, #ece3d4);
   --s3d-mut: var(--muted-foreground, #9b8f7c);
+  --s3d-accent-bg: #2a2419;
   position: fixed;
   inset: 0;          /* full-viewport: this route is full-bleed (no global site header) */
   overflow: hidden;
@@ -26,23 +33,23 @@
 .sand3d-map header{position:absolute;top:0;left:0;right:0;height:46px;display:flex;align-items:center;gap:12px;
   padding:0 14px;background:var(--s3d-panel);border-bottom:1px solid var(--s3d-line);backdrop-filter:blur(6px);z-index:10;}
 .sand3d-map header h1{font-size:15px;margin:0;font-weight:600;white-space:nowrap;}
-.sand3d-map select{background:#2a2419;color:var(--s3d-ink);border:1px solid var(--s3d-line);border-radius:6px;padding:5px 8px;max-width:300px;}
+.sand3d-map select{background:var(--s3d-accent-bg);color:var(--s3d-ink);border:1px solid var(--s3d-line);border-radius:6px;padding:5px 8px;max-width:300px;}
 .sand3d-map .sub{color:var(--s3d-mut);font-size:11px;}
 .sand3d-map aside{position:absolute;top:46px;left:0;bottom:0;width:240px;background:var(--s3d-panel);
   border-right:1px solid var(--s3d-line);overflow:auto;padding:10px;z-index:9;backdrop-filter:blur(6px);}
 .sand3d-map aside h2{font-size:11px;text-transform:uppercase;letter-spacing:.6px;color:var(--s3d-mut);margin:6px 2px 8px;}
 .sand3d-map .tools{display:flex;gap:6px;margin:0 2px 8px;}
-.sand3d-map .tools button{flex:1;background:#2a2419;color:var(--s3d-ink);border:1px solid var(--s3d-line);
+.sand3d-map .tools button{flex:1;background:var(--s3d-accent-bg);color:var(--s3d-ink);border:1px solid var(--s3d-line);
   border-radius:6px;padding:5px;cursor:pointer;font-size:11px;}
 .sand3d-map .catrow{display:flex;align-items:center;gap:7px;padding:4px;border-radius:6px;cursor:pointer;user-select:none;}
-.sand3d-map .catrow:hover{background:#2a2419;}
+.sand3d-map .catrow:hover{background:var(--s3d-accent-bg);}
 .sand3d-map .catrow.off{opacity:.4;}
 .sand3d-map .sw{width:12px;height:12px;border-radius:3px;flex:0 0 auto;border:1px solid #0006;}
 .sand3d-map .catrow .n{flex:1;} .sand3d-map .catrow .c{color:var(--s3d-mut);font-variant-numeric:tabular-nums;}
 .sand3d-map .caret{width:11px;flex:0 0 auto;color:var(--s3d-mut);font-size:10px;text-align:center;cursor:pointer;}
 .sand3d-map .things{margin:0 0 3px 24px;display:none;} .sand3d-map .things.open{display:block;}
 .sand3d-map .thingrow{display:flex;align-items:center;gap:6px;padding:2px 4px;border-radius:5px;cursor:pointer;user-select:none;}
-.sand3d-map .thingrow:hover{background:#2a2419;} .sand3d-map .thingrow.off{opacity:.38;}
+.sand3d-map .thingrow:hover{background:var(--s3d-accent-bg);} .sand3d-map .thingrow.off{opacity:.38;}
 .sand3d-map .thingrow .n{flex:1;font-size:12px;} .sand3d-map .thingrow .c{color:var(--s3d-mut);font-size:11px;font-variant-numeric:tabular-nums;}
 .sand3d-map .dotmini{width:8px;height:8px;border-radius:50%;flex:0 0 auto;}
 .sand3d-map #info{position:absolute;right:12px;top:58px;width:300px;background:var(--s3d-panel);border:1px solid var(--s3d-line);
@@ -75,20 +82,20 @@
 .sand3d-map #err{position:absolute;left:50%;top:54%;transform:translateX(-50%);max-width:560px;color:#e8b;
   background:#1f1b15;border:1px solid var(--s3d-line);border-radius:9px;padding:14px 18px;z-index:30;display:none;}
 .sand3d-map code{background:#000a;padding:1px 5px;border-radius:4px;color:#ddc;}
-.sand3d-map .tab{padding:4px 11px;border:1px solid var(--s3d-line);border-radius:7px;cursor:pointer;background:#2a2419;font-size:12px;}
+.sand3d-map .tab{padding:4px 11px;border:1px solid var(--s3d-line);border-radius:7px;cursor:pointer;background:var(--s3d-accent-bg);font-size:12px;}
 .sand3d-map .tab.on{background:#5a4a2a;color:#fff;}
 .sand3d-map aside input[type=checkbox]{accent-color:#8a6c34;cursor:pointer;flex:0 0 auto;margin:0;width:13px;height:13px;}
 .sand3d-map #search{position:absolute;top:46px;left:0;right:0;bottom:0;background:var(--s3d-bg);overflow:auto;
   padding:18px 24px;z-index:12;display:none;}
 .sand3d-map #search.on{display:block;}
-.sand3d-map #sbox{width:100%;max-width:560px;font-size:15px;padding:9px 12px;background:#2a2419;
+.sand3d-map #sbox{width:100%;max-width:560px;font-size:15px;padding:9px 12px;background:var(--s3d-accent-bg);
   color:var(--s3d-ink);border:1px solid var(--s3d-line);border-radius:8px;outline:none;}
 .sand3d-map .sresult{border:1px solid var(--s3d-line);border-radius:9px;padding:10px 12px;margin:10px 0;
   background:var(--s3d-panel);max-width:820px;}
 .sand3d-map .sresult .h{display:flex;align-items:center;gap:8px;font-size:14px;font-weight:600;}
 .sand3d-map .sresult .tot{color:var(--s3d-mut);font-weight:400;font-size:12px;}
 .sand3d-map .chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px;}
-.sand3d-map .chip{background:#2a2419;border:1px solid var(--s3d-line);border-radius:14px;padding:3px 10px;
+.sand3d-map .chip{background:var(--s3d-accent-bg);border:1px solid var(--s3d-line);border-radius:14px;padding:3px 10px;
   cursor:pointer;font-size:12px;} .sand3d-map .chip:hover{background:#5a4a2a;} .sand3d-map .chip b{color:#fff;}
 
 .sand3d-map .s3d-elink { color: var(--s3d-ink); text-decoration: underline dotted; }
