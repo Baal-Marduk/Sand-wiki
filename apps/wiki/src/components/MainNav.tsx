@@ -51,8 +51,9 @@ export function MainNav() {
       <NavigationMenuList className="flex-wrap justify-start gap-1">
         {/* Gallery is reachable from the Builder tool's segmented switch (ToolNav),
             so it's dropped from the desktop bar here. MobileNav still lists it
-            because the Builder page is gated below 1024px. */}
-        {SECTIONS.filter((s) => s.slug !== "gallery").map((section) => {
+            because the Builder page is gated below 1024px.
+            "admin" (Data) is temporarily hidden from the bar — the /admin route stays. */}
+        {SECTIONS.filter((s) => s.slug !== "gallery" && s.slug !== "admin").map((section) => {
           if (section.kind === "data" && section.categories.length > 0) {
             return (
               <NavigationMenuItem key={section.slug}>
