@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { SECTIONS, isWipSection } from "@/lib/taxonomy";
-import { SectionIcon } from "@/components/SectionIcon";
+import { CategoryIcon } from "@/components/CategoryIcon";
 import { WipBadge } from "@/components/WipBadge";
 import {
   NavigationMenu,
@@ -61,7 +61,6 @@ export function MainNav() {
                   className={`${triggerCls}${isActive(`/${section.slug}`) ? " nav-tick text-primary" : ""}`}
                   onClick={() => router.push(`/${section.slug}`)}
                 >
-                  <SectionIcon slug={section.slug} className="size-4 shrink-0" />
                   {section.label}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className={contentCls}>
@@ -70,6 +69,7 @@ export function MainNav() {
                       <li key={c.slug}>
                         {c.wip ? (
                           <span className={itemDisabledCls} aria-disabled="true">
+                            <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
                             {c.label}
                             <span className="ml-auto">
                               <WipBadge />
@@ -77,6 +77,7 @@ export function MainNav() {
                           </span>
                         ) : (
                           <Link href={`/${section.slug}?category=${c.slug}`} className={itemCls}>
+                            <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
                             {c.label}
                           </Link>
                         )}
@@ -105,7 +106,6 @@ export function MainNav() {
                 href={href}
                 className={`${navItemCls}${isActive(href) ? " nav-tick text-primary" : ""}`}
               >
-                <SectionIcon slug={section.slug} className="size-4 shrink-0" />
                 {section.label}
               </Link>
             </NavigationMenuItem>
