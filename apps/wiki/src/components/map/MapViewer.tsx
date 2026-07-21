@@ -70,6 +70,11 @@ function mountViewer(root) {
 
   // teardown bookkeeping: removable listeners + the RAF handle
   const off = [];
+  // liveness flag: StrictMode double-invokes this effect in dev (mount -> cleanup -> mount,
+  // same DOM). Guards the top-level fetch().then() chains below so a phantom first-mount's
+  // fetch resolving after its teardown ran does nothing (else the <select id="loc"> gets
+  // every location appended twice).
+  let alive = true;
 
   // ---- loot cross-links: item/spawner labels become wiki links when a matching entity exists ----
   const nameHtml = (label) => {
@@ -141,11 +146,12 @@ function mountViewer(root) {
   const ASSETS = "/map/";
 
   // ---- load the static spawner->items table (optional; click panel lists what a spawner can become) ----
-  fetch(ASSETS + "spawns.json").then(r => r.ok ? r.json() : {}).then(s => { SPAWNS = s; }).catch(() => {});
+  fetch(ASSETS + "spawns.json").then(r => r.ok ? r.json() : {}).then(s => { if (!alive) return; SPAWNS = s; }).catch(() => {});
 
   // ---- load manifest, populate dropdown ----
   const locSel = $("loc");
   fetch(ASSETS + "manifest.json").then(r => { if (!r.ok) throw 0; return r.json(); }).then(m => {
+    if (!alive) return;
     CATS = m.cats; LOCCATS = m.loccats;
     // global index for search: blueprint -> {label,cat,total,locs:{key:count}}
     LOCMAP = {}; SEARCHIX = {};
@@ -247,6 +253,7 @@ function mountViewer(root) {
     return await loader.parseAsync(buf, "");
   }
 
+  // TODO(map): also dispose materials/textures here (careful: skip shared HOVER/SELECT mats) — leaks across remounts.
   function disposeCurrent() {
     if (!current) return; scene.remove(current);
     current.traverse(o => { if (o.geometry) o.geometry.dispose(); });
@@ -452,6 +459,7 @@ function mountViewer(root) {
   renderSearch("");
 
   return () => {
+    alive = false;
     cancelAnimationFrame(rafId);
     off.forEach(f => f());
     renderer.dispose();
