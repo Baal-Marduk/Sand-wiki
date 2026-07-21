@@ -58,6 +58,12 @@ describe("slugForName", () => {
     expect(slugForName("Valuable Piles03")).toMatchObject({ href: "/items/coin-crown" });
   });
 
+  it("links lockable doors to their colour-matched key", () => {
+    expect(slugForName("Sqr Door Lockable Black")).toMatchObject({ href: "/items/game-key-island-door-black" });
+    expect(slugForName("Sqr Door Lockable Red")).toMatchObject({ href: "/items/game-key-island-door-red" });
+    expect(slugForName("Sqr Door Lockable Fort")).toMatchObject({ href: "/items/game-key-island-door-fort" });
+  });
+
   // Armored turrets have no corresponding wiki kit — intentionally unlinked (no alias,
   // no name match) so they stay plain text rather than mislinking.
   it("leaves an armored turret (no wiki kit) unlinked", () => {

@@ -45,6 +45,13 @@ const FAMILIES: { re: RegExp; slug: string }[] = [
   { re: /^locked box valuables\b/i, slug: "valuables-box" },
   { re: /^safe\b/i, slug: "valuables-safe" },
   { re: /^valuable pile/i, slug: "coin-crown" }, // ground piles of crowns ("Valuable Piles01"…)
+  // lockable doors → the colour-matched key that opens them
+  { re: /^sqr door lockable black/i, slug: "game-key-island-door-black" },
+  { re: /^sqr door lockable blue/i, slug: "game-key-island-door-blue" },
+  { re: /^sqr door lockable green/i, slug: "game-key-island-door-green" },
+  { re: /^sqr door lockable red/i, slug: "game-key-island-door-red" },
+  { re: /^sqr door lockable white/i, slug: "game-key-island-door-white" },
+  { re: /^sqr door lockable fort/i, slug: "game-key-island-door-fort" },
 ];
 
 /** Lowercase, trim, collapse internal whitespace. Exported for tests. */
