@@ -38,6 +38,21 @@ describe("slugForName", () => {
     expect(slugForName("")).toBeNull();
   });
 
+  // Curated alias: the map's turret loot label diverges from the wiki kit name, so it
+  // only resolves via the alias layer (verified against the real store).
+  it("resolves a turret loot label to its wiki artillery kit via the alias layer", () => {
+    expect(slugForName("Auto Mounted Turret T1 Packable"))
+      .toMatchObject({ href: "/items/game-packed-auto-turret-t1-container" });
+    expect(slugForName("Shotgun Mounted Turret T3 Packable"))
+      .toMatchObject({ href: "/items/game-packed-shotgun-turret-t3-container" });
+  });
+
+  // Armored turrets have no corresponding wiki kit — intentionally unlinked (no alias,
+  // no name match) so they stay plain text rather than mislinking.
+  it("leaves an armored turret (no wiki kit) unlinked", () => {
+    expect(slugForName("Auto Mounted Turret Armored T1 Packable")).toBeNull();
+  });
+
   // "Backpack" (item, slug "backpack01") is disabled in the current dataset and has
   // no enabled entity of the same name — verified via packages/data/generated/entities.json.
   it("returns null for a disabled entity's name, even though it exists in the dataset", () => {
