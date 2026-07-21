@@ -2,20 +2,24 @@ import { test, expect } from "@playwright/test";
 
 // The /map route is a desktop-only, full-bleed 3D viewer. With a wide viewport the
 // viewer mounts (above the 1024px gate) and fetches the fixture manifest, populating
-// the location dropdown. Real location GLBs are supplied out-of-band, so this smoke
-// asserts the shell + dropdown, not a 3D load.
+// the searchable location picker. Real location GLBs are supplied out-of-band, so this
+// smoke asserts the shell + picker, not a 3D load.
 test.describe("3D map", () => {
-  test("mounts on a wide viewport and populates the location dropdown", async ({ page }) => {
+  test("mounts on a wide viewport and the location picker opens with the fixture", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 900 });
     await page.goto("/map");
 
     // ToolNavBrand renders the page title; unique on this full-bleed page.
     await expect(page.getByText("3D Map")).toBeVisible();
 
-    // The manifest fetch fills <select id="loc"> with the fixture's one location.
-    const options = page.locator("#loc option");
-    await expect(options).toHaveCount(1, { timeout: 15000 });
-    await expect(options.first()).toContainText("Test POI");
+    // The searchable picker (#locinput) opens on focus; the manifest fetch fills the
+    // list (#loclist .locrow) — the fixture ships exactly one location, "Test POI".
+    const input = page.locator("#locinput");
+    await expect(input).toBeVisible();
+    await input.click();
+    const rows = page.locator("#loclist .locrow");
+    await expect(rows).toHaveCount(1, { timeout: 15000 });
+    await expect(rows.first()).toContainText("Test POI");
   });
 
   test("shows the desktop-only gate on a narrow viewport", async ({ page }) => {

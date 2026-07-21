@@ -26,8 +26,10 @@ export default function MapViewer() {
       <canvas id="c"></canvas>
       <header>
         <ToolNavBrand title="3D Map" />
-        <span className="tab on" id="tabMap">Map</span>
-        <span className="tab" id="tabSearch">Search</span>
+        <div className="mv-seg">
+          <span className="tab on" id="tabMap">Map</span>
+          <span className="tab" id="tabSearch">Search</span>
+        </div>
         <div id="locpick">
           <input id="locinput" type="text" placeholder="Search location…" autoComplete="off" spellCheck={false} />
           <div id="loclist"></div>
@@ -39,8 +41,8 @@ export default function MapViewer() {
           <div className="tools">
             <button id="allOn">All</button>
             <button id="allOff">None</button>
-            <button id="baseBtn">Hide terrain</button>
-            <button id="xrayBtn">X-ray items</button>
+            <button id="baseBtn" aria-pressed="false">Hide terrain</button>
+            <button id="xrayBtn" aria-pressed="false">X-ray items</button>
           </div>
           <div id="legend"></div>
         </div>
@@ -50,6 +52,7 @@ export default function MapViewer() {
         <b>Drag</b> look · <b>scroll</b> move · <b>WASD</b> fly · <b>Space</b> up · <b>Q</b> down · <b>Shift</b> 5% speed · <b>click</b> inspect
       </div>
       <div id="hud"></div>
+      <div id="compass">N</div>
       <div id="tip"></div>
       <div id="load">loading…</div>
       <div id="err"></div>
@@ -78,10 +81,15 @@ function mountViewer(root) {
   // built twice / a stale location loads).
   let alive = true;
 
-  // ---- loot cross-links: item/spawner labels become wiki links when a matching entity exists ----
-  const nameHtml = (label) => {
+  // ---- loot cross-links: a label becomes an icon + link to its wiki entity page when
+  //      a matching entity exists; falls back to (icon +) plain text otherwise. `cls`
+  //      styles the name (".ci" for loot items, "mv-become-nm" for spawner members). ----
+  const namedLink = (label, cls) => {
     const hit = slugForName(label);
-    return hit ? `<a class="s3d-elink" href="${hit.href}">${label}</a>` : label;
+    const ic = hit && hit.icon ? `<img class="mv-loot-icon" src="${hit.icon}" alt="" aria-hidden="true">` : "";
+    return hit
+      ? `<a class="${cls}" href="${hit.href}">${ic}${label}</a>`
+      : `<span class="${cls}">${ic}${label}</span>`;
   };
 
   // ---- renderer / scene ----
@@ -263,9 +271,10 @@ function mountViewer(root) {
       const open = openCats.has(k), st = catState(k);
       const wrap = document.createElement("div");
       const row = document.createElement("div"); row.className = "catrow"; row.dataset.k = k;
-      row.innerHTML = `<span class="caret">${open ? "▾" : "▸"}</span>` +
-        `<input type="checkbox" ${st !== "none" ? "checked" : ""}>` +
-        `<span class="sw" style="background:${color}"></span><span class="n">${label}</span><span class="c">${count}</span>`;
+      row.innerHTML = `<input class="cx" type="checkbox" ${st !== "none" ? "checked" : ""}>` +
+        `<span class="caret">${open ? "▾" : "▸"}</span>` +
+        `<span class="sw" style="background:${color}"></span>` +
+        `<span class="n">${label}</span><span class="c">${count}</span>`;
       const cb = row.querySelector("input"); cb.indeterminate = (st === "some");
       const things = document.createElement("div"); things.className = "things" + (open ? " open" : "");
       [...g.things.entries()].sort((a, b) => b[1].meshes.length - a[1].meshes.length).forEach(([tk, t]) => {
@@ -294,7 +303,8 @@ function mountViewer(root) {
   }
   $("allOn").onclick = () => { hidden.clear(); update(); };
   $("allOff").onclick = () => { for (const k in byCat) for (const tk of byCat[k].things.keys()) hidden.add(tk); update(); };
-  $("baseBtn").onclick = () => { showBase = !showBase; $("baseBtn").textContent = showBase ? "Hide terrain" : "Show terrain"; update(); };
+  $("baseBtn").onclick = () => { showBase = !showBase; const b = $("baseBtn");
+    b.textContent = showBase ? "Hide terrain" : "Show terrain"; b.setAttribute("aria-pressed", String(!showBase)); update(); };
   // X-ray: draw item meshes over terrain (depthTest off + high renderOrder). Highlight mats share the flag.
   function applyXray() {
     HOVER.depthTest = SELECT.depthTest = !xray;
@@ -302,8 +312,8 @@ function mountViewer(root) {
       if (o.material) o.material.depthTest = !xray;
       if (o._om) o._om.depthTest = !xray; }
   }
-  $("xrayBtn").onclick = () => { xray = !xray; $("xrayBtn").textContent = xray ? "X-ray on" : "X-ray items";
-    $("xrayBtn").style.background = xray ? "#5a4a2a" : ""; applyXray(); };
+  $("xrayBtn").onclick = () => { xray = !xray; const b = $("xrayBtn");
+    b.textContent = xray ? "X-ray on" : "X-ray items"; b.setAttribute("aria-pressed", String(xray)); applyXray(); };
 
   // ---- fetch + gunzip + parse a GLB ----
   async function fetchGlb(url) {
@@ -439,37 +449,56 @@ function mountViewer(root) {
   }
   let LOOTMODE = "Storm"; // Stormdive vs Voyage loot amounts — see docs/LOOT.md
   function showInfo(o) {
-    if (!o) { $("info").style.display = "none"; return; }
+    const info = $("info");
+    if (!o) { info.style.display = "none"; return; }
     const cat = CATS.find(c => c[0] === o.userData.c) || ["", "?", "#888"];
     const E = SPAWNS[o.userData.b];
-    let spHtml = "";
-    if (E) {
-      const V = (LOOTMODE === "Voyage"); // loot row = [item, stormMin, stormMax, voyageMin, voyageMax]
-      const lootRows = loot => loot.map(r => { const it = r[0], mn = V ? r[3] : r[1], mx = V ? r[4] : r[2];
-        return `<div class="sploot">${nameHtml(it)} <span class="spw">${mn === mx ? mn : mn + "–" + mx}</span></div>`; }).join("");
-      const badge = c => { const cc = CATS.find(x => x[0] === c) || ["", "", "#888"]; return `<span class="badge" style="background:${cc[2]}"></span>`; };
-      const hasLoot = (E.loot && E.loot.length) || (E.m && E.m.some(s => ((SPAWNS[s.bp] || {}).loot || []).length));
-      if (hasLoot) // mode switch: same containers, different counts per game mode
-        spHtml += `<div class="lootmode">Amounts: <span class="lm${V ? "" : " on"}" data-m="Storm">Stormdive</span><span class="lm${V ? " on" : ""}" data-m="Voyage">Voyage</span></div>`;
-      if (E.loot && E.loot.length) // directly-clicked container: its own contents (open)
-        spHtml += `<div class="splist"><div class="sphdr">Contents</div><div class="splootl">${lootRows(E.loot)}</div></div>`;
-      if (E.m && E.m.length) // spawner: members open, each member's loot collapsed
-        spHtml += '<div class="splist"><div class="sphdr">Can become</div>' +
-          E.m.map(s => {
-            const pct = (s.pct != null) ? ` <span class="spw">${s.pct}%</span>` : "";
-            const cnt = (s.count) ? ` <span class="spw">×${s.count}</span>` : "";
-            const row = `${badge(s.cat)}${nameHtml(s.label)}${cnt}${pct}`;
-            const ml = (SPAWNS[s.bp] || {}).loot;
-            return (ml && ml.length)
-              ? `<details class="spdet"><summary class="sprow">${row}</summary><div class="splootl">${lootRows(ml)}</div></details>`
-              : `<div class="sprow">${row}</div>`;
-          }).join("") + "</div>";
+    const V = (LOOTMODE === "Voyage"); // loot row = [item, stormMin, stormMax, voyageMin, voyageMax]
+    const qty = r => { const mn = V ? r[3] : r[1], mx = V ? r[4] : r[2]; return mn === mx ? `${mn}` : `${mn}–${mx}`; };
+    const contents = loot => loot.map(r => `${namedLink(r[0], "ci")}<span class="cq">${qty(r)}</span>`).join("");
+
+    let body = "";
+    const hasLoot = !!(E && ((E.loot && E.loot.length) || (E.m && E.m.some(s => ((SPAWNS[s.bp] || {}).loot || []).length))));
+    if (hasLoot) // same containers, different counts per game mode
+      body += `<div class="mv-amounts"><span class="k">Amounts:</span><div class="mv-aseg">` +
+        `<button class="${V ? "" : "on"}" data-m="Storm">Stormdive</button>` +
+        `<button class="${V ? "on" : ""}" data-m="Voyage">Voyage</button></div></div>`;
+    if (E && E.loot && E.loot.length) // directly-clicked container: its own contents
+      body += `<div class="mv-becomes-lbl">Contents</div><div class="mv-contents">${contents(E.loot)}</div>`;
+    if (E && E.m && E.m.length) { // spawner: members, each member's loot collapsed (first open)
+      let opened = false;
+      body += `<div class="mv-becomes-lbl">Can become</div>` +
+        E.m.map(s => {
+          const cc = CATS.find(x => x[0] === s.cat) || ["", "", "#888"];
+          const tail = (s.pct != null) ? `${s.pct}%` : (s.count ? `×${s.count}` : "");
+          const pct = tail ? `<span class="mv-become-pct">${tail}</span>` : "";
+          const ml = (SPAWNS[s.bp] || {}).loot;
+          const sel = (ml && ml.length && !opened) ? " sel" : ""; if (sel) opened = true;
+          const inner = (ml && ml.length) ? `<div class="mv-become-contents">${contents(ml)}</div>` : "";
+          return `<div class="mv-become${sel}"><div class="mv-become-row">` +
+            `<span class="mv-become-dot" style="background:${cc[2]}"></span>${namedLink(s.label, "mv-become-nm")}${pct}` +
+            `</div>${inner}</div>`;
+        }).join("");
     }
-    $("info").style.display = "block";
-    $("info").innerHTML = `<b>${nameHtml(o.userData.t)}</b><br>
-      <span class="cat"><span class="badge" style="background:${cat[2]}"></span>${cat[1]}</span>
-      <div class="raw">${o.userData.b || ""}</div>${spHtml}`;
-    $("info").querySelectorAll(".lm").forEach(el => el.onclick = () => { LOOTMODE = el.dataset.m; showInfo(selected); });
+
+    // title: highlight a trailing "[tag]" effort marker like the mockup
+    const title = (o.userData.t || "").replace(/\s*(\[[^\]]+\])\s*$/, ' <span class="eff">$1</span>');
+    info.style.display = "flex";
+    info.innerHTML =
+      `<div class="mv-ins-head">` +
+        `<div class="mv-ins-title">${title}</div>` +
+        `<div class="mv-ins-cat"><span class="dot" style="background:${cat[2]}"></span>${cat[1]}</div>` +
+        `<div class="mv-ins-id">${o.userData.b || ""}</div>` +
+      `</div><div class="mv-ins-body">${body}</div>`;
+    // amounts toggle
+    info.querySelectorAll(".mv-aseg button").forEach(el => el.onclick = () => { LOOTMODE = el.dataset.m; showInfo(selected); });
+    // expand/collapse a "can become" member (entity-name links still navigate)
+    info.querySelectorAll(".mv-become-row").forEach(row => row.onclick = e => {
+      if (e.target.closest("a")) return;
+      const b = row.closest(".mv-become"), was = b.classList.contains("sel");
+      info.querySelectorAll(".mv-become").forEach(x => x.classList.remove("sel"));
+      if (!was) b.classList.add("sel");
+    });
   }
 
   // left-drag = look in place, click(no move) = pick, wheel = move forward (WASD/QE strafe+vertical)
