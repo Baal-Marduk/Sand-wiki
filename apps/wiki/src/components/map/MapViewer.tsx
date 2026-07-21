@@ -49,7 +49,7 @@ export default function MapViewer() {
       </aside>
       <div id="info"></div>
       <div id="help">
-        <b>Drag</b> look · <b>scroll</b> move · <b>WASD</b> fly · <b>Space</b> up · <b>Q</b> down · <b>Shift</b> 5% speed · <b>click</b> inspect
+        <b>Drag</b> look · <b>scroll</b> move · <b>WASD</b> fly · <b>Space</b> up · <b>Q</b> down · <b>Shift</b> fast · <b>click</b> inspect
       </div>
       <div id="hud"></div>
       <div id="compass">N</div>
@@ -84,12 +84,16 @@ function mountViewer(root) {
   // ---- loot cross-links: a label becomes an icon + link to its wiki entity page when
   //      a matching entity exists; falls back to (icon +) plain text otherwise. `cls`
   //      styles the name (".ci" for loot items, "mv-become-nm" for spawner members). ----
+  // loot-box labels carry a spawner "effort" variant (Low/Mid/High/Mixed) we don't
+  // want to show — strip it for display but keep the tier (T1/T2/…).
+  const cleanLabel = (s) => (s || "").replace(/\s*\b(?:Low|Mid|High|Mixed)\s+Effort\b/gi, "").replace(/\s{2,}/g, " ").trim();
   const namedLink = (label, cls) => {
     const hit = slugForName(label);
+    const disp = cleanLabel(label);
     const ic = hit && hit.icon ? `<img class="mv-loot-icon" src="${hit.icon}" alt="" aria-hidden="true">` : "";
     return hit
-      ? `<a class="${cls}" href="${hit.href}">${ic}${label}</a>`
-      : `<span class="${cls}">${ic}${label}</span>`;
+      ? `<a class="${cls}" href="${hit.href}">${ic}${disp}</a>`
+      : `<span class="${cls}">${ic}${disp}</span>`;
   };
 
   // ---- renderer / scene ----
@@ -125,7 +129,7 @@ function mountViewer(root) {
   function onKeyUp(e) { keys[e.code] = false; }
   window.addEventListener("keydown", onKeyDown); off.push(() => window.removeEventListener("keydown", onKeyDown));
   window.addEventListener("keyup", onKeyUp); off.push(() => window.removeEventListener("keyup", onKeyUp));
-  const slowMul = () => (keys.ShiftLeft || keys.ShiftRight) ? 0.05 : 1; // hold Shift = 5% speed (fine nav)
+  const boostMul = () => (keys.ShiftLeft || keys.ShiftRight) ? 4 : 1; // hold Shift = 4× speed (fast traversal)
   // Adaptive speed: scale with the camera's distance to the scene centre (clamped), so you
   // slow right down when close among objects and stay quick when far out. Base factor tuned
   // slower than before per feedback that it was hard to navigate up close.
@@ -133,7 +137,7 @@ function mountViewer(root) {
   const moveScale = () => { const d = camera.position.distanceTo(sceneCenter); return Math.min(sceneR, Math.max(sceneR * 0.04, d)); };
   let dollyVel = 0; // wheel-scroll momentum along the view dir; eased out each frame (smooth scroll)
   function flyStep(dt) {
-    const sp = moveScale() * BASE_SPEED * dt * slowMul(); // slower when close to the scene; Shift = 5%
+    const sp = moveScale() * BASE_SPEED * dt * boostMul(); // slower when close to the scene; Shift = 4× boost
     const f = fwd(), r = rgt(), m = new THREE.Vector3();
     if (keys.KeyW) m.add(f); if (keys.KeyS) m.sub(f);
     if (keys.KeyD) m.add(r); if (keys.KeyA) m.sub(r);
@@ -481,8 +485,10 @@ function mountViewer(root) {
         }).join("");
     }
 
-    // title: highlight a trailing "[tag]" effort marker like the mockup
-    const title = (o.userData.t || "").replace(/\s*(\[[^\]]+\])\s*$/, ' <span class="eff">$1</span>');
+    // title: effort stripped, tier kept; links to the wiki entity/container when one matches
+    const tHit = slugForName(o.userData.t);
+    const tText = cleanLabel(o.userData.t).replace(/\s*(\[[^\]]+\])\s*$/, ' <span class="eff">$1</span>');
+    const title = tHit ? `<a href="${tHit.href}">${tText}</a>` : tText;
     info.style.display = "flex";
     info.innerHTML =
       `<div class="mv-ins-head">` +
@@ -529,7 +535,7 @@ function mountViewer(root) {
   function onWheel(ev) { ev.preventDefault();
     // add an impulse to the dolly momentum; flyStep eases it out (smooth scroll). Uses the
     // same adaptive scale as WASD, so scrolling is gentle when close and snappier when far.
-    dollyVel += -Math.sign(ev.deltaY) * moveScale() * BASE_SPEED * slowMul(); }
+    dollyVel += -Math.sign(ev.deltaY) * moveScale() * BASE_SPEED * boostMul(); }
   canvas.addEventListener("wheel", onWheel, { passive: false }); off.push(() => canvas.removeEventListener("wheel", onWheel));
 
   // ---- Map / Search tabs ----

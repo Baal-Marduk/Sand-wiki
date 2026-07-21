@@ -134,6 +134,8 @@
 .sand3d-map .mv-ins-head { padding: 15px 16px 13px; border-bottom: 1px solid var(--border); }
 .sand3d-map .mv-ins-title { font-family: var(--font-display); font-size: 18px; font-weight: 600; color: var(--foreground); line-height: 1.14; }
 .sand3d-map .mv-ins-title .eff { color: var(--primary); }
+.sand3d-map .mv-ins-title a { color: inherit; text-decoration: none; }
+.sand3d-map .mv-ins-title a:hover { color: var(--primary-hover); }
 .sand3d-map .mv-ins-cat { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 12px; color: var(--muted-foreground); }
 .sand3d-map .mv-ins-cat .dot { width: 9px; height: 9px; flex: 0 0 auto; }
 .sand3d-map .mv-ins-id { font-family: var(--font-mono); font-size: 11px; color: var(--dim); margin-top: 9px; word-break: break-all; }
@@ -171,6 +173,11 @@
 .sand3d-map .ci { display: inline-flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted-foreground); text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 2px; }
 .sand3d-map .ci:hover { color: var(--primary-hover); }
 .sand3d-map .mv-loot-icon { width: 18px; height: 18px; object-fit: contain; flex: 0 0 auto; background: var(--card-elevated); border: 1px solid var(--border); }
+/* "can become" members: prefer the object sprite over the category square — when a
+   member has an icon, hide its color dot and show the sprite larger; icon-less
+   members keep the dot as their cue. (:has() is fine — the viewer is Chromium-only.) */
+.sand3d-map .mv-become-row:has(.mv-loot-icon) .mv-become-dot { display: none; }
+.sand3d-map .mv-become-nm .mv-loot-icon { width: 30px; height: 30px; }
 
 /* ---- viewport overlays (offset into the visible viewport) ---- */
 .sand3d-map #compass {

@@ -47,6 +47,14 @@ describe("slugForName", () => {
       .toMatchObject({ href: "/items/game-packed-shotgun-turret-t3-container" });
   });
 
+  // Loot boxes vary by tier/effort but the wiki has one untiered container per type;
+  // the family fallback links them regardless of the tier/effort suffix.
+  it("resolves loot-box families to their untiered wiki container", () => {
+    expect(slugForName("Shells Box T1 Mid Effort")).toMatchObject({ href: "/environment/crate-of-shells" });
+    expect(slugForName("Medical Cabinet T2 Low Effort")).toMatchObject({ href: "/environment/medical-cabinet" });
+    expect(slugForName("Locked Box Military")).toMatchObject({ href: "/environment/military-box" });
+  });
+
   // Armored turrets have no corresponding wiki kit — intentionally unlinked (no alias,
   // no name match) so they stay plain text rather than mislinking.
   it("leaves an armored turret (no wiki kit) unlinked", () => {

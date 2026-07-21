@@ -30,6 +30,20 @@ const ALIASES: Record<string, string> = {
   "Mounted Turret T3 Packable": "game-packed-turret-t3-container",
 };
 
+/** Family fallback: loot-box labels vary by tier/effort (e.g. "Shells Box T1 Mid
+ *  Effort") but the wiki models each loot type as ONE untiered container. Match the
+ *  family prefix → wiki container slug; verified against the store. Ambiguous families
+ *  (Army Box, Container Box, Valuable Piles) are intentionally omitted until confirmed. */
+const FAMILIES: { re: RegExp; slug: string }[] = [
+  { re: /^shells box\b/i, slug: "crate-of-shells" },
+  { re: /^food box\b/i, slug: "food-crate" },
+  { re: /^parts box\b/i, slug: "parts-crate" },
+  { re: /^medical cabinet\b/i, slug: "medical-cabinet" },
+  { re: /^locked box military\b/i, slug: "military-box" },
+  { re: /^locked box utility\b/i, slug: "utility-box" },
+  { re: /^locked box valuables\b/i, slug: "valuables-box" },
+];
+
 /** Lowercase, trim, collapse internal whitespace. Exported for tests. */
 export function __normalize(name: string): string {
   return name.trim().toLowerCase().replace(/\s+/g, " ");
@@ -39,6 +53,14 @@ export interface EntityRoute {
   href: string;
   /** Sprite path (e.g. "/icons/…png") when the entity has one, else null. */
   icon: string | null;
+}
+
+/** Resolve a wiki slug to its route + icon, or null if the entity is missing/disabled. */
+function routeFor(slug: string): EntityRoute | null {
+  const e = getEntity(slug);
+  if (!e || e.disabled) return null;
+  const base = KIND_ROUTE.find((k) => k.kind === e.kind)?.base;
+  return base ? { href: `${base}/${slug}`, icon: e.icon ?? null } : null;
 }
 
 let INDEX: Map<string, EntityRoute> | null = null;
@@ -60,18 +82,19 @@ function getIndex(): Map<string, EntityRoute> {
   // curated aliases win over name matches (they correct known mismatches); each is
   // verified against the store so a missing/disabled target is skipped, never dead-linked.
   for (const [label, slug] of Object.entries(ALIASES)) {
-    const e = getEntity(slug);
-    if (!e || e.disabled) continue;
-    const base = KIND_ROUTE.find((k) => k.kind === e.kind)?.base;
-    if (!base) continue;
-    m.set(__normalize(label), { href: `${base}/${slug}`, icon: e.icon ?? null });
+    const r = routeFor(slug);
+    if (r) m.set(__normalize(label), r);
   }
   INDEX = m;
   return m;
 }
 
-/** Route for a loot/container display name, or null if no enabled entity matches. */
+/** Route for a loot/container display name, or null if nothing matches. Tries the
+ *  built index (exact name + curated aliases) first, then the loot-box family rules. */
 export function slugForName(name: string): EntityRoute | null {
   if (!name) return null;
-  return getIndex().get(__normalize(name)) ?? null;
+  const hit = getIndex().get(__normalize(name));
+  if (hit) return hit;
+  for (const f of FAMILIES) if (f.re.test(name.trim())) return routeFor(f.slug);
+  return null;
 }
