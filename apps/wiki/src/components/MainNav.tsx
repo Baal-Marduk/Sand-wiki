@@ -4,8 +4,8 @@ import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { SECTIONS, isWipSection } from "@/lib/taxonomy";
 import { CategoryIcon } from "@/components/CategoryIcon";
-import { SectionIcon } from "@/components/SectionIcon";
 import { WipBadge } from "@/components/WipBadge";
+import { NewBadge } from "@/components/NewBadge";
 import {
   NavigationMenu,
   NavigationMenuList,
@@ -51,8 +51,9 @@ export function MainNav() {
       <NavigationMenuList className="flex-wrap justify-start gap-1">
         {/* Gallery is reachable from the Builder tool's segmented switch (ToolNav),
             so it's dropped from the desktop bar here. MobileNav still lists it
-            because the Builder page is gated below 1024px. */}
-        {SECTIONS.filter((s) => s.slug !== "gallery").map((section) => {
+            because the Builder page is gated below 1024px.
+            "admin" (Data) is temporarily hidden from the bar — the /admin route stays. */}
+        {SECTIONS.filter((s) => s.slug !== "gallery" && s.slug !== "admin").map((section) => {
           if (section.kind === "data" && section.categories.length > 0) {
             return (
               <NavigationMenuItem key={section.slug}>
@@ -62,7 +63,6 @@ export function MainNav() {
                   className={`${triggerCls}${isActive(`/${section.slug}`) ? " nav-tick text-primary" : ""}`}
                   onClick={() => router.push(`/${section.slug}`)}
                 >
-                  <SectionIcon slug={section.slug} className="size-4 shrink-0" />
                   {section.label}
                 </NavigationMenuTrigger>
                 <NavigationMenuContent className={contentCls}>
@@ -108,8 +108,8 @@ export function MainNav() {
                 href={href}
                 className={`${navItemCls}${isActive(href) ? " nav-tick text-primary" : ""}`}
               >
-                <SectionIcon slug={section.slug} className="size-4 shrink-0" />
                 {section.label}
+                {section.slug === "map" && <NewBadge />}
               </Link>
             </NavigationMenuItem>
           );
