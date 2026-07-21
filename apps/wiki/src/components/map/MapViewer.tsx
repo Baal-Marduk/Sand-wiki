@@ -53,7 +53,6 @@ export default function MapViewer() {
         <b>Drag</b> look · <b>scroll</b> move · <b>WASD</b> fly · <b>Space</b> up · <b>Q</b> down · <b>Shift</b> fast · <b>click</b> inspect
       </div>
       <div id="hud"></div>
-      <div id="compass">N</div>
       <div id="tip"></div>
       <div id="load">loading…</div>
       <div id="err"></div>
@@ -571,7 +570,6 @@ function mountViewer(root) {
       `<div class="mv-ins-head">` +
         `<div class="mv-ins-title">${title}</div>` +
         `<div class="mv-ins-cat"><span class="dot" style="background:${cat[2]}"></span>${cat[1]}</div>` +
-        `<div class="mv-ins-id">${o.userData.b || ""}</div>` +
       `</div><div class="mv-ins-body">${body}</div>`;
     // amounts toggle
     info.querySelectorAll(".mv-aseg button").forEach(el => el.onclick = () => { LOOTMODE = el.dataset.m; showInfo(selected); });

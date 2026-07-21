@@ -138,7 +138,6 @@
 .sand3d-map .mv-ins-title a:hover { color: var(--primary-hover); }
 .sand3d-map .mv-ins-cat { display: flex; align-items: center; gap: 8px; margin-top: 8px; font-size: 12px; color: var(--muted-foreground); }
 .sand3d-map .mv-ins-cat .dot { width: 9px; height: 9px; flex: 0 0 auto; }
-.sand3d-map .mv-ins-id { font-family: var(--font-mono); font-size: 11px; color: var(--dim); margin-top: 9px; word-break: break-all; }
 .sand3d-map .mv-ins-body { overflow-y: auto; flex: 1; min-height: 0; }
 .sand3d-map .mv-ins-body::-webkit-scrollbar { width: 8px; }
 .sand3d-map .mv-ins-body::-webkit-scrollbar-thumb { background: var(--border-strong); }
@@ -185,13 +184,6 @@
 .sand3d-map .mv-become-row > .mv-loot-icon { width: 26px; height: 26px; }
 
 /* ---- viewport overlays (offset into the visible viewport) ---- */
-.sand3d-map #compass {
-  position: absolute; left: calc(var(--mv-sidebar) + 18px); bottom: 18px; width: 46px; height: 46px; z-index: 20;
-  display: grid; place-items: center; border-radius: 50%;
-  background: color-mix(in srgb, var(--background) 78%, transparent); border: 1px solid var(--border-strong);
-  backdrop-filter: blur(6px); font-family: var(--font-display); font-weight: 700; color: var(--primary); font-size: 17px;
-}
-.sand3d-map #compass::before { content: ''; position: absolute; top: 4px; left: 50%; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 7px solid var(--primary); }
 .sand3d-map #help {
   position: absolute; left: calc((var(--mv-sidebar) + 100vw) / 2); bottom: 18px; transform: translateX(-50%); z-index: 20;
   white-space: nowrap; background: color-mix(in srgb, var(--background) 80%, transparent);
