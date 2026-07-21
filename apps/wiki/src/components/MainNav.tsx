@@ -3,7 +3,6 @@
 import Link from "next/link";
 import { useRouter, usePathname } from "next/navigation";
 import { SECTIONS, isWipSection } from "@/lib/taxonomy";
-import { CategoryIcon } from "@/components/CategoryIcon";
 import { SectionIcon } from "@/components/SectionIcon";
 import { WipBadge } from "@/components/WipBadge";
 import {
@@ -71,7 +70,6 @@ export function MainNav() {
                       <li key={c.slug}>
                         {c.wip ? (
                           <span className={itemDisabledCls} aria-disabled="true">
-                            <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
                             {c.label}
                             <span className="ml-auto">
                               <WipBadge />
@@ -79,7 +77,6 @@ export function MainNav() {
                           </span>
                         ) : (
                           <Link href={`/${section.slug}?category=${c.slug}`} className={itemCls}>
-                            <CategoryIcon slug={c.slug} className="size-4 shrink-0" />
                             {c.label}
                           </Link>
                         )}
