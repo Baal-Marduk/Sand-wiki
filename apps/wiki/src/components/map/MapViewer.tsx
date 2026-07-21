@@ -45,7 +45,7 @@ export default function MapViewer() {
       </aside>
       <div id="info"></div>
       <div id="help">
-        <b>Drag</b> look · <b>scroll</b> move · <b>WASD/QE</b> fly · <b>Shift</b> 5% speed · <b>click</b> inspect
+        <b>Drag</b> look · <b>scroll</b> move · <b>WASD</b> fly · <b>Space</b> up · <b>Q</b> down · <b>Shift</b> 5% speed · <b>click</b> inspect
       </div>
       <div id="hud"></div>
       <div id="tip"></div>
@@ -106,20 +106,29 @@ function mountViewer(root) {
   window.addEventListener("resize", resize); off.push(() => window.removeEventListener("resize", resize));
   resize();
 
-  // ---- WASD/QE fly (move along view direction) ----
+  // ---- WASD/QE + Space fly (move along view direction) ----
   const keys = {};
-  function onKeyDown(e) { if (/^(SELECT|INPUT|TEXTAREA)$/.test(e.target.tagName)) return; keys[e.code] = true; }
+  function onKeyDown(e) { if (/^(SELECT|INPUT|TEXTAREA)$/.test(e.target.tagName)) return;
+    if (e.code === "Space") e.preventDefault(); // Space = ascend; don't page-scroll or click focused UI
+    keys[e.code] = true; }
   function onKeyUp(e) { keys[e.code] = false; }
   window.addEventListener("keydown", onKeyDown); off.push(() => window.removeEventListener("keydown", onKeyDown));
   window.addEventListener("keyup", onKeyUp); off.push(() => window.removeEventListener("keyup", onKeyUp));
   const slowMul = () => (keys.ShiftLeft || keys.ShiftRight) ? 0.05 : 1; // hold Shift = 5% speed (fine nav)
+  let dollyVel = 0; // wheel-scroll momentum along the view dir; eased out each frame (smooth scroll)
   function flyStep(dt) {
     const sp = sceneR * 0.5 * dt * slowMul(); // speed scales with scene size; Shift = 5%
     const f = fwd(), r = rgt(), m = new THREE.Vector3();
     if (keys.KeyW) m.add(f); if (keys.KeyS) m.sub(f);
     if (keys.KeyD) m.add(r); if (keys.KeyA) m.sub(r);
-    if (keys.KeyE) m.y += 1; if (keys.KeyQ) m.y -= 1;
+    if (keys.KeyE || keys.Space) m.y += 1; if (keys.KeyQ) m.y -= 1; // Space or E = up, Q = down
     if (m.lengthSq()) camera.position.addScaledVector(m.normalize(), sp);
+    // smooth wheel dolly: apply the current momentum this frame, then decay it toward zero.
+    // ~0.12s time constant → glides to a stop in ~0.3s instead of snapping per notch.
+    if (Math.abs(dollyVel) > sceneR * 1e-4) {
+      camera.position.addScaledVector(fwd(), dollyVel * dt);
+      dollyVel *= Math.exp(-dt / 0.12);
+    } else dollyVel = 0;
   }
 
   // ---- highlight materials (shared) ----
@@ -415,7 +424,9 @@ function mountViewer(root) {
     canvas.style.cursor = "grab"; if (wasClick) clickPick(ev); }
   canvas.addEventListener("pointerup", endDrag); off.push(() => canvas.removeEventListener("pointerup", endDrag));
   function onWheel(ev) { ev.preventDefault();
-    camera.position.addScaledVector(fwd(), -Math.sign(ev.deltaY) * sceneR * 0.06 * slowMul()); }
+    // add an impulse to the dolly momentum; flyStep eases it out. Matches the old
+    // per-notch distance (sceneR*0.5 * 0.12s time constant ≈ sceneR*0.06) but glides.
+    dollyVel += -Math.sign(ev.deltaY) * sceneR * 0.5 * slowMul(); }
   canvas.addEventListener("wheel", onWheel, { passive: false }); off.push(() => canvas.removeEventListener("wheel", onWheel));
 
   // ---- Map / Search tabs ----
