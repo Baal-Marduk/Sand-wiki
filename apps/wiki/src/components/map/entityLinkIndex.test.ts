@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { slugForName, __normalize, keyOpens, doorKey, lootSetsForBlueprint, lootRollupForBlueprint, containerRoute } from "./entityLinkIndex";
+import { slugForName, __normalize, keyOpens, doorKey, lootSetsForBlueprint, lootRollupForBlueprint, lootChancesFor, containerRoute } from "./entityLinkIndex";
 
 describe("__normalize", () => {
   it("lowercases, trims, and collapses internal whitespace", () => {
@@ -181,5 +181,35 @@ describe("lootRollupForBlueprint", () => {
     const crown = rollup.find((r) => r.name === "Coin Crown");
     expect(crown).toMatchObject({ merged: true });     // 300-500 / 400-500 / 500-700 / …
     expect(rollup.find((r) => r.name === "Rocket Launcher")).toMatchObject({ merged: false });
+  });
+});
+
+describe("lootChancesFor", () => {
+  // The key-locked boxes are not in entity_loot.json — a separate extractor produces
+  // lockbox_loot.json with per-item chances and no sets — and they bake zero loot rows
+  // into spawns.json. The popup showed a Military Box with no contents at all.
+  it("finds loot for a locked box, which has no sets and nothing baked", () => {
+    expect(lootSetsForBlueprint("game_lockedBox_military")).toEqual([]);
+    const rows = lootChancesFor("game_lockedBox_military", "Locked Box Military");
+    expect(rows.length).toBeGreaterThan(20);
+    expect(rows[0]).toMatchObject({ name: "80 mm Shell" });
+    expect(rows[0].chance).toBeGreaterThan(90);
+  });
+
+  it("covers the other two locked boxes too", () => {
+    expect(lootChancesFor("game_lockedBox_valuables", "Locked Box Valuables").length).toBeGreaterThan(0);
+    expect(lootChancesFor("game_lockedBox_utility", "Locked Box Utility").length).toBeGreaterThan(0);
+  });
+
+  it("still prefers set-derived numbers when the container has sets", () => {
+    // Identical to lootRollupForBlueprint for a set-based container: the fallback must
+    // not shadow the variant-exact path.
+    const viaSets = lootRollupForBlueprint("game_armyBox_t1_lowEffort");
+    expect(lootChancesFor("game_armyBox_t1_lowEffort", "Army Box T1 Low Effort")).toEqual(viaSets);
+    expect(viaSets).toHaveLength(8);
+  });
+
+  it("returns [] for something that is not a container", () => {
+    expect(lootChancesFor("game_treasureShovel", "Treasure Shovel")).toEqual([]);
   });
 });

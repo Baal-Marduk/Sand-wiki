@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { ToolNavBrand } from "@/components/ToolNavBrand";
-import { slugForName, keyOpens, doorKey, lootSetsForBlueprint, lootRollupForBlueprint, containerRoute } from "@/components/map/entityLinkIndex";
+import { slugForName, keyOpens, doorKey, lootSetsForBlueprint, lootChancesFor, containerRoute } from "@/components/map/entityLinkIndex";
 import "@/components/map/map.css";
 
 // Faithful port of the standalone viewer's <script type="module"> body. That viewer (formerly
@@ -570,19 +570,22 @@ function mountViewer(root) {
     const contents = loot => loot.map(r => `${namedLink(r[0], "ci")}<span class="cq">${qty(r)}</span>`).join("");
 
     let body = "";
-    const hasLoot = !!(E && ((E.loot && E.loot.length) || (E.m && E.m.some(s => ((SPAWNS[s.bp] || {}).loot || []).length))));
+    // The wiki knows a container's loot even when nothing is baked into spawns.json —
+    // the key-locked boxes bake zero rows but have all their drops in the wiki data.
+    const sets = lootSetsForBlueprint(o.userData.b);
+    const rollup = lootChancesFor(o.userData.b, o.userData.t);
+    const hasLoot = !!(sets.length || rollup.length ||
+      (E && ((E.loot && E.loot.length) || (E.m && E.m.some(s => ((SPAWNS[s.bp] || {}).loot || []).length)))));
     if (hasLoot) // same containers, different counts per game mode
       body += `<div class="mv-amounts"><span class="k">Amounts:</span><div class="mv-aseg">` +
         `<button class="${V ? "" : "on"}" data-m="Storm">Stormdive</button>` +
         `<button class="${V ? "on" : ""}" data-m="Voyage">Voyage</button></div></div>`;
-    if (E && E.loot && E.loot.length) { // directly-clicked container: its own contents
+    if (sets.length || rollup.length || (E && E.loot && E.loot.length)) {
       // spawns.json bakes `loot` as the UNION of every set the container can roll, which
       // reads as "this is what's inside". It isn't — the game rolls ONE set and grants that
       // set's items (LootSetupDataComponent.RollEntry). The pile bakes 52 rows and yields
-      // 5-6. Prefer the wiki's role:"loot-set" rows, which carry the real odds and exact
-      // per-set amounts; fall back to the flat list when the label has no wiki container.
-      const sets = lootSetsForBlueprint(o.userData.b);
-      const rollup = lootRollupForBlueprint(o.userData.b);
+      // 5-6. Prefer the wiki's rows, which carry the real odds and exact per-set amounts;
+      // fall back to the flat baked list only when the wiki knows nothing about it.
       const qtyOf = it => { const q = V ? it.voyage : it.storm; return q ? q.replace("-", "–") : ""; };
       const itemRow = it => {
         const ic = it.icon ? `<img class="mv-loot-icon" src="${it.icon}" alt="" aria-hidden="true">` : "";
