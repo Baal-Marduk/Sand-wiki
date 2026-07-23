@@ -126,7 +126,7 @@ export function slugForName(name: string): EntityRoute | null {
  *  "Army Box" to the key-locked Military Box and "Shells Box T1 Resupply" to the ordinary
  *  Crate of Shells. Falls back to null so callers can try slugForName(). */
 export function routeForBlueprint(blueprint: string): EntityRoute | null {
-  const hit = (CONTAINER_BLUEPRINTS as Record<string, { slug: string; group: string }>)[blueprint];
+  const hit = (CONTAINER_BLUEPRINTS as BlueprintHit)[blueprint];
   return hit ? routeFor(hit.slug) : null;
 }
 
@@ -159,8 +159,61 @@ export interface LootSetView { label: string; chance: number; items: LootSetItem
  *  exact roll pool — a low-effort crate must not show the high-effort crate's sets.
  *
  *  Returns [] when the blueprint has no set data, so callers keep their existing path. */
+export interface LootChanceRow {
+  name: string; href: string | null; icon: string | null;
+  /** Chance any single open yields this item at all — a rollup over the sets, NOT a
+   *  contents list. */
+  chance: number;
+  voyage: string | null; storm: string | null;
+  /** The quantity span is stitched from sets with different amounts, so no single open can
+   *  produce the whole range (Coin Crown reads 300-700; no set gives that). */
+  merged: boolean;
+}
+
+/** The per-item effective chances for a blueprint's container — "how often do I see this at
+ *  all", the counterpart to the sets.
+ *
+ *  Derived from this blueprint's OWN sets rather than the container's role:"loot" rows,
+ *  because those are a tier-group rollup: "Tier 1" unions the low/mid/high entities and
+ *  takes chance = max across them. A low-effort crate would then show 15 items at
+ *  tier-wide odds next to its 4 actual sets — two panels contradicting each other. Summing
+ *  the weights of the sets that contain an item is exact for the object clicked, and is
+ *  guaranteed consistent with the set list shown beside it. */
+export function lootRollupForBlueprint(blueprint: string): LootChanceRow[] {
+  const acc = new Map<string, LootChanceRow & { spans: Set<string> }>();
+  for (const s of lootSetsForBlueprint(blueprint)) {
+    for (const it of s.items) {
+      let row = acc.get(it.name);
+      if (!row) {
+        row = { name: it.name, href: it.href, icon: it.icon, chance: 0,
+                voyage: it.voyage, storm: it.storm, merged: false, spans: new Set() };
+        acc.set(it.name, row);
+      }
+      row.chance += s.chance;
+      row.spans.add(`${it.voyage}/${it.storm}`);
+      row.voyage = widen(row.voyage, it.voyage);
+      row.storm = widen(row.storm, it.storm);
+    }
+  }
+  return [...acc.values()]
+    .map(({ spans, ...r }) => ({ ...r, chance: Math.round(r.chance * 10) / 10, merged: spans.size > 1 }))
+    .sort((a, b) => b.chance - a.chance);
+}
+
+/** Union of two "lo-hi" (or "n") spans, for the rollup's approximate amount column. */
+function widen(a: string | null, b: string | null): string | null {
+  if (!a || !b) return a ?? b;
+  const nums = (v: string) => v.split("-").map(Number);
+  const [alo, ahi = alo] = nums(a), [blo, bhi = blo] = nums(b);
+  if ([alo, ahi, blo, bhi].some(Number.isNaN)) return a;
+  const lo = Math.min(alo, blo), hi = Math.max(ahi, bhi);
+  return lo === hi ? `${lo}` : `${lo}-${hi}`;
+}
+
+type BlueprintHit = Record<string, { slug: string; group: string }>;
+
 export function lootSetsForBlueprint(blueprint: string): LootSetView[] {
-  const hit = (CONTAINER_BLUEPRINTS as Record<string, { slug: string; group: string }>)[blueprint];
+  const hit = (CONTAINER_BLUEPRINTS as BlueprintHit)[blueprint];
   if (!hit) return [];
   const e = getEntity(hit.slug);
   if (!e || e.disabled) return [];

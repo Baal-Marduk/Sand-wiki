@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { ToolNavBrand } from "@/components/ToolNavBrand";
-import { slugForName, keyOpens, doorKey, lootSetsForBlueprint, containerRoute } from "@/components/map/entityLinkIndex";
+import { slugForName, keyOpens, doorKey, lootSetsForBlueprint, lootRollupForBlueprint, containerRoute } from "@/components/map/entityLinkIndex";
 import "@/components/map/map.css";
 
 // Faithful port of the standalone viewer's <script type="module"> body. That viewer (formerly
@@ -582,26 +582,43 @@ function mountViewer(root) {
       // 5-6. Prefer the wiki's role:"loot-set" rows, which carry the real odds and exact
       // per-set amounts; fall back to the flat list when the label has no wiki container.
       const sets = lootSetsForBlueprint(o.userData.b);
-      if (sets.length) {
-        const sizes = sets.map(s => s.items.length);
-        const lo = Math.min(...sizes), hi = Math.max(...sizes);
-        const setQty = it => { const q = V ? it.voyage : it.storm; return q ? q.replace("-", "–") : ""; };
-        let opened = false;
-        body += `<div class="mv-becomes-lbl">Contents — one of these ${sets.length} sets` +
-          `<span class="mv-become-pct">${lo === hi ? lo : `${lo}–${hi}`} items</span></div>` +
-          sets.map(s => {
-            const sel = !opened ? " sel" : ""; if (sel) opened = true;
-            const rows = s.items.map(it => {
-              const ic = it.icon ? `<img class="mv-loot-icon" src="${it.icon}" alt="" aria-hidden="true">` : "";
-              const nm = it.href ? `<a class="ci" href="${it.href}">${ic}${it.name}</a>` : `<span class="ci">${ic}${it.name}</span>`;
-              return `${nm}<span class="cq">${setQty(it)}</span>`;
-            }).join("");
-            return `<div class="mv-become foldable${sel}"><div class="mv-become-row">` +
-              `<span class="mv-become-caret" aria-hidden="true"></span>` +
-              `<span class="mv-become-nm">${s.label}</span>` +
-              `<span class="mv-become-pct">${s.chance}%</span>` +
-              `</div><div class="mv-become-contents">${rows}</div></div>`;
-          }).join("");
+      const rollup = lootRollupForBlueprint(o.userData.b);
+      const qtyOf = it => { const q = V ? it.voyage : it.storm; return q ? q.replace("-", "–") : ""; };
+      const itemRow = it => {
+        const ic = it.icon ? `<img class="mv-loot-icon" src="${it.icon}" alt="" aria-hidden="true">` : "";
+        return it.href ? `<a class="ci" href="${it.href}">${ic}${it.name}</a>`
+                       : `<span class="ci">${ic}${it.name}</span>`;
+      };
+      if (sets.length || rollup.length) {
+        // Two collapsed sections, both shut by default: the popup is small and neither view
+        // is the one everyone wants. "Item Chances" answers "how often do I see this at
+        // all"; "Loot Sets" answers "what do I actually walk away with".
+        if (rollup.length)
+          body += `<details class="mv-fold"><summary>Item Chances` +
+            `<span class="mv-fold-n">${rollup.length}</span></summary>` +
+            `<div class="mv-contents mv-chances">` +
+            rollup.map(it =>
+              `${itemRow(it)}<span class="cp">${it.chance}%</span>` +
+              // "~" marks a span stitched from sets with different amounts — no single
+              // open can yield the whole range. Exact values are in the sets below.
+              `<span class="cq">${qtyOf(it)}${it.merged ? "<i class=\"mv-approx\" title=\"Range spans several sets; no single open gives all of it\">~</i>" : ""}</span>`
+            ).join("") + `</div></details>`;
+        if (sets.length) {
+          const sizes = sets.map(s => s.items.length);
+          const lo = Math.min(...sizes), hi = Math.max(...sizes);
+          body += `<details class="mv-fold"><summary>Loot Sets` +
+            `<span class="mv-fold-n">${sets.length}</span></summary>` +
+            `<div class="mv-fold-note">Opening gives you ONE set — ` +
+            `${lo === hi ? lo : `${lo}–${hi}`} items.</div>` +
+            sets.map(s => {
+              const rows = s.items.map(it => `${itemRow(it)}<span class="cq">${qtyOf(it)}</span>`).join("");
+              return `<div class="mv-become foldable"><div class="mv-become-row">` +
+                `<span class="mv-become-caret" aria-hidden="true"></span>` +
+                `<span class="mv-become-nm">${s.label}</span>` +
+                `<span class="mv-become-pct">${s.chance}%</span>` +
+                `</div><div class="mv-become-contents">${rows}</div></div>`;
+            }).join("") + `</details>`;
+        }
       } else {
         body += `<div class="mv-becomes-lbl">Contents</div><div class="mv-contents">${contents(E.loot)}</div>`;
       }

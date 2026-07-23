@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { slugForName, __normalize, keyOpens, doorKey, lootSetsForBlueprint, containerRoute } from "./entityLinkIndex";
+import { slugForName, __normalize, keyOpens, doorKey, lootSetsForBlueprint, lootRollupForBlueprint, containerRoute } from "./entityLinkIndex";
 
 describe("__normalize", () => {
   it("lowercases, trims, and collapses internal whitespace", () => {
@@ -147,5 +147,39 @@ describe("containerRoute", () => {
       .toMatchObject({ href: "/environment/crate-of-shells" });
     expect(containerRoute("not_a_blueprint", "Crate of Shells"))
       .toMatchObject({ href: "/environment/crate-of-shells" });
+  });
+});
+
+describe("lootRollupForBlueprint", () => {
+  it("agrees with the sets it is derived from", () => {
+    const sets = lootSetsForBlueprint("game_buriedTreasure");
+    const rollup = lootRollupForBlueprint("game_buriedTreasure");
+    const distinct = new Set(sets.flatMap((s) => s.items.map((i) => i.name)));
+    expect(rollup).toHaveLength(distinct.size);
+    // One roll, so the set weights are a probability distribution.
+    expect(sets.reduce((a, s) => a + s.chance, 0)).toBeCloseTo(100, 1);
+  });
+
+  it("reproduces the rocket launcher's real odds", () => {
+    // set6 + set7 at weight 100 each, out of 4100 => 4.9%. The site showed 18.2%
+    // before the tier split was removed.
+    const rl = lootRollupForBlueprint("game_buriedTreasure").find((r) => r.name === "Rocket Launcher");
+    expect(rl?.chance).toBeCloseTo(4.9, 1);
+  });
+
+  it("uses the blueprint's own pool, not the tier-group union", () => {
+    // role:"loot" for weapon-crate Tier 1 unions low/mid/high into 15 items with
+    // chance = max across them; a low-effort crate really only has its own 8.
+    const rollup = lootRollupForBlueprint("game_armyBox_t1_lowEffort");
+    expect(rollup).toHaveLength(8);
+    // Present in all four of its sets.
+    expect(rollup[0]).toMatchObject({ name: "Resource Scrapped Ammo", chance: 100 });
+  });
+
+  it("flags a quantity span stitched from sets that disagree", () => {
+    const rollup = lootRollupForBlueprint("game_buriedTreasure");
+    const crown = rollup.find((r) => r.name === "Coin Crown");
+    expect(crown).toMatchObject({ merged: true });     // 300-500 / 400-500 / 500-700 / …
+    expect(rollup.find((r) => r.name === "Rocket Launcher")).toMatchObject({ merged: false });
   });
 });
