@@ -11,7 +11,14 @@ export interface LockboxCrate {
   requiresKeySlug: string | null;
   requiresKeyName: string | null;
   loot: LockboxLootRow[];
+  /** One rollable set: the crate rolls a reward tier, then ONE set inside it, and grants
+   *  every item in it — the same model as every other container. */
+  sets?: LockboxSet[];
+  setSize?: [number, number] | null;
+  blueprint?: string;
 }
+export interface LockboxSetItem { slug: string; name: string; voyage: string | null; storm: string | null }
+export interface LockboxSet { label: string; group: string; chance: number; items: LockboxSetItem[] }
 export interface LockboxData { crates: LockboxCrate[] }
 
 const DESCRIPTION =
@@ -54,6 +61,19 @@ export function buildLockboxLinks(data: LockboxData | null): LockboxLinks {
         sourceSlug: c.slug, targetSlug: r.slug, role: "loot", name: r.name,
         amount: null, tier: r.tier, value1: r.chance == null ? null : String(r.chance),
         value2: r.count ?? null, value3: null, sortOrder: sort++, buyGroup: null,
+      });
+    }
+    // Same two roles the container path emits, so consumers need no special case.
+    let setIndex = 0;
+    for (const st of c.sets ?? []) {
+      const base = setIndex++ * 1000;
+      st.items.forEach((it, i) => {
+        links.push({
+          sourceSlug: c.slug, targetSlug: it.slug, role: "loot-set", name: it.name,
+          amount: st.items.length, tier: `${st.group} - ${st.label}`,
+          value1: String(st.chance), value2: it.voyage ?? null, value3: it.storm ?? null,
+          sortOrder: base + i, buyGroup: null,
+        });
       });
     }
     if (c.requiresKeySlug) {

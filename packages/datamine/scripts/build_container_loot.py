@@ -261,6 +261,15 @@ with open(dest, "w", encoding="utf-8", newline="\n") as fh:
     json.dump(artifact, fh, indent=1, ensure_ascii=False)
     fh.write("\n")
 
+# The key-locked crates come from build_lockbox_loot.py, not the container path, but the
+# map resolves every container the same way -- by blueprint id -- so they belong in the
+# same index. Without this a Military Box had no way to reach its own loot.
+_lb_path = os.path.join(SEK_OUT, "lockbox_loot.json")
+if os.path.exists(_lb_path):
+    for _c in json.load(open(_lb_path, encoding="utf-8"))["crates"]:
+        if _c.get("blueprint"):
+            blueprint_slugs[_c["blueprint"]] = {"slug": _c["slug"], "group": "Loot"}
+
 # Blueprint index for the 3D map (apps/wiki/src/components/map). Committed like any
 # other generated artifact; regenerate with this script.
 bp_dest = os.path.normpath(os.path.join(DATAMINE, "..", "..", "apps", "wiki", "src",

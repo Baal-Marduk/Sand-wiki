@@ -200,42 +200,6 @@ export function lootRollupForBlueprint(blueprint: string): LootChanceRow[] {
     .sort((a, b) => b.chance - a.chance);
 }
 
-/** Per-item chances for a clicked object, from whichever pipeline knows about it.
- *
- *  Set-based containers (the crates, the pile) go through the blueprint index and get
- *  variant-exact numbers derived from their own sets. The key-locked boxes do not: they
- *  are not in entity_loot.json at all — a separate extractor produces lockbox_loot.json
- *  with per-item chances directly, and no set structure. They also bake zero loot rows
- *  into spawns.json, so before this the popup showed a Military Box with no contents
- *  whatsoever, even though the wiki had all 28 of its drops.
- *
- *  So: sets first, then the container's own role:"loot" rows. */
-export function lootChancesFor(blueprint: string | undefined, name: string): LootChanceRow[] {
-  const fromSets = blueprint ? lootRollupForBlueprint(blueprint) : [];
-  if (fromSets.length) return fromSets;
-
-  const route = containerRoute(blueprint, name);
-  const slug = route?.href.split("/").pop();
-  if (!slug) return [];
-  const out: LootChanceRow[] = [];
-  for (const l of outgoingLinks(slug, ["loot"])) {
-    const target = l.targetSlug ? getEntity(l.targetSlug) : null;
-    const base = target && !target.disabled
-      ? KIND_ROUTE.find((k) => k.kind === target.kind)?.base
-      : undefined;
-    const strip = (v: string | null) => (v ? v.replace(/~$/, "") : null);
-    out.push({
-      name: l.name,
-      href: base && target ? `${base}/${target.slug}` : null,
-      icon: target?.icon ?? null,
-      chance: Number(l.value1) || 0,
-      voyage: strip(l.value2), storm: strip(l.value3),
-      merged: !!(l.value2?.endsWith("~") || l.value3?.endsWith("~")),
-    });
-  }
-  return out.sort((a, b) => b.chance - a.chance);
-}
-
 /** Union of two "lo-hi" (or "n") spans, for the rollup's approximate amount column. */
 function widen(a: string | null, b: string | null): string | null {
   if (!a || !b) return a ?? b;

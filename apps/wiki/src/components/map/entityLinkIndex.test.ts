@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { slugForName, __normalize, keyOpens, doorKey, lootSetsForBlueprint, lootRollupForBlueprint, lootChancesFor, containerRoute } from "./entityLinkIndex";
+import { slugForName, __normalize, keyOpens, doorKey, lootSetsForBlueprint, lootRollupForBlueprint, containerRoute } from "./entityLinkIndex";
 
 describe("__normalize", () => {
   it("lowercases, trims, and collapses internal whitespace", () => {
@@ -184,52 +184,36 @@ describe("lootRollupForBlueprint", () => {
   });
 });
 
-describe("lootChancesFor", () => {
-  // The key-locked boxes are not in entity_loot.json — a separate extractor produces
-  // lockbox_loot.json with per-item chances and no sets — and they bake zero loot rows
-  // into spawns.json. The popup showed a Military Box with no contents at all.
-  it("finds loot for a locked box, which has no sets and nothing baked", () => {
-    expect(lootSetsForBlueprint("game_lockedBox_military")).toEqual([]);
-    const rows = lootChancesFor("game_lockedBox_military", "Locked Box Military");
-    expect(rows.length).toBeGreaterThan(20);
-    expect(rows[0]).toMatchObject({ name: "80 mm Shell" });
-    expect(rows[0].chance).toBeGreaterThan(90);
+describe("locked boxes go through the same set path as every other container", () => {
+  // These were the odd ones out: a separate extractor (conf_worldContractsConfig) whose
+  // builder collapsed sets into per-item chances, and zero loot baked into spawns.json.
+  // The popup showed a Military Box with no contents at all. They roll a reward tier then
+  // ONE set inside it — the same model as the crates — so they use the same code path.
+  it("has real sets, counted not inferred", () => {
+    const size = (bp: string) => {
+      const z = lootSetsForBlueprint(bp).map((s) => s.items.length);
+      return [Math.min(...z), Math.max(...z)];
+    };
+    expect(lootSetsForBlueprint("game_lockedBox_military")).toHaveLength(23);
+    expect(size("game_lockedBox_military")).toEqual([4, 5]);
+    expect(size("game_lockedBox_utility")).toEqual([3, 4]);
+    expect(size("game_lockedBox_valuables")).toEqual([1, 4]);
   });
 
-  it("covers the other two locked boxes too", () => {
-    expect(lootChancesFor("game_lockedBox_valuables", "Locked Box Valuables").length).toBeGreaterThan(0);
-    expect(lootChancesFor("game_lockedBox_utility", "Locked Box Utility").length).toBeGreaterThan(0);
+  it("carries per-set amounts", () => {
+    const sets = lootSetsForBlueprint("game_lockedBox_military");
+    for (const s of sets) for (const it of s.items) expect(it.voyage).toBeTruthy();
   });
 
-  it("still prefers set-derived numbers when the container has sets", () => {
-    // Identical to lootRollupForBlueprint for a set-based container: the fallback must
-    // not shadow the variant-exact path.
-    const viaSets = lootRollupForBlueprint("game_armyBox_t1_lowEffort");
-    expect(lootChancesFor("game_armyBox_t1_lowEffort", "Army Box T1 Low Effort")).toEqual(viaSets);
-    expect(viaSets).toHaveLength(8);
-  });
-
-  it("returns [] for something that is not a container", () => {
-    expect(lootChancesFor("game_treasureShovel", "Treasure Shovel")).toEqual([]);
-  });
-});
-
-describe("lootChancesFor amounts", () => {
-  it("carries a quantity for locked boxes, whose counts are not mode-split", () => {
-    // conf_worldContractsConfig has one count per item, so storm is null and only
-    // voyage is populated. The popup defaults to Stormdive, which rendered a blank
-    // amount: "80 mm Shell 98.7%" with no number at all.
-    const rows = lootChancesFor("game_lockedBox_military", "Locked Box Military");
-    const shell = rows.find((r) => r.name === "80 mm Shell");
-    expect(shell).toMatchObject({ voyage: "20-60", storm: null });
-    expect(rows.every((r) => r.voyage || r.storm)).toBe(true);
-  });
-
-  it("expected items per open is Sigma P(item), not the row count", () => {
-    // A Military Box holds ~4 items, not the 28 it could draw from.
-    const sum = (bp: string) =>
-      lootChancesFor(bp, "").reduce((a, r) => a + r.chance, 0) / 100;
-    expect(sum("game_lockedBox_military")).toBeCloseTo(4.0, 1);
-    expect(sum("game_lockedBox_valuables")).toBeCloseTo(2.0, 1);
+  it("set weights are a distribution, and the rollup agrees with the builder", () => {
+    for (const bp of ["game_lockedBox_military", "game_lockedBox_valuables", "game_lockedBox_utility"]) {
+      const sets = lootSetsForBlueprint(bp);
+      expect(sets.reduce((a, s) => a + s.chance, 0)).toBeCloseTo(100, 0);
+    }
+    // build_lockbox_loot.py computes this independently as
+    // Sigma_tier P(tier) * (#sets-with-item / #sets-in-tier) = 98.7%.
+    const shell = lootRollupForBlueprint("game_lockedBox_military").find((r) => r.name === "80 mm Shell");
+    expect(shell?.chance).toBeCloseTo(98.7, 0);
+    expect(shell?.voyage).toBe("20-60");
   });
 });

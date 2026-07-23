@@ -102,19 +102,19 @@
      "resolved": true
     },
     {
-     "slug": "small-cannon-ammo",
-     "name": "40 mm Shell",
-     "chance": 11.4,
-     "tier": "Loot",
-     "count": "80-160",
-     "resolved": true
-    },
-    {
      "slug": "shotgun-turret-ammo",
      "name": "70 mm Shell",
      "chance": 11.4,
      "tier": "Loot",
      "count": "30-60",
+     "resolved": true
+    },
+    {
+     "slug": "small-cannon-ammo",
+     "name": "40 mm Shell",
+     "chance": 11.4,
+     "tier": "Loot",
+     "count": "80-160",
      "resolved": true
     },
     {
@@ -174,14 +174,6 @@
      "resolved": true
     },
     {
-     "slug": "turret-ammo-high-velocity",
-     "name": "High Velocity 80 mm Shell",
-     "chance": 0.6,
-     "tier": "Loot",
-     "count": "45",
-     "resolved": true
-    },
-    {
      "slug": "turret-ammo-delayed-detonation",
      "name": "80 mm Proximity Fuse Shell",
      "chance": 0.6,
@@ -190,8 +182,8 @@
      "resolved": true
     },
     {
-     "slug": "shotgun-turret-ammo-slug",
-     "name": "70 mm Shotgun Cannon Slug",
+     "slug": "turret-ammo-high-velocity",
+     "name": "High Velocity 80 mm Shell",
      "chance": 0.6,
      "tier": "Loot",
      "count": "45",
@@ -206,11 +198,11 @@
      "resolved": true
     },
     {
-     "slug": "small-cannon-ammo-low-recoil",
-     "name": "Low-Recoil 40 mm Shell",
+     "slug": "shotgun-turret-ammo-slug",
+     "name": "70 mm Shotgun Cannon Slug",
      "chance": 0.6,
      "tier": "Loot",
-     "count": "80",
+     "count": "45",
      "resolved": true
     },
     {
@@ -219,6 +211,14 @@
      "chance": 0.6,
      "tier": "Loot",
      "count": "120",
+     "resolved": true
+    },
+    {
+     "slug": "small-cannon-ammo-low-recoil",
+     "name": "Low-Recoil 40 mm Shell",
+     "chance": 0.6,
+     "tier": "Loot",
+     "count": "80",
      "resolved": true
     },
     {
@@ -237,7 +237,849 @@
      "count": "1",
      "resolved": true
     }
-   ]
+   ],
+   "sets": [
+    {
+     "label": "T1 set1",
+     "effort": null,
+     "group": "Loot",
+     "chance": 10.1,
+     "items": [
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      },
+      {
+       "slug": "small-cannon-ammo",
+       "name": "40 mm Shell",
+       "resolved": true,
+       "voyage": "80",
+       "storm": "80"
+      },
+      {
+       "slug": "shotgun-turret-ammo",
+       "name": "70 mm Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      },
+      {
+       "slug": "rocket-launcher-ammo-armor-piercing",
+       "name": "Armor-Piercing Rocket",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      }
+     ]
+    },
+    {
+     "label": "T1 set2",
+     "effort": null,
+     "group": "Loot",
+     "chance": 10.1,
+     "items": [
+      {
+       "slug": "shotgun",
+       "name": "Pepper Mill Shotgun",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "shotgun-ammo",
+       "name": "12 GA Ammo",
+       "resolved": true,
+       "voyage": "60",
+       "storm": "60"
+      },
+      {
+       "slug": "c4-dynamite",
+       "name": "Time Bomb",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "20",
+       "storm": "20"
+      }
+     ]
+    },
+    {
+     "label": "T1 set3",
+     "effort": null,
+     "group": "Loot",
+     "chance": 10.1,
+     "items": [
+      {
+       "slug": "shotgun",
+       "name": "Pepper Mill Shotgun",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "shotgun-ammo",
+       "name": "12 GA Ammo",
+       "resolved": true,
+       "voyage": "60",
+       "storm": "60"
+      },
+      {
+       "slug": "grenade-contact",
+       "name": "HG-6 Contact Grenade",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "20",
+       "storm": "20"
+      }
+     ]
+    },
+    {
+     "label": "T1 set4",
+     "effort": null,
+     "group": "Loot",
+     "chance": 10.1,
+     "items": [
+      {
+       "slug": "repeater-rifle",
+       "name": "M82 Rifle",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "rifle-ammo",
+       "name": "9x42 mm Ammo",
+       "resolved": true,
+       "voyage": "120",
+       "storm": "120"
+      },
+      {
+       "slug": "c4-dynamite",
+       "name": "Time Bomb",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "20",
+       "storm": "20"
+      }
+     ]
+    },
+    {
+     "label": "T1 set5",
+     "effort": null,
+     "group": "Loot",
+     "chance": 10.1,
+     "items": [
+      {
+       "slug": "repeater-rifle",
+       "name": "M82 Rifle",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "rifle-ammo",
+       "name": "9x42 mm Ammo",
+       "resolved": true,
+       "voyage": "120",
+       "storm": "120"
+      },
+      {
+       "slug": "grenade-contact",
+       "name": "HG-6 Contact Grenade",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "20",
+       "storm": "20"
+      }
+     ]
+    },
+    {
+     "label": "T1 set6",
+     "effort": null,
+     "group": "Loot",
+     "chance": 10.1,
+     "items": [
+      {
+       "slug": "revolver-quick-reload",
+       "name": "EB \"Vita\" Police Revolver",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "pistol-ammo",
+       "name": "8x21 mm Ammo",
+       "resolved": true,
+       "voyage": "200",
+       "storm": "200"
+      },
+      {
+       "slug": "c4-dynamite",
+       "name": "Time Bomb",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "20",
+       "storm": "20"
+      }
+     ]
+    },
+    {
+     "label": "T1 set7",
+     "effort": null,
+     "group": "Loot",
+     "chance": 10.1,
+     "items": [
+      {
+       "slug": "revolver-quick-reload",
+       "name": "EB \"Vita\" Police Revolver",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "pistol-ammo",
+       "name": "8x21 mm Ammo",
+       "resolved": true,
+       "voyage": "200",
+       "storm": "200"
+      },
+      {
+       "slug": "grenade-contact",
+       "name": "HG-6 Contact Grenade",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "20",
+       "storm": "20"
+      }
+     ]
+    },
+    {
+     "label": "T1 set8",
+     "effort": null,
+     "group": "Loot",
+     "chance": 10.1,
+     "items": [
+      {
+       "slug": "sniper-rifle-iron-sights",
+       "name": "1874e Petros Rifle",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      },
+      {
+       "slug": "sniper-rifle-ammo",
+       "name": "11x54 mm Ammo",
+       "resolved": true,
+       "voyage": "16",
+       "storm": "16"
+      },
+      {
+       "slug": "c4-dynamite",
+       "name": "Time Bomb",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "20",
+       "storm": "20"
+      }
+     ]
+    },
+    {
+     "label": "T1 set9",
+     "effort": null,
+     "group": "Loot",
+     "chance": 10.1,
+     "items": [
+      {
+       "slug": "sniper-rifle-iron-sights",
+       "name": "1874e Petros Rifle",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      },
+      {
+       "slug": "sniper-rifle-ammo",
+       "name": "11x54 mm Ammo",
+       "resolved": true,
+       "voyage": "16",
+       "storm": "16"
+      },
+      {
+       "slug": "grenade-contact",
+       "name": "HG-6 Contact Grenade",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "20",
+       "storm": "20"
+      }
+     ]
+    },
+    {
+     "label": "T0 set1",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "60",
+       "storm": "60"
+      },
+      {
+       "slug": "small-cannon-ammo",
+       "name": "40 mm Shell",
+       "resolved": true,
+       "voyage": "160",
+       "storm": "160"
+      },
+      {
+       "slug": "shotgun-turret-ammo",
+       "name": "70 mm Shell",
+       "resolved": true,
+       "voyage": "60",
+       "storm": "60"
+      },
+      {
+       "slug": "rocket-launcher-ammo-armor-piercing",
+       "name": "Armor-Piercing Rocket",
+       "resolved": true,
+       "voyage": "4",
+       "storm": "4"
+      },
+      {
+       "slug": "rocket-launcher-ammo-high-explosion",
+       "name": "High-Explosive Rocket",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      }
+     ]
+    },
+    {
+     "label": "T0 set2",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "60",
+       "storm": "60"
+      },
+      {
+       "slug": "turret-ammo-high-velocity",
+       "name": "High Velocity 80 mm Shell",
+       "resolved": true,
+       "voyage": "45",
+       "storm": "45"
+      },
+      {
+       "slug": "turret-ammo-emp",
+       "name": "EMP 80 mm Shell",
+       "resolved": true,
+       "voyage": "3",
+       "storm": "3"
+      },
+      {
+       "slug": "turret-ammo-delayed-detonation",
+       "name": "80 mm Proximity Fuse Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      }
+     ]
+    },
+    {
+     "label": "T0 set3",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "shotgun-turret-ammo",
+       "name": "70 mm Shell",
+       "resolved": true,
+       "voyage": "60",
+       "storm": "60"
+      },
+      {
+       "slug": "shotgun-turret-ammo-slug",
+       "name": "70 mm Shotgun Cannon Slug",
+       "resolved": true,
+       "voyage": "45",
+       "storm": "45"
+      },
+      {
+       "slug": "shotgun-turret-ammo-smoke",
+       "name": "Smoke 70 mm Shell",
+       "resolved": true,
+       "voyage": "5",
+       "storm": "5"
+      },
+      {
+       "slug": "grenade-contact",
+       "name": "HG-6 Contact Grenade",
+       "resolved": true,
+       "voyage": "3",
+       "storm": "3"
+      }
+     ]
+    },
+    {
+     "label": "T0 set4",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "small-cannon-ammo",
+       "name": "40 mm Shell",
+       "resolved": true,
+       "voyage": "160",
+       "storm": "160"
+      },
+      {
+       "slug": "small-cannon-ammo-long-range",
+       "name": "Long-Range 40 mm Shell",
+       "resolved": true,
+       "voyage": "120",
+       "storm": "120"
+      },
+      {
+       "slug": "small-cannon-ammo-low-recoil",
+       "name": "Low-Recoil 40 mm Shell",
+       "resolved": true,
+       "voyage": "80",
+       "storm": "80"
+      },
+      {
+       "slug": "grenade-contact",
+       "name": "HG-6 Contact Grenade",
+       "resolved": true,
+       "voyage": "3",
+       "storm": "3"
+      }
+     ]
+    },
+    {
+     "label": "T0 set5",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "sniper-rifle",
+       "name": "1874s Petros Sniper Rifle",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      },
+      {
+       "slug": "sniper-rifle-ammo",
+       "name": "11x54 mm Ammo",
+       "resolved": true,
+       "voyage": "32",
+       "storm": "32"
+      },
+      {
+       "slug": "c4-dynamite",
+       "name": "Time Bomb",
+       "resolved": true,
+       "voyage": "3",
+       "storm": "3"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      }
+     ]
+    },
+    {
+     "label": "T0 set6",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "sniper-rifle",
+       "name": "1874s Petros Sniper Rifle",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      },
+      {
+       "slug": "sniper-rifle-ammo",
+       "name": "11x54 mm Ammo",
+       "resolved": true,
+       "voyage": "32",
+       "storm": "32"
+      },
+      {
+       "slug": "grenade-contact",
+       "name": "HG-6 Contact Grenade",
+       "resolved": true,
+       "voyage": "3",
+       "storm": "3"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      }
+     ]
+    },
+    {
+     "label": "T0 set7",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "semi-automatic-pistol-increased-mag",
+       "name": "Blitz 15R Pistol",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "pistol-ammo",
+       "name": "8x21 mm Ammo",
+       "resolved": true,
+       "voyage": "200",
+       "storm": "200"
+      },
+      {
+       "slug": "c4-dynamite",
+       "name": "Time Bomb",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      }
+     ]
+    },
+    {
+     "label": "T0 set8",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "semi-automatic-pistol-increased-mag",
+       "name": "Blitz 15R Pistol",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "pistol-ammo",
+       "name": "8x21 mm Ammo",
+       "resolved": true,
+       "voyage": "200",
+       "storm": "200"
+      },
+      {
+       "slug": "grenade-contact",
+       "name": "HG-6 Contact Grenade",
+       "resolved": true,
+       "voyage": "3",
+       "storm": "3"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      }
+     ]
+    },
+    {
+     "label": "T0 set9",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "repeater-rifle-quick-reload",
+       "name": "KF866/9R \"Mehrzel\" Repeater",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      },
+      {
+       "slug": "rifle-ammo",
+       "name": "9x42 mm Ammo",
+       "resolved": true,
+       "voyage": "60",
+       "storm": "60"
+      },
+      {
+       "slug": "c4-dynamite",
+       "name": "Time Bomb",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      }
+     ]
+    },
+    {
+     "label": "T0 set10",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "rifle-repeater-aperture",
+       "name": "M82 \"Aperture\" Rifle",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      },
+      {
+       "slug": "rifle-ammo",
+       "name": "9x42 mm Ammo",
+       "resolved": true,
+       "voyage": "60",
+       "storm": "60"
+      },
+      {
+       "slug": "grenade-contact",
+       "name": "HG-6 Contact Grenade",
+       "resolved": true,
+       "voyage": "3",
+       "storm": "3"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      }
+     ]
+    },
+    {
+     "label": "T0 set11",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "revolver-quick-reload-eight-shot",
+       "name": "EB \"Tiszt\" Award Revolver",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      },
+      {
+       "slug": "pistol-ammo",
+       "name": "8x21 mm Ammo",
+       "resolved": true,
+       "voyage": "200",
+       "storm": "200"
+      },
+      {
+       "slug": "c4-dynamite",
+       "name": "Time Bomb",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      }
+     ]
+    },
+    {
+     "label": "T0 set12",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "revolver-quick-reload-eight-shot",
+       "name": "EB \"Tiszt\" Award Revolver",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      },
+      {
+       "slug": "pistol-ammo",
+       "name": "8x21 mm Ammo",
+       "resolved": true,
+       "voyage": "200",
+       "storm": "200"
+      },
+      {
+       "slug": "grenade-contact",
+       "name": "HG-6 Contact Grenade",
+       "resolved": true,
+       "voyage": "3",
+       "storm": "3"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      }
+     ]
+    },
+    {
+     "label": "T0 set13",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "shotgun-triplet",
+       "name": "Triplet Shotgun",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      },
+      {
+       "slug": "shotgun-ammo",
+       "name": "12 GA Ammo",
+       "resolved": true,
+       "voyage": "60",
+       "storm": "60"
+      },
+      {
+       "slug": "c4-dynamite",
+       "name": "Time Bomb",
+       "resolved": true,
+       "voyage": "2",
+       "storm": "2"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      }
+     ]
+    },
+    {
+     "label": "T0 set14",
+     "effort": null,
+     "group": "Loot",
+     "chance": 0.65,
+     "items": [
+      {
+       "slug": "shotgun-triplet",
+       "name": "Triplet Shotgun",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      },
+      {
+       "slug": "shotgun-ammo",
+       "name": "12 GA Ammo",
+       "resolved": true,
+       "voyage": "60",
+       "storm": "60"
+      },
+      {
+       "slug": "grenade-contact",
+       "name": "HG-6 Contact Grenade",
+       "resolved": true,
+       "voyage": "3",
+       "storm": "3"
+      },
+      {
+       "slug": "turret-ammo",
+       "name": "80 mm Shell",
+       "resolved": true,
+       "voyage": "30",
+       "storm": "30"
+      }
+     ]
+    }
+   ],
+   "setSize": [
+    4,
+    5
+   ],
+   "blueprint": "game_lockedBox_military"
   },
   {
    "id": "valuables-box",
@@ -281,22 +1123,124 @@
      "resolved": true
     },
     {
-     "slug": "game-key-island-door-green",
-     "name": "Green Key",
-     "chance": 2.4,
-     "tier": "Loot",
-     "count": "1",
-     "resolved": true
-    },
-    {
      "slug": "game-key-locked-box",
      "name": "Box Key",
      "chance": 2.4,
      "tier": "Loot",
      "count": "1",
      "resolved": true
+    },
+    {
+     "slug": "game-key-island-door-green",
+     "name": "Green Key",
+     "chance": 2.4,
+     "tier": "Loot",
+     "count": "1",
+     "resolved": true
     }
-   ]
+   ],
+   "sets": [
+    {
+     "label": "T1 set1",
+     "effort": null,
+     "group": "Loot",
+     "chance": 47.62,
+     "items": [
+      {
+       "slug": "coin-crown",
+       "name": "Crowns",
+       "resolved": true,
+       "voyage": "1000",
+       "storm": "1000"
+      },
+      {
+       "slug": "small-valuables",
+       "name": "Small Valuables",
+       "resolved": true,
+       "voyage": "150",
+       "storm": "150"
+      }
+     ]
+    },
+    {
+     "label": "T1 set2",
+     "effort": null,
+     "group": "Loot",
+     "chance": 47.62,
+     "items": [
+      {
+       "slug": "coin-crown",
+       "name": "Crowns",
+       "resolved": true,
+       "voyage": "1000",
+       "storm": "1000"
+      },
+      {
+       "slug": "valuable-papers",
+       "name": "Valuable Papers",
+       "resolved": true,
+       "voyage": "75",
+       "storm": "75"
+      }
+     ]
+    },
+    {
+     "label": "T0 set1",
+     "effort": null,
+     "group": "Loot",
+     "chance": 2.38,
+     "items": [
+      {
+       "slug": "coin-crown",
+       "name": "Crowns",
+       "resolved": true,
+       "voyage": "2000",
+       "storm": "2000"
+      },
+      {
+       "slug": "artefact-crystal",
+       "name": "Crystal",
+       "resolved": true,
+       "voyage": "10",
+       "storm": "10"
+      },
+      {
+       "slug": "game-key-locked-box",
+       "name": "Box Key",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      },
+      {
+       "slug": "game-key-island-door-green",
+       "name": "Green Key",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      }
+     ]
+    },
+    {
+     "label": "T0 set2",
+     "effort": null,
+     "group": "Loot",
+     "chance": 2.38,
+     "items": [
+      {
+       "slug": "coin-crown",
+       "name": "Crowns",
+       "resolved": true,
+       "voyage": "2000",
+       "storm": "2000"
+      }
+     ]
+    }
+   ],
+   "setSize": [
+    1,
+    4
+   ],
+   "blueprint": "game_lockedBox_valuables"
   },
   {
    "id": "utility-box",
@@ -348,19 +1292,19 @@
      "resolved": true
     },
     {
-     "slug": "resource-metal-t3",
-     "name": "Computing Module",
-     "chance": 4.5,
-     "tier": "Loot",
-     "count": "5",
-     "resolved": true
-    },
-    {
      "slug": "game-key-locked-box",
      "name": "Box Key",
      "chance": 4.5,
      "tier": "Loot",
      "count": "1",
+     "resolved": true
+    },
+    {
+     "slug": "resource-metal-t3",
+     "name": "Computing Module",
+     "chance": 4.5,
+     "tier": "Loot",
+     "count": "5",
      "resolved": true
     },
     {
@@ -371,7 +1315,151 @@
      "count": "1",
      "resolved": true
     }
-   ]
+   ],
+   "sets": [
+    {
+     "label": "T1 set1",
+     "effort": null,
+     "group": "Loot",
+     "chance": 45.45,
+     "items": [
+      {
+       "slug": "resource-metal-t1",
+       "name": "Mechanical Parts",
+       "resolved": true,
+       "voyage": "400",
+       "storm": "400"
+      },
+      {
+       "slug": "resource-metal-t2",
+       "name": "Pneumatic Parts",
+       "resolved": true,
+       "voyage": "75",
+       "storm": "75"
+      },
+      {
+       "slug": "food-can",
+       "name": "Canned Food",
+       "resolved": true,
+       "voyage": "20",
+       "storm": "20"
+      },
+      {
+       "slug": "med-kit",
+       "name": "MedKit",
+       "resolved": true,
+       "voyage": "10",
+       "storm": "10"
+      }
+     ]
+    },
+    {
+     "label": "T1 set2",
+     "effort": null,
+     "group": "Loot",
+     "chance": 45.45,
+     "items": [
+      {
+       "slug": "resource-metal-t1",
+       "name": "Mechanical Parts",
+       "resolved": true,
+       "voyage": "400",
+       "storm": "400"
+      },
+      {
+       "slug": "resource-metal-t2",
+       "name": "Pneumatic Parts",
+       "resolved": true,
+       "voyage": "75",
+       "storm": "75"
+      },
+      {
+       "slug": "energy-bar",
+       "name": "NZ Mk2 Energy Rod",
+       "resolved": true,
+       "voyage": "5",
+       "storm": "5"
+      }
+     ]
+    },
+    {
+     "label": "T0 set1",
+     "effort": null,
+     "group": "Loot",
+     "chance": 4.55,
+     "items": [
+      {
+       "slug": "resource-metal-t1",
+       "name": "Mechanical Parts",
+       "resolved": true,
+       "voyage": "750",
+       "storm": "750"
+      },
+      {
+       "slug": "resource-metal-t2",
+       "name": "Pneumatic Parts",
+       "resolved": true,
+       "voyage": "150",
+       "storm": "150"
+      },
+      {
+       "slug": "resource-metal-t3",
+       "name": "Computing Module",
+       "resolved": true,
+       "voyage": "5",
+       "storm": "5"
+      },
+      {
+       "slug": "game-key-locked-box",
+       "name": "Box Key",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      }
+     ]
+    },
+    {
+     "label": "T0 set2",
+     "effort": null,
+     "group": "Loot",
+     "chance": 4.55,
+     "items": [
+      {
+       "slug": "resource-metal-t1",
+       "name": "Mechanical Parts",
+       "resolved": true,
+       "voyage": "750",
+       "storm": "750"
+      },
+      {
+       "slug": "resource-metal-t2",
+       "name": "Pneumatic Parts",
+       "resolved": true,
+       "voyage": "150",
+       "storm": "150"
+      },
+      {
+       "slug": "old-jacket-t3",
+       "name": "SGOW SW.73 Light Armor",
+       "resolved": true,
+       "voyage": "1",
+       "storm": "1"
+      },
+      {
+       "slug": "med-kit",
+       "name": "MedKit",
+       "resolved": true,
+       "voyage": "15",
+       "storm": "15"
+      }
+     ]
+    }
+   ],
+   "setSize": [
+    3,
+    4
+   ],
+   "blueprint": "game_lockedBox_utility"
   }
  ]
 }

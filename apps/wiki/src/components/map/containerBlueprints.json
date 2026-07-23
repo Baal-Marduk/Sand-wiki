@@ -83,6 +83,18 @@
   "slug": "food-crate",
   "group": "Tier 3 Mid"
  },
+ "game_lockedBox_military": {
+  "slug": "military-box",
+  "group": "Loot"
+ },
+ "game_lockedBox_utility": {
+  "slug": "utility-box",
+  "group": "Loot"
+ },
+ "game_lockedBox_valuables": {
+  "slug": "valuables-box",
+  "group": "Loot"
+ },
  "game_medicalCabinet_t1_highEffort": {
   "slug": "medical-cabinet",
   "group": "Tier 1 High"

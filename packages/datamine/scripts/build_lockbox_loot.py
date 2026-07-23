@@ -85,11 +85,44 @@ for cdef in ov["crates"]:
                      "tier": "Loot", "count": fmt_range(e["min"], e["max"]), "resolved": ok})
     loot.sort(key=lambda r: -r["chance"])
 
+    # The sets themselves. A crate rolls a reward tier, then ONE set inside it, and grants
+    # that set's items -- exactly the model every other container follows. Collapsing this
+    # to per-item chances (the `loot` rows above) loses what a single open actually gives:
+    # a Military Box holds 4-5 items, not the 28 it can draw from.
+    sets = []
+    for t, chance in tier_chances.items():
+        tsets = tiers.get(t, [])
+        if not tsets or not total:
+            continue
+        p_set = (chance / total) / len(tsets)
+        for i, s in enumerate(tsets, 1):
+            items, seen = [], set()
+            for x in s:
+                bp = x.get("item")
+                if not bp or bp in seen:
+                    continue
+                seen.add(bp)
+                slug, name, ok = resolve(bp)
+                if not slug:
+                    continue
+                cnt = str(int(x.get("count", 1) or 1))
+                # conf_worldContractsConfig is not split by game mode: one count, both modes.
+                items.append({"slug": slug, "name": name, "resolved": ok,
+                              "voyage": cnt, "storm": cnt})
+            if items:
+                sets.append({"label": f"T{t} set{i}", "effort": None, "group": "Loot",
+                             "chance": round(p_set * 100, 2), "items": items})
+    sets.sort(key=lambda s: -s["chance"])
+    sizes = [len(s["items"]) for s in sets]
+
     # Enrich display names from the shipped entities.
     out_crates.append({
         "id": cdef["id"], "slug": cdef["slug"], "name": cdef["name"],
         "category": "loot-containers", "icon": cdef.get("icon"),
-        "requiresKeySlug": cdef.get("requiresKeySlug"), "requiresKeyName": None, "loot": loot,
+        "requiresKeySlug": cdef.get("requiresKeySlug"), "requiresKeyName": None,
+        "loot": loot, "sets": sets,
+        "setSize": [min(sizes), max(sizes)] if sizes else None,
+        "blueprint": cdef["epb"],
     })
 
 if os.path.exists(GEN_ENTITIES):
@@ -98,15 +131,22 @@ if os.path.exists(GEN_ENTITIES):
         for r in c["loot"]:
             if r["slug"] in name_by_slug:
                 r["name"] = name_by_slug[r["slug"]]
+        for st in c.get("sets") or []:
+            for r in st["items"]:
+                if r["slug"] in name_by_slug:
+                    r["name"] = name_by_slug[r["slug"]]
         if c["requiresKeySlug"]:
             c["requiresKeyName"] = name_by_slug.get(c["requiresKeySlug"], c["requiresKeySlug"])
 
 artifact = {"meta": {"source": "conf_worldContractsConfig._lockedBoxLootData", "crates": len(out_crates)}, "crates": out_crates}
 os.makedirs("sek-out", exist_ok=True)
-json.dump(artifact, open("sek-out/lockbox_loot.json", "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+with open("sek-out/lockbox_loot.json", "w", encoding="utf-8", newline="\n") as fh:
+    json.dump(artifact, fh, indent=1, ensure_ascii=False)
+    fh.write("\n")
 
 print(f"lockbox crates: {len(out_crates)}")
 for c in out_crates:
-    print(f"  {c['slug']}: {len(c['loot'])} loot rows, key={c['requiresKeySlug']}")
+    print(f"  {c['slug']}: {len(c['sets'])} sets of {c['setSize']} items, "
+          f"{len(c['loot'])} distinct items, key={c['requiresKeySlug']}")
 if unresolved:
     print(f"unresolved (skipped) blueprints: {sorted(set(unresolved))}")

@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { ToolNavBrand } from "@/components/ToolNavBrand";
-import { slugForName, keyOpens, doorKey, lootSetsForBlueprint, lootChancesFor, containerRoute } from "@/components/map/entityLinkIndex";
+import { slugForName, keyOpens, doorKey, lootSetsForBlueprint, lootRollupForBlueprint, containerRoute } from "@/components/map/entityLinkIndex";
 import "@/components/map/map.css";
 
 // Faithful port of the standalone viewer's <script type="module"> body. That viewer (formerly
@@ -573,7 +573,7 @@ function mountViewer(root) {
     // The wiki knows a container's loot even when nothing is baked into spawns.json —
     // the key-locked boxes bake zero rows but have all their drops in the wiki data.
     const sets = lootSetsForBlueprint(o.userData.b);
-    const rollup = lootChancesFor(o.userData.b, o.userData.t);
+    const rollup = lootRollupForBlueprint(o.userData.b);
     const hasLoot = !!(sets.length || rollup.length ||
       (E && ((E.loot && E.loot.length) || (E.m && E.m.some(s => ((SPAWNS[s.bp] || {}).loot || []).length)))));
     if (hasLoot) // same containers, different counts per game mode
@@ -593,17 +593,13 @@ function mountViewer(root) {
         const q = (V ? it.voyage : it.storm) || it.voyage || it.storm;
         return q ? q.replace("-", "–") : "";
       };
-      // How much you actually walk away with. Exact when we have the sets; otherwise the
-      // expected number of items, which is just Σ P(item present) — for the Military Box
-      // that is 400.2% over 28 entries, i.e. ~4 items, not 28.
+      // How many items an open gives: counted off the sets, never inferred. (Summing
+      // P(item) is a valid expectation but returns 3.5 for a thing that is always 3 or 4.)
       const perOpen = (() => {
-        if (sets.length) {
-          const z = sets.map(s => s.items.length);
-          const lo = Math.min(...z), hi = Math.max(...z);
-          return lo === hi ? `${lo}` : `${lo}–${hi}`;
-        }
-        const e = rollup.reduce((a, r) => a + r.chance, 0) / 100;
-        return e >= 0.5 ? `~${Math.round(e * 10) / 10}` : null;
+        if (!sets.length) return null;
+        const z = sets.map(s => s.items.length);
+        const lo = Math.min(...z), hi = Math.max(...z);
+        return lo === hi ? `${lo}` : `${lo}–${hi}`;
       })();
       const itemRow = it => {
         const ic = it.icon ? `<img class="mv-loot-icon" src="${it.icon}" alt="" aria-hidden="true">` : "";
@@ -616,9 +612,7 @@ function mountViewer(root) {
         // all"; "Loot Sets" answers "what do I actually walk away with".
         if (rollup.length)
           body += `<details class="mv-fold"><summary>Item Chances` +
-            `<span class="mv-fold-n">${perOpen ? `${perOpen} of ${rollup.length}` : rollup.length}</span></summary>` +
-            (perOpen ? `<div class="mv-fold-note">One open gives ${perOpen} of these ` +
-              `${rollup.length} items${sets.length ? "" : " on average"}.</div>` : "") +
+            `<span class="mv-fold-n">${rollup.length}</span></summary>` +
             `<div class="mv-contents mv-chances">` +
             rollup.map(it =>
               `${itemRow(it)}<span class="cp">${it.chance}%</span>` +
@@ -631,8 +625,7 @@ function mountViewer(root) {
           const lo = Math.min(...sizes), hi = Math.max(...sizes);
           body += `<details class="mv-fold"><summary>Loot Sets` +
             `<span class="mv-fold-n">${sets.length}</span></summary>` +
-            `<div class="mv-fold-note">Opening gives you ONE set — ` +
-            `${lo === hi ? lo : `${lo}–${hi}`} items.</div>` +
+            `<div class="mv-fold-note">Opening gives you ONE set — ${perOpen} items.</div>` +
             sets.map(s => {
               const rows = s.items.map(it => `${itemRow(it)}<span class="cq">${qtyOf(it)}</span>`).join("");
               return `<div class="mv-become foldable"><div class="mv-become-row">` +
