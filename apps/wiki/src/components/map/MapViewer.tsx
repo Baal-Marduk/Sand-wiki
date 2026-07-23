@@ -87,9 +87,15 @@ function mountViewer(root) {
   // loot-box labels carry a spawner "effort" variant (Low/Mid/High/Mixed) we don't
   // want to show — strip it for display but keep the tier (T1/T2/…).
   const cleanLabel = (s) => (s || "").replace(/\s*\b(?:Low|Mid|High|Mixed)\s+Effort\b/gi, "").replace(/\s{2,}/g, " ").trim();
+  // trailing effort/tier tag ("… [mid]") kept as a small badge so swapping to the wiki name
+  // (which has no such tag) doesn't drop the spawner's effort tier.
+  const effBadge = (label) => { const m = /\s*(\[[^\]]+\])\s*$/.exec(label || ""); return m ? ` <span class="eff">${m[1]}</span>` : ""; };
+  // what to show for a loot row: the resolved wiki entity's canonical name when it links,
+  // otherwise the cleaned blueprint label. Keeps the effort badge either way.
+  const dispName = (label, hit) => (hit && !hit.family ? `${hit.name}${effBadge(label)}` : cleanLabel(label));
   const namedLink = (label, cls) => {
     const hit = slugForName(label);
-    const disp = cleanLabel(label);
+    const disp = dispName(label, hit);
     const ic = hit && hit.icon ? `<img class="mv-loot-icon" src="${hit.icon}" alt="" aria-hidden="true">` : "";
     return hit
       ? `<a class="${cls}" href="${hit.href}">${ic}${disp}</a>`
@@ -587,7 +593,7 @@ function mountViewer(root) {
           const inner = foldable ? `<div class="mv-become-contents">${contents(ml)}</div>` : "";
           // name is plain text (clicking the row folds/unfolds); a separate ↗ icon opens
           // the wiki page, so users don't change page by accident while expanding.
-          const hit = slugForName(s.label), disp = cleanLabel(s.label);
+          const hit = slugForName(s.label), disp = dispName(s.label, hit);
           const ic = hit && hit.icon ? `<img class="mv-loot-icon" src="${hit.icon}" alt="" aria-hidden="true">` : "";
           const open = hit ? `<a class="mv-become-open" href="${hit.href}" title="Open ${disp}" aria-label="Open ${disp}">↗</a>` : "";
           return `<div class="mv-become${foldable ? " foldable" : ""}${sel}"><div class="mv-become-row">` +
@@ -609,9 +615,11 @@ function mountViewer(root) {
           return `<a class="ci" href="${x.href}">${ic}${x.name}</a><span class="cq"></span>`;
         }).join("") + `</div>`;
 
-    // title: effort stripped, tier kept; links to the wiki entity/container when one matches
+    // title: wiki name when it links (effort tier kept as a badge), else the cleaned label
     const tHit = slugForName(o.userData.t);
-    const tText = cleanLabel(o.userData.t).replace(/\s*(\[[^\]]+\])\s*$/, ' <span class="eff">$1</span>');
+    const tText = tHit
+      ? `${tHit.name}${effBadge(o.userData.t)}`
+      : cleanLabel(o.userData.t).replace(/\s*(\[[^\]]+\])\s*$/, ' <span class="eff">$1</span>');
     const title = tHit ? `<a href="${tHit.href}">${tText}</a>` : tText;
     info.style.display = "flex";
     info.innerHTML =

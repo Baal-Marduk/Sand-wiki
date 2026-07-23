@@ -45,6 +45,7 @@ const FAMILIES: { re: RegExp; slug: string }[] = [
   { re: /^locked box valuables\b/i, slug: "valuables-box" },
   { re: /^safe\b/i, slug: "valuables-safe" },
   { re: /^valuable pile/i, slug: "coin-crown" }, // ground piles of crowns ("Valuable Piles01"…)
+  { re: /^coin crown pile/i, slug: "coin-crown" }, // tiered crown piles ("Coin Crown Pile 25"…)
 ];
 
 /** Lockable door label → the key item that opens it (colour-matched, plus the fort key). */
@@ -64,16 +65,24 @@ export function __normalize(name: string): string {
 
 export interface EntityRoute {
   href: string;
+  /** The wiki entity's canonical display name — what the map panel should show, in place
+   *  of the blueprint-derived loot label (e.g. "District Officer's Portable Safe", not
+   *  "Document Safe"). */
+  name: string;
   /** Sprite path (e.g. "/icons/…png") when the entity has one, else null. */
   icon: string | null;
+  /** True when matched via a loot-box FAMILY rule: many tiered/effort labels collapse to one
+   *  untiered wiki page, so the panel keeps the original label (which carries the tier) rather
+   *  than replacing it with the container's generic wiki name. */
+  family?: boolean;
 }
 
-/** Resolve a wiki slug to its route + icon, or null if the entity is missing/disabled. */
+/** Resolve a wiki slug to its route + name + icon, or null if the entity is missing/disabled. */
 function routeFor(slug: string): EntityRoute | null {
   const e = getEntity(slug);
   if (!e || e.disabled) return null;
   const base = KIND_ROUTE.find((k) => k.kind === e.kind)?.base;
-  return base ? { href: `${base}/${slug}`, icon: e.icon ?? null } : null;
+  return base ? { href: `${base}/${slug}`, name: e.name, icon: e.icon ?? null } : null;
 }
 
 let INDEX: Map<string, EntityRoute> | null = null;
@@ -85,13 +94,25 @@ let INDEX: Map<string, EntityRoute> | null = null;
 function getIndex(): Map<string, EntityRoute> {
   if (INDEX) return INDEX;
   const m = new Map<string, EntityRoute>();
-  for (const { kind, base } of KIND_ROUTE) {
-    for (const e of listByKind(kind)) {
-      if (e.disabled) continue;
-      const key = __normalize(e.name);
-      if (!m.has(key)) m.set(key, { href: `${base}/${e.slug}`, icon: e.icon ?? null });
-    }
-  }
+  const add = (key: string, e: { slug: string; name: string; icon: string | null }, base: string) => {
+    const k = __normalize(key);
+    if (k && !m.has(k)) m.set(k, { href: `${base}/${e.slug}`, name: e.name, icon: e.icon ?? null });
+  };
+  // Three passes, highest priority first (never overwrites): the flavour `name`, then the
+  // blueprint-derived `derivedName` (loot labels come from the same blueprint id, so they
+  // match this when the flavour name diverges), then `derivedName` with a leading
+  // "Game "/"Item " word dropped — the extractor strips that prefix from container labels
+  // ("Packed Turret …") while the wiki keeps it in derivedName ("Game Packed Turret …").
+  for (const { kind, base } of KIND_ROUTE)
+    for (const e of listByKind(kind)) if (!e.disabled) add(e.name, e, base);
+  for (const { kind, base } of KIND_ROUTE)
+    for (const e of listByKind(kind)) if (!e.disabled && e.derivedName) add(e.derivedName, e, base);
+  for (const { kind, base } of KIND_ROUTE)
+    for (const e of listByKind(kind))
+      if (!e.disabled && e.derivedName) {
+        const stripped = e.derivedName.replace(/^(?:Game|Item)\s+/i, "");
+        if (stripped !== e.derivedName) add(stripped, e, base);
+      }
   // curated aliases win over name matches (they correct known mismatches); each is
   // verified against the store so a missing/disabled target is skipped, never dead-linked.
   for (const [label, slug] of Object.entries(ALIASES)) {
@@ -108,7 +129,11 @@ export function slugForName(name: string): EntityRoute | null {
   if (!name) return null;
   const hit = getIndex().get(__normalize(name));
   if (hit) return hit;
-  for (const f of FAMILIES) if (f.re.test(name.trim())) return routeFor(f.slug);
+  for (const f of FAMILIES)
+    if (f.re.test(name.trim())) {
+      const r = routeFor(f.slug);
+      return r ? { ...r, family: true } : null;
+    }
   return null;
 }
 
