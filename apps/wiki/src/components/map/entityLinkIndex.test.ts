@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { slugForName, __normalize, keyOpens, doorKey } from "./entityLinkIndex";
+import { slugForName, __normalize, keyOpens, doorKey, lootSetsForBlueprint } from "./entityLinkIndex";
 
 describe("__normalize", () => {
   it("lowercases, trims, and collapses internal whitespace", () => {
@@ -87,4 +87,39 @@ describe("slugForName", () => {
   // packages/data/generated/entities.json appears in more than one of
   // {item, environment, trampler-part}, so there is no real fixture to assert against.
   // (Verified by grouping entities.json by normalized name and checking for kind overlap.)
+});
+
+describe("lootSetsForBlueprint", () => {
+  it("returns [] for a blueprint that is not a loot container", () => {
+    expect(lootSetsForBlueprint("game_treasureShovel")).toEqual([]);
+    expect(lootSetsForBlueprint("definitely_not_a_blueprint")).toEqual([]);
+  });
+
+  it("resolves a container whose map label does not match its wiki name", () => {
+    // The map labels this "Buried Treasure"; the wiki entity is "Suspicious Pile of Sand",
+    // so name matching finds nothing and only the blueprint id connects them.
+    expect(slugForName("Buried Treasure")).toBeNull();
+    const sets = lootSetsForBlueprint("game_buriedTreasure");
+    expect(sets).toHaveLength(13);
+    // Weighted, not uniform: six T1 sets and T2 set1 sit at 500, the rest at 100.
+    expect(sets[0].chance).toBeCloseTo(12.2, 1);
+    expect(sets[sets.length - 1].chance).toBeCloseTo(2.44, 2);
+  });
+
+  it("scopes sets to the blueprint's own roll pool, not the whole tier group", () => {
+    // "Tier 1" unions the low/mid/high entities and each names its sets set1..setN.
+    // A low-effort crate must show only its own four, at 25% each.
+    const low = lootSetsForBlueprint("game_armyBox_t1_lowEffort");
+    expect(low).toHaveLength(4);
+    expect(low.every((s) => Math.abs(s.chance - 25) < 0.01)).toBe(true);
+    expect(lootSetsForBlueprint("game_armyBox_t3_highEffort")).toHaveLength(8);
+  });
+
+  it("carries exact per-set quantities, never a merged span", () => {
+    const sets = lootSetsForBlueprint("game_buriedTreasure");
+    const rocket = sets.find((s) => s.items.some((i) => i.name === "Rocket Launcher"));
+    expect(rocket).toBeDefined();
+    // The rollup renders Coin Crown as "300-700~"; inside a set it is one real range.
+    for (const it of rocket!.items) expect(it.voyage ?? "").not.toContain("~");
+  });
 });

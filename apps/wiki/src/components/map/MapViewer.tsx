@@ -6,10 +6,12 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { ToolNavBrand } from "@/components/ToolNavBrand";
-import { slugForName, keyOpens, doorKey } from "@/components/map/entityLinkIndex";
+import { slugForName, keyOpens, doorKey, lootSetsForBlueprint } from "@/components/map/entityLinkIndex";
 import "@/components/map/map.css";
 
-// Faithful port of sand3d/viewer/index.html's <script type="module"> body.
+// Faithful port of the standalone viewer's <script type="module"> body. That viewer (formerly
+// sand3d/viewer/index.html) has since been deleted upstream — this component is now the only
+// implementation; sand-map-extractor just bakes the assets it loads.
 // Kept as close to byte-for-byte as a React wrapper allows — see the task
 // notes for the deliberate list of adaptations (scoped $, ASSETS path,
 // bundled three imports, RAF handle + listener teardown, loot cross-links).
@@ -573,8 +575,37 @@ function mountViewer(root) {
       body += `<div class="mv-amounts"><span class="k">Amounts:</span><div class="mv-aseg">` +
         `<button class="${V ? "" : "on"}" data-m="Storm">Stormdive</button>` +
         `<button class="${V ? "on" : ""}" data-m="Voyage">Voyage</button></div></div>`;
-    if (E && E.loot && E.loot.length) // directly-clicked container: its own contents
-      body += `<div class="mv-becomes-lbl">Contents</div><div class="mv-contents">${contents(E.loot)}</div>`;
+    if (E && E.loot && E.loot.length) { // directly-clicked container: its own contents
+      // spawns.json bakes `loot` as the UNION of every set the container can roll, which
+      // reads as "this is what's inside". It isn't — the game rolls ONE set and grants that
+      // set's items (LootSetupDataComponent.RollEntry). The pile bakes 52 rows and yields
+      // 5-6. Prefer the wiki's role:"loot-set" rows, which carry the real odds and exact
+      // per-set amounts; fall back to the flat list when the label has no wiki container.
+      const sets = lootSetsForBlueprint(o.userData.b);
+      if (sets.length) {
+        const sizes = sets.map(s => s.items.length);
+        const lo = Math.min(...sizes), hi = Math.max(...sizes);
+        const setQty = it => { const q = V ? it.voyage : it.storm; return q ? q.replace("-", "–") : ""; };
+        let opened = false;
+        body += `<div class="mv-becomes-lbl">Contents — one of these ${sets.length} sets` +
+          `<span class="mv-become-pct">${lo === hi ? lo : `${lo}–${hi}`} items</span></div>` +
+          sets.map(s => {
+            const sel = !opened ? " sel" : ""; if (sel) opened = true;
+            const rows = s.items.map(it => {
+              const ic = it.icon ? `<img class="mv-loot-icon" src="${it.icon}" alt="" aria-hidden="true">` : "";
+              const nm = it.href ? `<a class="ci" href="${it.href}">${ic}${it.name}</a>` : `<span class="ci">${ic}${it.name}</span>`;
+              return `${nm}<span class="cq">${setQty(it)}</span>`;
+            }).join("");
+            return `<div class="mv-become foldable${sel}"><div class="mv-become-row">` +
+              `<span class="mv-become-caret" aria-hidden="true"></span>` +
+              `<span class="mv-become-nm">${s.label}</span>` +
+              `<span class="mv-become-pct">${s.chance}%</span>` +
+              `</div><div class="mv-become-contents">${rows}</div></div>`;
+          }).join("");
+      } else {
+        body += `<div class="mv-becomes-lbl">Contents</div><div class="mv-contents">${contents(E.loot)}</div>`;
+      }
+    }
     if (E && E.m && E.m.length) { // spawner: members, each member's loot collapsed (first open)
       let opened = false;
       body += `<div class="mv-becomes-lbl">Can become</div>` +
