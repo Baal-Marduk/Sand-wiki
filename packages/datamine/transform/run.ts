@@ -16,7 +16,7 @@ import { loadWeaponStats, loadTurretStats, mergeCombatStats } from "./combat-sta
 import { loadRecipes, mergeRecipes } from "./recipes";
 import { enumerateItems } from "./enumerate";
 import { canonicalSekId } from "./variants";
-import { buildLootLinks, applyLoot, type LootOverrides } from "./loot";
+import { buildLootLinks, applyLoot, mergeContainerEntities, type LootOverrides } from "./loot";
 import { mergeEnemies, buildEnemyLootLinks } from "./enemies";
 import { mergeWorldSpawnEntity, buildWorldSpawnLinks } from "./world-spawns";
 import { mergeLockboxEntities, buildLockboxLinks, applyLockboxLinks } from "./lockbox";
@@ -114,8 +114,14 @@ console.log(lockboxes
   ? `lockboxes: merged ${lockboxes.crates.length} locked-crate container(s)`
   : "lockboxes: source absent (lockbox_loot.json) — none merged");
 
+// --- datamined containers: mint entities for any that have loot but no wiki page yet,
+//     so their loot/loot-set links are never dangling ---
+const withContainers = mergeContainerEntities(withLockboxes, containerLoot, lootOverrides);
+const mintedContainers = withContainers.length - withLockboxes.length;
+console.log(`containers: minted ${mintedContainers} new container entity(ies)`);
+
 // --- per-location notable loot: mint any new location entities (e.g. Ship Graveyard) ---
-const withLocations = mergeLocationEntities(withLockboxes, locationLoot);
+const withLocations = mergeLocationEntities(withContainers, locationLoot);
 console.log(locationLoot
   ? `location loot: ${locationLoot.locations.length} location(s) with notable loot`
   : "location loot: source absent (location_loot.json) — none merged");

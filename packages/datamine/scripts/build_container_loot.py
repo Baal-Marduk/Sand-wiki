@@ -89,10 +89,38 @@ for c in sources:
     if dm_slug in EXCLUDE:
         continue  # not a real loot container (e.g. mob drops, naval mine)
     eff_order = {e: i for i, e in enumerate(c.get("efforts") or [])}
+    # variants are the truthful unit: one real entity = one roll pool with its own sets.
+    variants_by_cell = collections.defaultdict(list)
+    for v in c.get("variants") or []:
+        variants_by_cell[(v.get("tier"), v.get("effort"))].append(v)
+
     def cellkey(item):
         k, cell = item
         return (cell.get("tier") if cell.get("tier") is not None else 0,
                 eff_order.get(cell.get("effort"), 0))
+
+    def set_views(cells):
+        """The sets a player can actually roll from these cells, with exact per-set
+        quantities. Each set's odds are normalised within its own entity, because that
+        entity is the roll -- odds are NOT comparable across effort variants."""
+        out = []
+        for cell in cells:
+            for v in variants_by_cell.get((cell.get("tier"), cell.get("effort")), []):
+                for s in v["sets"]:
+                    if not s.get("known"):
+                        continue
+                    per = {}
+                    for mode in ("voyage", "storm"):
+                        for it in s.get(mode) or []:
+                            per.setdefault(it["item"], {})[mode] = fmt_range(it["min"], it["max"])
+                    items = []
+                    for lid, r in per.items():
+                        slug, iname, ok = resolve(lid)
+                        items.append({"slug": slug, "name": iname, "resolved": ok,
+                                      "voyage": r.get("voyage"), "storm": r.get("storm")})
+                    out.append({"label": s["label"], "effort": v.get("effort"),
+                                "chance": s["pct"], "items": items})
+        return out
 
     # Group cells, merging the low/mid/high effort dimension away.
     groups = collections.OrderedDict()  # gkey -> {"label", "cells"}
@@ -118,8 +146,13 @@ for c in sources:
                     it = e["item"]
                     if it not in seen: seen.add(it); order.append(it)
                     cur = agg.get(it)
-                    if cur is None: agg[it] = [e["min"], e["max"], e["pct"]]
-                    else: cur[0] = min(cur[0], e["min"]); cur[1] = max(cur[1], e["max"]); cur[2] = max(cur[2], e["pct"])
+                    if cur is None: agg[it] = [e["min"], e["max"], e["pct"], bool(e.get("merged"))]
+                    else:
+                        # Widening across cells stitches the span further, so the result is
+                        # merged whenever it came from more than one source range.
+                        if e["min"] != cur[0] or e["max"] != cur[1]: cur[3] = True
+                        cur[0] = min(cur[0], e["min"]); cur[1] = max(cur[1], e["max"])
+                        cur[2] = max(cur[2], e["pct"]); cur[3] = cur[3] or bool(e.get("merged"))
         loot = []
         for it in order:
             slug, iname, ok = resolve(it)
@@ -141,9 +174,16 @@ for c in sources:
                 "storm": fmt_range(s[0], s[1]) if s else None,
                 "stormBonus": storm_bonus,
                 "moreInStorm": more_in_storm,
+                # The min-max span is stitched from sets with different quantities, so no
+                # single open can yield the whole range. Exact values live in `sets`.
+                "mergedRange": bool((v or s)[3]) if (v or s) else False,
                 "resolved": ok,
             })
-        tiers.append({"tier": g["label"], "rollSets": roll_sets or None, "loot": loot})
+        sets = set_views(g["cells"])
+        tiers.append({"tier": g["label"], "rollSets": roll_sets or None,
+                      "setSize": (min(len(s["items"]) for s in sets),
+                                  max(len(s["items"]) for s in sets)) if sets else None,
+                      "sets": sets, "loot": loot})
 
     # Guaranteed (mandatory) drops live outside the random `cells` (e.g. the
     # Ironclad box's Alloy Steel), so the cell loop above never sees them. Inline
@@ -152,7 +192,8 @@ for c in sources:
     mand = c.get("mandatory") or []
     if mand:
         if not tiers:
-            tiers.append({"tier": "Drops", "rollSets": None, "loot": []})
+            tiers.append({"tier": "Drops", "rollSets": None, "setSize": None,
+                          "sets": [], "loot": []})
         loot0 = tiers[0]["loot"]
         present = {e["slug"] for e in loot0 if e["slug"]}
         guaranteed = []
@@ -173,6 +214,7 @@ for c in sources:
                 "storm": rng,
                 "stormBonus": 1.0,
                 "moreInStorm": False,
+                "mergedRange": False,
                 "resolved": ok,
             })
         tiers[0]["loot"] = guaranteed + loot0
@@ -193,7 +235,11 @@ artifact = {
     "containers": out,
 }
 dest = os.path.join(SEK_OUT, "container_loot.json")
-json.dump(artifact, open(dest, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+# Explicit LF: committed files in this repo are LF (autocrlf off + a pre-commit CRLF
+# guard); Python text mode would emit CRLF on Windows and rewrite every line.
+with open(dest, "w", encoding="utf-8", newline="\n") as fh:
+    json.dump(artifact, fh, indent=1, ensure_ascii=False)
+    fh.write("\n")
 
 print(f"containers: {len(out)}")
 print(f"tiers total: {sum(len(c['tiers']) for c in out.values())}")
