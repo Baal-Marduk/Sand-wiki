@@ -11,18 +11,15 @@ const cl: ContainerLoot = {
       { slug: "rifle-musket", name: "Rifle Musket", chance: 25, voyage: "1", storm: "1" },
     ] }],
   },
-  // Nothing is excluded any more: anything that can drop loot is listed, and
-  // build_loot_sources.py has already removed entities that cannot drop anything.
-  // A container with no tiers simply contributes no links.
-  "mob-drops": { name: "Mob Drops", icon: "", category: "loot-containers", tiers: [] },
+  "mob-drops": { name: "Mob Drops", icon: "", category: "loot-containers", tiers: [] }, // excluded
 };
-const ov = { containerSlugMap: { "weapons-crate": "weapon-crate" } };
+const ov = { containerSlugMap: { "weapons-crate": "weapon-crate" }, excludeContainers: ["mob-drops"] };
 
 describe("loot transform", () => {
-  it("maps container_loot to loot links under the mapped env slug", () => {
+  it("maps container_loot to loot links under the mapped env slug, skipping excluded", () => {
     const { covered, links } = buildLootLinks(cl, ov);
-    expect([...covered]).toEqual(["weapon-crate", "mob-drops"]);
-    expect(links).toHaveLength(2);   // mob-drops has no tiers, so no rows
+    expect([...covered]).toEqual(["weapon-crate"]);
+    expect(links).toHaveLength(2);
     expect(links[0]).toEqual({
       sourceSlug: "weapon-crate", targetSlug: "pistol-ammo", role: "loot", name: "Pistol Ammo",
       amount: null, tier: "Tier 1", value1: "50", value2: "25-45", value3: "25-45", sortOrder: 0, buyGroup: null,

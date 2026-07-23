@@ -119,10 +119,6 @@
   "slug": "medical-cabinet",
   "group": "Tier 3 Mid"
  },
- "game_navalMine": {
-  "slug": "naval-mine",
-  "group": "Drops"
- },
  "game_navalMineOriginalScale": {
   "slug": "naval-mine-original-scale",
   "group": "Drops"
@@ -254,17 +250,5 @@
  "item_ironcladContainer80mm": {
   "slug": "ironclad-loot-box",
   "group": "Drops"
- },
- "mobLoot_ghoulMelee": {
-  "slug": "mob-drops",
-  "group": "Melee mob Melee Mob"
- },
- "mobLoot_ghoulMeleeShovel": {
-  "slug": "mob-drops",
-  "group": "Melee mob (tool) Melee Mob (Tool)"
- },
- "mobLoot_ghoulRange": {
-  "slug": "mob-drops",
-  "group": "Ranged mob Ranged Mob"
  }
 }
