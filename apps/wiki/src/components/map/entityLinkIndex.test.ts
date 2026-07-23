@@ -213,3 +213,23 @@ describe("lootChancesFor", () => {
     expect(lootChancesFor("game_treasureShovel", "Treasure Shovel")).toEqual([]);
   });
 });
+
+describe("lootChancesFor amounts", () => {
+  it("carries a quantity for locked boxes, whose counts are not mode-split", () => {
+    // conf_worldContractsConfig has one count per item, so storm is null and only
+    // voyage is populated. The popup defaults to Stormdive, which rendered a blank
+    // amount: "80 mm Shell 98.7%" with no number at all.
+    const rows = lootChancesFor("game_lockedBox_military", "Locked Box Military");
+    const shell = rows.find((r) => r.name === "80 mm Shell");
+    expect(shell).toMatchObject({ voyage: "20-60", storm: null });
+    expect(rows.every((r) => r.voyage || r.storm)).toBe(true);
+  });
+
+  it("expected items per open is Sigma P(item), not the row count", () => {
+    // A Military Box holds ~4 items, not the 28 it could draw from.
+    const sum = (bp: string) =>
+      lootChancesFor(bp, "").reduce((a, r) => a + r.chance, 0) / 100;
+    expect(sum("game_lockedBox_military")).toBeCloseTo(4.0, 1);
+    expect(sum("game_lockedBox_valuables")).toBeCloseTo(2.0, 1);
+  });
+});

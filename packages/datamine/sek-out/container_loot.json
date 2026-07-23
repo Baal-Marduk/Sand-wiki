@@ -1,7 +1,7 @@
 {
  "meta": {
   "source": "loot_sources.json",
-  "containers": 12
+  "containers": 11
  },
  "containers": {
   "weapon-crate": {
@@ -8319,51 +8319,6 @@
        "slug": "boosted-energy-bar",
        "name": "Boosted Energy Bar",
        "chance": 3.8,
-       "voyage": "1",
-       "storm": "1",
-       "stormBonus": 1.0,
-       "moreInStorm": false,
-       "mergedRange": false,
-       "resolved": true
-      }
-     ]
-    }
-   ]
-  },
-  "naval-mine-original-scale": {
-   "name": "Naval Mine (Original Scale)",
-   "icon": null,
-   "category": "loot-containers",
-   "tiers": [
-    {
-     "tier": "Drops",
-     "rollSets": 1,
-     "setSize": [
-      1,
-      1
-     ],
-     "sets": [
-      {
-       "label": "navalMine",
-       "effort": null,
-       "group": "Drops",
-       "chance": 100.0,
-       "items": [
-        {
-         "slug": "resource-metal-t1",
-         "name": "Resource Metal T1",
-         "resolved": true,
-         "voyage": "1",
-         "storm": "1"
-        }
-       ]
-      }
-     ],
-     "loot": [
-      {
-       "slug": "resource-metal-t1",
-       "name": "Resource Metal T1",
-       "chance": 100.0,
        "voyage": "1",
        "storm": "1",
        "stormBonus": 1.0,

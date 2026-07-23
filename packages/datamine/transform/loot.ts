@@ -17,18 +17,31 @@ const CONTAINER_DESCRIPTION =
 
 /** Upsert environment entities for datamined containers that have loot but no wiki page yet,
  *  so their links are never dangling. Mirrors mergeLockboxEntities; existing entities keep
- *  their curated name/description/icon and only gain the category if it was missing. */
+ *  their curated name/description/icon and only gain the category if it was missing.
+ *
+ *  Also prunes: a container that stops being produced — because it was excluded, or its
+ *  loot tables disappeared — must not leave an orphan page behind. Without this, adding
+ *  "Naval Mine (Original Scale)" to excludeContainers left its minted entity in the
+ *  artifact, so it kept showing up in the site-wide search with no loot attached.
+ *  Only entities we minted are removable, identified by the exact generated description;
+ *  anything a human has touched is left alone. */
 export function mergeContainerEntities(
   entities: Entity[], cl: ContainerLoot, ov: LootOverrides,
 ): Entity[] {
   const exclude = new Set(ov.excludeContainers ?? []);
   const map = ov.containerSlugMap ?? {};
-  const existing = new Set(entities.map((e) => e.slug));
+  const wanted = new Set(
+    Object.keys(cl).filter((s) => !exclude.has(s)).map((s) => map[s] ?? s),
+  );
+  const kept = entities.filter(
+    (e) => e.description !== CONTAINER_DESCRIPTION || wanted.has(e.slug),
+  );
+  const existing = new Set(kept.map((e) => e.slug));
   const added: Entity[] = [];
-  for (const [sekSlug, c] of Object.entries(cl)) {
-    if (exclude.has(sekSlug)) continue;
-    const slug = map[sekSlug] ?? sekSlug;
+  for (const slug of wanted) {
     if (existing.has(slug)) continue;
+    const sek = Object.keys(cl).find((s) => (map[s] ?? s) === slug)!;
+    const c = cl[sek];
     existing.add(slug);
     added.push({
       id: slug, slug, kind: "environment", name: c.name,
@@ -38,7 +51,7 @@ export function mergeContainerEntities(
       itemStats: null, tramplerStats: null, techNodeStats: null,
     });
   }
-  return entities.concat(added);
+  return kept.concat(added);
 }
 
 /** Build loot EntityLink rows from SEK container_loot, mapping each SEK container slug to

@@ -22633,32 +22633,6 @@
     "buyGroup": null
   },
   {
-    "sourceSlug": "naval-mine-original-scale",
-    "targetSlug": "resource-metal-t1",
-    "role": "loot",
-    "name": "Resource Metal T1",
-    "amount": null,
-    "tier": "Drops",
-    "value1": "100",
-    "value2": "1",
-    "value3": "1",
-    "sortOrder": 0,
-    "buyGroup": null
-  },
-  {
-    "sourceSlug": "naval-mine-original-scale",
-    "targetSlug": "resource-metal-t1",
-    "role": "loot-set",
-    "name": "Resource Metal T1",
-    "amount": 1,
-    "tier": "Drops - navalMine",
-    "value1": "100",
-    "value2": "1",
-    "value3": "1",
-    "sortOrder": 0,
-    "buyGroup": null
-  },
-  {
     "sourceSlug": "shell-box-resupply",
     "targetSlug": "old-jacket",
     "role": "loot",

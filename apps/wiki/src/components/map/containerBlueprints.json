@@ -119,10 +119,6 @@
   "slug": "medical-cabinet",
   "group": "Tier 3 Mid"
  },
- "game_navalMineOriginalScale": {
-  "slug": "naval-mine-original-scale",
-  "group": "Drops"
- },
  "game_partsBox_t1_highEffort": {
   "slug": "parts-crate",
   "group": "Tier 1 High"

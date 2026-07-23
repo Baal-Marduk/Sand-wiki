@@ -117,8 +117,7 @@ console.log(lockboxes
 // --- datamined containers: mint entities for any that have loot but no wiki page yet,
 //     so their loot/loot-set links are never dangling ---
 const withContainers = mergeContainerEntities(withLockboxes, containerLoot, lootOverrides);
-const mintedContainers = withContainers.length - withLockboxes.length;
-console.log(`containers: minted ${mintedContainers} new container entity(ies)`);
+console.log(`containers: ${withContainers.length - withLockboxes.length >= 0 ? "+" : ""}${withContainers.length - withLockboxes.length} container entity(ies)`);
 
 // --- per-location notable loot: mint any new location entities (e.g. Ship Graveyard) ---
 const withLocations = mergeLocationEntities(withContainers, locationLoot);
@@ -167,10 +166,20 @@ if (locDangling.length) {
     [...new Set(locDangling.map((l) => l.targetSlug))].slice(0, 20).join(", "));
 }
 locationLootLinks.links = locationLootLinks.links.filter((l) => !l.targetSlug || knownSlugs.has(l.targetSlug));
-const links = applyLocationLoot(
+const allLinks = applyLocationLoot(
   applyLockboxLinks(applyLoot(applyLoot(applyLoot(baseline.links, loot), enemyLoot), worldLoot), lockboxLinks),
   locationLootLinks,
 );
+// A source that no longer exists as an entity leaves its links behind: applyLoot only
+// overwrites rows for containers it still covers, so excluding a container (or losing its
+// loot tables) orphaned them. Drop links from unknown sources, same as the targetSlug
+// filters above do for unknown destinations.
+const orphaned = allLinks.filter((l) => !knownSlugs.has(l.sourceSlug));
+if (orphaned.length) {
+  console.warn(`links: dropping ${orphaned.length} row(s) from removed sources:`,
+    [...new Set(orphaned.map((l) => l.sourceSlug))].slice(0, 20).join(", "));
+}
+const links = allLinks.filter((l) => knownSlugs.has(l.sourceSlug));
 console.log(`enemy loot: ${enemyLoot.links.length} link(s) across ${enemyLoot.covered.size} enemies`);
 console.log(`lockboxes: ${lockboxLinks.links.length} link(s) (loot + requires-key) across ${lockboxLinks.covered.size} crates`);
 console.log(`location loot: ${locationLootLinks.links.length} notable link(s) across ${locationLootLinks.covered.size} locations`);

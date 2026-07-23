@@ -16250,23 +16250,6 @@
     "techNodeStats": null
   },
   {
-    "id": "naval-mine-original-scale",
-    "slug": "naval-mine-original-scale",
-    "kind": "environment",
-    "name": "Naval Mine (Original Scale)",
-    "description": "A loot container found out in the world. Opening it grants every item from exactly one of its possible sets, chosen at random by weight.",
-    "category": "loot-containers",
-    "rarity": null,
-    "icon": null,
-    "imageAlt": null,
-    "derivedName": null,
-    "sourceUrl": null,
-    "disabled": false,
-    "itemStats": null,
-    "tramplerStats": null,
-    "techNodeStats": null
-  },
-  {
     "id": "shell-box-resupply",
     "slug": "shell-box-resupply",
     "kind": "environment",

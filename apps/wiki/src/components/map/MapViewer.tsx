@@ -586,7 +586,25 @@ function mountViewer(root) {
       // set's items (LootSetupDataComponent.RollEntry). The pile bakes 52 rows and yields
       // 5-6. Prefer the wiki's rows, which carry the real odds and exact per-set amounts;
       // fall back to the flat baked list only when the wiki knows nothing about it.
-      const qtyOf = it => { const q = V ? it.voyage : it.storm; return q ? q.replace("-", "–") : ""; };
+      // The locked boxes' counts come from conf_worldContractsConfig and are not split by
+      // game mode, so one side is null. Falling back beats rendering a blank cell — which
+      // is what a Military Box did, listing "80 mm Shell 98.7%" with no amount at all.
+      const qtyOf = it => {
+        const q = (V ? it.voyage : it.storm) || it.voyage || it.storm;
+        return q ? q.replace("-", "–") : "";
+      };
+      // How much you actually walk away with. Exact when we have the sets; otherwise the
+      // expected number of items, which is just Σ P(item present) — for the Military Box
+      // that is 400.2% over 28 entries, i.e. ~4 items, not 28.
+      const perOpen = (() => {
+        if (sets.length) {
+          const z = sets.map(s => s.items.length);
+          const lo = Math.min(...z), hi = Math.max(...z);
+          return lo === hi ? `${lo}` : `${lo}–${hi}`;
+        }
+        const e = rollup.reduce((a, r) => a + r.chance, 0) / 100;
+        return e >= 0.5 ? `~${Math.round(e * 10) / 10}` : null;
+      })();
       const itemRow = it => {
         const ic = it.icon ? `<img class="mv-loot-icon" src="${it.icon}" alt="" aria-hidden="true">` : "";
         return it.href ? `<a class="ci" href="${it.href}">${ic}${it.name}</a>`
@@ -598,7 +616,9 @@ function mountViewer(root) {
         // all"; "Loot Sets" answers "what do I actually walk away with".
         if (rollup.length)
           body += `<details class="mv-fold"><summary>Item Chances` +
-            `<span class="mv-fold-n">${rollup.length}</span></summary>` +
+            `<span class="mv-fold-n">${perOpen ? `${perOpen} of ${rollup.length}` : rollup.length}</span></summary>` +
+            (perOpen ? `<div class="mv-fold-note">One open gives ${perOpen} of these ` +
+              `${rollup.length} items${sets.length ? "" : " on average"}.</div>` : "") +
             `<div class="mv-contents mv-chances">` +
             rollup.map(it =>
               `${itemRow(it)}<span class="cp">${it.chance}%</span>` +
