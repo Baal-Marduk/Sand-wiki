@@ -34,9 +34,10 @@ DROP_SUFFIX = re.compile(r"(_mob ?drop|_mine ?drop|mobdrop|minedrop)$", re.I)
 OVERRIDES = json.load(open(os.path.join(DATAMINE, "transform", "overrides", "loot-overrides.json"), encoding="utf-8"))
 ALIAS = OVERRIDES["itemSlugAliases"]
 KNOWN_LIVE_SLUGS = set(OVERRIDES["knownLiveSlugs"])
-# Container reconciliation against the existing wiki model: drop non-containers,
-# remap datamined slugs onto existing wiki slugs, and override display names.
-EXCLUDE = set(OVERRIDES.get("excludeContainers", []))
+# Container reconciliation against the existing wiki model: remap datamined slugs onto
+# existing wiki slugs and override display names. Nothing is excluded -- anything that can
+# drop loot gets listed; is_live() in build_loot_sources.py has already removed the entities
+# that cannot drop anything at all.
 SLUG_MAP = OVERRIDES.get("containerSlugMap", {})
 CONTAINER_OVERRIDES = OVERRIDES.get("containerOverrides", {})
 slugset = {w["slug"] for w in wiki_items} | KNOWN_LIVE_SLUGS
@@ -87,8 +88,6 @@ unresolved = collections.Counter()
 for c in sources:
     name = c["name"]
     dm_slug = slugify(name)
-    if dm_slug in EXCLUDE:
-        continue  # not a real loot container (e.g. mob drops, naval mine)
     eff_order = {e: i for i, e in enumerate(c.get("efforts") or [])}
     # variants are the truthful unit: one real entity = one roll pool with its own sets.
     variants_by_cell = collections.defaultdict(list)

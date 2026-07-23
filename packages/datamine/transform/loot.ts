@@ -3,7 +3,6 @@ import type { ContainerLoot } from "./sek";
 
 export interface LootOverrides {
   containerSlugMap: Record<string, string>;
-  excludeContainers: string[];
 }
 
 export interface LootResult { covered: Set<string>; links: EntityLink[] }
@@ -21,12 +20,10 @@ const CONTAINER_DESCRIPTION =
 export function mergeContainerEntities(
   entities: Entity[], cl: ContainerLoot, ov: LootOverrides,
 ): Entity[] {
-  const exclude = new Set(ov.excludeContainers ?? []);
   const map = ov.containerSlugMap ?? {};
   const existing = new Set(entities.map((e) => e.slug));
   const added: Entity[] = [];
   for (const [sekSlug, c] of Object.entries(cl)) {
-    if (exclude.has(sekSlug)) continue;
     const slug = map[sekSlug] ?? sekSlug;
     if (existing.has(slug)) continue;
     existing.add(slug);
@@ -42,7 +39,7 @@ export function mergeContainerEntities(
 }
 
 /** Build loot EntityLink rows from SEK container_loot, mapping each SEK container slug to
- *  its wiki env slug (containerSlugMap; identity if unmapped) and skipping excludeContainers.
+ *  its wiki env slug (containerSlugMap; identity if unmapped).
  *
  *  Two roles, because a container grants ONE whole set rather than a sample of its union:
  *   - role "loot"     — the per-item rollup: "chance any single open yields this item".
@@ -53,12 +50,10 @@ export function mergeContainerEntities(
  *                       set label -> tier, set chance -> value1, quantities -> value2/value3.
  *                       sortOrder groups a set's items together: setIndex*1000 + itemIndex. */
 export function buildLootLinks(cl: ContainerLoot, ov: LootOverrides): LootResult {
-  const exclude = new Set(ov.excludeContainers ?? []);
   const map = ov.containerSlugMap ?? {};
   const covered = new Set<string>();
   const links: EntityLink[] = [];
   for (const [sekSlug, c] of Object.entries(cl)) {
-    if (exclude.has(sekSlug)) continue;
     const envSlug = map[sekSlug] ?? sekSlug;
     covered.add(envSlug);
     let sort = 0;
