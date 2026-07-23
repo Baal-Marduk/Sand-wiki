@@ -33,48 +33,35 @@ for mode, lst in (('voyage', voy), ('storm', sto)):
             for i in t['items']['$items']
         ]
 
-OVERRIDES = json.load(open('transform/overrides/loot-overrides.json', encoding='utf-8'))
-EXCLUDE_ENTITIES = set(OVERRIDES.get('excludeEntities', []))
-
-# ---- source definitions: entity pattern -> (source name, variant label) -------------
+# ---- source definitions: entity pattern -> display name -----------------------------
 # Named groups: `tier` (game tier 1-3), `eff` (low/mid/high placement effort).
-# A variant label is used when the entity is a distinct container rather than an effort
-# placement of an existing one. Order matters: first match wins.
+# Order matters: first match wins.
+#
+# Only entities that can actually drop something need a rule here. Entities whose loot
+# tables no longer exist are skipped by is_live() before matching, so they need neither a
+# pattern nor an exclusion entry -- see is_live(). Adding rules for them would be a list of
+# hand-written exceptions that has to be maintained forever and silently rots when the game
+# renames something.
 SOURCES = [
-    (r'^game_armyBox_t(?P<tier>\d)_(?P<eff>low|mid|high)Effort$', 'Weapons Crate', None),
-    (r'^game_armyBox_t(?P<tier>\d)$',                             'Weapons Crate', None),
-    (r'^game_armyBox_OnlyWeaponsT(?P<tier>\d)$',      'Weapons Crate (Weapons Only)', None),
-    (r'^game_armyBox_onlyExplosives$',                'Weapons Crate (Explosives)', None),
-    (r'^game_armyBox_resupplyAmmo$',                  'Weapons Crate (Ammo Resupply)', None),
-    (r'^game_armyBox_resupplyWeapons$',               'Weapons Crate (Weapon Resupply)', None),
+    (r'^game_armyBox_t(?P<tier>\d)_(?P<eff>low|mid|high)Effort$', 'Weapons Crate'),
+    (r'^game_armyBox_resupplyAmmo$',                  'Weapons Crate (Ammo Resupply)'),
+    (r'^game_armyBox_resupplyWeapons$',               'Weapons Crate (Weapon Resupply)'),
 
-    (r'^game_foodBox_t(?P<tier>\d)_(?P<eff>low|mid|high)Effort$', 'Food Crate', None),
-    (r'^game_foodBox_t(?P<tier>\d)$',                             'Food Crate', None),
+    (r'^game_foodBox_t(?P<tier>\d)_(?P<eff>low|mid|high)Effort$', 'Food Crate'),
+    (r'^game_partsBox_t(?P<tier>\d)_(?P<eff>low|mid|high)Effort$', 'Resource Crate'),
+    (r'^game_medicalCabinet_t(?P<tier>\d)_(?P<eff>low|mid|high)Effort$', 'Medical Cabinet'),
+    (r'^game_safeMiddle_t(?P<tier>\d)_(?P<eff>low|mid|high)Effort$', 'Safe'),
 
-    (r'^game_partsBox_t(?P<tier>\d)_(?P<eff>low|mid|high)Effort$', 'Resource Crate', None),
-    (r'^game_partsBox_t(?P<tier>\d)$',                             'Resource Crate', None),
-    (r'^game_partsBox_onlyResourcesT(?P<tier>\d)$',   'Resource Crate (Resources Only)', None),
-    (r'^game_partsBox_onlyTramplerResT(?P<tier>\d)$', 'Resource Crate (Trampler Parts)', None),
+    (r'^game_shellsBox_t(?P<tier>\d)_(?P<eff>low|mid|high)Effort$', 'Shell Box'),
+    (r'^game_shellsBox_t(?P<tier>\d)_resupply$',      'Shell Box (Resupply)'),
 
-    (r'^game_medicalCabinet_t(?P<tier>\d)_(?P<eff>low|mid|high)Effort$', 'Medical Cabinet', None),
-    (r'^game_medicalCabinet_t(?P<tier>\d)$',                             'Medical Cabinet', None),
+    (r'^item_ironcladContainer(?P<mm>\d+)mm$', 'Ironclad Loot Box'),
+    (r'^item_containerBox_1L$',                'Ironclad Loot Box'),
 
-    (r'^game_safeMiddle_t(?P<tier>\d)_(?P<eff>low|mid|high)Effort$', 'Safe', None),
-    (r'^game_safeMiddle_t(?P<tier>\d)$',                             'Safe', None),
-
-    (r'^game_shellsBox_t(?P<tier>\d)_(?P<eff>low|mid|high)Effort$', 'Shell Box', None),
-    (r'^game_shellsBox_t(?P<tier>\d)_onlyBasic$',     'Shell Box (Basic)', None),
-    (r'^game_shellsBox_t(?P<tier>\d)_resupply$',      'Shell Box (Resupply)', None),
-    (r'^game_shellsBox_t(?P<tier>\d)$',                             'Shell Box', None),
-
-    (r'^item_ironcladContainer(?P<mm>\d+)mm$', 'Ironclad Loot Box', 'ironclad'),
-    (r'^item_containerBox_1L$',                'Ironclad Loot Box', 'ironclad'),
-    (r'^game_militiaBox_(?P<mm>\d+)mm$',       'Militia Box', 'militia'),
-
-    (r'^game_buriedTreasure$',      'Buried Treasure', None),
-    (r'^game_aurogenCrystal(?P<n>\d)$', 'Aurogen Crystal', 'crystal'),
-    (r'^game_navalMine$',                'Naval Mine', None),
-    (r'^game_navalMineOriginalScale$',   'Naval Mine (Original Scale)', None),
+    (r'^game_buriedTreasure$',           'Buried Treasure'),
+    (r'^game_aurogenCrystal(?P<n>\d)$',  'Aurogen Crystal'),
+    (r'^game_navalMine$',                'Naval Mine'),
+    (r'^game_navalMineOriginalScale$',   'Naval Mine (Original Scale)'),
 ]
 
 sources = {}
@@ -142,11 +129,29 @@ def set_rows(entries, entity):
     return out
 
 
+def is_live(data):
+    """Can this entity drop anything this build defines?
+
+    Some EPBs still carry a LootSetupDataComponent from before a rename, pointing at loot
+    tables that no longer exist in conf_worldLootTables{Voyage,Storm}Config -- e.g.
+    game_partsBox_t1 -> "resource_container_T1_set1", superseded by the per-effort
+    "resource_container_lowEffort_T1_set1". They still appear in world spawn data, but they
+    resolve to nothing, so they cannot contribute a single item.
+
+    Deciding this here, BEFORE requiring a SOURCES pattern, is what keeps the config free of
+    hand-written exceptions: a dead entity needs no pattern and no exclusion entry, because
+    a thing that does not exist causes no problems. Only entities that can actually drop
+    something have to be named."""
+    ok = lambda rows: any(e.get('tableId') in tables for e in rows)
+    return ok(data['entries']) or ok(data['mandatory'])
+
+
+dead_entities = sorted(e for e, d in entity_loot.items() if not is_live(d))
+
 for ent, data in sorted(entity_loot.items()):
-    if ent in EXCLUDE_ENTITIES:
-        matched_entities.add(ent)
+    if not is_live(data):
         continue
-    for pat, source, _variant in SOURCES:
+    for pat, source in SOURCES:
         m = re.match(pat, ent)
         if not m:
             continue
@@ -174,38 +179,19 @@ for ent, data in sorted(entity_loot.items()):
                 src(source)['mandatory'].append(x)
         break
 
-# Some EPBs still carry a LootSetupDataComponent from before a rename, pointing at loot
-# tables that no longer exist in conf_worldLootTables{Voyage,Storm}Config -- e.g.
-# game_armyBox_t1 -> "weapons_container_T1_set1", superseded by the per-effort
-# "weapons_container_lowEffort_T1_set1". They still appear in world spawn data, but they
-# cannot drop anything this build defines, so listing them would create empty containers.
-# Detected rather than hardcoded: a variant survives only if at least one table resolves.
-# Dangling sets that sit alongside live ones are KEPT in the weight denominator, so the
-# surviving probabilities stay honest instead of being silently renormalised.
-dropped = []
-for s in sources.values():
-    keep = []
-    for v in s['variants']:
-        # A mandatory-only entity (Aurogen Crystal) is valid: it has no roll pool at all.
-        if any(x['known'] for x in v['sets']) or any(x['known'] for x in v['mandatory']):
-            keep.append(v)
-        else:
-            dropped.append((v['entity'], len(v['sets'])))
-    s['variants'] = keep
-for name in [n for n, s in sources.items() if not s['variants']]:
-    del sources[name]
-if dropped:
-    print('skipped %d entities whose every loot table is missing from this build:'
-          % len(dropped), file=sys.stderr)
-    for ent, n in sorted(dropped):
-        print('  %-42s %d dangling table refs' % (ent, n), file=sys.stderr)
+if dead_entities:
+    print('skipped %d entities whose loot tables no longer exist in this build:'
+          % len(dead_entities), file=sys.stderr)
+    for ent in dead_entities:
+        print('  %s' % ent, file=sys.stderr)
 
-missing = sorted(set(entity_loot) - matched_entities)
+# Only entities that CAN drop something have to be named. Dead ones are already gone, so
+# this never asks anyone to write a rule for a table that no longer exists.
+missing = sorted(set(entity_loot) - matched_entities - set(dead_entities))
 if missing:
     raise SystemExit(
-        'build_loot_sources: %d loot-bearing entities match no SOURCES pattern and are not\n'
-        'listed in loot-overrides.json "excludeEntities". Refusing to emit a silently\n'
-        'incomplete catalog. Add a pattern or an exclusion for:\n  %s'
+        'build_loot_sources: %d entities can drop loot but match no SOURCES pattern, so they\n'
+        'would vanish from the catalog silently. Add a pattern for each:\n  %s'
         % (len(missing), '\n  '.join(missing)))
 
 # Mob drops: tables exist but no entity weights -> equal weights per sub-group.
