@@ -25,8 +25,27 @@ export function loadSekItems(dir = SEK): SekItem[] { return read("items.json", d
 export function loadLocalization(dir = SEK): Localization { return read("localization.json", dir); }
 
 // --- container loot (already reconciled to wiki slugs + tier-collapse by build_container_loot.py) ---
-export interface LootEntry { slug: string; name: string; chance: number; voyage: string | null; storm: string | null }
-export interface LootTier { tier: string; rollSets: number; loot: LootEntry[] }
+export interface LootEntry {
+  slug: string; name: string; chance: number; voyage: string | null; storm: string | null;
+  /** The min-max span is stitched from sets with differing quantities, so no single open
+   *  can produce the whole range. Exact per-set values live in LootTier.sets. */
+  mergedRange?: boolean;
+}
+/** One rollable set: opening the container grants EVERY item in exactly one of these. */
+export interface LootSetItem { slug: string | null; name: string; voyage: string | null; storm: string | null }
+export interface LootSet {
+  label: string; effort: string | null; chance: number; items: LootSetItem[];
+  /** Tier label plus effort ("Tier 1 Low"), unique per roll pool. A tier group unions the
+   *  low/mid/high entities and all of them name their sets set1..setN, so this is what
+   *  keeps one variant's set1 distinct from another's. */
+  group: string;
+}
+export interface LootTier {
+  tier: string; rollSets: number; loot: LootEntry[];
+  sets?: LootSet[];
+  /** [min, max] item count of a single open — the real "how much is in here". */
+  setSize?: [number, number] | null;
+}
 export interface Container { name: string; icon: string; category: string; tiers: LootTier[] }
 export type ContainerLoot = Record<string, Container>;  // keyed by SEK container slug
 

@@ -225,3 +225,28 @@
 .sand3d-map .chip { background: var(--card-elevated); border: 1px solid var(--border-strong); padding: 3px 10px; cursor: pointer; font-size: 12px; }
 .sand3d-map .chip:hover { border-color: var(--primary); color: var(--primary-hover); }
 .sand3d-map .chip b { color: var(--foreground); }
+
+/* ---- collapsed loot sections ("Item Chances" / "Loot Sets") ----------------------
+   Both start shut: the popup is narrow and neither view is the one every visitor
+   wants. Native <details> so it works without JS and keyboard/AT get it for free. */
+.sand3d-map .mv-fold { border-top: 1px solid var(--border); }
+.sand3d-map .mv-fold > summary {
+  display: flex; align-items: center; gap: 8px; cursor: pointer; list-style: none;
+  padding: 11px 16px; font-family: var(--font-display); text-transform: uppercase;
+  letter-spacing: .12em; font-size: 10px; color: var(--dim);
+  transition: color .12s, background-color .12s;
+}
+.sand3d-map .mv-fold > summary::-webkit-details-marker { display: none; }
+.sand3d-map .mv-fold > summary::before { content: "▸"; font-size: 9px; color: var(--dim); }
+.sand3d-map .mv-fold[open] > summary::before { content: "▾"; color: var(--primary); }
+.sand3d-map .mv-fold > summary:hover { color: var(--foreground); background: var(--card-elevated); }
+.sand3d-map .mv-fold[open] > summary { color: var(--foreground); }
+.sand3d-map .mv-fold > summary:focus-visible { outline: 2px solid var(--primary); outline-offset: -2px; }
+/* count badge, right-aligned like .mv-become-pct */
+.sand3d-map .mv-fold-n { margin-left: auto; font-family: var(--font-mono); font-size: 12px; color: var(--muted-foreground); letter-spacing: 0; }
+.sand3d-map .mv-fold-note { padding: 0 16px 8px; font-size: 11px; color: var(--muted-foreground); }
+/* item / chance / amount */
+.sand3d-map .mv-chances { grid-template-columns: 1fr auto auto; }
+.sand3d-map .mv-chances .cp { font-family: var(--font-mono); font-size: 12px; color: var(--muted-foreground); text-align: right; }
+/* "~": the amount spans several sets, so no single open yields the whole range */
+.sand3d-map .mv-approx { font-style: normal; color: var(--dim); cursor: help; padding-left: 1px; }

@@ -6,10 +6,12 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { ToolNavBrand } from "@/components/ToolNavBrand";
-import { slugForName, keyOpens, doorKey } from "@/components/map/entityLinkIndex";
+import { slugForName, keyOpens, doorKey, lootSetsForBlueprint, lootRollupForBlueprint, containerRoute } from "@/components/map/entityLinkIndex";
 import "@/components/map/map.css";
 
-// Faithful port of sand3d/viewer/index.html's <script type="module"> body.
+// Faithful port of the standalone viewer's <script type="module"> body. That viewer (formerly
+// sand3d/viewer/index.html) has since been deleted upstream — this component is now the only
+// implementation; sand-map-extractor just bakes the assets it loads.
 // Kept as close to byte-for-byte as a React wrapper allows — see the task
 // notes for the deliberate list of adaptations (scoped $, ASSETS path,
 // bundled three imports, RAF handle + listener teardown, loot cross-links).
@@ -568,13 +570,75 @@ function mountViewer(root) {
     const contents = loot => loot.map(r => `${namedLink(r[0], "ci")}<span class="cq">${qty(r)}</span>`).join("");
 
     let body = "";
-    const hasLoot = !!(E && ((E.loot && E.loot.length) || (E.m && E.m.some(s => ((SPAWNS[s.bp] || {}).loot || []).length))));
+    // The wiki knows a container's loot even when nothing is baked into spawns.json —
+    // the key-locked boxes bake zero rows but have all their drops in the wiki data.
+    const sets = lootSetsForBlueprint(o.userData.b);
+    const rollup = lootRollupForBlueprint(o.userData.b);
+    const hasLoot = !!(sets.length || rollup.length ||
+      (E && ((E.loot && E.loot.length) || (E.m && E.m.some(s => ((SPAWNS[s.bp] || {}).loot || []).length)))));
     if (hasLoot) // same containers, different counts per game mode
       body += `<div class="mv-amounts"><span class="k">Amounts:</span><div class="mv-aseg">` +
         `<button class="${V ? "" : "on"}" data-m="Storm">Stormdive</button>` +
         `<button class="${V ? "on" : ""}" data-m="Voyage">Voyage</button></div></div>`;
-    if (E && E.loot && E.loot.length) // directly-clicked container: its own contents
-      body += `<div class="mv-becomes-lbl">Contents</div><div class="mv-contents">${contents(E.loot)}</div>`;
+    if (sets.length || rollup.length || (E && E.loot && E.loot.length)) {
+      // spawns.json bakes `loot` as the UNION of every set the container can roll, which
+      // reads as "this is what's inside". It isn't — the game rolls ONE set and grants that
+      // set's items (LootSetupDataComponent.RollEntry). The pile bakes 52 rows and yields
+      // 5-6. Prefer the wiki's rows, which carry the real odds and exact per-set amounts;
+      // fall back to the flat baked list only when the wiki knows nothing about it.
+      // The locked boxes' counts come from conf_worldContractsConfig and are not split by
+      // game mode, so one side is null. Falling back beats rendering a blank cell — which
+      // is what a Military Box did, listing "80 mm Shell 98.7%" with no amount at all.
+      const qtyOf = it => {
+        const q = (V ? it.voyage : it.storm) || it.voyage || it.storm;
+        return q ? q.replace("-", "–") : "";
+      };
+      // How many items an open gives: counted off the sets, never inferred. (Summing
+      // P(item) is a valid expectation but returns 3.5 for a thing that is always 3 or 4.)
+      const perOpen = (() => {
+        if (!sets.length) return null;
+        const z = sets.map(s => s.items.length);
+        const lo = Math.min(...z), hi = Math.max(...z);
+        return lo === hi ? `${lo}` : `${lo}–${hi}`;
+      })();
+      const itemRow = it => {
+        const ic = it.icon ? `<img class="mv-loot-icon" src="${it.icon}" alt="" aria-hidden="true">` : "";
+        return it.href ? `<a class="ci" href="${it.href}">${ic}${it.name}</a>`
+                       : `<span class="ci">${ic}${it.name}</span>`;
+      };
+      if (sets.length || rollup.length) {
+        // Two collapsed sections, both shut by default: the popup is small and neither view
+        // is the one everyone wants. "Item Chances" answers "how often do I see this at
+        // all"; "Loot Sets" answers "what do I actually walk away with".
+        if (rollup.length)
+          body += `<details class="mv-fold"><summary>Item Chances` +
+            `<span class="mv-fold-n">${rollup.length}</span></summary>` +
+            `<div class="mv-contents mv-chances">` +
+            rollup.map(it =>
+              `${itemRow(it)}<span class="cp">${it.chance}%</span>` +
+              // "~" marks a span stitched from sets with different amounts — no single
+              // open can yield the whole range. Exact values are in the sets below.
+              `<span class="cq">${qtyOf(it)}${it.merged ? "<i class=\"mv-approx\" title=\"Range spans several sets; no single open gives all of it\">~</i>" : ""}</span>`
+            ).join("") + `</div></details>`;
+        if (sets.length) {
+          const sizes = sets.map(s => s.items.length);
+          const lo = Math.min(...sizes), hi = Math.max(...sizes);
+          body += `<details class="mv-fold"><summary>Loot Sets` +
+            `<span class="mv-fold-n">${sets.length}</span></summary>` +
+            `<div class="mv-fold-note">Opening gives you ONE set — ${perOpen} items.</div>` +
+            sets.map(s => {
+              const rows = s.items.map(it => `${itemRow(it)}<span class="cq">${qtyOf(it)}</span>`).join("");
+              return `<div class="mv-become foldable"><div class="mv-become-row">` +
+                `<span class="mv-become-caret" aria-hidden="true"></span>` +
+                `<span class="mv-become-nm">${s.label}</span>` +
+                `<span class="mv-become-pct">${s.chance}%</span>` +
+                `</div><div class="mv-become-contents">${rows}</div></div>`;
+            }).join("") + `</details>`;
+        }
+      } else {
+        body += `<div class="mv-becomes-lbl">Contents</div><div class="mv-contents">${contents(E.loot)}</div>`;
+      }
+    }
     if (E && E.m && E.m.length) { // spawner: members, each member's loot collapsed (first open)
       let opened = false;
       body += `<div class="mv-becomes-lbl">Can become</div>` +
@@ -587,7 +651,8 @@ function mountViewer(root) {
           const inner = foldable ? `<div class="mv-become-contents">${contents(ml)}</div>` : "";
           // name is plain text (clicking the row folds/unfolds); a separate ↗ icon opens
           // the wiki page, so users don't change page by accident while expanding.
-          const hit = slugForName(s.label), disp = cleanLabel(s.label);
+          // blueprint first: the label alone mislinks (see containerRoute).
+          const hit = containerRoute(s.bp, s.label), disp = cleanLabel(s.label);
           const ic = hit && hit.icon ? `<img class="mv-loot-icon" src="${hit.icon}" alt="" aria-hidden="true">` : "";
           const open = hit ? `<a class="mv-become-open" href="${hit.href}" title="Open ${disp}" aria-label="Open ${disp}">↗</a>` : "";
           return `<div class="mv-become${foldable ? " foldable" : ""}${sel}"><div class="mv-become-row">` +
@@ -610,7 +675,7 @@ function mountViewer(root) {
         }).join("") + `</div>`;
 
     // title: effort stripped, tier kept; links to the wiki entity/container when one matches
-    const tHit = slugForName(o.userData.t);
+    const tHit = containerRoute(o.userData.b, o.userData.t);
     const tText = cleanLabel(o.userData.t).replace(/\s*(\[[^\]]+\])\s*$/, ' <span class="eff">$1</span>');
     const title = tHit ? `<a href="${tHit.href}">${tText}</a>` : tText;
     info.style.display = "flex";

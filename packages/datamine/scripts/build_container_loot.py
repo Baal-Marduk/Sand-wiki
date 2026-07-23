@@ -80,6 +80,7 @@ def tier_label(tier, effort):
 LOW_MID_HIGH = {"low", "mid", "high"}
 
 out = collections.OrderedDict()
+blueprint_slugs = {}
 resolved_n = tot_n = 0
 unresolved = collections.Counter()
 
@@ -89,10 +90,44 @@ for c in sources:
     if dm_slug in EXCLUDE:
         continue  # not a real loot container (e.g. mob drops, naval mine)
     eff_order = {e: i for i, e in enumerate(c.get("efforts") or [])}
+    # variants are the truthful unit: one real entity = one roll pool with its own sets.
+    variants_by_cell = collections.defaultdict(list)
+    for v in c.get("variants") or []:
+        variants_by_cell[(v.get("tier"), v.get("effort"))].append(v)
+
     def cellkey(item):
         k, cell = item
         return (cell.get("tier") if cell.get("tier") is not None else 0,
                 eff_order.get(cell.get("effort"), 0))
+
+    def set_views(cells, group_label):
+        """The sets a player can actually roll from these cells, with exact per-set
+        quantities. Each set's odds are normalised within its own entity, because that
+        entity is the roll -- odds are NOT comparable across effort variants, which is why
+        `group` keeps them apart: a Tier 1 crate group unions the low/mid/high entities,
+        and all three name their sets set1..setN."""
+        out = []
+        for cell in cells:
+            for v in variants_by_cell.get((cell.get("tier"), cell.get("effort")), []):
+                for s in v["sets"]:
+                    if not s.get("known"):
+                        continue
+                    per = {}
+                    for mode in ("voyage", "storm"):
+                        for it in s.get(mode) or []:
+                            per.setdefault(it["item"], {})[mode] = fmt_range(it["min"], it["max"])
+                    items = []
+                    for lid, r in per.items():
+                        slug, iname, ok = resolve(lid)
+                        items.append({"slug": slug, "name": iname, "resolved": ok,
+                                      "voyage": r.get("voyage"), "storm": r.get("storm")})
+                    eff = v.get("effort")
+                    out.append({"label": s["label"], "effort": eff,
+                                # Unique per (group, effort): the key the wiki + map use to
+                                # tell one variant's set1 from another's.
+                                "group": group_label + (f" {eff.title()}" if eff else ""),
+                                "chance": s["pct"], "items": items})
+        return out
 
     # Group cells, merging the low/mid/high effort dimension away.
     groups = collections.OrderedDict()  # gkey -> {"label", "cells"}
@@ -105,6 +140,7 @@ for c in sources:
         groups.setdefault(gkey, {"label": label, "cells": []})["cells"].append(cell)
 
     tiers = []
+    bp_rows = []
     for g in groups.values():
         # Union items across every cell in the group; widen amounts to the full
         # observed range per mode; chance = max pct seen for the item.
@@ -118,8 +154,13 @@ for c in sources:
                     it = e["item"]
                     if it not in seen: seen.add(it); order.append(it)
                     cur = agg.get(it)
-                    if cur is None: agg[it] = [e["min"], e["max"], e["pct"]]
-                    else: cur[0] = min(cur[0], e["min"]); cur[1] = max(cur[1], e["max"]); cur[2] = max(cur[2], e["pct"])
+                    if cur is None: agg[it] = [e["min"], e["max"], e["pct"], bool(e.get("merged"))]
+                    else:
+                        # Widening across cells stitches the span further, so the result is
+                        # merged whenever it came from more than one source range.
+                        if e["min"] != cur[0] or e["max"] != cur[1]: cur[3] = True
+                        cur[0] = min(cur[0], e["min"]); cur[1] = max(cur[1], e["max"])
+                        cur[2] = max(cur[2], e["pct"]); cur[3] = cur[3] or bool(e.get("merged"))
         loot = []
         for it in order:
             slug, iname, ok = resolve(it)
@@ -141,9 +182,21 @@ for c in sources:
                 "storm": fmt_range(s[0], s[1]) if s else None,
                 "stormBonus": storm_bonus,
                 "moreInStorm": more_in_storm,
+                # The min-max span is stitched from sets with different quantities, so no
+                # single open can yield the whole range. Exact values live in `sets`.
+                "mergedRange": bool((v or s)[3]) if (v or s) else False,
                 "resolved": ok,
             })
-        tiers.append({"tier": g["label"], "rollSets": roll_sets or None, "loot": loot})
+        sets = set_views(g["cells"], g["label"])
+        for cell in g["cells"]:
+            for v in variants_by_cell.get((cell.get("tier"), cell.get("effort")), []):
+                eff = v.get("effort")
+                bp_rows.append((v["entity"],
+                                g["label"] + (f" {eff.title()}" if eff else "")))
+        tiers.append({"tier": g["label"], "rollSets": roll_sets or None,
+                      "setSize": (min(len(s["items"]) for s in sets),
+                                  max(len(s["items"]) for s in sets)) if sets else None,
+                      "sets": sets, "loot": loot})
 
     # Guaranteed (mandatory) drops live outside the random `cells` (e.g. the
     # Ironclad box's Alloy Steel), so the cell loop above never sees them. Inline
@@ -152,7 +205,8 @@ for c in sources:
     mand = c.get("mandatory") or []
     if mand:
         if not tiers:
-            tiers.append({"tier": "Drops", "rollSets": None, "loot": []})
+            tiers.append({"tier": "Drops", "rollSets": None, "setSize": None,
+                          "sets": [], "loot": []})
         loot0 = tiers[0]["loot"]
         present = {e["slug"] for e in loot0 if e["slug"]}
         guaranteed = []
@@ -173,6 +227,7 @@ for c in sources:
                 "storm": rng,
                 "stormBonus": 1.0,
                 "moreInStorm": False,
+                "mergedRange": False,
                 "resolved": ok,
             })
         tiers[0]["loot"] = guaranteed + loot0
@@ -180,6 +235,13 @@ for c in sources:
     # Remap the datamined slug onto the existing wiki slug, and apply name/icon
     # overrides (icon defaults to null — SEK container art isn't served by the wiki).
     wiki_slug = SLUG_MAP.get(dm_slug, dm_slug)
+    # Exact blueprint -> wiki container slug. The 3D map knows each object's blueprint id
+    # (o.userData.b, e.g. "game_buriedTreasure") and would otherwise have to guess the
+    # container from its display label -- which fails outright ("Buried Treasure" vs the
+    # wiki's "Suspicious Pile of Sand") and mis-resolves ("Army Box …" -> military-box,
+    # the locked box, not the weapons crate). This is the same id the pipeline keys on.
+    for entity, group in bp_rows:
+        blueprint_slugs[entity] = {"slug": wiki_slug, "group": group}
     ov = CONTAINER_OVERRIDES.get(wiki_slug, {})
     out[wiki_slug] = {
         "name": ov.get("name", name),
@@ -193,7 +255,29 @@ artifact = {
     "containers": out,
 }
 dest = os.path.join(SEK_OUT, "container_loot.json")
-json.dump(artifact, open(dest, "w", encoding="utf-8"), indent=1, ensure_ascii=False)
+# Explicit LF: committed files in this repo are LF (autocrlf off + a pre-commit CRLF
+# guard); Python text mode would emit CRLF on Windows and rewrite every line.
+with open(dest, "w", encoding="utf-8", newline="\n") as fh:
+    json.dump(artifact, fh, indent=1, ensure_ascii=False)
+    fh.write("\n")
+
+# The key-locked crates come from build_lockbox_loot.py, not the container path, but the
+# map resolves every container the same way -- by blueprint id -- so they belong in the
+# same index. Without this a Military Box had no way to reach its own loot.
+_lb_path = os.path.join(SEK_OUT, "lockbox_loot.json")
+if os.path.exists(_lb_path):
+    for _c in json.load(open(_lb_path, encoding="utf-8"))["crates"]:
+        if _c.get("blueprint"):
+            blueprint_slugs[_c["blueprint"]] = {"slug": _c["slug"], "group": "Loot"}
+
+# Blueprint index for the 3D map (apps/wiki/src/components/map). Committed like any
+# other generated artifact; regenerate with this script.
+bp_dest = os.path.normpath(os.path.join(DATAMINE, "..", "..", "apps", "wiki", "src",
+                                        "components", "map", "containerBlueprints.json"))
+with open(bp_dest, "w", encoding="utf-8", newline="\n") as fh:
+    json.dump(dict(sorted(blueprint_slugs.items())), fh, indent=1, ensure_ascii=False)
+    fh.write("\n")
+print(f"blueprint index: {len(blueprint_slugs)} -> {bp_dest}")
 
 print(f"containers: {len(out)}")
 print(f"tiers total: {sum(len(c['tiers']) for c in out.values())}")

@@ -1,0 +1,262 @@
+{
+ "game_armyBox_resupplyAmmo": {
+  "slug": "weapons-crate-ammo-resupply",
+  "group": "Drops"
+ },
+ "game_armyBox_resupplyWeapons": {
+  "slug": "weapons-crate-weapon-resupply",
+  "group": "Drops"
+ },
+ "game_armyBox_t1_highEffort": {
+  "slug": "weapon-crate",
+  "group": "Tier 1 High"
+ },
+ "game_armyBox_t1_lowEffort": {
+  "slug": "weapon-crate",
+  "group": "Tier 1 Low"
+ },
+ "game_armyBox_t1_midEffort": {
+  "slug": "weapon-crate",
+  "group": "Tier 1 Mid"
+ },
+ "game_armyBox_t2_highEffort": {
+  "slug": "weapon-crate",
+  "group": "Tier 2 High"
+ },
+ "game_armyBox_t2_lowEffort": {
+  "slug": "weapon-crate",
+  "group": "Tier 2 Low"
+ },
+ "game_armyBox_t2_midEffort": {
+  "slug": "weapon-crate",
+  "group": "Tier 2 Mid"
+ },
+ "game_armyBox_t3_highEffort": {
+  "slug": "weapon-crate",
+  "group": "Tier 3 High"
+ },
+ "game_armyBox_t3_lowEffort": {
+  "slug": "weapon-crate",
+  "group": "Tier 3 Low"
+ },
+ "game_armyBox_t3_midEffort": {
+  "slug": "weapon-crate",
+  "group": "Tier 3 Mid"
+ },
+ "game_buriedTreasure": {
+  "slug": "suspicious-pile-of-sand",
+  "group": "Drops"
+ },
+ "game_foodBox_t1_highEffort": {
+  "slug": "food-crate",
+  "group": "Tier 1 High"
+ },
+ "game_foodBox_t1_lowEffort": {
+  "slug": "food-crate",
+  "group": "Tier 1 Low"
+ },
+ "game_foodBox_t1_midEffort": {
+  "slug": "food-crate",
+  "group": "Tier 1 Mid"
+ },
+ "game_foodBox_t2_highEffort": {
+  "slug": "food-crate",
+  "group": "Tier 2 High"
+ },
+ "game_foodBox_t2_lowEffort": {
+  "slug": "food-crate",
+  "group": "Tier 2 Low"
+ },
+ "game_foodBox_t2_midEffort": {
+  "slug": "food-crate",
+  "group": "Tier 2 Mid"
+ },
+ "game_foodBox_t3_highEffort": {
+  "slug": "food-crate",
+  "group": "Tier 3 High"
+ },
+ "game_foodBox_t3_lowEffort": {
+  "slug": "food-crate",
+  "group": "Tier 3 Low"
+ },
+ "game_foodBox_t3_midEffort": {
+  "slug": "food-crate",
+  "group": "Tier 3 Mid"
+ },
+ "game_lockedBox_military": {
+  "slug": "military-box",
+  "group": "Loot"
+ },
+ "game_lockedBox_utility": {
+  "slug": "utility-box",
+  "group": "Loot"
+ },
+ "game_lockedBox_valuables": {
+  "slug": "valuables-box",
+  "group": "Loot"
+ },
+ "game_medicalCabinet_t1_highEffort": {
+  "slug": "medical-cabinet",
+  "group": "Tier 1 High"
+ },
+ "game_medicalCabinet_t1_lowEffort": {
+  "slug": "medical-cabinet",
+  "group": "Tier 1 Low"
+ },
+ "game_medicalCabinet_t1_midEffort": {
+  "slug": "medical-cabinet",
+  "group": "Tier 1 Mid"
+ },
+ "game_medicalCabinet_t2_highEffort": {
+  "slug": "medical-cabinet",
+  "group": "Tier 2 High"
+ },
+ "game_medicalCabinet_t2_lowEffort": {
+  "slug": "medical-cabinet",
+  "group": "Tier 2 Low"
+ },
+ "game_medicalCabinet_t2_midEffort": {
+  "slug": "medical-cabinet",
+  "group": "Tier 2 Mid"
+ },
+ "game_medicalCabinet_t3_highEffort": {
+  "slug": "medical-cabinet",
+  "group": "Tier 3 High"
+ },
+ "game_medicalCabinet_t3_lowEffort": {
+  "slug": "medical-cabinet",
+  "group": "Tier 3 Low"
+ },
+ "game_medicalCabinet_t3_midEffort": {
+  "slug": "medical-cabinet",
+  "group": "Tier 3 Mid"
+ },
+ "game_partsBox_t1_highEffort": {
+  "slug": "parts-crate",
+  "group": "Tier 1 High"
+ },
+ "game_partsBox_t1_lowEffort": {
+  "slug": "parts-crate",
+  "group": "Tier 1 Low"
+ },
+ "game_partsBox_t1_midEffort": {
+  "slug": "parts-crate",
+  "group": "Tier 1 Mid"
+ },
+ "game_partsBox_t2_highEffort": {
+  "slug": "parts-crate",
+  "group": "Tier 2 High"
+ },
+ "game_partsBox_t2_lowEffort": {
+  "slug": "parts-crate",
+  "group": "Tier 2 Low"
+ },
+ "game_partsBox_t2_midEffort": {
+  "slug": "parts-crate",
+  "group": "Tier 2 Mid"
+ },
+ "game_partsBox_t3_highEffort": {
+  "slug": "parts-crate",
+  "group": "Tier 3 High"
+ },
+ "game_partsBox_t3_lowEffort": {
+  "slug": "parts-crate",
+  "group": "Tier 3 Low"
+ },
+ "game_partsBox_t3_midEffort": {
+  "slug": "parts-crate",
+  "group": "Tier 3 Mid"
+ },
+ "game_safeMiddle_t1_highEffort": {
+  "slug": "valuables-safe",
+  "group": "Tier 1 High"
+ },
+ "game_safeMiddle_t1_lowEffort": {
+  "slug": "valuables-safe",
+  "group": "Tier 1 Low"
+ },
+ "game_safeMiddle_t1_midEffort": {
+  "slug": "valuables-safe",
+  "group": "Tier 1 Mid"
+ },
+ "game_safeMiddle_t2_highEffort": {
+  "slug": "valuables-safe",
+  "group": "Tier 2 High"
+ },
+ "game_safeMiddle_t2_lowEffort": {
+  "slug": "valuables-safe",
+  "group": "Tier 2 Low"
+ },
+ "game_safeMiddle_t2_midEffort": {
+  "slug": "valuables-safe",
+  "group": "Tier 2 Mid"
+ },
+ "game_safeMiddle_t3_highEffort": {
+  "slug": "valuables-safe",
+  "group": "Tier 3 High"
+ },
+ "game_safeMiddle_t3_lowEffort": {
+  "slug": "valuables-safe",
+  "group": "Tier 3 Low"
+ },
+ "game_safeMiddle_t3_midEffort": {
+  "slug": "valuables-safe",
+  "group": "Tier 3 Mid"
+ },
+ "game_shellsBox_t1_highEffort": {
+  "slug": "crate-of-shells",
+  "group": "Tier 1 High"
+ },
+ "game_shellsBox_t1_lowEffort": {
+  "slug": "crate-of-shells",
+  "group": "Tier 1 Low"
+ },
+ "game_shellsBox_t1_midEffort": {
+  "slug": "crate-of-shells",
+  "group": "Tier 1 Mid"
+ },
+ "game_shellsBox_t1_resupply": {
+  "slug": "shell-box-resupply",
+  "group": "Tier 1"
+ },
+ "game_shellsBox_t2_highEffort": {
+  "slug": "crate-of-shells",
+  "group": "Tier 2 High"
+ },
+ "game_shellsBox_t2_lowEffort": {
+  "slug": "crate-of-shells",
+  "group": "Tier 2 Low"
+ },
+ "game_shellsBox_t2_midEffort": {
+  "slug": "crate-of-shells",
+  "group": "Tier 2 Mid"
+ },
+ "game_shellsBox_t3_highEffort": {
+  "slug": "crate-of-shells",
+  "group": "Tier 3 High"
+ },
+ "game_shellsBox_t3_lowEffort": {
+  "slug": "crate-of-shells",
+  "group": "Tier 3 Low"
+ },
+ "game_shellsBox_t3_midEffort": {
+  "slug": "crate-of-shells",
+  "group": "Tier 3 Mid"
+ },
+ "item_containerBox_1L": {
+  "slug": "ironclad-loot-box",
+  "group": "Drops"
+ },
+ "item_ironcladContainer40mm": {
+  "slug": "ironclad-loot-box",
+  "group": "Drops"
+ },
+ "item_ironcladContainer70mm": {
+  "slug": "ironclad-loot-box",
+  "group": "Drops"
+ },
+ "item_ironcladContainer80mm": {
+  "slug": "ironclad-loot-box",
+  "group": "Drops"
+ }
+}

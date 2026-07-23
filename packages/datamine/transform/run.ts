@@ -16,7 +16,7 @@ import { loadWeaponStats, loadTurretStats, mergeCombatStats } from "./combat-sta
 import { loadRecipes, mergeRecipes } from "./recipes";
 import { enumerateItems } from "./enumerate";
 import { canonicalSekId } from "./variants";
-import { buildLootLinks, applyLoot, type LootOverrides } from "./loot";
+import { buildLootLinks, applyLoot, mergeContainerEntities, type LootOverrides } from "./loot";
 import { mergeEnemies, buildEnemyLootLinks } from "./enemies";
 import { mergeWorldSpawnEntity, buildWorldSpawnLinks } from "./world-spawns";
 import { mergeLockboxEntities, buildLockboxLinks, applyLockboxLinks } from "./lockbox";
@@ -114,8 +114,13 @@ console.log(lockboxes
   ? `lockboxes: merged ${lockboxes.crates.length} locked-crate container(s)`
   : "lockboxes: source absent (lockbox_loot.json) — none merged");
 
+// --- datamined containers: mint entities for any that have loot but no wiki page yet,
+//     so their loot/loot-set links are never dangling ---
+const withContainers = mergeContainerEntities(withLockboxes, containerLoot, lootOverrides);
+console.log(`containers: ${withContainers.length - withLockboxes.length >= 0 ? "+" : ""}${withContainers.length - withLockboxes.length} container entity(ies)`);
+
 // --- per-location notable loot: mint any new location entities (e.g. Ship Graveyard) ---
-const withLocations = mergeLocationEntities(withLockboxes, locationLoot);
+const withLocations = mergeLocationEntities(withContainers, locationLoot);
 console.log(locationLoot
   ? `location loot: ${locationLoot.locations.length} location(s) with notable loot`
   : "location loot: source absent (location_loot.json) — none merged");
@@ -161,10 +166,20 @@ if (locDangling.length) {
     [...new Set(locDangling.map((l) => l.targetSlug))].slice(0, 20).join(", "));
 }
 locationLootLinks.links = locationLootLinks.links.filter((l) => !l.targetSlug || knownSlugs.has(l.targetSlug));
-const links = applyLocationLoot(
+const allLinks = applyLocationLoot(
   applyLockboxLinks(applyLoot(applyLoot(applyLoot(baseline.links, loot), enemyLoot), worldLoot), lockboxLinks),
   locationLootLinks,
 );
+// A source that no longer exists as an entity leaves its links behind: applyLoot only
+// overwrites rows for containers it still covers, so excluding a container (or losing its
+// loot tables) orphaned them. Drop links from unknown sources, same as the targetSlug
+// filters above do for unknown destinations.
+const orphaned = allLinks.filter((l) => !knownSlugs.has(l.sourceSlug));
+if (orphaned.length) {
+  console.warn(`links: dropping ${orphaned.length} row(s) from removed sources:`,
+    [...new Set(orphaned.map((l) => l.sourceSlug))].slice(0, 20).join(", "));
+}
+const links = allLinks.filter((l) => knownSlugs.has(l.sourceSlug));
 console.log(`enemy loot: ${enemyLoot.links.length} link(s) across ${enemyLoot.covered.size} enemies`);
 console.log(`lockboxes: ${lockboxLinks.links.length} link(s) (loot + requires-key) across ${lockboxLinks.covered.size} crates`);
 console.log(`location loot: ${locationLootLinks.links.length} notable link(s) across ${locationLootLinks.covered.size} locations`);

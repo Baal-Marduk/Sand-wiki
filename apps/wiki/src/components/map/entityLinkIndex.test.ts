@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { slugForName, __normalize, keyOpens, doorKey } from "./entityLinkIndex";
+import { slugForName, __normalize, keyOpens, doorKey, lootSetsForBlueprint, lootRollupForBlueprint, containerRoute } from "./entityLinkIndex";
 
 describe("__normalize", () => {
   it("lowercases, trims, and collapses internal whitespace", () => {
@@ -53,7 +53,9 @@ describe("slugForName", () => {
     expect(slugForName("Shells Box T1 Mid Effort")).toMatchObject({ href: "/environment/crate-of-shells" });
     expect(slugForName("Medical Cabinet T2 Low Effort")).toMatchObject({ href: "/environment/medical-cabinet" });
     expect(slugForName("Locked Box Military")).toMatchObject({ href: "/environment/military-box" });
-    expect(slugForName("Army Box T1 High Effort")).toMatchObject({ href: "/environment/military-box" });
+    // game_armyBox_* is the Weapon Crate. This used to assert military-box — the key-locked
+    // Military Box — so every army box on the map linked to the wrong container.
+    expect(slugForName("Army Box T1 High Effort")).toMatchObject({ href: "/environment/weapon-crate" });
     expect(slugForName("Safe Middle T2")).toMatchObject({ href: "/environment/valuables-safe" });
     expect(slugForName("Valuable Piles03")).toMatchObject({ href: "/items/coin-crown" });
   });
@@ -87,4 +89,131 @@ describe("slugForName", () => {
   // packages/data/generated/entities.json appears in more than one of
   // {item, environment, trampler-part}, so there is no real fixture to assert against.
   // (Verified by grouping entities.json by normalized name and checking for kind overlap.)
+});
+
+describe("lootSetsForBlueprint", () => {
+  it("returns [] for a blueprint that is not a loot container", () => {
+    expect(lootSetsForBlueprint("game_treasureShovel")).toEqual([]);
+    expect(lootSetsForBlueprint("definitely_not_a_blueprint")).toEqual([]);
+  });
+
+  it("resolves a container whose map label does not match its wiki name", () => {
+    // The map labels this "Buried Treasure"; the wiki entity is "Suspicious Pile of Sand",
+    // so name matching finds nothing and only the blueprint id connects them.
+    expect(slugForName("Buried Treasure")).toBeNull();
+    const sets = lootSetsForBlueprint("game_buriedTreasure");
+    expect(sets).toHaveLength(13);
+    // Weighted, not uniform: six T1 sets and T2 set1 sit at 500, the rest at 100.
+    expect(sets[0].chance).toBeCloseTo(12.2, 1);
+    expect(sets[sets.length - 1].chance).toBeCloseTo(2.44, 2);
+  });
+
+  it("scopes sets to the blueprint's own roll pool, not the whole tier group", () => {
+    // "Tier 1" unions the low/mid/high entities and each names its sets set1..setN.
+    // A low-effort crate must show only its own four, at 25% each.
+    const low = lootSetsForBlueprint("game_armyBox_t1_lowEffort");
+    expect(low).toHaveLength(4);
+    expect(low.every((s) => Math.abs(s.chance - 25) < 0.01)).toBe(true);
+    expect(lootSetsForBlueprint("game_armyBox_t3_highEffort")).toHaveLength(8);
+  });
+
+  it("carries exact per-set quantities, never a merged span", () => {
+    const sets = lootSetsForBlueprint("game_buriedTreasure");
+    const rocket = sets.find((s) => s.items.some((i) => i.name === "Rocket Launcher"));
+    expect(rocket).toBeDefined();
+    // The rollup renders Coin Crown as "300-700~"; inside a set it is one real range.
+    for (const it of rocket!.items) expect(it.voyage ?? "").not.toContain("~");
+  });
+});
+
+describe("containerRoute", () => {
+  it("prefers the blueprint over the display label", () => {
+    // Label alone resolves to nothing here; the blueprint is exact.
+    expect(slugForName("Buried Treasure")).toBeNull();
+    expect(containerRoute("game_buriedTreasure", "Buried Treasure"))
+      .toMatchObject({ href: "/environment/suspicious-pile-of-sand" });
+  });
+
+  it("distinguishes variants a family rule collapses", () => {
+    // The /^shells box\b/ family sends every label to crate-of-shells; the resupply
+    // crate is its own container and only the blueprint separates them.
+    expect(slugForName("Shells Box T1 Resupply")).toMatchObject({ href: "/environment/crate-of-shells" });
+    expect(containerRoute("game_shellsBox_t1_resupply", "Shells Box T1 Resupply"))
+      .toMatchObject({ href: "/environment/shell-box-resupply" });
+  });
+
+  it("falls back to the label when the blueprint is unknown", () => {
+    expect(containerRoute(undefined, "Crate of Shells"))
+      .toMatchObject({ href: "/environment/crate-of-shells" });
+    expect(containerRoute("not_a_blueprint", "Crate of Shells"))
+      .toMatchObject({ href: "/environment/crate-of-shells" });
+  });
+});
+
+describe("lootRollupForBlueprint", () => {
+  it("agrees with the sets it is derived from", () => {
+    const sets = lootSetsForBlueprint("game_buriedTreasure");
+    const rollup = lootRollupForBlueprint("game_buriedTreasure");
+    const distinct = new Set(sets.flatMap((s) => s.items.map((i) => i.name)));
+    expect(rollup).toHaveLength(distinct.size);
+    // One roll, so the set weights are a probability distribution.
+    expect(sets.reduce((a, s) => a + s.chance, 0)).toBeCloseTo(100, 1);
+  });
+
+  it("reproduces the rocket launcher's real odds", () => {
+    // set6 + set7 at weight 100 each, out of 4100 => 4.9%. The site showed 18.2%
+    // before the tier split was removed.
+    const rl = lootRollupForBlueprint("game_buriedTreasure").find((r) => r.name === "Rocket Launcher");
+    expect(rl?.chance).toBeCloseTo(4.9, 1);
+  });
+
+  it("uses the blueprint's own pool, not the tier-group union", () => {
+    // role:"loot" for weapon-crate Tier 1 unions low/mid/high into 15 items with
+    // chance = max across them; a low-effort crate really only has its own 8.
+    const rollup = lootRollupForBlueprint("game_armyBox_t1_lowEffort");
+    expect(rollup).toHaveLength(8);
+    // Present in all four of its sets.
+    expect(rollup[0]).toMatchObject({ name: "Resource Scrapped Ammo", chance: 100 });
+  });
+
+  it("flags a quantity span stitched from sets that disagree", () => {
+    const rollup = lootRollupForBlueprint("game_buriedTreasure");
+    const crown = rollup.find((r) => r.name === "Coin Crown");
+    expect(crown).toMatchObject({ merged: true });     // 300-500 / 400-500 / 500-700 / …
+    expect(rollup.find((r) => r.name === "Rocket Launcher")).toMatchObject({ merged: false });
+  });
+});
+
+describe("locked boxes go through the same set path as every other container", () => {
+  // These were the odd ones out: a separate extractor (conf_worldContractsConfig) whose
+  // builder collapsed sets into per-item chances, and zero loot baked into spawns.json.
+  // The popup showed a Military Box with no contents at all. They roll a reward tier then
+  // ONE set inside it — the same model as the crates — so they use the same code path.
+  it("has real sets, counted not inferred", () => {
+    const size = (bp: string) => {
+      const z = lootSetsForBlueprint(bp).map((s) => s.items.length);
+      return [Math.min(...z), Math.max(...z)];
+    };
+    expect(lootSetsForBlueprint("game_lockedBox_military")).toHaveLength(23);
+    expect(size("game_lockedBox_military")).toEqual([4, 5]);
+    expect(size("game_lockedBox_utility")).toEqual([3, 4]);
+    expect(size("game_lockedBox_valuables")).toEqual([1, 4]);
+  });
+
+  it("carries per-set amounts", () => {
+    const sets = lootSetsForBlueprint("game_lockedBox_military");
+    for (const s of sets) for (const it of s.items) expect(it.voyage).toBeTruthy();
+  });
+
+  it("set weights are a distribution, and the rollup agrees with the builder", () => {
+    for (const bp of ["game_lockedBox_military", "game_lockedBox_valuables", "game_lockedBox_utility"]) {
+      const sets = lootSetsForBlueprint(bp);
+      expect(sets.reduce((a, s) => a + s.chance, 0)).toBeCloseTo(100, 0);
+    }
+    // build_lockbox_loot.py computes this independently as
+    // Sigma_tier P(tier) * (#sets-with-item / #sets-in-tier) = 98.7%.
+    const shell = lootRollupForBlueprint("game_lockedBox_military").find((r) => r.name === "80 mm Shell");
+    expect(shell?.chance).toBeCloseTo(98.7, 0);
+    expect(shell?.voyage).toBe("20-60");
+  });
 });
