@@ -33,7 +33,13 @@ export interface LootEntry {
 }
 /** One rollable set: opening the container grants EVERY item in exactly one of these. */
 export interface LootSetItem { slug: string | null; name: string; voyage: string | null; storm: string | null }
-export interface LootSet { label: string; effort: string | null; chance: number; items: LootSetItem[] }
+export interface LootSet {
+  label: string; effort: string | null; chance: number; items: LootSetItem[];
+  /** Tier label plus effort ("Tier 1 Low"), unique per roll pool. A tier group unions the
+   *  low/mid/high entities and all of them name their sets set1..setN, so this is what
+   *  keeps one variant's set1 distinct from another's. */
+  group: string;
+}
 export interface LootTier {
   tier: string; rollSets: number; loot: LootEntry[];
   sets?: LootSet[];

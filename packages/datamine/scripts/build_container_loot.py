@@ -80,6 +80,7 @@ def tier_label(tier, effort):
 LOW_MID_HIGH = {"low", "mid", "high"}
 
 out = collections.OrderedDict()
+blueprint_slugs = {}
 resolved_n = tot_n = 0
 unresolved = collections.Counter()
 
@@ -99,10 +100,12 @@ for c in sources:
         return (cell.get("tier") if cell.get("tier") is not None else 0,
                 eff_order.get(cell.get("effort"), 0))
 
-    def set_views(cells):
+    def set_views(cells, group_label):
         """The sets a player can actually roll from these cells, with exact per-set
         quantities. Each set's odds are normalised within its own entity, because that
-        entity is the roll -- odds are NOT comparable across effort variants."""
+        entity is the roll -- odds are NOT comparable across effort variants, which is why
+        `group` keeps them apart: a Tier 1 crate group unions the low/mid/high entities,
+        and all three name their sets set1..setN."""
         out = []
         for cell in cells:
             for v in variants_by_cell.get((cell.get("tier"), cell.get("effort")), []):
@@ -118,7 +121,11 @@ for c in sources:
                         slug, iname, ok = resolve(lid)
                         items.append({"slug": slug, "name": iname, "resolved": ok,
                                       "voyage": r.get("voyage"), "storm": r.get("storm")})
-                    out.append({"label": s["label"], "effort": v.get("effort"),
+                    eff = v.get("effort")
+                    out.append({"label": s["label"], "effort": eff,
+                                # Unique per (group, effort): the key the wiki + map use to
+                                # tell one variant's set1 from another's.
+                                "group": group_label + (f" {eff.title()}" if eff else ""),
                                 "chance": s["pct"], "items": items})
         return out
 
@@ -133,6 +140,7 @@ for c in sources:
         groups.setdefault(gkey, {"label": label, "cells": []})["cells"].append(cell)
 
     tiers = []
+    bp_rows = []
     for g in groups.values():
         # Union items across every cell in the group; widen amounts to the full
         # observed range per mode; chance = max pct seen for the item.
@@ -179,7 +187,12 @@ for c in sources:
                 "mergedRange": bool((v or s)[3]) if (v or s) else False,
                 "resolved": ok,
             })
-        sets = set_views(g["cells"])
+        sets = set_views(g["cells"], g["label"])
+        for cell in g["cells"]:
+            for v in variants_by_cell.get((cell.get("tier"), cell.get("effort")), []):
+                eff = v.get("effort")
+                bp_rows.append((v["entity"],
+                                g["label"] + (f" {eff.title()}" if eff else "")))
         tiers.append({"tier": g["label"], "rollSets": roll_sets or None,
                       "setSize": (min(len(s["items"]) for s in sets),
                                   max(len(s["items"]) for s in sets)) if sets else None,
@@ -222,6 +235,13 @@ for c in sources:
     # Remap the datamined slug onto the existing wiki slug, and apply name/icon
     # overrides (icon defaults to null — SEK container art isn't served by the wiki).
     wiki_slug = SLUG_MAP.get(dm_slug, dm_slug)
+    # Exact blueprint -> wiki container slug. The 3D map knows each object's blueprint id
+    # (o.userData.b, e.g. "game_buriedTreasure") and would otherwise have to guess the
+    # container from its display label -- which fails outright ("Buried Treasure" vs the
+    # wiki's "Suspicious Pile of Sand") and mis-resolves ("Army Box …" -> military-box,
+    # the locked box, not the weapons crate). This is the same id the pipeline keys on.
+    for entity, group in bp_rows:
+        blueprint_slugs[entity] = {"slug": wiki_slug, "group": group}
     ov = CONTAINER_OVERRIDES.get(wiki_slug, {})
     out[wiki_slug] = {
         "name": ov.get("name", name),
@@ -240,6 +260,15 @@ dest = os.path.join(SEK_OUT, "container_loot.json")
 with open(dest, "w", encoding="utf-8", newline="\n") as fh:
     json.dump(artifact, fh, indent=1, ensure_ascii=False)
     fh.write("\n")
+
+# Blueprint index for the 3D map (apps/wiki/src/components/map). Committed like any
+# other generated artifact; regenerate with this script.
+bp_dest = os.path.normpath(os.path.join(DATAMINE, "..", "..", "apps", "wiki", "src",
+                                        "components", "map", "containerBlueprints.json"))
+with open(bp_dest, "w", encoding="utf-8", newline="\n") as fh:
+    json.dump(dict(sorted(blueprint_slugs.items())), fh, indent=1, ensure_ascii=False)
+    fh.write("\n")
+print(f"blueprint index: {len(blueprint_slugs)} -> {bp_dest}")
 
 print(f"containers: {len(out)}")
 print(f"tiers total: {sum(len(c['tiers']) for c in out.values())}")

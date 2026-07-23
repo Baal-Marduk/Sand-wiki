@@ -20,6 +20,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 25.0,
        "items": [
         {
@@ -48,6 +49,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 25.0,
        "items": [
         {
@@ -76,6 +78,7 @@
       {
        "label": "set3",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 25.0,
        "items": [
         {
@@ -104,6 +107,7 @@
       {
        "label": "set4",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 25.0,
        "items": [
         {
@@ -132,6 +136,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 25.0,
        "items": [
         {
@@ -160,6 +165,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 25.0,
        "items": [
         {
@@ -188,6 +194,7 @@
       {
        "label": "set3",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 25.0,
        "items": [
         {
@@ -216,6 +223,7 @@
       {
        "label": "set4",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 25.0,
        "items": [
         {
@@ -244,6 +252,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 25.0,
        "items": [
         {
@@ -272,6 +281,7 @@
       {
        "label": "set2",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 25.0,
        "items": [
         {
@@ -300,6 +310,7 @@
       {
        "label": "set3",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 25.0,
        "items": [
         {
@@ -328,6 +339,7 @@
       {
        "label": "set4",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 25.0,
        "items": [
         {
@@ -533,6 +545,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 25.0,
        "items": [
         {
@@ -575,6 +588,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 25.0,
        "items": [
         {
@@ -617,6 +631,7 @@
       {
        "label": "set3",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 25.0,
        "items": [
         {
@@ -659,6 +674,7 @@
       {
        "label": "set4",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 25.0,
        "items": [
         {
@@ -701,6 +717,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 20.0,
        "items": [
         {
@@ -736,6 +753,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 20.0,
        "items": [
         {
@@ -771,6 +789,7 @@
       {
        "label": "set3",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 20.0,
        "items": [
         {
@@ -806,6 +825,7 @@
       {
        "label": "set4",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 20.0,
        "items": [
         {
@@ -841,6 +861,7 @@
       {
        "label": "set5",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 20.0,
        "items": [
         {
@@ -876,6 +897,7 @@
       {
        "label": "T2 set1",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 20.0,
        "items": [
         {
@@ -918,6 +940,7 @@
       {
        "label": "T2 set2",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 20.0,
        "items": [
         {
@@ -960,6 +983,7 @@
       {
        "label": "T2 set3",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 20.0,
        "items": [
         {
@@ -1002,6 +1026,7 @@
       {
        "label": "T3 set4",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 20.0,
        "items": [
         {
@@ -1044,6 +1069,7 @@
       {
        "label": "T2 set5",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 20.0,
        "items": [
         {
@@ -1340,6 +1366,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 25.0,
        "items": [
         {
@@ -1382,6 +1409,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 25.0,
        "items": [
         {
@@ -1424,6 +1452,7 @@
       {
        "label": "set3",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 25.0,
        "items": [
         {
@@ -1459,6 +1488,7 @@
       {
        "label": "set4",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 25.0,
        "items": [
         {
@@ -1494,6 +1524,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 20.0,
        "items": [
         {
@@ -1543,6 +1574,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 20.0,
        "items": [
         {
@@ -1592,6 +1624,7 @@
       {
        "label": "set3",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 20.0,
        "items": [
         {
@@ -1641,6 +1674,7 @@
       {
        "label": "set4",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 20.0,
        "items": [
         {
@@ -1690,6 +1724,7 @@
       {
        "label": "set5",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 20.0,
        "items": [
         {
@@ -1739,6 +1774,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 8.33,
        "items": [
         {
@@ -1781,6 +1817,7 @@
       {
        "label": "set2",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 8.33,
        "items": [
         {
@@ -1823,6 +1860,7 @@
       {
        "label": "set3",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 8.33,
        "items": [
         {
@@ -1865,6 +1903,7 @@
       {
        "label": "set4",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 8.33,
        "items": [
         {
@@ -1907,6 +1946,7 @@
       {
        "label": "set5",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 16.67,
        "items": [
         {
@@ -1949,6 +1989,7 @@
       {
        "label": "set6",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 16.67,
        "items": [
         {
@@ -1991,6 +2032,7 @@
       {
        "label": "set7",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 16.67,
        "items": [
         {
@@ -2033,6 +2075,7 @@
       {
        "label": "set8",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 16.67,
        "items": [
         {
@@ -2336,6 +2379,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 50.0,
        "items": [
         {
@@ -2357,6 +2401,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 50.0,
        "items": [
         {
@@ -2385,6 +2430,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -2413,6 +2459,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -2448,6 +2495,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 50.0,
        "items": [
         {
@@ -2476,6 +2524,7 @@
       {
        "label": "set2",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 50.0,
        "items": [
         {
@@ -2567,6 +2616,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 50.0,
        "items": [
         {
@@ -2595,6 +2645,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 50.0,
        "items": [
         {
@@ -2630,6 +2681,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -2665,6 +2717,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -2707,6 +2760,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 50.0,
        "items": [
         {
@@ -2742,6 +2796,7 @@
       {
        "label": "set2",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 50.0,
        "items": [
         {
@@ -2851,6 +2906,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 50.0,
        "items": [
         {
@@ -2879,6 +2935,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 50.0,
        "items": [
         {
@@ -2914,6 +2971,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -2956,6 +3014,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -3005,6 +3064,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 50.0,
        "items": [
         {
@@ -3047,6 +3107,7 @@
       {
        "label": "set2",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 50.0,
        "items": [
         {
@@ -3181,6 +3242,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 100.0,
        "items": [
         {
@@ -3202,6 +3264,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 100.0,
        "items": [
         {
@@ -3223,6 +3286,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 100.0,
        "items": [
         {
@@ -3278,6 +3342,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 50.0,
        "items": [
         {
@@ -3306,6 +3371,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 50.0,
        "items": [
         {
@@ -3334,6 +3400,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -3362,6 +3429,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -3390,6 +3458,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 50.0,
        "items": [
         {
@@ -3418,6 +3487,7 @@
       {
        "label": "set2",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 50.0,
        "items": [
         {
@@ -3502,6 +3572,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 50.0,
        "items": [
         {
@@ -3530,6 +3601,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 50.0,
        "items": [
         {
@@ -3558,6 +3630,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -3593,6 +3666,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -3628,6 +3702,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 50.0,
        "items": [
         {
@@ -3663,6 +3738,7 @@
       {
        "label": "set2",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 50.0,
        "items": [
         {
@@ -3772,6 +3848,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 100.0,
        "items": [
         {
@@ -3793,6 +3870,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 100.0,
        "items": [
         {
@@ -3814,6 +3892,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 100.0,
        "items": [
         {
@@ -3869,6 +3948,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 100.0,
        "items": [
         {
@@ -3897,6 +3977,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 100.0,
        "items": [
         {
@@ -3925,6 +4006,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 100.0,
        "items": [
         {
@@ -3998,6 +4080,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 100.0,
        "items": [
         {
@@ -4026,6 +4109,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 100.0,
        "items": [
         {
@@ -4061,6 +4145,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 100.0,
        "items": [
         {
@@ -4159,6 +4244,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 50.0,
        "items": [
         {
@@ -4187,6 +4273,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 50.0,
        "items": [
         {
@@ -4215,6 +4302,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -4243,6 +4331,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -4271,6 +4360,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 50.0,
        "items": [
         {
@@ -4299,6 +4389,7 @@
       {
        "label": "set2",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 50.0,
        "items": [
         {
@@ -4383,6 +4474,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 50.0,
        "items": [
         {
@@ -4418,6 +4510,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 50.0,
        "items": [
         {
@@ -4453,6 +4546,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -4488,6 +4582,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -4523,6 +4618,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 50.0,
        "items": [
         {
@@ -4558,6 +4654,7 @@
       {
        "label": "set2",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 50.0,
        "items": [
         {
@@ -4660,6 +4757,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 50.0,
        "items": [
         {
@@ -4695,6 +4793,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 50.0,
        "items": [
         {
@@ -4730,6 +4829,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -4772,6 +4872,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 50.0,
        "items": [
         {
@@ -4814,6 +4915,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 43.48,
        "items": [
         {
@@ -4856,6 +4958,7 @@
       {
        "label": "set2",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 43.48,
        "items": [
         {
@@ -4898,6 +5001,7 @@
       {
        "label": "set3",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 6.52,
        "items": [
         {
@@ -4947,6 +5051,7 @@
       {
        "label": "set4",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 6.52,
        "items": [
         {
@@ -5103,6 +5208,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 33.33,
        "items": [
         {
@@ -5124,6 +5230,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 33.33,
        "items": [
         {
@@ -5145,6 +5252,7 @@
       {
        "label": "set3",
        "effort": "low",
+       "group": "Tier 1 Low",
        "chance": 33.33,
        "items": [
         {
@@ -5166,6 +5274,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 33.33,
        "items": [
         {
@@ -5187,6 +5296,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 33.33,
        "items": [
         {
@@ -5208,6 +5318,7 @@
       {
        "label": "set3",
        "effort": "mid",
+       "group": "Tier 1 Mid",
        "chance": 33.33,
        "items": [
         {
@@ -5229,6 +5340,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 33.33,
        "items": [
         {
@@ -5250,6 +5362,7 @@
       {
        "label": "set2",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 33.33,
        "items": [
         {
@@ -5271,6 +5384,7 @@
       {
        "label": "set3",
        "effort": "high",
+       "group": "Tier 1 High",
        "chance": 33.33,
        "items": [
         {
@@ -5348,6 +5462,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 16.67,
        "items": [
         {
@@ -5383,6 +5498,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 16.67,
        "items": [
         {
@@ -5418,6 +5534,7 @@
       {
        "label": "set3",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 16.67,
        "items": [
         {
@@ -5453,6 +5570,7 @@
       {
        "label": "set4",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 16.67,
        "items": [
         {
@@ -5488,6 +5606,7 @@
       {
        "label": "set5",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 16.67,
        "items": [
         {
@@ -5523,6 +5642,7 @@
       {
        "label": "set6",
        "effort": "low",
+       "group": "Tier 2 Low",
        "chance": 16.67,
        "items": [
         {
@@ -5558,6 +5678,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 16.67,
        "items": [
         {
@@ -5593,6 +5714,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 16.67,
        "items": [
         {
@@ -5628,6 +5750,7 @@
       {
        "label": "set3",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 16.67,
        "items": [
         {
@@ -5663,6 +5786,7 @@
       {
        "label": "set4",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 16.67,
        "items": [
         {
@@ -5698,6 +5822,7 @@
       {
        "label": "set5",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 16.67,
        "items": [
         {
@@ -5733,6 +5858,7 @@
       {
        "label": "set6",
        "effort": "mid",
+       "group": "Tier 2 Mid",
        "chance": 16.67,
        "items": [
         {
@@ -5768,6 +5894,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 16.67,
        "items": [
         {
@@ -5803,6 +5930,7 @@
       {
        "label": "set2",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 16.67,
        "items": [
         {
@@ -5838,6 +5966,7 @@
       {
        "label": "set3",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 16.67,
        "items": [
         {
@@ -5873,6 +6002,7 @@
       {
        "label": "set4",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 16.67,
        "items": [
         {
@@ -5908,6 +6038,7 @@
       {
        "label": "set5",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 16.67,
        "items": [
         {
@@ -5943,6 +6074,7 @@
       {
        "label": "set6",
        "effort": "high",
+       "group": "Tier 2 High",
        "chance": 16.67,
        "items": [
         {
@@ -6078,6 +6210,7 @@
       {
        "label": "set1",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 25.0,
        "items": [
         {
@@ -6120,6 +6253,7 @@
       {
        "label": "set2",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 25.0,
        "items": [
         {
@@ -6162,6 +6296,7 @@
       {
        "label": "set3",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 25.0,
        "items": [
         {
@@ -6204,6 +6339,7 @@
       {
        "label": "set4",
        "effort": "low",
+       "group": "Tier 3 Low",
        "chance": 25.0,
        "items": [
         {
@@ -6246,6 +6382,7 @@
       {
        "label": "set1",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 25.0,
        "items": [
         {
@@ -6295,6 +6432,7 @@
       {
        "label": "set2",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 25.0,
        "items": [
         {
@@ -6344,6 +6482,7 @@
       {
        "label": "set3",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 25.0,
        "items": [
         {
@@ -6393,6 +6532,7 @@
       {
        "label": "set4",
        "effort": "mid",
+       "group": "Tier 3 Mid",
        "chance": 25.0,
        "items": [
         {
@@ -6442,6 +6582,7 @@
       {
        "label": "set1",
        "effort": "high",
+       "group": "Tier 3 High",
        "chance": 100.0,
        "items": [
         {
@@ -6620,6 +6761,7 @@
       {
        "label": "T1 set1",
        "effort": null,
+       "group": "Drops",
        "chance": 12.2,
        "items": [
         {
@@ -6669,6 +6811,7 @@
       {
        "label": "T1 set2",
        "effort": null,
+       "group": "Drops",
        "chance": 12.2,
        "items": [
         {
@@ -6711,6 +6854,7 @@
       {
        "label": "T1 set3",
        "effort": null,
+       "group": "Drops",
        "chance": 12.2,
        "items": [
         {
@@ -6753,6 +6897,7 @@
       {
        "label": "T1 set4",
        "effort": null,
+       "group": "Drops",
        "chance": 12.2,
        "items": [
         {
@@ -6795,6 +6940,7 @@
       {
        "label": "T1 set5",
        "effort": null,
+       "group": "Drops",
        "chance": 12.2,
        "items": [
         {
@@ -6837,6 +6983,7 @@
       {
        "label": "T1 set6",
        "effort": null,
+       "group": "Drops",
        "chance": 12.2,
        "items": [
         {
@@ -6879,6 +7026,7 @@
       {
        "label": "T2 set1",
        "effort": null,
+       "group": "Drops",
        "chance": 12.2,
        "items": [
         {
@@ -6921,6 +7069,7 @@
       {
        "label": "T2 set2",
        "effort": null,
+       "group": "Drops",
        "chance": 2.44,
        "items": [
         {
@@ -6963,6 +7112,7 @@
       {
        "label": "T2 set3",
        "effort": null,
+       "group": "Drops",
        "chance": 2.44,
        "items": [
         {
@@ -7005,6 +7155,7 @@
       {
        "label": "T2 set4",
        "effort": null,
+       "group": "Drops",
        "chance": 2.44,
        "items": [
         {
@@ -7047,6 +7198,7 @@
       {
        "label": "T2 set5",
        "effort": null,
+       "group": "Drops",
        "chance": 2.44,
        "items": [
         {
@@ -7089,6 +7241,7 @@
       {
        "label": "T2 set6",
        "effort": null,
+       "group": "Drops",
        "chance": 2.44,
        "items": [
         {
@@ -7131,6 +7284,7 @@
       {
        "label": "T2 set7",
        "effort": null,
+       "group": "Drops",
        "chance": 2.44,
        "items": [
         {
@@ -7577,6 +7731,7 @@
       {
        "label": "set1",
        "effort": null,
+       "group": "Drops",
        "chance": 57.69,
        "items": [
         {
@@ -7605,6 +7760,7 @@
       {
        "label": "set2",
        "effort": null,
+       "group": "Drops",
        "chance": 19.23,
        "items": [
         {
@@ -7633,6 +7789,7 @@
       {
        "label": "set3",
        "effort": null,
+       "group": "Drops",
        "chance": 19.23,
        "items": [
         {
@@ -7661,6 +7818,7 @@
       {
        "label": "set4",
        "effort": null,
+       "group": "Drops",
        "chance": 3.85,
        "items": [
         {
@@ -7689,6 +7847,7 @@
       {
        "label": "set1",
        "effort": null,
+       "group": "Drops",
        "chance": 57.69,
        "items": [
         {
@@ -7717,6 +7876,7 @@
       {
        "label": "set2",
        "effort": null,
+       "group": "Drops",
        "chance": 19.23,
        "items": [
         {
@@ -7745,6 +7905,7 @@
       {
        "label": "set3",
        "effort": null,
+       "group": "Drops",
        "chance": 19.23,
        "items": [
         {
@@ -7773,6 +7934,7 @@
       {
        "label": "set4",
        "effort": null,
+       "group": "Drops",
        "chance": 3.85,
        "items": [
         {
@@ -7801,6 +7963,7 @@
       {
        "label": "set1",
        "effort": null,
+       "group": "Drops",
        "chance": 57.69,
        "items": [
         {
@@ -7829,6 +7992,7 @@
       {
        "label": "set2",
        "effort": null,
+       "group": "Drops",
        "chance": 19.23,
        "items": [
         {
@@ -7857,6 +8021,7 @@
       {
        "label": "set3",
        "effort": null,
+       "group": "Drops",
        "chance": 19.23,
        "items": [
         {
@@ -7885,6 +8050,7 @@
       {
        "label": "set4",
        "effort": null,
+       "group": "Drops",
        "chance": 3.85,
        "items": [
         {
@@ -7913,6 +8079,7 @@
       {
        "label": "set1",
        "effort": null,
+       "group": "Drops",
        "chance": 57.69,
        "items": [
         {
@@ -7941,6 +8108,7 @@
       {
        "label": "set2",
        "effort": null,
+       "group": "Drops",
        "chance": 19.23,
        "items": [
         {
@@ -7969,6 +8137,7 @@
       {
        "label": "set3",
        "effort": null,
+       "group": "Drops",
        "chance": 19.23,
        "items": [
         {
@@ -7997,6 +8166,7 @@
       {
        "label": "set4",
        "effort": null,
+       "group": "Drops",
        "chance": 3.85,
        "items": [
         {
@@ -8176,6 +8346,7 @@
       {
        "label": "navalMine",
        "effort": null,
+       "group": "Drops",
        "chance": 100.0,
        "items": [
         {
@@ -8220,6 +8391,7 @@
       {
        "label": "set1",
        "effort": null,
+       "group": "Tier 1",
        "chance": 100.0,
        "items": [
         {
@@ -8318,6 +8490,7 @@
       {
        "label": "set1",
        "effort": null,
+       "group": "Drops",
        "chance": 100.0,
        "items": [
         {
@@ -8434,6 +8607,7 @@
       {
        "label": "set1",
        "effort": null,
+       "group": "Drops",
        "chance": 100.0,
        "items": [
         {

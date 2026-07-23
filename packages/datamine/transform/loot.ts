@@ -81,7 +81,10 @@ export function buildLootLinks(cl: ContainerLoot, ov: LootOverrides): LootResult
             // amount carries the set's item count so the UI can say "one open = N items"
             // without re-deriving it from the row group.
             amount: s.items.length,
-            tier: t.tier === "Drops" ? s.label : `${t.tier} - ${s.label}`,
+            // "<group> - <label>", always. The group prefix is what lets a consumer pick
+            // exactly one roll pool's sets (the 3D map does this from a blueprint id);
+            // display strips it back off.
+            tier: `${s.group} - ${s.label}`,
             value1: String(s.chance), value2: it.voyage ?? null, value3: it.storm ?? null,
             sortOrder: base + i, buyGroup: null,
           });
