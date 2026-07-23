@@ -6,7 +6,7 @@ import * as THREE from "three";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { RoomEnvironment } from "three/examples/jsm/environments/RoomEnvironment.js";
 import { ToolNavBrand } from "@/components/ToolNavBrand";
-import { slugForName, keyOpens, doorKey, lootSetsForBlueprint } from "@/components/map/entityLinkIndex";
+import { slugForName, keyOpens, doorKey, lootSetsForBlueprint, containerRoute } from "@/components/map/entityLinkIndex";
 import "@/components/map/map.css";
 
 // Faithful port of the standalone viewer's <script type="module"> body. That viewer (formerly
@@ -618,7 +618,8 @@ function mountViewer(root) {
           const inner = foldable ? `<div class="mv-become-contents">${contents(ml)}</div>` : "";
           // name is plain text (clicking the row folds/unfolds); a separate ↗ icon opens
           // the wiki page, so users don't change page by accident while expanding.
-          const hit = slugForName(s.label), disp = cleanLabel(s.label);
+          // blueprint first: the label alone mislinks (see containerRoute).
+          const hit = containerRoute(s.bp, s.label), disp = cleanLabel(s.label);
           const ic = hit && hit.icon ? `<img class="mv-loot-icon" src="${hit.icon}" alt="" aria-hidden="true">` : "";
           const open = hit ? `<a class="mv-become-open" href="${hit.href}" title="Open ${disp}" aria-label="Open ${disp}">↗</a>` : "";
           return `<div class="mv-become${foldable ? " foldable" : ""}${sel}"><div class="mv-become-row">` +
@@ -641,7 +642,7 @@ function mountViewer(root) {
         }).join("") + `</div>`;
 
     // title: effort stripped, tier kept; links to the wiki entity/container when one matches
-    const tHit = slugForName(o.userData.t);
+    const tHit = containerRoute(o.userData.b, o.userData.t);
     const tText = cleanLabel(o.userData.t).replace(/\s*(\[[^\]]+\])\s*$/, ' <span class="eff">$1</span>');
     const title = tHit ? `<a href="${tHit.href}">${tText}</a>` : tText;
     info.style.display = "flex";

@@ -33,15 +33,20 @@ const ALIASES: Record<string, string> = {
   "Mounted Turret T3 Packable": "game-packed-turret-t3-container",
 };
 
-/** Family fallback: loot-box labels vary by tier/effort (e.g. "Shells Box T1 Mid
- *  Effort") but the wiki models each loot type as ONE untiered container. Match the
- *  family prefix → wiki container slug; verified against the store. Ambiguous families
- *  (Army Box, Container Box, Valuable Piles) are intentionally omitted until confirmed. */
+/** Family fallback for labels with NO blueprint to key on — prefer routeForBlueprint(),
+ *  which is exact. Loot-box labels vary by tier/effort ("Shells Box T1 Mid Effort") but the
+ *  wiki models each loot type as ONE untiered container, so match the family prefix → wiki
+ *  container slug; each is verified against the store.
+ *
+ *  These rules are guesses from a display name and have been wrong: "Army Box" pointed at
+ *  military-box, the key-locked Military Box, when game_armyBox_* is the Weapon Crate — so
+ *  every army box on the map linked to the wrong container. Anything a blueprint can answer
+ *  should not be answered here. Ambiguous families (Container Box, Valuable Piles) stay out. */
 const FAMILIES: { re: RegExp; slug: string }[] = [
   { re: /^shells box\b/i, slug: "crate-of-shells" },
   { re: /^food box\b/i, slug: "food-crate" },
   { re: /^parts box\b/i, slug: "parts-crate" },
-  { re: /^army box\b/i, slug: "military-box" },
+  { re: /^army box\b/i, slug: "weapon-crate" },
   { re: /^medical cabinet\b/i, slug: "medical-cabinet" },
   { re: /^locked box military\b/i, slug: "military-box" },
   { re: /^locked box utility\b/i, slug: "utility-box" },
@@ -113,6 +118,21 @@ export function slugForName(name: string): EntityRoute | null {
   if (hit) return hit;
   for (const f of FAMILIES) if (f.re.test(name.trim())) return routeFor(f.slug);
   return null;
+}
+
+/** Route for a container by blueprint id — exact, and the preferred path for anything the
+ *  map can identify by blueprint. Display names cannot do this job: "Buried Treasure" is the
+ *  wiki's "Suspicious Pile of Sand" (no name match at all), and family guessing sent every
+ *  "Army Box" to the key-locked Military Box and "Shells Box T1 Resupply" to the ordinary
+ *  Crate of Shells. Falls back to null so callers can try slugForName(). */
+export function routeForBlueprint(blueprint: string): EntityRoute | null {
+  const hit = (CONTAINER_BLUEPRINTS as Record<string, { slug: string; group: string }>)[blueprint];
+  return hit ? routeFor(hit.slug) : null;
+}
+
+/** Blueprint first, display name second. Use for anything that names a container. */
+export function containerRoute(blueprint: string | undefined, name: string): EntityRoute | null {
+  return (blueprint ? routeForBlueprint(blueprint) : null) ?? slugForName(name);
 }
 
 export interface LootSetItem {

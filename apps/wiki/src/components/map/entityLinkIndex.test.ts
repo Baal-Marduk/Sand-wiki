@@ -1,5 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { slugForName, __normalize, keyOpens, doorKey, lootSetsForBlueprint } from "./entityLinkIndex";
+import { slugForName, __normalize, keyOpens, doorKey, lootSetsForBlueprint, containerRoute } from "./entityLinkIndex";
 
 describe("__normalize", () => {
   it("lowercases, trims, and collapses internal whitespace", () => {
@@ -53,7 +53,9 @@ describe("slugForName", () => {
     expect(slugForName("Shells Box T1 Mid Effort")).toMatchObject({ href: "/environment/crate-of-shells" });
     expect(slugForName("Medical Cabinet T2 Low Effort")).toMatchObject({ href: "/environment/medical-cabinet" });
     expect(slugForName("Locked Box Military")).toMatchObject({ href: "/environment/military-box" });
-    expect(slugForName("Army Box T1 High Effort")).toMatchObject({ href: "/environment/military-box" });
+    // game_armyBox_* is the Weapon Crate. This used to assert military-box — the key-locked
+    // Military Box — so every army box on the map linked to the wrong container.
+    expect(slugForName("Army Box T1 High Effort")).toMatchObject({ href: "/environment/weapon-crate" });
     expect(slugForName("Safe Middle T2")).toMatchObject({ href: "/environment/valuables-safe" });
     expect(slugForName("Valuable Piles03")).toMatchObject({ href: "/items/coin-crown" });
   });
@@ -121,5 +123,29 @@ describe("lootSetsForBlueprint", () => {
     expect(rocket).toBeDefined();
     // The rollup renders Coin Crown as "300-700~"; inside a set it is one real range.
     for (const it of rocket!.items) expect(it.voyage ?? "").not.toContain("~");
+  });
+});
+
+describe("containerRoute", () => {
+  it("prefers the blueprint over the display label", () => {
+    // Label alone resolves to nothing here; the blueprint is exact.
+    expect(slugForName("Buried Treasure")).toBeNull();
+    expect(containerRoute("game_buriedTreasure", "Buried Treasure"))
+      .toMatchObject({ href: "/environment/suspicious-pile-of-sand" });
+  });
+
+  it("distinguishes variants a family rule collapses", () => {
+    // The /^shells box\b/ family sends every label to crate-of-shells; the resupply
+    // crate is its own container and only the blueprint separates them.
+    expect(slugForName("Shells Box T1 Resupply")).toMatchObject({ href: "/environment/crate-of-shells" });
+    expect(containerRoute("game_shellsBox_t1_resupply", "Shells Box T1 Resupply"))
+      .toMatchObject({ href: "/environment/shell-box-resupply" });
+  });
+
+  it("falls back to the label when the blueprint is unknown", () => {
+    expect(containerRoute(undefined, "Crate of Shells"))
+      .toMatchObject({ href: "/environment/crate-of-shells" });
+    expect(containerRoute("not_a_blueprint", "Crate of Shells"))
+      .toMatchObject({ href: "/environment/crate-of-shells" });
   });
 });
